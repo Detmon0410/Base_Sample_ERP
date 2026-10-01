@@ -2,10 +2,11 @@
   "name": "kanou-base-demo",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev:backend": "npm --prefix backend run dev",
-    "dev:frontend": "npm --prefix frontend run dev",
-    "install:backend": "npm --prefix backend install",
-    "install:frontend": "npm --prefix frontend install"
+    "setup": "node scripts/setup.js",
+    "kanou": "pnpm --parallel --filter ./backend --filter ./frontend run dev",
+    "db:migrate": "pnpm --filter ./backend run prisma:migrate",
+    "db:studio": "pnpm --filter ./backend run prisma:studio"
   }
 }

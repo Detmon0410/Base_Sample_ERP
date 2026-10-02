@@ -70,3 +70,8 @@ api.interceptors.response.use(
 export function unwrap(response) {
   return response.data.data;
 }
+
+/** For list endpoints: `{ success, data: [...], meta: { page, pageSize, total } }` -> `{ items, meta }`. */
+export function unwrapList(response) {
+  return { items: response.data.data, meta: response.data.meta };
+}

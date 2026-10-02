@@ -1,5 +1,6 @@
 import { buildDashboard } from "./dashboard.js";
 import { MockHttpError } from "./errors.js";
+import { masterDataRoutes } from "./masterData.js";
 
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
 // The data below is demo-only; replace these handlers with the real API later.
@@ -57,6 +58,14 @@ function userFromAuthorization(authorization) {
   return user;
 }
 
+function requireAdmin(authorization) {
+  const user = userFromAuthorization(authorization);
+  if (!user.memberships.some((membership) => membership.role === "Admin")) {
+    throw new MockHttpError(403, "FORBIDDEN", "Admin only");
+  }
+  return user;
+}
+
 export const mockRoutes = {
   "POST /auth/login": ({ body }) => {
     const user = mockUsers.find(
@@ -78,4 +87,7 @@ export const mockRoutes = {
   "POST /auth/logout": () => null,
 
   "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization)),
+
+  // Master data is maintained by Admin only (F3 spec, Q6/Q7).
+  ...masterDataRoutes(requireAdmin),
 };

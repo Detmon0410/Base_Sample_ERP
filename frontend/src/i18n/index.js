@@ -5,10 +5,12 @@ import { initReactI18next } from "react-i18next";
 import enAuth from "./locales/en/auth.json";
 import enCommon from "./locales/en/common.json";
 import enDashboard from "./locales/en/dashboard.json";
+import enMaster from "./locales/en/master.json";
 import enNav from "./locales/en/nav.json";
 import jaAuth from "./locales/ja/auth.json";
 import jaCommon from "./locales/ja/common.json";
 import jaDashboard from "./locales/ja/dashboard.json";
+import jaMaster from "./locales/ja/master.json";
 import jaNav from "./locales/ja/nav.json";
 
 export const SUPPORTED_LANGUAGES = [
@@ -23,8 +25,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { common: enCommon, auth: enAuth, nav: enNav, dashboard: enDashboard },
-      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, dashboard: jaDashboard },
+      en: { common: enCommon, auth: enAuth, nav: enNav, dashboard: enDashboard, master: enMaster },
+      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, dashboard: jaDashboard, master: jaMaster },
     },
     supportedLngs: SUPPORTED_LANGUAGES.map((language) => language.code),
     // English is the primary language. JA files hold the same keys with empty
@@ -32,7 +34,7 @@ i18n
     fallbackLng: "en",
     returnEmptyString: false,
     defaultNS: "common",
-    ns: ["common", "auth", "nav", "dashboard"],
+    ns: ["common", "auth", "nav", "dashboard", "master"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
     detection: {

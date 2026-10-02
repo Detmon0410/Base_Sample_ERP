@@ -14,8 +14,9 @@ const TONES = {
  * Status chip. Meaning is carried by the text and an icon, never by color alone.
  * tone: "danger" | "warning" | "success" | "neutral"
  */
-export function StatusBadge({ tone = "neutral", children, className }) {
-  const { icon: Icon, className: toneClass } = TONES[tone] ?? TONES.neutral;
+export function StatusBadge({ tone = "neutral", icon, children, className }) {
+  const { icon: toneIcon, className: toneClass } = TONES[tone] ?? TONES.neutral;
+  const Icon = icon ?? toneIcon;
   return (
     <Badge variant="outline" className={cn("h-7 gap-1.5 px-2.5 text-sm font-semibold", toneClass, className)}>
       {Icon ? <Icon className="size-4" aria-hidden="true" /> : null}

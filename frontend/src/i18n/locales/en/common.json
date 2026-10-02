@@ -23,5 +23,13 @@
       "description": "Your account cannot open this page. Please contact your administrator if you need access."
     }
   },
-  "loading": "Loading…"
+  "loading": "Loading…",
+  "pagination": {
+    "label": "Pagination",
+    "showing": "Showing {{from}}–{{to}} of {{total}}",
+    "none": "No records",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{page}}"
+  }
 }

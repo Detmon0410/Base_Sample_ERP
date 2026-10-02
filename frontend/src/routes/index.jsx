@@ -5,6 +5,7 @@ import { AuthLayout } from "@/layouts/AuthLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import { CustomersPage } from "@/pages/master/customers/CustomersPage";
 import { ForbiddenPage } from "@/pages/system/ForbiddenPage";
 import { NotFoundPage } from "@/pages/system/NotFoundPage";
 import { UnderConstructionPage } from "@/pages/system/UnderConstructionPage";
@@ -12,6 +13,11 @@ import { UnderConstructionPage } from "@/pages/system/UnderConstructionPage";
 import { GuestRoute } from "./GuestRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { RequirePermission } from "./RequirePermission";
+
+// Menu entries whose page is built. Everything else opens the "not built yet" placeholder.
+const IMPLEMENTED_PAGES = {
+  customers: CustomersPage,
+};
 
 /**
  * Route table. Every menu entry in config/navigation.js gets a route (and a wildcard
@@ -34,13 +40,10 @@ export function AppRoutes() {
 
           {NAV_GROUPS.map((group) => (
             <Route key={group.key} element={<RequirePermission access={group.access} />}>
-              {group.items.map((item) => (
-                <Route
-                  key={item.key}
-                  path={`${item.to.slice(1)}/*`}
-                  element={<UnderConstructionPage />}
-                />
-              ))}
+              {group.items.map((item) => {
+                const Page = IMPLEMENTED_PAGES[item.key] ?? UnderConstructionPage;
+                return <Route key={item.key} path={`${item.to.slice(1)}/*`} element={<Page />} />;
+              })}
             </Route>
           ))}
 

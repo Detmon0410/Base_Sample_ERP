@@ -1,0 +1,98 @@
+{
+  "common": {
+    "code": "",
+    "name": "",
+    "status": "",
+    "active": "",
+    "inactive": "",
+    "all": "",
+    "clearFilters": "",
+    "edit": "",
+    "save": "",
+    "saving": "",
+    "cancel": "",
+    "deactivate": "",
+    "reactivate": "",
+    "delete": "",
+    "deleting": "",
+    "required": "",
+    "search": "",
+    "statusFilter": "",
+    "createdAt": "",
+    "updatedAt": "",
+    "saved": "",
+    "deactivated": "",
+    "reactivated": "",
+    "deleted": "",
+    "loadError": "",
+    "retry": "",
+    "notFound": "",
+    "backToList": "",
+    "unsavedTitle": "",
+    "unsavedDescription": "",
+    "stay": "",
+    "leave": "",
+    "codeFixed": ""
+  },
+  "validation": {
+    "required": "",
+    "emailInvalid": "",
+    "amountInvalid": "",
+    "taxIdInvalid": "",
+    "maxLength": ""
+  },
+  "errors": {
+    "CODE_ALREADY_EXISTS": "",
+    "IN_USE": "",
+    "NOT_FOUND": "",
+    "VALIDATION_ERROR": "",
+    "FORBIDDEN": "",
+    "UNKNOWN": ""
+  },
+  "paymentTerms": {
+    "NET_15": "",
+    "NET_30": "",
+    "NET_45": "",
+    "NET_60": "",
+    "COD": ""
+  },
+  "customers": {
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {
+      "paymentTerms": "",
+      "creditLimit": ""
+    },
+    "form": {
+      "sections": {
+        "basic": "",
+        "billing": "",
+        "contact": ""
+      },
+      "fields": {
+        "code": "",
+        "name": "",
+        "taxId": "",
+        "address": "",
+        "paymentTerms": "",
+        "creditLimit": "",
+        "contactPerson": "",
+        "contactPhone": "",
+        "contactEmail": ""
+      },
+      "placeholders": {
+        "code": "",
+        "taxId": "",
+        "paymentTerms": "",
+        "creditLimit": ""
+      },
+      "deactivateTitle": "",
+      "deactivateDescription": "",
+      "reactivateTitle": "",
+      "reactivateDescription": "",
+      "deleteTitle": "",
+      "deleteDescription": ""
+    }
+  }
+}

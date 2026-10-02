@@ -23,5 +23,13 @@
       "description": ""
     }
   },
-  "loading": ""
+  "loading": "",
+  "pagination": {
+    "label": "",
+    "showing": "",
+    "none": "",
+    "previous": "",
+    "next": "",
+    "page": ""
+  }
 }

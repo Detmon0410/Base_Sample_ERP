@@ -1,0 +1,98 @@
+{
+  "common": {
+    "code": "Code",
+    "name": "Name",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "all": "All",
+    "clearFilters": "Clear search and filters",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "delete": "Delete",
+    "deleting": "Deleting…",
+    "required": "Required",
+    "search": "Search by code or name",
+    "statusFilter": "Status",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "saved": "Saved",
+    "deactivated": "Deactivated",
+    "reactivated": "Reactivated",
+    "deleted": "Deleted",
+    "loadError": "Could not load the list.",
+    "retry": "Try again",
+    "notFound": "This record does not exist.",
+    "backToList": "Back to the list",
+    "unsavedTitle": "Leave without saving?",
+    "unsavedDescription": "Your changes have not been saved.",
+    "stay": "Keep editing",
+    "leave": "Leave",
+    "codeFixed": "The code cannot be changed after it is created."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "emailInvalid": "Enter a valid e-mail address.",
+    "amountInvalid": "Enter a whole number of yen, 0 or more.",
+    "taxIdInvalid": "Use digits only, with an optional T at the start.",
+    "maxLength": "This is too long. Please shorten it."
+  },
+  "errors": {
+    "CODE_ALREADY_EXISTS": "This code is already used. Enter a different code.",
+    "IN_USE": "This record is used by other data, so it cannot be deleted. Deactivate it instead.",
+    "NOT_FOUND": "This record no longer exists.",
+    "VALIDATION_ERROR": "Please check the highlighted fields.",
+    "FORBIDDEN": "You do not have permission to change master data.",
+    "UNKNOWN": "Something went wrong. Please try again."
+  },
+  "paymentTerms": {
+    "NET_15": "Net 15",
+    "NET_30": "Net 30",
+    "NET_45": "Net 45",
+    "NET_60": "Net 60",
+    "COD": "Cash on delivery"
+  },
+  "customers": {
+    "new": "New customer",
+    "empty": "No customers yet.",
+    "noResult": "No customer matches. Clear the search or the status filter.",
+    "columns": {
+      "paymentTerms": "Payment terms",
+      "creditLimit": "Credit limit"
+    },
+    "form": {
+      "sections": {
+        "basic": "Basic information",
+        "billing": "Billing",
+        "contact": "Contact"
+      },
+      "fields": {
+        "code": "Customer code",
+        "name": "Customer name",
+        "taxId": "Tax ID",
+        "address": "Address",
+        "paymentTerms": "Payment terms",
+        "creditLimit": "Credit limit",
+        "contactPerson": "Contact person",
+        "contactPhone": "Phone",
+        "contactEmail": "E-mail"
+      },
+      "placeholders": {
+        "code": "C001",
+        "taxId": "1234567890",
+        "paymentTerms": "Select payment terms",
+        "creditLimit": "0"
+      },
+      "deactivateTitle": "Deactivate this customer?",
+      "deactivateDescription": "It will no longer be offered when creating new documents. Existing documents keep it, and you can reactivate it later.",
+      "reactivateTitle": "Reactivate this customer?",
+      "reactivateDescription": "It will be offered again when creating new documents.",
+      "deleteTitle": "Delete this customer?",
+      "deleteDescription": "This cannot be undone. A customer used by documents cannot be deleted; deactivate it instead."
+    }
+  }
+}

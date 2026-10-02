@@ -8,8 +8,5 @@
     "kanou": "pnpm --parallel --filter ./backend --filter ./frontend run dev",
     "db:migrate": "pnpm --filter ./backend run prisma:migrate",
     "db:studio": "pnpm --filter ./backend run prisma:studio"
-  },
-  "dependencies": {
-    "next-intl": "^4.14.8"
   }
 }

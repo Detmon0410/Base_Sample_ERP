@@ -16,7 +16,7 @@ const mockUsers = [
     email: "admin@kanou.test",
     password: "admin1234",
     status: "active",
-    memberships: [{ department: "ADMIN", role: "Admin" }],
+    memberships: [{ department: null, role: "Admin" }],
   },
   {
     id: 2,

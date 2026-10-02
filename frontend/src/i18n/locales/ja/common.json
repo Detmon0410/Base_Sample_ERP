@@ -23,9 +23,5 @@
       "description": ""
     }
   },
-  "errors": {
-    "network": "",
-    "internal": "",
-    "unknown": ""
-  }
+  "loading": ""
 }

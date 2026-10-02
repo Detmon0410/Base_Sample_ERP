@@ -4,8 +4,12 @@ import { Route, Routes } from "react-router";
 import { PageHeader } from "@/components/common/PageHeader";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { MainLayout } from "@/layouts/MainLayout";
+import { LoginPage } from "@/pages/auth/LoginPage";
 import { ForbiddenPage } from "@/pages/system/ForbiddenPage";
 import { NotFoundPage } from "@/pages/system/NotFoundPage";
+
+import { GuestRoute } from "./GuestRoute";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 // Placeholder until the Dashboard page (D1) is built.
 function HomePlaceholder() {
@@ -14,18 +18,24 @@ function HomePlaceholder() {
 }
 
 /**
- * Route table. F1 adds /login inside <AuthLayout> and wraps <MainLayout>
- * in a ProtectedRoute; module routes are added as their pages are built.
+ * Route table. Module routes are added inside the protected <MainLayout> as their
+ * pages are built, wrapped in <RequirePermission department="..."> where needed.
  */
 export function AppRoutes() {
   return (
     <Routes>
-      <Route element={<AuthLayout />}>{/* /login (A1) — F1 */}</Route>
+      <Route element={<GuestRoute />}>
+        <Route element={<AuthLayout />}>
+          <Route path="login" element={<LoginPage />} />
+        </Route>
+      </Route>
 
-      <Route element={<MainLayout />}>
-        <Route index element={<HomePlaceholder />} />
-        <Route path="403" element={<ForbiddenPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<MainLayout />}>
+          <Route index element={<HomePlaceholder />} />
+          <Route path="403" element={<ForbiddenPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
       </Route>
     </Routes>
   );

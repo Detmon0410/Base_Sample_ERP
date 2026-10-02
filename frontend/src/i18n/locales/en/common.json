@@ -23,9 +23,5 @@
       "description": "Your account cannot open this page. Please contact your administrator if you need access."
     }
   },
-  "errors": {
-    "network": "Cannot reach the server. Please check your connection and try again.",
-    "internal": "Something went wrong on the server. Please try again later.",
-    "unknown": "An unexpected error occurred."
-  }
+  "loading": "Loading…"
 }

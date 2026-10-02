@@ -1,6 +1,6 @@
 # Frontend Pages — Progress
 
-Plan and page specs: [frontend-plan.md](frontend-plan.md). Update this file whenever a page is finished.
+Plan and page specs: [frontend-plan.md](frontend-plan.md). API contract per page: [api/README.md](api/README.md). Update this file whenever a page is finished.
 
 **Legend:** ⬜ not started · 🟦 in progress · ✅ done · ⏸ deferred
 
@@ -11,7 +11,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Area | Done | Total |
 |---|---|---|
 | Foundation (F0) | 0 | 6 |
-| Authentication & shell | 0 | 5 |
+| Authentication & shell | 3 | 5 |
 | Dashboard | 0 | 1 |
 | Sale | 0 | 8 |
 | Factory | 0 | 5 |
@@ -28,7 +28,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 |---|---|---|
 | Tailwind + shadcn/ui + tokens (`#003577` / `#FFFFFF`) | ✅ | Root font 18px, buttons/inputs 45–54px, JA font fallback stack |
 | i18n (EN + empty JA, switcher) | ✅ | `react-i18next`, namespaces `common` / `auth` / `nav`, JA falls back to EN |
-| Router + protected routes | 🟦 | Routes + 403/404 done; `ProtectedRoute` comes with F1 |
+| Router + protected routes | ✅ | `ProtectedRoute`, `GuestRoute`, `RequirePermission` (not applied to any route yet) |
 | `api.js` + interceptors + mock switch | ✅ | `VITE_USE_MOCK=true` serves `/auth/*` from `services/mock` |
 | `AuthLayout` / `MainLayout` | ✅ | Main layout is header-only; sidebar/breadcrumb in F2 |
 | Common components | 🟦 | Done: LanguageSwitcher, PageHeader, MessagePage. Later: StatusBadge, ConfirmDialog, DataTable (need badge / alert-dialog / table) |
@@ -37,7 +37,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | ID | Page | Route | Pri | Status | API | i18n EN | i18n JA | Notes |
 |---|---|---|---|---|---|---|---|---|
-| A1 | Login | `/login` | P0 | ⬜ | mock | ⬜ | ⬜ | First deliverable |
+| A1 | Login | `/login` | P0 | ✅ | mock | ✅ | ⬜ | Verified in browser: validation, wrong password, inactive account, redirect-back, reload keeps session, logout, 401 → login |
 | A2 | ~~Forgot password~~ | – | – | ⏸ | | – | – | Removed (Admin resets passwords) |
 | A3 | Forbidden | `/403` | P0 | ✅ | – | ✅ | ⬜ | |
 | A4 | Not found | `*` | P0 | ✅ | – | ✅ | ⬜ | |
@@ -92,3 +92,4 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 |---|---|
 | 2026-10-02 | Plan and tracker created. No pages implemented yet. |
 | 2026-10-02 | Foundation (F0) built: tokens, i18n, API client + mock, layouts, 403/404 pages. |
+| 2026-10-02 | F1: Login page, `AuthProvider` / `useAuth`, route guards, logout button in header. |

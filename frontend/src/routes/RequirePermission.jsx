@@ -1,17 +1,17 @@
 import { Navigate, Outlet } from "react-router";
 
 import { useAuth } from "@/hooks/useAuth";
-import { canAccessDepartment } from "@/utils/permissions";
+import { canUse } from "@/utils/permissions";
 
 /**
- * Wrap a group of routes to limit them to one department (Admin always passes):
- *   <Route element={<RequirePermission department="Sale" />}> ... </Route>
- * Not applied to any route yet; module routes start using it from F2 onward.
+ * Wrap a group of routes with the same access rule (see `canUse` in utils/permissions.js):
+ *   <Route element={<RequirePermission access={{ type: "admin" }} />}> ... </Route>
+ * A user without access is sent to the 403 page.
  */
-export function RequirePermission({ department }) {
+export function RequirePermission({ access }) {
   const { user } = useAuth();
 
-  if (!canAccessDepartment(user, department)) {
+  if (!canUse(user, access)) {
     return <Navigate to="/403" replace />;
   }
 

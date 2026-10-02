@@ -1,20 +1,16 @@
+import { buildDashboard } from "./dashboard.js";
+import { MockHttpError } from "./errors.js";
+
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
 // The data below is demo-only; replace these handlers with the real API later.
 
-export class MockHttpError extends Error {
-  constructor(status, code, message) {
-    super(message);
-    this.status = status;
-    this.code = code;
-  }
-}
 
 const mockUsers = [
   {
     id: 1,
     name: "Demo Admin",
-    email: "admin@kanou.test",
-    password: "admin1234",
+    email: "admin@gmail.com",
+    password: "admin",
     status: "active",
     memberships: [{ department: null, role: "Admin" }],
   },
@@ -35,6 +31,14 @@ const mockUsers = [
     email: "bob@kanou.test",
     password: "bob12345",
     status: "inactive",
+    memberships: [{ department: "Factory", role: "Worker" }],
+  },
+  {
+    id: 4,
+    name: "Ken Suzuki",
+    email: "ken@kanou.test",
+    password: "ken12345",
+    status: "active",
     memberships: [{ department: "Factory", role: "Worker" }],
   },
 ];
@@ -72,4 +76,6 @@ export const mockRoutes = {
   "GET /auth/me": ({ authorization }) => toPublicUser(userFromAuthorization(authorization)),
 
   "POST /auth/logout": () => null,
+
+  "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization)),
 };

@@ -1,12 +1,69 @@
 {
   "dashboard": "Dashboard",
-  "sale": "Sale",
-  "factory": "Factory",
-  "stock": "Stock",
-  "purchase": "Purchase",
-  "accounting": "Accounting",
-  "traceability": "Traceability",
-  "masterData": "Master Data",
-  "administration": "Administration",
-  "skipToContent": "Skip to main content"
+  "skipToContent": "Skip to main content",
+  "mainMenu": "Main menu",
+  "toggleMenu": "Collapse or expand the menu",
+  "groups": {
+    "sale": "Sale",
+    "factory": "Factory",
+    "stock": "Stock",
+    "purchase": "Purchase",
+    "accounting": "Accounting",
+    "traceability": "Traceability",
+    "masterData": "Master Data",
+    "administration": "Administration"
+  },
+  "items": {
+    "quotations": "Quotations",
+    "customerPos": "Customer POs",
+    "saleOrders": "Sale Orders",
+    "deliveryNotes": "Delivery Notes",
+    "workOrders": "Work Orders",
+    "productionTracking": "Production tracking",
+    "fgTransfer": "Finished goods transfer",
+    "stockOverview": "Stock overview",
+    "stockMovements": "Stock movements",
+    "stockAdjustment": "Stock adjustment",
+    "stockStatus": "Stock status board",
+    "purchaseOrders": "Purchase Orders",
+    "goodsReceipt": "Goods receipt",
+    "invoices": "Customer invoices",
+    "receipts": "Customer receipts",
+    "bills": "Supplier bills",
+    "payments": "Supplier payments",
+    "journal": "Journal entries",
+    "accountingMaster": "Accounting master",
+    "productTrace": "Product trace",
+    "customers": "Customers",
+    "suppliers": "Suppliers",
+    "products": "Products",
+    "materials": "Materials",
+    "warehouses": "Warehouses",
+    "machines": "Machines / lines",
+    "employees": "Employees",
+    "uom": "Units of measure",
+    "priceLists": "Price lists",
+    "users": "Users",
+    "roles": "Departments and roles"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "new": "New",
+    "detail": "Details"
+  },
+  "userMenu": {
+    "open": "Open the user menu",
+    "profile": "Profile",
+    "admin": "Admin",
+    "noDepartment": "All departments"
+  },
+  "roles": {
+    "Admin": "Admin",
+    "Manager": "Manager",
+    "Worker": "Worker"
+  },
+  "underConstruction": {
+    "title": "This page is not built yet",
+    "description": "It is part of the plan and will be added soon. You can keep using the other pages from the menu."
+  }
 }

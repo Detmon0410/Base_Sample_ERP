@@ -1,47 +1,44 @@
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
 
-import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { AppSidebar } from "@/components/layout/AppSidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { useSidebarState } from "@/hooks/useSidebarState";
 
 /**
- * Application frame. Currently the header and content area only;
- * the department sidebar, breadcrumb and full user menu arrive in F2.
+ * Application frame for every page after login: collapsible sidebar on the left,
+ * header (menu toggle, breadcrumb, language, user menu) on top, the page below.
+ * Widths: 280px expanded, 64px collapsed.
  */
 export function MainLayout() {
-  const { t } = useTranslation();
-  const { user, logout } = useAuth();
+  const { t } = useTranslation("nav");
+  const [open, setOpen] = useSidebarState();
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-card focus:px-4 focus:py-2 focus:text-primary"
+    <TooltipProvider delayDuration={200}>
+      <SidebarProvider
+        open={open}
+        onOpenChange={setOpen}
+        style={{ "--sidebar-width": "280px", "--sidebar-width-icon": "64px" }}
       >
-        {t("nav:skipToContent")}
-      </a>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-card focus:px-4 focus:py-2 focus:text-primary"
+        >
+          {t("skipToContent")}
+        </a>
 
-      <header className="flex h-16 items-center justify-between bg-primary px-8 text-primary-foreground">
-        <p className="text-xl font-bold tracking-wide">{t("app.name")}</p>
-        <div className="flex items-center gap-6">
-          <LanguageSwitcher onDark />
-          <span className="font-semibold">{user?.name}</span>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className="border-white/70 bg-transparent text-white hover:bg-white/15 hover:text-white"
-            onClick={logout}
-          >
-            {t("auth:logout")}
-          </Button>
-        </div>
-      </header>
+        <AppSidebar />
 
-      <main id="main-content" className="flex-1 p-8">
-        <Outlet />
-      </main>
-    </div>
+        <SidebarInset className="min-w-0 bg-background">
+          <AppHeader />
+          <main id="main-content" className="mx-auto w-full max-w-[1600px] flex-1 p-8">
+            <Outlet />
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }

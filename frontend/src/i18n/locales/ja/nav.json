@@ -1,12 +1,69 @@
 {
   "dashboard": "",
-  "sale": "",
-  "factory": "",
-  "stock": "",
-  "purchase": "",
-  "accounting": "",
-  "traceability": "",
-  "masterData": "",
-  "administration": "",
-  "skipToContent": ""
+  "skipToContent": "",
+  "mainMenu": "",
+  "toggleMenu": "",
+  "groups": {
+    "sale": "",
+    "factory": "",
+    "stock": "",
+    "purchase": "",
+    "accounting": "",
+    "traceability": "",
+    "masterData": "",
+    "administration": ""
+  },
+  "items": {
+    "quotations": "",
+    "customerPos": "",
+    "saleOrders": "",
+    "deliveryNotes": "",
+    "workOrders": "",
+    "productionTracking": "",
+    "fgTransfer": "",
+    "stockOverview": "",
+    "stockMovements": "",
+    "stockAdjustment": "",
+    "stockStatus": "",
+    "purchaseOrders": "",
+    "goodsReceipt": "",
+    "invoices": "",
+    "receipts": "",
+    "bills": "",
+    "payments": "",
+    "journal": "",
+    "accountingMaster": "",
+    "productTrace": "",
+    "customers": "",
+    "suppliers": "",
+    "products": "",
+    "materials": "",
+    "warehouses": "",
+    "machines": "",
+    "employees": "",
+    "uom": "",
+    "priceLists": "",
+    "users": "",
+    "roles": ""
+  },
+  "breadcrumb": {
+    "label": "",
+    "new": "",
+    "detail": ""
+  },
+  "userMenu": {
+    "open": "",
+    "profile": "",
+    "admin": "",
+    "noDepartment": ""
+  },
+  "roles": {
+    "Admin": "",
+    "Manager": "",
+    "Worker": ""
+  },
+  "underConstruction": {
+    "title": "",
+    "description": ""
+  }
 }

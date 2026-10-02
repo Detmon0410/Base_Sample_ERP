@@ -12,7 +12,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 |---|---|---|
 | Foundation (F0) | 0 | 6 |
 | Authentication & shell | 3 | 5 |
-| Dashboard | 0 | 1 |
+| Dashboard | 1 | 1 |
 | Sale | 0 | 8 |
 | Factory | 0 | 5 |
 | Stock | 0 | 3 |
@@ -30,8 +30,8 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | i18n (EN + empty JA, switcher) | ✅ | `react-i18next`, namespaces `common` / `auth` / `nav`, JA falls back to EN |
 | Router + protected routes | ✅ | `ProtectedRoute`, `GuestRoute`, `RequirePermission` (not applied to any route yet) |
 | `api.js` + interceptors + mock switch | ✅ | `VITE_USE_MOCK=true` serves `/auth/*` from `services/mock` |
-| `AuthLayout` / `MainLayout` | ✅ | Main layout is header-only; sidebar/breadcrumb in F2 |
-| Common components | 🟦 | Done: LanguageSwitcher, PageHeader, MessagePage. Later: StatusBadge, ConfirmDialog, DataTable (need badge / alert-dialog / table) |
+| `AuthLayout` / `MainLayout` | ✅ | F2 shell: collapsible sidebar (280px / 64px, remembered), header with breadcrumb, language and user menu |
+| Common components | 🟦 | Done: LanguageSwitcher, PageHeader, MessagePage, StatusBadge. Later: ConfirmDialog, DataTable (need alert-dialog) |
 
 ## Pages
 
@@ -43,7 +43,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | A4 | Not found | `*` | P0 | ✅ | – | ✅ | ⬜ | |
 | A5 | Server error | `/500` | P2 | ⬜ | – | ⬜ | ⬜ | |
 | A6 | My profile | `/profile` | P2 | ⬜ | | ⬜ | ⬜ | |
-| D1 | Dashboard | `/` | P0 | ⬜ | | ⬜ | ⬜ | |
+| D1 | Dashboard | `/` | P0 | ✅ | mock | ✅ | ⬜ | Spec: specs/f2-app-shell-dashboard.md · API: api/dashboard.md · tested as Admin, Manager+Worker, Worker |
 | S1 | Quotation list | `/sale/quotations` | P1 | ⬜ | | ⬜ | ⬜ | |
 | S2 | Quotation form | `/sale/quotations/new` | P1 | ⬜ | | ⬜ | ⬜ | Availability check |
 | S3 | Quotation detail | `/sale/quotations/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
@@ -92,4 +92,5 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 |---|---|
 | 2026-10-02 | Plan and tracker created. No pages implemented yet. |
 | 2026-10-02 | Foundation (F0) built: tokens, i18n, API client + mock, layouts, 403/404 pages. |
+| 2026-10-02 | F2: app shell (collapsible sidebar by department, breadcrumb, user menu), Dashboard D1 with mock data, placeholder page for every unbuilt menu entry. |
 | 2026-10-02 | F1: Login page, `AuthProvider` / `useAuth`, route guards, logout button in header. |

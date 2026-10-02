@@ -33,3 +33,4 @@ What the frontend expects from the backend, written **per page**. The frontend a
 | Page | Document | Status |
 |---|---|---|
 | A1 Login (and the session / logout used by the app header) | [auth.md](auth.md) | Frontend done, **backend not implemented** |
+| D1 Dashboard | [dashboard.md](dashboard.md) | Frontend done (mock), **backend not implemented** |

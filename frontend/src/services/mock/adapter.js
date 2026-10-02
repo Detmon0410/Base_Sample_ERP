@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 
-import { MockHttpError, mockRoutes } from "./routes.js";
+import { MockHttpError } from "./errors.js";
+import { mockRoutes } from "./routes.js";
 
 const LATENCY_MS = 400;
 

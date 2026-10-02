@@ -1,0 +1,94 @@
+{
+  "title": "",
+  "updatedAt": "",
+  "refresh": "",
+  "refreshing": "",
+  "loadError": "",
+  "loadErrorPage": "",
+  "refreshFailed": "",
+  "retry": "",
+  "noLinkAccess": "",
+  "quickActions": {
+    "title": "",
+    "newQuotation": "",
+    "newWorkOrder": "",
+    "newPurchaseOrder": "",
+    "newInvoice": ""
+  },
+  "kpis": {
+    "openSaleOrders": {
+      "label": "",
+      "context": ""
+    },
+    "quotationsWaiting": {
+      "label": "",
+      "context": ""
+    },
+    "workOrdersInProcess": {
+      "label": "",
+      "context": ""
+    },
+    "lateWorkOrders": {
+      "label": "",
+      "context": ""
+    },
+    "materialsInShortage": {
+      "label": "",
+      "context": ""
+    },
+    "poWaitingForGoods": {
+      "label": "",
+      "context": ""
+    },
+    "overdueInvoices": {
+      "label": "",
+      "context": ""
+    },
+    "unpaidSupplierBills": {
+      "label": "",
+      "context": ""
+    }
+  },
+  "approvals": {
+    "title": "",
+    "empty": "",
+    "open": "",
+    "types": {
+      "QT": "",
+      "SO": "",
+      "WO": "",
+      "PO": "",
+      "INVOICE": "",
+      "BILL": ""
+    }
+  },
+  "myRecent": {
+    "title": "",
+    "empty": ""
+  },
+  "stockAlerts": {
+    "title": "",
+    "empty": "",
+    "viewAll": "",
+    "material": "",
+    "quantity": "",
+    "status": "",
+    "statuses": {
+      "SHORTAGE": "",
+      "NEAR_SHORTAGE": ""
+    }
+  },
+  "production": {
+    "title": "",
+    "empty": "",
+    "late": "",
+    "steps": "",
+    "planFinish": "",
+    "qty": ""
+  },
+  "activity": {
+    "title": "",
+    "empty": "",
+    "by": ""
+  }
+}

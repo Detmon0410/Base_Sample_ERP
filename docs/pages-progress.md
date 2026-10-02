@@ -92,5 +92,8 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 |---|---|
 | 2026-10-02 | Plan and tracker created. No pages implemented yet. |
 | 2026-10-02 | Foundation (F0) built: tokens, i18n, API client + mock, layouts, 403/404 pages. |
+| 2026-10-02 | Dashboard: removed the Refresh button; it now updates itself every 15 s while the tab is visible, with a "Live" indicator (polling; push later). |
+| 2026-10-02 | Language choice moved into the user menu as small rectangular flags (UK / Japan); login screen shows the same flags. Header user button is avatar-only; Log out is red. |
+| 2026-10-02 | F2 review: removed Dashboard quick actions, hid visible page titles (screen-reader-only h1), fixed the logo badge in the collapsed sidebar. |
 | 2026-10-02 | F2: app shell (collapsible sidebar by department, breadcrumb, user menu), Dashboard D1 with mock data, placeholder page for every unbuilt menu entry. |
 | 2026-10-02 | F1: Login page, `AuthProvider` / `useAuth`, route guards, logout button in header. |

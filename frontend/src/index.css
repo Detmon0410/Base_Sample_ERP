@@ -10,7 +10,7 @@
   Tailwind size scales with it (h-11 = 49.5px, text-sm = 15.75px).
 */
 :root {
-  --background: #f4f6f9;
+  --background: #ffffff;
   --foreground: #1a2230;
   --card: #ffffff;
   --card-foreground: #1a2230;
@@ -88,6 +88,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   html {
     @apply font-sans;
     font-size: 18px;
@@ -96,13 +97,16 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
   body {
     @apply bg-background text-foreground;
     margin: 0;
-    min-width: 1280px; /* desktop only */
+    min-width: 1280px;
+    /* desktop only */
     min-height: 100vh;
     line-height: 1.6;
   }
+
   #root {
     min-height: 100vh;
   }

@@ -11,7 +11,7 @@ Decisions already made: sidebar is **collapsible**; the Dashboard is an **overvi
 
 ```text
 ┌──────────────┬──────────────────────────────────────────────────────────┐
-│ Sidebar      │ Header:  [☰]  Breadcrumb            [EN|日本語]  [User ▾]  │
+│ Sidebar      │ Header:  [☰]  Breadcrumb                          [User ▾]  │
 │ (collapsible)├──────────────────────────────────────────────────────────┤
 │              │ Page title (h1)                       [primary action]    │
 │  menu groups │                                                           │
@@ -53,8 +53,8 @@ Menu (order, icon, pages). Permission = department the user must belong to (Admi
 |---|---|
 | Sidebar toggle | Left, text-free icon button with `aria-label` |
 | Breadcrumb | `Dashboard / Sale / Quotations / QT-0012`. Last item is plain text (current page); earlier items are links. Built from route metadata, translated |
-| Language | EN / 日本語 text buttons (existing `LanguageSwitcher`) |
-| User menu | Avatar with initials + name; opens a dropdown: name, e-mail, list of `Department · Role` (e.g. "Sale · Manager"), **Profile** (A6, disabled until built), **Log out** |
+| Language | **Not in the header.** Two small rectangular flags (UK = English, Japan = 日本語) inside the user menu; the name is the accessible name and the tooltip. The login screen keeps the two flags beside the logo |
+| User menu | **Avatar with initials only** (no name, no arrow; the name is the tooltip and the accessible name); opens a dropdown: name, e-mail, list of `Department · Role` (e.g. "Sale · Manager"), **language flags**, **Profile** (A6, disabled until built), **Log out** (red) |
 | Height | 64px, white background, bottom border. The login screen's transparent navbar is unchanged |
 
 ### 1.3 Content area
@@ -66,7 +66,7 @@ Background `#F4F6F9`, padding 32px, max content width 1600px, centered on wider 
 
 Purpose: in one screen, show what needs attention across the whole factory, and jump to the right page.
 
-Page title: "Dashboard". Under it: "Good morning, {name}" is **not** used (keeps it factual); instead a line "Updated {time}" with a **Refresh** text button.
+The page title is not shown (see section 8). Top right: a small "Live · Updated hh:mm:ss" indicator (green dot). There is **no Refresh button**: the page updates itself.
 
 ### 2.1 Blocks, top to bottom
 
@@ -78,9 +78,9 @@ Page title: "Dashboard". Under it: "Good morning, {name}" is **not** used (keeps
 | 3 | **Material stock alerts** | Top 5 materials in Shortage or Near shortage: material, on hand, reorder point, status badge. Link "View stock status board" | `aditional_req.md` #2 |
 | 4 | **Production in progress** | Up to 5 Work Orders in process: WO no., product, qty, progress bar (steps done / total), plan finish date, "Late" badge when past the plan date | `Factory_req.md` |
 | 5 | **Recent activity** | Last 8 events across departments: time, document (type + number), action, who | – |
-| 6 | **Quick actions** | Buttons only for actions the user may do: New quotation, New Work Order, New Purchase Order, New invoice … | – |
+| 6 | ~~Quick actions~~ | **Removed** (decision after review): the Dashboard has no "New …" buttons; users create documents from each page | – |
 
-Layout (≥ 1280px): KPI cards in a 4-column grid (2 rows). Blocks 2 and 3 side by side (50/50); blocks 4 and 5 side by side; quick actions as a row of buttons under the page title area on the right.
+Layout (≥ 1280px; the page title is not shown, see section 8): KPI cards in a 4-column grid (2 rows). Blocks 2 and 3 side by side (50/50); blocks 4 and 5 side by side; quick actions as a row of buttons under the page title area on the right.
 
 ### 2.2 KPI cards
 
@@ -109,7 +109,7 @@ Status colors: numbers that signal a problem (shortage, late, overdue) use the d
 | No access | Block hidden (approvals, quick actions) or KPI shown without link (see above) |
 
 ### 2.4 Behavior
-- Data is loaded when the page opens, again when the browser tab regains focus after 5 minutes, and when **Refresh** is pressed (no auto-polling in v1).
+- **Real time:** data loads when the page opens, then **every 15 seconds while the browser tab is visible**, and immediately when the tab becomes visible again. Updates are silent (no skeleton, no flicker); numbers just change. If an update fails, the last data stays on screen with "Could not refresh. Showing the data from hh:mm." until a later update succeeds. No polling while the tab is hidden.
 - Dates follow the language (`2026-10-01` EN, `2026年10月1日` JA); money is `¥1,234,000` via `Intl.NumberFormat(locale, { style: "currency", currency: "JPY" })`.
 - All text goes through i18n (`nav`, `dashboard` namespaces); JA values stay empty and fall back to EN.
 
@@ -185,7 +185,7 @@ Admin, Manager (Sale + Purchase Worker), Worker (Factory) each see the right men
 | Q4 | Do Workers see money amounts and KPI numbers of other departments? | Yes, it is an overview (your decision: all departments), but without links to pages they cannot open. Needs confirmation from the business side |
 | Q5 | "Stock" is not a department in `user_account_req.md` (only Sale, Factory, Purchase, Accounting) | Show the Stock group to users in Factory or Purchase (and Admin) |
 | Q6 | Master Data access | Admin edits; other roles read-only inside their own department's pages (requirement is silent — please confirm) |
-| Q7 | Refresh | Manual button + refresh on returning to the tab after 5 minutes (no polling) |
+| Q7 | Refresh | **Decided:** no button; real-time updates by polling every 15 s while the tab is visible (replace with SSE / WebSocket when the backend offers it) |
 
 ---
 
@@ -198,3 +198,8 @@ Admin, Manager (Sale + Purchase Worker), Worker (Factory) each see the right men
 | Money in JA | Fullwidth yen sign (￥1,850,000) | That is what the browser produces for the ja-JP locale |
 | Stock group visible to Factory and Purchase (Q5) | Same | Suggested answer taken |
 | Master Data menu for Admin only (Q6) | Same | Suggested answer taken |
+| Quick actions block (6) | **Removed** | Decision after review: the Dashboard must not have "add" buttons |
+| Page title (h1) shown at the top of each page | **Not shown visually**; kept as a screen-reader-only h1 | The breadcrumb already says where the user is. Applies to every page through `PageHeader` |
+| Logo badge in the collapsed sidebar | Centered, no side padding when collapsed | It was clipped by the 64px width |
+| Language switch as EN / 日本語 text buttons in the header | Small rectangular **flags** in the user menu (and on the login screen) | Decision after review: keeps the header clean. Flags are SVG because flag emoji do not render on Windows |
+| Refresh button + update after 5 minutes (Q7) | **No Refresh button.** Self-updating every 15 s while the tab is visible, plus a "Live" indicator | Decision after review: the Dashboard must update in real time |

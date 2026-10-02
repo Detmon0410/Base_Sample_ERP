@@ -3,11 +3,10 @@ import { useTranslation } from "react-i18next";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { UserMenu } from "@/components/layout/UserMenu";
-import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 
-/** Top bar: menu toggle and breadcrumb on the left, language and user menu on the right. */
+/** Top bar: menu toggle and breadcrumb on the left, the user menu (with the language) on the right. */
 export function AppHeader() {
   const { t } = useTranslation("nav");
   const { toggleSidebar, open } = useSidebar();
@@ -30,7 +29,6 @@ export function AppHeader() {
         <Breadcrumbs />
       </div>
 
-      <LanguageSwitcher />
       <UserMenu />
     </header>
   );

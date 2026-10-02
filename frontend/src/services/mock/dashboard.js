@@ -62,6 +62,22 @@ function approvalsFor(user) {
   return APPROVALS.filter((a) => managerDepartments.includes(a.department));
 }
 
+// Demo only: a few numbers move every 15 s so the live updates of the page can be seen.
+function withLiveDrift(blocks) {
+  const tick = Math.floor(Date.now() / 15000);
+  const { kpis } = blocks;
+  kpis.openSaleOrders = { count: 12 + (tick % 4), readyToDeliver: 3 + (tick % 2) };
+  kpis.overdueInvoices = { count: 2, amountJpy: 1850000 + (tick % 5) * 50000 };
+  blocks.stockAlerts = blocks.stockAlerts.map((alert) =>
+    alert.code === "COMP" ? { ...alert, qtyOnHand: 40 - (tick % 4) } : alert,
+  );
+  blocks.activity = [
+    { at: new Date(tick * 15000).toISOString(), type: "SO", number: `SO-${String(32 + (tick % 60)).padStart(4, "0")}`, action: "Created", user: "Alice Sato" },
+    ...blocks.activity.slice(0, 7),
+  ];
+  return blocks;
+}
+
 export function buildDashboard(user) {
   const fail = failedBlocks();
   if (fail.includes("all")) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
@@ -84,6 +100,8 @@ export function buildDashboard(user) {
     production: PRODUCTION,
     activity: ACTIVITY,
   };
+
+  withLiveDrift(blocks);
 
   const errors = {};
   for (const name of fail) {

@@ -2,52 +2,54 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getDashboard } from "@/services/dashboard.service";
 
-const REFETCH_AFTER_MS = 5 * 60 * 1000;
+// "Real time" without a push channel: ask again every few seconds while the tab is visible.
+// When the backend offers SSE / WebSocket, replace this hook's internals; the page does not change.
+export const DASHBOARD_POLL_MS = 15 * 1000;
+
+/** One request. Never runs two at once; keeps the last data on screen if it fails. */
+function requestDashboard(setState, inFlight) {
+  if (inFlight.current) return;
+  inFlight.current = true;
+  getDashboard()
+    .then((data) => setState({ status: "ready", data, error: null }))
+    .catch((error) =>
+      setState((previous) => ({ status: previous.data ? "ready" : "error", data: previous.data, error })),
+    )
+    .finally(() => {
+      inFlight.current = false;
+    });
+}
 
 /**
- * status: "loading" (first load) | "ready" | "refreshing" (data stays visible) | "error" (no data)
- * Loads on open, on Refresh, and when the browser tab comes back after 5 minutes (no polling).
+ * status: "loading" (first load, no data yet) | "ready" | "error" (first load failed, no data)
+ * Updates itself: loads when the page opens, every 15 s while the tab is visible, and right away
+ * when the tab becomes visible again. Background updates are silent (no skeleton, no flicker);
+ * if one fails the last data stays on screen and `error` is set until a later update succeeds.
  */
 export function useDashboard() {
   const [state, setState] = useState({ status: "loading", data: null, error: null });
-  const hiddenAt = useRef(null);
+  const inFlight = useRef(false);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const data = await getDashboard();
-      setState({ status: "ready", data, error: null });
-    } catch (error) {
-      setState((previous) => ({ status: previous.data ? "ready" : "error", data: previous.data, error }));
-    }
-  }, []);
+  const load = useCallback(() => requestDashboard(setState, inFlight), []);
 
-  const refresh = useCallback(() => {
-    setState((previous) => ({ ...previous, status: previous.data ? "refreshing" : "loading" }));
-    return fetchData();
-  }, [fetchData]);
-
+  // First load + polling while the tab is visible.
   useEffect(() => {
-    let cancelled = false;
-    getDashboard()
-      .then((data) => !cancelled && setState({ status: "ready", data, error: null }))
-      .catch((error) => !cancelled && setState({ status: "error", data: null, error }));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    load();
+    const timer = setInterval(() => {
+      if (!document.hidden) load();
+    }, DASHBOARD_POLL_MS);
+    return () => clearInterval(timer);
+  }, [load]);
 
+  // Catch up immediately when the user comes back to the tab.
   useEffect(() => {
     const onVisibility = () => {
-      if (document.hidden) {
-        hiddenAt.current = Date.now();
-      } else if (hiddenAt.current && Date.now() - hiddenAt.current > REFETCH_AFTER_MS) {
-        hiddenAt.current = null;
-        refresh();
-      }
+      if (!document.hidden) load();
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, [refresh]);
+  }, [load]);
 
-  return { ...state, refresh };
+  // `retry` is for the "Try again" buttons of a failed block / first load.
+  return { ...state, retry: load };
 }

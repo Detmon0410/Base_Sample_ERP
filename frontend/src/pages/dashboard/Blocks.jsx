@@ -1,4 +1,4 @@
-import { ArrowRightIcon, PlusIcon } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -186,33 +186,5 @@ export function ActivityBlock({ items, hasError, loading, onRetry }) {
         ))}
       </ul>
     </BlockCard>
-  );
-}
-
-const ACTIONS = [
-  { key: "newQuotation", to: "/sale/quotations/new", department: "Sale" },
-  { key: "newWorkOrder", to: "/factory/work-orders/new", department: "Factory" },
-  { key: "newPurchaseOrder", to: "/purchase/orders/new", department: "Purchase" },
-  { key: "newInvoice", to: "/accounting/invoices/new", department: "Accounting" },
-];
-
-/** Only the actions the signed-in user may do (create rights follow the department). */
-export function QuickActions() {
-  const { t } = useTranslation("dashboard");
-  const { user } = useAuth();
-  const allowed = ACTIONS.filter((action) => canUse(user, { type: "departments", departments: [action.department] }));
-  if (allowed.length === 0) return null;
-
-  return (
-    <section aria-label={t("quickActions.title")} className="mb-6 flex flex-wrap items-center gap-3">
-      <h2 className="mr-2 text-base font-bold">{t("quickActions.title")}</h2>
-      {allowed.map((action) => (
-        <Button key={action.key} asChild variant="outline">
-          <Link to={action.to}>
-            <PlusIcon /> {t(`quickActions.${action.key}`)}
-          </Link>
-        </Button>
-      ))}
-    </section>
   );
 }

@@ -8,11 +8,13 @@ Mock to mirror: `frontend/src/services/mock/dashboard.js`
 
 | Method | Path | Auth | Used when |
 |---|---|---|---|
-| `GET` | `/dashboard` | Bearer | Page opens, **Refresh** is pressed, and when the browser tab is shown again after 5 minutes (no polling) |
+| `GET` | `/dashboard` | Bearer | Page opens, then **every 15 seconds while the browser tab is visible**, and right after the tab becomes visible again (the page has no Refresh button; it updates itself) |
+
+**Load note for the backend:** every open Dashboard asks every 15 s, so this endpoint must be cheap (aggregate queries with indexes or a short server-side cache of a few seconds). Supporting `ETag` / `If-None-Match` (answer `304 Not Modified` when nothing changed) is recommended. When the backend can push changes (SSE or WebSocket), the frontend will switch from polling to push without changing this response shape.
 
 One request returns every block so the page loads fast. A block that fails on the server is returned as `null` and listed in `errors`, so the other blocks still render (the page shows "Could not load this section" with a Try again button for that block only).
 
-Whole request errors: `401 UNAUTHORIZED` (frontend goes to Login), `500 INTERNAL_SERVER_ERROR` (frontend shows "Could not load the dashboard", or, if it already has data, keeps it and says the refresh failed).
+Whole request errors: `401 UNAUTHORIZED` (frontend goes to Login), `500 INTERNAL_SERVER_ERROR` (frontend shows "Could not load the dashboard" on the first load; during background updates it keeps the last data and says "Could not refresh" until a later update succeeds).
 
 ## Response
 

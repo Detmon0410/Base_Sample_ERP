@@ -1,20 +1,12 @@
 {
   "title": "Dashboard",
+  "live": "Live",
   "updatedAt": "Updated {{time}}",
-  "refresh": "Refresh",
-  "refreshing": "Refreshing…",
   "loadError": "Could not load this section.",
   "loadErrorPage": "Could not load the dashboard.",
   "refreshFailed": "Could not refresh. Showing the data from {{time}}.",
   "retry": "Try again",
   "noLinkAccess": "You do not have access to this page.",
-  "quickActions": {
-    "title": "Quick actions",
-    "newQuotation": "New quotation",
-    "newWorkOrder": "New Work Order",
-    "newPurchaseOrder": "New Purchase Order",
-    "newInvoice": "New invoice"
-  },
   "kpis": {
     "openSaleOrders": {
       "label": "Open Sale Orders",

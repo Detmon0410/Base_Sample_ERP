@@ -1,4 +1,3 @@
-import { RefreshCwIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { PageHeader } from "@/components/common/PageHeader";
@@ -14,7 +13,6 @@ import {
   ApprovalsBlock,
   MyRecentBlock,
   ProductionBlock,
-  QuickActions,
   StockAlertsBlock,
 } from "./Blocks";
 import { KpiCard, KpiCardSkeleton } from "./KpiCard";
@@ -24,41 +22,38 @@ import { KPI_DEFS } from "./kpis";
 export function DashboardPage() {
   const { t, i18n } = useTranslation("dashboard");
   const { user } = useAuth();
-  const { status, data, error, refresh } = useDashboard();
+  const { status, data, error, retry } = useDashboard();
 
   const loading = status === "loading";
-  const refreshing = status === "refreshing";
   const errors = data?.errors ?? {};
   // Workers get "My recent documents" instead of approvals; decide from the role so the title does not flip after loading.
   const showApprovals = data ? data.approvals !== null : canApproveAnywhere(user);
-  const block = (name) => ({ loading, hasError: Boolean(errors[name]), onRetry: refresh, items: data?.[name] });
+  const block = (name) => ({ loading, hasError: Boolean(errors[name]), onRetry: retry, items: data?.[name] });
 
   return (
     <>
       <PageHeader
         title={t("title")}
         actions={
-          <div className="flex items-center gap-4">
-            {data?.generatedAt ? (
-              <span className="text-sm text-muted-foreground" aria-live="polite">
-                {t("updatedAt", { time: formatTime(data.generatedAt, i18n.language) })}
+          // No refresh button: the page updates itself (see useDashboard). This only shows it is live.
+          data?.generatedAt ? (
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span aria-hidden="true" className="relative flex size-2.5">
+                <span className="absolute inline-flex size-full rounded-full bg-success opacity-60 motion-safe:animate-ping" />
+                <span className="relative inline-flex size-2.5 rounded-full bg-success" />
               </span>
-            ) : null}
-            <Button type="button" variant="outline" onClick={refresh} disabled={loading || refreshing}>
-              <RefreshCwIcon className={refreshing ? "animate-spin" : undefined} />
-              {refreshing ? t("refreshing") : t("refresh")}
-            </Button>
-          </div>
+              <span className="font-semibold text-foreground">{t("live")}</span>
+              {t("updatedAt", { time: formatTime(data.generatedAt, i18n.language, true) })}
+            </p>
+          ) : null
         }
       />
-
-      <QuickActions />
 
       {status === "error" ? (
         <Alert variant="destructive" className="mb-6 p-4 text-base">
           <AlertTitle className="text-base font-bold">{t("loadErrorPage")}</AlertTitle>
           <AlertDescription className="flex items-center gap-4 text-base">
-            <Button type="button" size="sm" variant="outline" onClick={refresh}>
+            <Button type="button" size="sm" variant="outline" onClick={retry}>
               {t("retry")}
             </Button>
           </AlertDescription>

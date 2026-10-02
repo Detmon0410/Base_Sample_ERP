@@ -28,11 +28,15 @@ export function formatDate(value, language) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-export function formatTime(value, language) {
+export function formatTime(value, language, withSeconds = false) {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat(toLocale(language), { hour: "2-digit", minute: "2-digit" }).format(date);
+  return new Intl.DateTimeFormat(toLocale(language), {
+    hour: "2-digit",
+    minute: "2-digit",
+    ...(withSeconds ? { second: "2-digit" } : {}),
+  }).format(date);
 }
 
 export function formatDateTime(value, language) {

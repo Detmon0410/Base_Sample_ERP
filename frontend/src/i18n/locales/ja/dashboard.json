@@ -1,20 +1,12 @@
 {
   "title": "",
+  "live": "",
   "updatedAt": "",
-  "refresh": "",
-  "refreshing": "",
   "loadError": "",
   "loadErrorPage": "",
   "refreshFailed": "",
   "retry": "",
   "noLinkAccess": "",
-  "quickActions": {
-    "title": "",
-    "newQuotation": "",
-    "newWorkOrder": "",
-    "newPurchaseOrder": "",
-    "newInvoice": ""
-  },
   "kpis": {
     "openSaleOrders": {
       "label": "",

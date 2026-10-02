@@ -1,16 +1,20 @@
-import { ChevronDownIcon, LogOutIcon, UserIcon } from "lucide-react";
+import { LogOutIcon, UserIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { LanguageFlag } from "@/components/common/LanguageFlag";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
+import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { initials } from "@/utils/format";
 
 const DEPARTMENT_KEYS = {
@@ -21,7 +25,7 @@ const DEPARTMENT_KEYS = {
 };
 
 export function UserMenu() {
-  const { t } = useTranslation(["nav", "auth"]);
+  const { t, i18n } = useTranslation(["nav", "auth", "common"]);
   const { user, logout } = useAuth();
   if (!user) return null;
 
@@ -29,15 +33,15 @@ export function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={t("nav:userMenu.open")}
-        className="flex h-11 items-center gap-3 rounded-lg px-2 text-left outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+        title={user.name}
+        className="grid size-11 place-items-center rounded-full outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-muted"
       >
+        {/* Only the avatar is shown; the name is in the menu, the tooltip and the accessible name. */}
         <Avatar className="size-9">
           <AvatarFallback className="bg-primary text-sm font-semibold text-primary-foreground">
             {initials(user.name)}
           </AvatarFallback>
         </Avatar>
-        <span className="font-semibold">{user.name}</span>
-        <ChevronDownIcon className="size-4 text-muted-foreground" aria-hidden="true" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-72">
@@ -57,10 +61,32 @@ export function UserMenu() {
           ))}
         </div>
         <DropdownMenuSeparator />
+        <p className="px-2 pt-1 pb-1.5 text-sm text-muted-foreground">{t("common:language.label")}</p>
+        {/* Small round flags; the language name is the accessible name and the tooltip. */}
+        <DropdownMenuRadioGroup
+          value={i18n.resolvedLanguage}
+          onValueChange={(code) => i18n.changeLanguage(code)}
+          className="flex gap-2 px-2 pb-2"
+        >
+          {SUPPORTED_LANGUAGES.map(({ code, label }) => (
+            <DropdownMenuRadioItem
+              key={code}
+              value={code}
+              lang={code}
+              aria-label={label}
+              title={label}
+              onSelect={(event) => event.preventDefault()}
+              className="h-10 w-14 justify-center rounded-md border-2 border-transparent p-0 data-[state=checked]:border-primary data-[state=checked]:bg-secondary [&_[data-slot=dropdown-menu-radio-item-indicator]]:hidden"
+            >
+              <LanguageFlag code={code} />
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
         <DropdownMenuItem disabled className="h-10 text-base">
           <UserIcon /> {t("nav:userMenu.profile")}
         </DropdownMenuItem>
-        <DropdownMenuItem className="h-10 text-base" onSelect={logout}>
+        <DropdownMenuItem variant="destructive" className="h-10 text-base" onSelect={logout}>
           <LogOutIcon /> {t("auth:logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>

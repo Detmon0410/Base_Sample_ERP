@@ -1,16 +1,67 @@
-# React + Vite
+# Kanou ERP Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + Vite frontend for Kanou ERP. The UI layer will use shadcn/ui instead of
+Ant Design and will remain JavaScript-based for the current project.
 
-Currently, two official plugins are available:
+## Recommended structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```text
+src/
+├── app/
+│   ├── App.jsx                 # Application root
+│   └── router.jsx              # Public/protected route definitions
+├── assets/                     # Project images and fonts only
+├── components/
+│   ├── ui/                     # shadcn-generated primitives
+│   └── shared/                 # Reusable ERP components
+├── features/
+│   ├── auth/                   # Login form, auth API, schema, session logic
+│   ├── dashboard/
+│   └── master-data/            # Users, roles and future master data modules
+├── hooks/                      # Cross-feature hooks only
+├── layouts/
+│   ├── AuthLayout.jsx
+│   └── AppLayout.jsx
+├── lib/
+│   └── utils.js                # shadcn cn() helper and shared utilities
+├── pages/                      # Route-level page composition
+├── services/
+│   └── api.js                  # Shared Axios client
+├── styles/
+│   └── globals.css             # Tailwind theme and global tokens
+└── main.jsx
+```
 
-## React Compiler
+Only create a directory when its first real module is implemented. This avoids
+empty scaffolding and keeps ownership clear.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Boundaries
 
-## Expanding the Oxlint configuration
+- `components/ui` contains shadcn primitives and no ERP business rules.
+- Feature-specific components, hooks, validation and API calls stay together in
+  `features/<feature>`.
+- `pages` compose features for a route; they should not own reusable logic.
+- `services/api.js` owns the API base URL and later the authentication interceptors.
+- Shared components are promoted to `components/shared` only after they are used
+  by more than one feature.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## First implementation: Login
+
+1. Initialize Tailwind CSS and shadcn/ui with JavaScript mode (`tsx: false`).
+2. Add only the required shadcn components: Button, Card, Input, Label and Form.
+3. Create `/login` in `app/router.jsx` using `AuthLayout`.
+4. Build the login feature with React Hook Form and Zod validation.
+5. Add an auth service and session provider; connect the real API afterward.
+6. Protect application routes and redirect signed-in users away from `/login`.
+
+## Planned UI dependencies
+
+- shadcn/ui + Tailwind CSS v4
+- React Router
+- React Hook Form + Zod
+- Lucide React
+- TanStack Query when server-state screens begin
+- TanStack Table when data grids are implemented
+
+Install libraries when the feature that needs them is started, rather than adding
+the full stack up front.

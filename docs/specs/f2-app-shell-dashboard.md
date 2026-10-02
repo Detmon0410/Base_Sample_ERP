@@ -66,7 +66,7 @@ Background `#F4F6F9`, padding 32px, max content width 1600px, centered on wider 
 
 Purpose: in one screen, show what needs attention across the whole factory, and jump to the right page.
 
-The page title is not shown (see section 8). Top right: a small "Live · Updated hh:mm:ss" indicator (green dot). There is **no Refresh button**: the page updates itself.
+The page title is not shown (see section 8). There is **no Refresh button and no "Live / Updated" indicator**: the page updates itself silently.
 
 ### 2.1 Blocks, top to bottom
 
@@ -163,7 +163,7 @@ Still to install: `table`, `progress`.
 shadcn defaults are enlarged for our users (18px root, 48px items). Sidebar default width `16rem` is replaced by 280px / 64px.
 
 ## 5. Accessibility checklist
-- Landmarks: `header`, `nav aria-label="Main"`, `main`; one `h1`
+- Landmarks: `header`, `nav aria-label="Main"`, a **single** `main` (shadcn `SidebarInset` was changed from `<main>` to `<div>` to avoid a nested second `main`); one `h1`
 - Sidebar toggle has `aria-expanded`; collapsed items have tooltips for mouse **and** keyboard focus
 - Active menu item uses `aria-current="page"`
 - Badges and KPI warnings use text + icon, not color only
@@ -202,4 +202,4 @@ Admin, Manager (Sale + Purchase Worker), Worker (Factory) each see the right men
 | Page title (h1) shown at the top of each page | **Not shown visually**; kept as a screen-reader-only h1 | The breadcrumb already says where the user is. Applies to every page through `PageHeader` |
 | Logo badge in the collapsed sidebar | Centered, no side padding when collapsed | It was clipped by the 64px width |
 | Language switch as EN / 日本語 text buttons in the header | Small rectangular **flags** in the user menu (and on the login screen) | Decision after review: keeps the header clean. Flags are SVG because flag emoji do not render on Windows |
-| Refresh button + update after 5 minutes (Q7) | **No Refresh button.** Self-updating every 15 s while the tab is visible, plus a "Live" indicator | Decision after review: the Dashboard must update in real time |
+| Refresh button + update after 5 minutes (Q7) | **No Refresh button.** Self-updating every 15 s while the tab is visible; nothing is shown about it (no button, no "Live" label, no time) | Decision after review: the Dashboard must update in real time |

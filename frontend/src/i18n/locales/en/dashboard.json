@@ -1,7 +1,5 @@
 {
   "title": "Dashboard",
-  "live": "Live",
-  "updatedAt": "Updated {{time}}",
   "loadError": "Could not load this section.",
   "loadErrorPage": "Could not load the dashboard.",
   "refreshFailed": "Could not refresh. Showing the data from {{time}}.",

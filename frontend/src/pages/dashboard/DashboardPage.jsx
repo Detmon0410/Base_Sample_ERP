@@ -32,22 +32,9 @@ export function DashboardPage() {
 
   return (
     <>
-      <PageHeader
-        title={t("title")}
-        actions={
-          // No refresh button: the page updates itself (see useDashboard). This only shows it is live.
-          data?.generatedAt ? (
-            <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span aria-hidden="true" className="relative flex size-2.5">
-                <span className="absolute inline-flex size-full rounded-full bg-success opacity-60 motion-safe:animate-ping" />
-                <span className="relative inline-flex size-2.5 rounded-full bg-success" />
-              </span>
-              <span className="font-semibold text-foreground">{t("live")}</span>
-              {t("updatedAt", { time: formatTime(data.generatedAt, i18n.language, true) })}
-            </p>
-          ) : null
-        }
-      />
+      {/* The page updates itself (see useDashboard); nothing to show or press here. */}
+      <PageHeader title={t("title")} />
+
 
       {status === "error" ? (
         <Alert variant="destructive" className="mb-6 p-4 text-base">

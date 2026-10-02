@@ -2,6 +2,8 @@
 
 Status: **PLAN (not yet implemented)** · Progress tracker: [pages-progress.md](pages-progress.md)
 
+Page flow (Figma, page "Page Flow", top to bottom): https://www.figma.com/design/hVCWGKZgvqcWqBt4f6Xlr3/Kanou-Base-Demo?node-id=57-3 — detailed swimlane version on the page "User Flow": https://www.figma.com/design/hVCWGKZgvqcWqBt4f6Xlr3/Kanou-Base-Demo?node-id=52-2
+
 Source requirements: `BaseRequirement_md/` (Sale, Factory, Accounting, master_data, user_account, aditional, stack).
 `Purchase_req.md` and `Sotck_req.md` are empty, so Stock / Purchase pages below are inferred from `master_data_req.md` and `aditional_req.md` and must be confirmed.
 
@@ -30,7 +32,7 @@ Source requirements: `BaseRequirement_md/` (Sale, Factory, Accounting, master_da
 8. Visible focus ring (3px), full keyboard operation, no hover-only information.
 9. Predictable lists: search box + filters on top, table, pagination at the bottom, same on every list page.
 10. Date format by locale (EN `2026-10-01`, JA `2026年10月1日`); numbers with thousands separators; currency shown explicitly.
-11. Language switcher always visible in the header, choice persisted.
+11. Language is chosen with two small rectangular flags: in the **user (profile) menu** inside the app, and next to the logo on the login screen (no profile yet). Choice persisted.
 12. Layout must survive 200% zoom; min width 1280px is the design target (office desktops), tablet works, phone is out of scope.
 
 ### Design tokens (defined once in `src/index.css`)
@@ -67,13 +69,13 @@ Master Data     Customers · Suppliers · Products · Materials · BOM · Wareho
 Administration  Users · Departments & Roles
 ```
 
-Header: logo/system name · current page title area · language switcher (EN / 日本語) · user menu (name, department/role, Profile, Log out).
+Header: menu toggle · breadcrumb · user menu (avatar only; the menu shows name, department/role, **language flags**, Profile, and Log out in red).
 
 ### Standard page templates (reuse everywhere)
 
 | Template | Layout | Used by |
 |---|---|---|
-| **List page** | Breadcrumb → title + primary action → search + filters → table → pagination | every list |
+| **List page** | Breadcrumb (header) → primary action on the right → search + filters → table → pagination. The page title is not repeated in the content (screen-reader-only h1) | every list |
 | **Detail page** | Breadcrumb → title + status badge + action buttons → summary card → line items → history / related documents | QT, SO, WO, DN, PO, Invoice … |
 | **Form page** | Breadcrumb → title → sectioned form → sticky footer (Save / Cancel) | create / edit |
 | **Dashboard** | KPI cards → shortcut cards → alert lists | Dashboard |

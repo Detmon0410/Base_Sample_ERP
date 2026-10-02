@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "Kanou ERP",
+    "tagline": "Manage sales, production, stock, purchasing and accounting in one place."
+  },
+  "language": {
+    "label": "Language"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "backToDashboard": "Back to Dashboard",
+    "retry": "Try again"
+  },
+  "pages": {
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you are looking for does not exist or has been moved."
+    },
+    "forbidden": {
+      "title": "You do not have permission",
+      "description": "Your account cannot open this page. Please contact your administrator if you need access."
+    }
+  },
+  "errors": {
+    "network": "Cannot reach the server. Please check your connection and try again.",
+    "internal": "Something went wrong on the server. Please try again later.",
+    "unknown": "An unexpected error occurred."
+  }
+}

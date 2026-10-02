@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "",
+    "tagline": ""
+  },
+  "language": {
+    "label": ""
+  },
+  "actions": {
+    "save": "",
+    "cancel": "",
+    "back": "",
+    "backToDashboard": "",
+    "retry": ""
+  },
+  "pages": {
+    "notFound": {
+      "title": "",
+      "description": ""
+    },
+    "forbidden": {
+      "title": "",
+      "description": ""
+    }
+  },
+  "errors": {
+    "network": "",
+    "internal": "",
+    "unknown": ""
+  }
+}

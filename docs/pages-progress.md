@@ -26,12 +26,12 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Item | Status | Notes |
 |---|---|---|
-| Tailwind + shadcn/ui + tokens (`#003577` / `#FFFFFF`) | ⬜ | |
-| i18n (EN + empty JA, switcher) | ⬜ | |
-| Router + protected routes | ⬜ | |
-| `api.js` + interceptors + mock switch | ⬜ | |
-| `AuthLayout` / `MainLayout` | ⬜ | |
-| Common components (PageHeader, StatusBadge, FormField, ConfirmDialog, DataTable) | ⬜ | |
+| Tailwind + shadcn/ui + tokens (`#003577` / `#FFFFFF`) | ✅ | Root font 18px, buttons/inputs 45–54px, JA font fallback stack |
+| i18n (EN + empty JA, switcher) | ✅ | `react-i18next`, namespaces `common` / `auth` / `nav`, JA falls back to EN |
+| Router + protected routes | 🟦 | Routes + 403/404 done; `ProtectedRoute` comes with F1 |
+| `api.js` + interceptors + mock switch | ✅ | `VITE_USE_MOCK=true` serves `/auth/*` from `services/mock` |
+| `AuthLayout` / `MainLayout` | ✅ | Main layout is header-only; sidebar/breadcrumb in F2 |
+| Common components | 🟦 | Done: LanguageSwitcher, PageHeader, MessagePage. Later: StatusBadge, ConfirmDialog, DataTable (need badge / alert-dialog / table) |
 
 ## Pages
 
@@ -39,8 +39,8 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 |---|---|---|---|---|---|---|---|---|
 | A1 | Login | `/login` | P0 | ⬜ | mock | ⬜ | ⬜ | First deliverable |
 | A2 | ~~Forgot password~~ | – | – | ⏸ | | – | – | Removed (Admin resets passwords) |
-| A3 | Forbidden | `/403` | P0 | ⬜ | – | ⬜ | ⬜ | |
-| A4 | Not found | `*` | P0 | ⬜ | – | ⬜ | ⬜ | |
+| A3 | Forbidden | `/403` | P0 | ✅ | – | ✅ | ⬜ | |
+| A4 | Not found | `*` | P0 | ✅ | – | ✅ | ⬜ | |
 | A5 | Server error | `/500` | P2 | ⬜ | – | ⬜ | ⬜ | |
 | A6 | My profile | `/profile` | P2 | ⬜ | | ⬜ | ⬜ | |
 | D1 | Dashboard | `/` | P0 | ⬜ | | ⬜ | ⬜ | |
@@ -91,3 +91,4 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Date | Change |
 |---|---|
 | 2026-10-02 | Plan and tracker created. No pages implemented yet. |
+| 2026-10-02 | Foundation (F0) built: tokens, i18n, API client + mock, layouts, 403/404 pages. |

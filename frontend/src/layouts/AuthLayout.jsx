@@ -1,22 +1,33 @@
+import { FactoryIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
 
+import { AuthBackground } from "@/components/common/AuthBackground";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 
-/** Two columns: brand panel on the left, the page (login form) on the right. */
+/**
+ * Login screen frame: a transparent navbar floating over a soft background, with
+ * the page centered below it. It is exactly one screen tall (h-dvh) so the page itself
+ * never scrolls. The content area only scrolls as a safety net on an unusually short
+ * window, so nothing is ever cut off.
+ */
 export function AuthLayout() {
   const { t } = useTranslation();
 
   return (
-    <div className="grid min-h-screen grid-cols-[2fr_3fr]">
-      <aside className="flex flex-col justify-between bg-primary p-12 text-primary-foreground">
-        <p className="text-3xl font-bold tracking-wide">{t("app.name")}</p>
-        <p className="max-w-sm text-xl leading-relaxed">{t("app.tagline")}</p>
-      </aside>
+    <div className="relative flex h-dvh flex-col overflow-hidden">
+      <AuthBackground />
 
-      <div className="relative flex items-center justify-center bg-background p-12">
-        <LanguageSwitcher className="absolute top-6 right-8" />
-        <main id="main-content" className="w-full max-w-md">
+      <header className="relative flex h-14 shrink-0 items-center justify-between px-8 text-primary">
+        <p className="flex items-center gap-2.5 text-lg font-bold tracking-wide">
+          <FactoryIcon className="size-6" aria-hidden="true" />
+          {t("app.name")}
+        </p>
+        <LanguageSwitcher />
+      </header>
+
+      <div className="relative flex min-h-0 flex-1 overflow-y-auto px-8 pb-2">
+        <main id="main-content" className="m-auto w-full max-w-[24rem]">
           <Outlet />
         </main>
       </div>

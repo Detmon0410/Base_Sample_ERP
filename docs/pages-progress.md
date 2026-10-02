@@ -26,7 +26,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Item | Status | Notes |
 |---|---|---|
-| Tailwind + shadcn/ui + tokens (`#003577` / `#FFFFFF`) | ✅ | Root font 18px, buttons/inputs 45–54px, JA font fallback stack |
+| Tailwind + shadcn/ui + tokens (`#1447E6` / `#FFFFFF`) | ✅ | Root font 18px, buttons/inputs 45–54px, JA font fallback stack |
 | i18n (EN + empty JA, switcher) | ✅ | `react-i18next`, namespaces `common` / `auth` / `nav`, JA falls back to EN |
 | Router + protected routes | ✅ | `ProtectedRoute`, `GuestRoute`, `RequirePermission` (not applied to any route yet) |
 | `api.js` + interceptors + mock switch | ✅ | `VITE_USE_MOCK=true` serves `/auth/*` from `services/mock` |

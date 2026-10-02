@@ -13,7 +13,7 @@ Source requirements: `BaseRequirement_md/` (Sale, Factory, Accounting, master_da
 |---|---|
 | Users | Japanese office staff, mostly 40–50+ → readability and predictability beat visual flair |
 | Language | i18n with **EN (primary)** and **JA** (keys created now, values filled later; JA falls back to EN) |
-| Theme | Primary `#003577`, surface `#FFFFFF`. Contrast of `#003577` on white ≈ **11.8:1** (passes WCAG AAA) |
+| Theme | Primary `#1447E6`, surface `#FFFFFF`. Contrast of `#1447E6` on white ≈ **6.8:1** (passes WCAG AA; white text on it also 6.8:1) |
 | Accessibility target | WCAG 2.1 AA minimum |
 | Look and feel | Structured ERP: top bar + left sidebar by department + breadcrumb + page title + content |
 | Stack | React 19, Vite, react-router, Axios, shadcn/ui (Tailwind), react-i18next, Zod (forms) |
@@ -37,9 +37,9 @@ Source requirements: `BaseRequirement_md/` (Sale, Factory, Accounting, master_da
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-primary` | `#003577` | Header, primary buttons, links, focus ring |
-| `--color-primary-hover` | `#00285A` | Hover / pressed |
-| `--color-primary-soft` | `#E6EDF6` | Selected row, active menu background |
+| `--color-primary` | `#1447E6` | Header, primary buttons, links, focus ring |
+| `--color-primary-hover` | `#0F3BC4` | Hover / pressed |
+| `--color-primary-soft` | `#E8EFFD` | Selected row, active menu background |
 | `--color-surface` | `#FFFFFF` | Cards, tables, forms |
 | `--color-page` | `#F4F6F9` | App background |
 | `--color-text` | `#1A2230` | Body text |
@@ -191,7 +191,9 @@ All use the **List + Form** templates. Delete is replaced by **Deactivate** wher
 
 ## 4. Login page specification (first deliverable)
 
-Layout (desktop): two columns. Left 40%: `#003577` panel with system name "Kanou ERP", one-line tagline, no decoration that carries meaning. Right 60%: white card, max-width 440px, vertically centered. On narrow widths the left panel collapses to a top banner.
+Layout (desktop): a small, **transparent navbar** (system name + factory icon on the left in primary `#1447E6`, language switcher on the right) over a plain white background with one soft blue glow behind the form (sized in %, so browser zoom does not shrink it; static, no animation). A single white card (max-width 384px, rounded, soft shadow) is centered below it. The screen is exactly one viewport tall and **does not scroll**; verified down to a 650px-high window including the error states (an inner scroll only appears as a safety net on shorter windows).
+
+Card (kept clean on purpose, no forgot-password or sign-up links): factory-icon badge centered on top (placeholder for the company logo), title "Login to your account" with a one-line subtitle (hidden while the error alert is shown), compact e-mail and password fields, an eye icon inside the password field to show / hide it (muted color, no frame or background; it is only visible while the password field or the eye itself has focus, and it keeps a focus ring for keyboard users), and a solid primary **Log in** button. A wrong e-mail / password (`INVALID_CREDENTIALS`) shows "The email address or password is incorrect." **directly under the e-mail field** (both fields get the invalid border) and clears as soon as the user types; other server problems (disabled account, network, 500) still use the alert above the form.
 
 | Element | Spec |
 |---|---|

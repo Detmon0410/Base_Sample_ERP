@@ -90,7 +90,7 @@ Priority: **P0** = build first, **P1** = core flow, **P2** = later. Sources are 
 | # | Page | Route | Pri | Content / information shown |
 |---|---|---|---|---|
 | A1 | **Login** | `/login` | P0 | System name and logo, language switcher, Email field, Password field with show/hide text button, Log in button, inline error ("Email or password is incorrect"), disabled-account message, loading state. No self-registration. |
-| A2 | Forgot password | `/forgot-password` | P2 | Email field, send button, confirmation message. Needs backend decision. |
+| ~~A2~~ | ~~Forgot password~~ | – | – | **Removed**: factory system, Admin resets passwords |
 | A3 | Forbidden | `/403` | P0 | "You do not have permission", button back to Dashboard |
 | A4 | Not found | `*` | P0 | "Page not found", link to Dashboard |
 | A5 | Server error | `/500` | P2 | Generic error, retry |
@@ -302,7 +302,14 @@ Each step ends with: pages built, `pnpm lint` and `pnpm build` clean, a keyboard
 
 ---
 
-## 7. Open questions
+## 7. Decisions
+
+- UI kit: **shadcn/ui + Tailwind** approved.
+- No "Forgot password" page; Admin resets passwords (Users page, U2).
+- Currency: **JPY only**, 0 decimals, format with `Intl.NumberFormat(locale, { style: "currency", currency: "JPY" })`.
+- Layout: **desktop only** (design target ≥ 1280px); no mobile / tablet work for now.
+
+## 8. Open questions (remaining)
 
 1. Confirm the empty Stock / Purchase flows (goods receipt? who approves PO? stock adjustment approval?).
 2. Auth: JWT in `Authorization` header (assumed) vs httpOnly cookie? Affects `api.js` and CORS.

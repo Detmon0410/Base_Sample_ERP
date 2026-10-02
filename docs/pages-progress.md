@@ -11,7 +11,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Area | Done | Total |
 |---|---|---|
 | Foundation (F0) | 0 | 6 |
-| Authentication & shell | 0 | 6 |
+| Authentication & shell | 0 | 5 |
 | Dashboard | 0 | 1 |
 | Sale | 0 | 8 |
 | Factory | 0 | 5 |
@@ -38,7 +38,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | ID | Page | Route | Pri | Status | API | i18n EN | i18n JA | Notes |
 |---|---|---|---|---|---|---|---|---|
 | A1 | Login | `/login` | P0 | ⬜ | mock | ⬜ | ⬜ | First deliverable |
-| A2 | Forgot password | `/forgot-password` | P2 | ⬜ | | ⬜ | ⬜ | |
+| A2 | ~~Forgot password~~ | – | – | ⏸ | | – | – | Removed (Admin resets passwords) |
 | A3 | Forbidden | `/403` | P0 | ⬜ | – | ⬜ | ⬜ | |
 | A4 | Not found | `*` | P0 | ⬜ | – | ⬜ | ⬜ | |
 | A5 | Server error | `/500` | P2 | ⬜ | – | ⬜ | ⬜ | |

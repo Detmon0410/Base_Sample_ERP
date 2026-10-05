@@ -39,7 +39,8 @@
     "emailInvalid": "Enter a valid e-mail address.",
     "amountInvalid": "Enter a whole number of yen, 0 or more.",
     "taxIdInvalid": "Use digits only, with an optional T at the start.",
-    "maxLength": "This is too long. Please shorten it."
+    "maxLength": "This is too long. Please shorten it.",
+    "numberInvalid": "Enter a whole number, 0 or more."
   },
   "errors": {
     "CODE_ALREADY_EXISTS": "This code is already used. Enter a different code.",
@@ -93,6 +94,96 @@
       "reactivateDescription": "It will be offered again when creating new documents.",
       "deleteTitle": "Delete this customer?",
       "deleteDescription": "This cannot be undone. A customer used by documents cannot be deleted; deactivate it instead."
+    }
+  },
+  "generic": {
+    "deactivateTitle": "Deactivate this {{name}}?",
+    "deactivateDescription": "It will no longer be offered when creating new documents. Existing documents keep it, and you can reactivate it later.",
+    "reactivateTitle": "Reactivate this {{name}}?",
+    "reactivateDescription": "It will be offered again when creating new documents.",
+    "deleteTitle": "Delete this {{name}}?",
+    "deleteDescription": "This cannot be undone. A {{name}} used by other data cannot be deleted; deactivate it instead."
+  },
+  "uom": {
+    "singular": "unit of measure",
+    "new": "New unit of measure",
+    "empty": "No units of measure yet.",
+    "noResult": "No unit of measure matches. Clear the search or the status filter.",
+    "columns": {},
+    "options": {},
+    "form": {
+      "section": "Unit of measure",
+      "fields": {},
+      "placeholders": {
+        "code": "pcs"
+      }
+    }
+  },
+  "warehouses": {
+    "singular": "warehouse",
+    "new": "New warehouse",
+    "empty": "No warehouses yet.",
+    "noResult": "No warehouse matches. Clear the search or the status filter.",
+    "columns": {
+      "type": "Type"
+    },
+    "options": {
+      "type": {
+        "RAW_MATERIAL": "Raw material",
+        "FINISHED_GOODS": "Finished goods"
+      }
+    },
+    "form": {
+      "section": "Warehouse",
+      "fields": {
+        "type": "Type"
+      },
+      "placeholders": {
+        "code": "WH-R",
+        "type": "Select type"
+      }
+    }
+  },
+  "machines": {
+    "singular": "machine or line",
+    "new": "New machine / line",
+    "empty": "No machines or lines yet.",
+    "noResult": "No machine or line matches. Clear the search or the status filter.",
+    "columns": {
+      "capacityPerDay": "Capacity per day"
+    },
+    "options": {},
+    "form": {
+      "section": "Machine / line",
+      "fields": {
+        "capacityPerDay": "Capacity per day",
+        "capacityUnit": "Unit"
+      },
+      "placeholders": {
+        "code": "LN-01",
+        "capacityPerDay": "200",
+        "capacityUnit": "pcs"
+      }
+    }
+  },
+  "employees": {
+    "singular": "employee",
+    "new": "New employee",
+    "empty": "No employees yet.",
+    "noResult": "No employee matches. Clear the search or the status filter.",
+    "columns": {
+      "position": "Position"
+    },
+    "options": {},
+    "form": {
+      "section": "Employee",
+      "fields": {
+        "position": "Position"
+      },
+      "placeholders": {
+        "code": "E001",
+        "position": "Operator"
+      }
     }
   }
 }

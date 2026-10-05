@@ -168,6 +168,58 @@ function validateCustomer(body) {
   return errors;
 }
 
+// ---- Flat entities: units of measure, warehouses, machines, employees (M9, M6, M7, M8) ------------
+
+const STAMP = { status: "active", createdAt: "2026-09-01T09:00:00.000Z", updatedAt: "2026-09-01T09:00:00.000Z" };
+const withIds = (rows) => rows.map((row, index) => ({ id: index + 1, ...STAMP, ...row }));
+
+/** Validator for rows with code, name and a few extra fields: { select: { field: [values] }, number: [fields], max: { field: n } }. */
+function simpleValidator({ required = [], select = {}, number = [], max = {} }) {
+  return (body) => {
+    const errors = [];
+    const text = (field) => String(body[field] ?? "").trim();
+    for (const field of ["code", "name", ...required]) if (!text(field)) errors.push({ path: [field], message: "REQUIRED" });
+    for (const [field, values] of Object.entries(select)) {
+      if (body[field] && !values.includes(body[field])) errors.push({ path: [field], message: "INVALID" });
+    }
+    for (const field of number) {
+      if (body[field] != null && (!Number.isInteger(body[field]) || body[field] < 0)) errors.push({ path: [field], message: "INVALID" });
+    }
+    for (const [field, limit] of Object.entries(max)) if (text(field).length > limit) errors.push({ path: [field], message: "INVALID" });
+    return errors;
+  };
+}
+
+const sampleUom = () =>
+  withIds([
+    { code: "pcs", name: "Pieces" },
+    { code: "kg", name: "Kilogram" },
+    { code: "m", name: "Meter" },
+    { code: "set", name: "Set" },
+    { code: "box", name: "Box" },
+  ]);
+
+const sampleWarehouses = () =>
+  withIds([
+    { code: "WH-R", name: "Raw Material Warehouse", type: "RAW_MATERIAL" },
+    { code: "WH-F", name: "Finished Goods Warehouse", type: "FINISHED_GOODS" },
+  ]);
+
+const sampleMachines = () =>
+  withIds([
+    { code: "LN-01", name: "Assembly Line 1", capacityPerDay: 200, capacityUnit: "pcs" },
+    { code: "LN-02", name: "Foaming Line", capacityPerDay: 150, capacityUnit: "pcs" },
+    { code: "LN-03", name: "Packing Line", capacityPerDay: 200, capacityUnit: "pcs" },
+    { code: "QC-01", name: "QC Station", capacityPerDay: 300, capacityUnit: "pcs" },
+  ]);
+
+const sampleEmployees = () =>
+  withIds([
+    { code: "E001", name: "Ken Suzuki", position: "Operator" },
+    { code: "E002", name: "Yuki Tanaka", position: "QC Inspector" },
+    { code: "E003", name: "Haruka Sato", position: "Operator" },
+  ]);
+
 /** Master data routes. `guard` throws 401/403 unless the caller is an Admin (Q6/Q7). */
 export function masterDataRoutes(guard) {
   const customers = sampleCustomers();
@@ -178,6 +230,34 @@ export function masterDataRoutes(guard) {
       validate: validateCustomer,
       // C001 and C002 stand for customers that already have Sale Orders.
       isInUse: (row) => row.code === "C001" || row.code === "C002",
+      guard,
+    }),
+    // The first four units, both warehouses and the production lines stand for records that documents already use.
+    ...createMockCrud("/master/uom", sampleUom(), {
+      searchFields: ["code", "name"],
+      sortable: ["code", "name", "status"],
+      validate: simpleValidator({}),
+      isInUse: (row) => row.code !== "box",
+      guard,
+    }),
+    ...createMockCrud("/master/warehouses", sampleWarehouses(), {
+      searchFields: ["code", "name"],
+      sortable: ["code", "name", "type", "status"],
+      validate: simpleValidator({ required: ["type"], select: { type: ["RAW_MATERIAL", "FINISHED_GOODS"] } }),
+      isInUse: (row) => row.code === "WH-R" || row.code === "WH-F",
+      guard,
+    }),
+    ...createMockCrud("/master/machines", sampleMachines(), {
+      searchFields: ["code", "name"],
+      sortable: ["code", "name", "capacityPerDay", "status"],
+      validate: simpleValidator({ number: ["capacityPerDay"], max: { capacityUnit: 20 } }),
+      isInUse: (row) => ["LN-01", "LN-02", "LN-03"].includes(row.code),
+      guard,
+    }),
+    ...createMockCrud("/master/employees", sampleEmployees(), {
+      searchFields: ["code", "name", "position"],
+      sortable: ["code", "name", "position", "status"],
+      validate: simpleValidator({ max: { position: 50 } }),
       guard,
     }),
   };

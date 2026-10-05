@@ -7,6 +7,7 @@ import { LoginPage } from "@/pages/auth/LoginPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { FoundationDemoPage } from "@/pages/dev/FoundationDemoPage";
 import { CustomersPage } from "@/pages/master/customers/CustomersPage";
+import { EmployeesPage, MachinesPage, UomPage, WarehousesPage } from "@/pages/master/simple/SimpleMasterPage";
 import { ForbiddenPage } from "@/pages/system/ForbiddenPage";
 import { NotFoundPage } from "@/pages/system/NotFoundPage";
 import { UnderConstructionPage } from "@/pages/system/UnderConstructionPage";
@@ -18,6 +19,10 @@ import { RequirePermission } from "./RequirePermission";
 // Menu entries whose page is built. Everything else opens the "not built yet" placeholder.
 const IMPLEMENTED_PAGES = {
   customers: CustomersPage,
+  uom: UomPage,
+  warehouses: WarehousesPage,
+  machines: MachinesPage,
+  employees: EmployeesPage,
 };
 
 /**

@@ -39,7 +39,8 @@
     "emailInvalid": "",
     "amountInvalid": "",
     "taxIdInvalid": "",
-    "maxLength": ""
+    "maxLength": "",
+    "numberInvalid": ""
   },
   "errors": {
     "CODE_ALREADY_EXISTS": "",
@@ -93,6 +94,96 @@
       "reactivateDescription": "",
       "deleteTitle": "",
       "deleteDescription": ""
+    }
+  },
+  "generic": {
+    "deactivateTitle": "",
+    "deactivateDescription": "",
+    "reactivateTitle": "",
+    "reactivateDescription": "",
+    "deleteTitle": "",
+    "deleteDescription": ""
+  },
+  "uom": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {},
+    "options": {},
+    "form": {
+      "section": "",
+      "fields": {},
+      "placeholders": {
+        "code": ""
+      }
+    }
+  },
+  "warehouses": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {
+      "type": ""
+    },
+    "options": {
+      "type": {
+        "RAW_MATERIAL": "",
+        "FINISHED_GOODS": ""
+      }
+    },
+    "form": {
+      "section": "",
+      "fields": {
+        "type": ""
+      },
+      "placeholders": {
+        "code": "",
+        "type": ""
+      }
+    }
+  },
+  "machines": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {
+      "capacityPerDay": ""
+    },
+    "options": {},
+    "form": {
+      "section": "",
+      "fields": {
+        "capacityPerDay": "",
+        "capacityUnit": ""
+      },
+      "placeholders": {
+        "code": "",
+        "capacityPerDay": "",
+        "capacityUnit": ""
+      }
+    }
+  },
+  "employees": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {
+      "position": ""
+    },
+    "options": {},
+    "form": {
+      "section": "",
+      "fields": {
+        "position": ""
+      },
+      "placeholders": {
+        "code": "",
+        "position": ""
+      }
     }
   }
 }

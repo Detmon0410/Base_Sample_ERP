@@ -19,7 +19,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Purchase | 0 | 5 |
 | Accounting | 0 | 6 |
 | Traceability | 0 | 1 |
-| Master data | 1 | 10 |
+| Master data | 5 | 10 |
 | Administration | 0 | 3 |
 
 ## Foundation
@@ -77,10 +77,10 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | M3 | Products | `/master/products` | P1 | ⬜ | | ⬜ | ⬜ | |
 | M4 | Materials | `/master/materials` | P1 | ⬜ | | ⬜ | ⬜ | |
 | M5 | BOM editor | in Product | P1 | ⬜ | | ⬜ | ⬜ | |
-| M6 | Warehouses | `/master/warehouses` | P1 | ⬜ | | ⬜ | ⬜ | |
-| M7 | Machines / Lines | `/master/machines` | P2 | ⬜ | | ⬜ | ⬜ | |
-| M8 | Employees | `/master/employees` | P2 | ⬜ | | ⬜ | ⬜ | |
-| M9 | Units of measure | `/master/uom` | P2 | ⬜ | | ⬜ | ⬜ | |
+| M6 | Warehouses | `/master/warehouses` | P1 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
+| M7 | Machines / Lines | `/master/machines` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
+| M8 | Employees | `/master/employees` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
+| M9 | Units of measure | `/master/uom` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
 | M10 | Price lists | `/master/price-lists` | P2 | ⬜ | | ⬜ | ⬜ | |
 | U1 | Users | `/admin/users` | P1 | ⬜ | | ⬜ | ⬜ | |
 | U2 | User form (dept + role) | `/admin/users/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
@@ -90,6 +90,8 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | Master data forms (new / edit) now open as a sheet sliding in from the right over the list, background slightly blurred; list search/filter/page is kept and the list reloads after save. Applies to Customers, Units of measure, Warehouses, Machines and Employees (all later detail pages should use `DetailSheet`). |
+| 2026-10-05 | Master Data: M9 Units of measure, M6 Warehouses, M7 Machines / lines and M8 Employees built with mock data from one generic list/form page; API doc updated. |
 | 2026-10-05 | Shared UX/UI foundation completed: detail layout, status history, linked documents, role-based Approve/Reject, shared save/cancel footer; page minimum width lowered from 1280px to 640px so 200% zoom on a 1280px screen reflows without side scrolling (forms, detail and dashboard grids stack, sidebar becomes a menu button). Checked in the browser with fake records; Approve/Reject shown only to Admin and the Manager of the owning department, others see a "waiting" note. |
 | 2026-10-02 | Plan and tracker created. No pages implemented yet. |
 | 2026-10-02 | Foundation (F0) built: tokens, i18n, API client + mock, layouts, 403/404 pages. |

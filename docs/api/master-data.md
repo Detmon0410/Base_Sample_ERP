@@ -125,8 +125,64 @@ model Customer {
 }
 ```
 
-## M2–M10
-Fields are listed in the F3 spec (section 3) and will be copied here, one table per resource, when each page is built. Shared rules above apply unchanged.
+## M9 Units of measure — `/master/uom`
+Fields: `code` (≤ 20, unique, e.g. `pcs`), `name` (≤ 100), `status`. Sort fields: `code`, `name`, `status`. Search: `code`, `name`. Delete is blocked (`IN_USE`) while a product or material uses the unit.
+
+## M6 Warehouses — `/master/warehouses`
+Fields: `code`, `name`, `type` (required: `RAW_MATERIAL` | `FINISHED_GOODS`), `status`. Sort fields: `code`, `name`, `type`, `status`. Delete blocked while stock or documents refer to it.
+
+## M7 Machines / lines — `/master/machines`
+Fields: `code`, `name`, `capacityPerDay` (integer ≥ 0, optional, `null` when unknown), `capacityUnit` (≤ 20, e.g. `pcs`), `status`. Sort fields: `code`, `name`, `capacityPerDay`, `status`. Delete blocked while a product routing uses the machine.
+
+## M8 Employees — `/master/employees`
+Fields: `code`, `name`, `position` (≤ 50, free text), `status`. Search: `code`, `name`, `position`. Sort fields: `code`, `name`, `position`, `status`. A link to a user account is planned (not in the form yet).
+
+Prisma sketch (all four follow the Customer pattern; `code` unique and compared case-insensitively):
+
+```prisma
+model Uom {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(20)
+  name      String   @db.VarChar(100)
+  status    String   @default("active") @db.VarChar(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Warehouse {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(20)
+  name      String   @db.VarChar(100)
+  type      String   @db.VarChar(20)   // RAW_MATERIAL | FINISHED_GOODS
+  status    String   @default("active") @db.VarChar(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Machine {
+  id             Int      @id @default(autoincrement())
+  code           String   @unique @db.VarChar(20)
+  name           String   @db.VarChar(100)
+  capacityPerDay Int?
+  capacityUnit   String?  @db.VarChar(20)
+  status         String   @default("active") @db.VarChar(10)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Employee {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(20)
+  name      String   @db.VarChar(100)
+  position  String?  @db.VarChar(50)
+  status    String   @default("active") @db.VarChar(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+## M2, M3, M4, M5, M10
+Fields are listed in the F3 spec (section 3) and will be copied here when each page is built (they have sub-lists: supplier materials, BOM, routing). Shared rules above apply unchanged.
 
 ## Backend checklist
 - [ ] Prisma models + migration + seed (the sample rows from `master_data_req.md`)

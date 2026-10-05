@@ -1,6 +1,6 @@
 # F3 Spec — Master Data (M1–M10)
 
-Status: **APPROVED with the suggested answers (Q1–Q10). Pattern + M1 Customers BUILT; M2–M10 not yet** · Plan: [../frontend-plan.md](../frontend-plan.md) · Data source: `BaseRequirement_md/master_data_req.md` (+ `Sale_req.md`, `Factory_req.md`)
+Status: **APPROVED with the suggested answers (Q1–Q10). Pattern + M1 Customers + M9 UoM + M6 Warehouses + M7 Machines + M8 Employees BUILT; M2, M3, M4, M5, M10 not yet** · Plan: [../frontend-plan.md](../frontend-plan.md) · Data source: `BaseRequirement_md/master_data_req.md` (+ `Sale_req.md`, `Factory_req.md`)
 After approval: build the shared list/form pattern with mock data, then write `docs/api/master-data.md` for the backend.
 
 Why now: Sale, Factory, Stock, Purchase and Accounting all pick customers, suppliers, products, materials, BOM, warehouses and machines from these lists. The same screens (list, form, deactivate) are also the pattern for every later module.
@@ -184,3 +184,8 @@ List: search, status filter, sort, paging, URL restored on reload, empty / loadi
 | Delete / Deactivate on the form | Same, with confirm dialogs; Delete blocked with `IN_USE` for records referenced elsewhere | Q4 |
 | 300 ms search delay, URL state | Same (`?q=&status=&sort=&page=`) | |
 | Table cell padding / sizes | Edit link, sort buttons and row controls are 45px tall; cells use tighter padding so the table fits 1280px without sideways scroll | 44px target rule |
+| Units of measure as a dialog (M9) | Same full list + form pages as the others | One generic page (`pages/master/simple`, config in `config/simpleMaster.js`) serves UoM, Warehouses, Machines and Employees; a dialog would need a second pattern |
+| Machine capacity "number + unit text" | Two fields: `capacityPerDay` (whole number) and `capacityUnit` (text) | Easier to sort and validate |
+| Employee link to a user account | Not built | Users (U1/U2) do not exist yet |
+| Order M9 → M6 → M4 → M2 → M3 → M7 → M8 | M9, M6, M7, M8 done together (flat fields); M4, M2, M3 (+BOM, routing, supplier materials) are next | They need tabs and a searchable select |
+| Form as a separate page (`/new`, `/:id`) | Opens as a **sheet on the right** over the list (list stays visible, blurred slightly). Same URLs; the list keeps its search / filter / page in the URL and reloads after save / delete. Close (X, Cancel, Esc) asks first when there are unsaved changes | Requested after review. `DetailSheet` (components/common) + `FormFooter inSheet`. `components/ui/sheet.jsx` overlay is customised (darker, 3px blur) — restore after a shadcn re-install |

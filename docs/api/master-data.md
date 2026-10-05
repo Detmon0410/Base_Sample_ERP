@@ -249,8 +249,81 @@ model SupplierMaterial {
 
 New error code: `ALREADY_LINKED` (409).
 
-## M3, M5, M10
-Fields are listed in the F3 spec (section 3) and will be copied here when each page is built (Products have sub-lists: BOM and routing). Shared rules above apply unchanged.
+## M3 Products — `/master/products`
+Fields: `code`, `name`, `uom` (required, **code** of an active unit), `sellingPrice` (whole yen ≥ 0, optional), `category` (free text ≤ 50, optional; the UI suggests values already used), `status`. Search: `code`, `name`, `category`. Sort fields: `code`, `name`, `uom`, `sellingPrice`, `status`. Delete is blocked (`IN_USE`) while an order, work order or stock record uses it; deleting an unused product also removes its BOM and routing.
+
+## M5 Bill of materials — `/master/bom-lines`
+One row = quantity of a material for **one unit** of a product. Edited on the product's "BOM" tab; read from the material side on the "Used in" tab. Each change is saved at once.
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/master/bom-lines?productId=` or `?materialId=` | no paging; items carry product and material names and the material's `uom` |
+| POST | `/master/bom-lines` | `{ productId, materialId, qty }`; `qty` > 0, up to 3 decimals; `409 ALREADY_LINKED` if the material is already in this product's BOM |
+| PUT | `/master/bom-lines/:id` | `{ qty }` only |
+| DELETE | `/master/bom-lines/:id` | |
+
+```json
+{ "id": 3, "productId": 1, "materialId": 3, "qty": 3.5,
+  "productCode": "RF-2D", "productName": "Refrigerator 2-Door 15Q",
+  "materialCode": "FOAM", "materialName": "Insulation foam", "uom": "kg" }
+```
+
+## Routing — `/master/routing-steps`
+The ordered production steps of a product (tab "Routing"). `stepNo` is set by the server: new steps go to the end, removing a step renumbers the later ones (always 1, 2, 3 …).
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/master/routing-steps?productId=` | ordered by `stepNo`; items carry `machineCode` / `machineName` (`null` when no machine) |
+| POST | `/master/routing-steps` | `{ productId, processName, machineId }`; `processName` required ≤ 100; `machineId` optional (`null`) |
+| PUT | `/master/routing-steps/:id` | `{ processName, machineId }` |
+| POST | `/master/routing-steps/:id/move` | `{ direction: "up" \| "down" }`; swaps `stepNo` with the neighbour; 400 at the ends |
+| DELETE | `/master/routing-steps/:id` | renumbers the later steps |
+
+A machine used by a routing step cannot be deleted (`IN_USE` on `DELETE /master/machines/:id`).
+
+```prisma
+model Product {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique @db.VarChar(20)
+  name         String   @db.VarChar(100)
+  uomId        Int
+  uom          Uom      @relation(fields: [uomId], references: [id])   // the API exposes the unit code
+  sellingPrice Int?
+  category     String?  @db.VarChar(50)
+  status       String   @default("active") @db.VarChar(10)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  bom          BomLine[]
+  routing      RoutingStep[]
+}
+
+model BomLine {
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  materialId Int
+  qty        Decimal  @db.Decimal(12, 3)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  material   Material @relation(fields: [materialId], references: [id])
+  @@unique([productId, materialId])
+}
+
+model RoutingStep {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  stepNo      Int
+  processName String   @db.VarChar(100)
+  machineId   Int?
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  machine     Machine? @relation(fields: [machineId], references: [id])
+  @@unique([productId, stepNo])
+}
+```
+
+Note for the backend: renumbering and `move` must run in one transaction (the unique `[productId, stepNo]` forbids two steps with the same number, so swap through a temporary value).
+
+## M10
+
+Price lists: fields are in the F3 spec (section 3) and will be copied here when the page is built. Shared rules above apply unchanged.
 
 ## Backend checklist
 - [ ] Prisma models + migration + seed (the sample rows from `master_data_req.md`)

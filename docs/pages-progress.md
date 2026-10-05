@@ -19,7 +19,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Purchase | 0 | 5 |
 | Accounting | 0 | 6 |
 | Traceability | 0 | 1 |
-| Master data | 7 | 10 |
+| Master data | 9 | 10 |
 | Administration | 0 | 3 |
 
 ## Foundation
@@ -74,9 +74,9 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | R1 | Product trace | `/trace` | P2 | ⬜ | | ⬜ | ⬜ | |
 | M1 | Customers | `/master/customers` | P1 | ✅ | mock | ✅ | ⬜ | Shared list/form pattern built here. Tested as Admin; non-Admin gets 403. API: api/master-data.md |
 | M2 | Suppliers | `/master/suppliers` | P1 | ✅ | mock | ✅ | ⬜ | Details sheet with tabs. Tested as Admin: validation, create, supplier links added / edited / removed from both sides, duplicate link blocked. API: api/master-data.md |
-| M3 | Products | `/master/products` | P1 | ⬜ | | ⬜ | ⬜ | |
+| M3 | Products | `/master/products` | P1 | ✅ | mock | ✅ | ⬜ | Details sheet with tabs. Tested as Admin: validation, create, delete (in use is blocked), BOM add / edit / remove, routing add / move / remove with renumbering. API: api/master-data.md |
 | M4 | Materials | `/master/materials` | P1 | ✅ | mock | ✅ | ⬜ | Details sheet with tabs. Tested as Admin: validation, create, supplier links added / edited / removed from both sides, duplicate link blocked. API: api/master-data.md | "Used in" tab waits for Products.
-| M5 | BOM editor | in Product | P1 | ⬜ | | ⬜ | ⬜ | |
+| M5 | BOM editor | in Product | P1 | ✅ | mock | ✅ | ⬜ | Tab "BOM" of the product sheet; the material's "Used in" tab reads it. API: api/master-data.md |
 | M6 | Warehouses | `/master/warehouses` | P1 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
 | M7 | Machines / Lines | `/master/machines` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
 | M8 | Employees | `/master/employees` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
@@ -90,6 +90,9 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | Detail sheet: cards no longer fold and their icons have no background; the sheet is resizable by dragging its left edge (width remembered) and fields switch between one and two columns with the sheet width. |
+| 2026-10-05 | Detail sheet redesigned: grey body with white shadowed cards (with icons), Save + icon buttons (deactivate, delete, close) in the header instead of a footer; opens at once from the list row instead of showing a skeleton. All master data forms now use `useRecordForm` + `RecordSheet`. |
+| 2026-10-05 | Master Data: M3 Products with the BOM (M5) and Routing tabs, and a "Used in" tab on materials. Only M10 Price lists is left. Dev page `/dev/testcomponents` lists every UI component of the app. |
 | 2026-10-05 | Master Data: M4 Materials and M2 Suppliers built with mock data, each with a tab for the supplier ↔ material links (price per unit, lead time) edited from either side; new shared parts: tabs, searchable select (EntitySelect), `useRecordForm`. |
 | 2026-10-05 | Master data forms (new / edit) now open as a sheet sliding in from the right over the list, background slightly blurred; list search/filter/page is kept and the list reloads after save. Applies to Customers, Units of measure, Warehouses, Machines and Employees (all later detail pages should use `DetailSheet`). |
 | 2026-10-05 | Master Data: M9 Units of measure, M6 Warehouses, M7 Machines / lines and M8 Employees built with mock data from one generic list/form page; API doc updated. |

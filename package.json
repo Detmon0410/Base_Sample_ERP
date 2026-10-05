@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "setup": "node scripts/setup.js",
-    "kanou": "pnpm --parallel --filter ./backend --filter ./frontend run dev",
+    "kanou": "node scripts/dev.js",
     "db:migrate": "pnpm --filter ./backend run prisma:migrate",
     "db:studio": "pnpm --filter ./backend run prisma:studio"
   }

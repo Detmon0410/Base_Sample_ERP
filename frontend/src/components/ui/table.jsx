@@ -12,7 +12,7 @@ function Table({
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom border-collapse text-sm text-[#666666] [&_td]:border [&_td]:border-slate-200 [&_th]:border [&_th]:border-slate-200", className)}
         {...props}
       />
     </div>
@@ -69,7 +69,7 @@ function TableRow({
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "transition-colors odd:bg-card even:bg-slate-50 hover:bg-primary/10 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
         className
       )}
       {...props}
@@ -85,7 +85,7 @@ function TableHead({
     <th
       data-slot="table-head"
       className={cn(
-        "h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0",
+        "h-10 px-2 text-left align-middle text-sm font-semibold whitespace-nowrap text-[#666666] [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}

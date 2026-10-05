@@ -9,6 +9,7 @@ import { Pagination } from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { PAGE_SIZE } from "@/config/masterData";
 
 const SEARCH_DELAY_MS = 300;
@@ -78,6 +79,7 @@ export function ListPage({
     <>
       <PageHeader title={title} />
 
+      <div className={`${PANEL_CLASS} p-5`}>
       <div className="mb-4 flex items-center gap-3">
         <div className="relative w-80">
           <SearchIcon
@@ -135,6 +137,7 @@ export function ListPage({
           onChange={(page) => setQuery({ page })}
         />
       ) : null}
+      </div>
     </>
   );
 }

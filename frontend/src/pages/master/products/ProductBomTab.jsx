@@ -206,7 +206,7 @@ export function ProductBomTab({ productId }) {
         ) : (
           <div className="grid gap-4 @lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
             <div className="flex flex-col gap-1.5 @lg:col-span-2">
-              <label htmlFor="bom-material" className="text-base font-semibold">
+              <label htmlFor="bom-material" className="text-sm font-semibold text-muted-foreground">
                 {t("links.material")}
               </label>
               <EntitySelect
@@ -220,7 +220,7 @@ export function ProductBomTab({ productId }) {
               {addErrors.material ? <p className="text-sm text-destructive">{addErrors.material}</p> : null}
             </div>
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="bom-qty" className="text-base font-semibold">
+              <label htmlFor="bom-qty" className="text-sm font-semibold text-muted-foreground">
                 {t("bom.qtyPerUnit")} {unitOf(adding.materialId) ? `(${unitOf(adding.materialId)})` : ""}
               </label>
               <Input

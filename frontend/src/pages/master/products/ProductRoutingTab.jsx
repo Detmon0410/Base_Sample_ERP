@@ -208,7 +208,7 @@ export function ProductRoutingTab({ productId }) {
       <SheetSection title={t("routing.add")} icon={PlusIcon}>
         <div className="grid gap-4 @lg:grid-cols-2">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="routing-name" className="text-base font-semibold">
+            <label htmlFor="routing-name" className="text-sm font-semibold text-muted-foreground">
               {t("routing.processName")}
             </label>
             <Input
@@ -220,7 +220,7 @@ export function ProductRoutingTab({ productId }) {
             {addError ? <p className="text-sm text-destructive">{addError}</p> : null}
           </div>
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="routing-machine" className="text-base font-semibold">
+            <label htmlFor="routing-machine" className="text-sm font-semibold text-muted-foreground">
               {t("routing.machine")}
             </label>
             <EntitySelect

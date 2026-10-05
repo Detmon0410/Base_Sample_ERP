@@ -42,17 +42,17 @@ export function DataTable({
 
   return (
     <div
-      className={cn("overflow-hidden rounded-xl border bg-card transition-opacity", fetching && "opacity-60")}
+      className={cn("overflow-hidden rounded-lg border border-slate-200 bg-card transition-opacity", fetching && "opacity-60")}
       aria-busy={fetching}
     >
-      <Table aria-label={ariaLabel} className="text-base">
-        <TableHeader className="bg-muted/60">
+      <Table aria-label={ariaLabel}>
+        <TableHeader className="bg-slate-100">
           <TableRow>
             {columns.map((column) => (
               <TableHead
                 key={column.key}
                 aria-sort={ariaSort(column)}
-                className={cn("h-12 px-3 text-base font-semibold text-foreground", column.align === "right" && "text-right")}
+                className={cn("h-11 px-3 text-sm font-semibold text-[#666666]", column.align === "right" && "text-right")}
               >
                 {column.sortable ? (
                   <button
@@ -121,7 +121,7 @@ export function DataTable({
                 <TableRow
                   key={rowKey(row)}
                   onClick={(event) => onRowClick(event, row)}
-                  className={cn(rowTo && "cursor-pointer hover:bg-secondary/60")}
+                  className={cn(rowTo && "cursor-pointer")}
                 >
                   {columns.map((column) => (
                     <TableCell

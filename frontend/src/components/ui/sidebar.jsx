@@ -658,7 +658,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        "flex min-h-9 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-1.5 py-1.5 leading-snug text-sidebar-foreground ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-[0.9rem] data-[size=sm]:text-sm data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground [&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
+        "flex min-h-9 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-1.5 py-1.5 leading-snug text-sidebar-foreground ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-sm data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground [&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
         className
       )}
       {...props}

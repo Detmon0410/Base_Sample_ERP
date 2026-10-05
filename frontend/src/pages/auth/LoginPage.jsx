@@ -82,7 +82,7 @@ export function LoginPage() {
             <h1 className="text-2xl leading-tight font-bold">{t("login.title")}</h1>
             {/* Hidden while the error alert is shown so the card stays within one screen. */}
             {alertKey ? null : (
-              <p className="mt-1.5 text-sm text-muted-foreground">{t("login.subtitle")}</p>
+              <p className="mt-1.5 text-base text-muted-foreground">{t("login.subtitle")}</p>
             )}
           </div>
         </div>
@@ -97,7 +97,7 @@ export function LoginPage() {
 
         <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Field data-invalid={emailInvalid ? true : undefined}>
-            <FieldLabel htmlFor="email" className="text-sm font-semibold">
+            <FieldLabel htmlFor="email" className="text-base font-semibold">
               {t("login.email")}
             </FieldLabel>
             <Input
@@ -115,7 +115,7 @@ export function LoginPage() {
           </Field>
 
           <Field data-invalid={passwordInvalid ? true : undefined}>
-            <FieldLabel htmlFor="password" className="text-sm font-semibold">
+            <FieldLabel htmlFor="password" className="text-base font-semibold">
               {t("login.password")}
             </FieldLabel>
             {/* The eye is only shown while focus is inside this wrapper (the field or the eye). */}

@@ -11,7 +11,7 @@ export function FormField({ id, label, required = false, error, hint, className,
 
   return (
     <Field data-invalid={error ? true : undefined} className={className}>
-      <FieldLabel htmlFor={id} className="text-base font-semibold">
+      <FieldLabel htmlFor={id} className="text-sm font-semibold text-muted-foreground">
         {label}
         {required ? (
           <span className="ml-1.5 text-sm font-normal text-muted-foreground">({t("common.required")})</span>

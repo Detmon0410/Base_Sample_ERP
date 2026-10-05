@@ -237,7 +237,7 @@ export function SupplierMaterialsTab({ mode, ownerId }) {
         ) : (
           <div className="grid gap-4 @lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,0.8fr)]">
             <div className="flex flex-col gap-1.5 @lg:col-span-3">
-              <label htmlFor="link-other" className="text-base font-semibold">
+              <label htmlFor="link-other" className="text-sm font-semibold text-muted-foreground">
                 {otherLabel}
               </label>
               <EntitySelect
@@ -251,7 +251,7 @@ export function SupplierMaterialsTab({ mode, ownerId }) {
               {addErrors.other ? <p className="text-sm text-destructive">{addErrors.other}</p> : null}
             </div>
             <div className="flex flex-col gap-1.5 @lg:col-span-2">
-              <label htmlFor="link-price" className="text-base font-semibold">
+              <label htmlFor="link-price" className="text-sm font-semibold text-muted-foreground">
                 {t("links.price")}
               </label>
               <MoneyInput
@@ -263,7 +263,7 @@ export function SupplierMaterialsTab({ mode, ownerId }) {
               {addErrors.price ? <p className="text-sm text-destructive">{addErrors.price}</p> : null}
             </div>
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="link-lead" className="text-base font-semibold">
+              <label htmlFor="link-lead" className="text-sm font-semibold text-muted-foreground">
                 {t("links.leadTime")}
               </label>
               <Input

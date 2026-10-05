@@ -19,7 +19,7 @@ export function CustomersListPage() {
 
   const columns = useMemo(
     () => [
-      { key: "code", header: t("master:common.code"), sortable: true, className: "font-semibold" },
+      { key: "code", header: t("master:common.code"), sortable: true },
       { key: "name", header: t("master:common.name"), sortable: true },
       {
         key: "paymentTerms",

@@ -98,7 +98,7 @@ export function ApprovalActions({ department, pending, onApprove, onReject }) {
             <AlertDialogDescription>{t("approval.rejectDescription")}</AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex flex-col gap-2">
-            <label htmlFor="reject-reason" className="text-base font-semibold">
+            <label htmlFor="reject-reason" className="text-sm font-semibold text-muted-foreground">
               {t("approval.reasonLabel")}
             </label>
             <Textarea

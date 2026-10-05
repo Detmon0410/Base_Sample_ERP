@@ -94,12 +94,12 @@ export function DetailSheet({
         style={{ width: `min(${width}px, 100vw)` }}
       >
         <SheetHeader className="flex-row flex-wrap items-center gap-x-3 gap-y-2 border-b bg-card px-5 py-3">
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
-            <SheetTitle className="text-xl font-bold break-words">{title}</SheetTitle>
+          <div className="flex min-w-max flex-1 items-center gap-x-3">
+            <SheetTitle className="text-xl font-bold whitespace-nowrap">{title}</SheetTitle>
             {badge}
           </div>
           <SheetDescription className="sr-only">{description ?? title}</SheetDescription>
-          <div className="flex max-w-full flex-wrap items-center justify-end gap-2">
+          <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-2">
             {actions}
             <SheetClose asChild>
               <Button type="button" variant="outline" size="icon" aria-label={t("actions.cancel")}>

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  * The list is filtered by code or name as the user types. Keyboard: type to search, Tab to the list,
  * Enter to choose, Esc to close.
  */
-export function EntitySelect({ id, options, value, onChange, placeholder, disabled, "aria-invalid": invalid, "aria-describedby": describedby }) {
+export function EntitySelect({ id, options, value, onChange, placeholder, emptyLabel, className, disabled, "aria-invalid": invalid, "aria-describedby": describedby }) {
   const { t } = useTranslation("master");
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
@@ -47,10 +47,11 @@ export function EntitySelect({ id, options, value, onChange, placeholder, disabl
           aria-haspopup="listbox"
           className={cn(
             "flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-input bg-card px-3 text-left text-base outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive",
-            !selected && "text-muted-foreground",
+            !selected && !emptyLabel && "text-muted-foreground",
+            className,
           )}
         >
-          <span className="truncate">{selected ? `${selected.code} · ${selected.name}` : placeholder}</span>
+          <span className="truncate">{selected ? `${selected.code} · ${selected.name}` : (emptyLabel ?? placeholder)}</span>
           <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
         </button>
       </PopoverTrigger>
@@ -67,6 +68,21 @@ export function EntitySelect({ id, options, value, onChange, placeholder, disabl
           />
         </div>
         <ul role="listbox" className="max-h-60 overflow-y-auto p-1">
+          {emptyLabel && !needle ? (
+            <li role="option" aria-selected={!selected}>
+              <button
+                type="button"
+                onClick={() => {
+                  onChange("");
+                  setOpen(false);
+                }}
+                className="flex min-h-11 w-full items-center gap-2 rounded-md px-3 text-left text-base outline-none hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <span className="min-w-0 flex-1 truncate font-semibold">{emptyLabel}</span>
+                {!selected ? <CheckIcon className="size-4 shrink-0" aria-hidden="true" /> : null}
+              </button>
+            </li>
+          ) : null}
           {shown.length === 0 ? (
             <li className="px-3 py-3 text-muted-foreground">{t("common.noOptions")}</li>
           ) : (

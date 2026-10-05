@@ -40,7 +40,8 @@
     "all": "All",
     "from": "From",
     "to": "To",
-    "clear": "Clear search and filters"
+    "clear": "Clear search and filters",
+    "date": "Date"
   },
   "fields": {
     "customer": "Customer",

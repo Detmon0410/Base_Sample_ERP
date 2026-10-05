@@ -9,6 +9,7 @@ import { Pagination } from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FILTER_CONTROL, FilterField } from "@/components/common/FilterField";
 import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { PAGE_SIZE } from "@/config/masterData";
 
@@ -80,40 +81,33 @@ export function ListPage({
       <PageHeader title={title} />
 
       <div className={`${PANEL_CLASS} p-5`}>
-      <div className="mb-4 flex items-center gap-3">
-        <div className="relative w-80">
-          <SearchIcon
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-3 my-auto size-5 text-muted-foreground"
-          />
-          <Input
-            type="search"
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            placeholder={searchLabel}
-            aria-label={searchLabel}
-            className="h-10 pl-10"
-          />
-        </div>
-
-        <Select value={query.status} onValueChange={(status) => setQuery({ status })}>
-          <SelectTrigger className="w-44" aria-label={t("common.statusFilter")}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("common.statusFilter")}: {t("common.all")}</SelectItem>
-            <SelectItem value="active">{t("common.active")}</SelectItem>
-            <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
-          </SelectContent>
-        </Select>
-
+      {/* Row 1: search on the left, New on the right, both 36px high. Row 2: the filters, which wrap among themselves. */}
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="relative h-9 min-w-0 max-w-md flex-1">
+            <SearchIcon aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 my-auto size-4 text-muted-foreground" />
+            <Input type="search" value={text} onChange={(event) => setText(event.target.value)} placeholder={searchLabel} aria-label={searchLabel} className="h-9 pl-9" />
+          </div>
         {newTo ? (
-          <Button asChild className="ml-auto">
+          <Button asChild className="h-9 shrink-0">
             <Link to={newTo}>
               <PlusIcon /> {newLabel}
             </Link>
           </Button>
         ) : null}
+      </div>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+          <FilterField label={t("common.statusFilter")} className="w-52">
+            <Select value={query.status} onValueChange={(status) => setQuery({ status })}>
+              <SelectTrigger className={`${FILTER_CONTROL} w-full`} aria-label={t("common.statusFilter")}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" align="start" className="min-w-44">
+                <SelectItem value="all">{t("common.all")}</SelectItem>
+                <SelectItem value="active">{t("common.active")}</SelectItem>
+                <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </FilterField>
       </div>
 
       <DataTable

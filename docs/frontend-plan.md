@@ -322,3 +322,20 @@ Each step ends with: pages built, `pnpm lint` and `pnpm build` clean, a keyboard
 5. Display language of document numbers and master codes: keep as entered (assumed).
 6. Is a phone / tablet layout needed, or desktop only (assumed)?
 7. Approve using shadcn/ui + Tailwind (they were mentioned for the Login page) — not in the stack spec, which only lists React + Vite.
+
+---
+
+## Type scale (design rule)
+
+Size says how much a piece of text matters; weight and colour only support it. Root font-size stays 18px (so rem layouts do not change); the Tailwind sizes are redefined in `frontend/src/index.css`:
+
+| Level | Size | Use |
+|---|---|---|
+| `3xl` / `2xl` | 31 / 26px | one big number on a screen (dashboard KPI), headline numbers |
+| `xl` | 22px | title of a sheet or dialog, the total of a document |
+| `lg` | 18px | **emphasis**: document numbers and codes in lists, card titles, "Total" |
+| `base` | 16px | **body**: table cells, field values, buttons, menu items, page text |
+| `sm` | 15px | **secondary**: field labels, table headers, hints, dates, reference columns, sidebar page names |
+| `xs` | 13px | the smallest: counters, fine print |
+
+Rules: outside tables, in a card the identifier is `lg` and bold and supporting facts are `sm` and muted; labels are always smaller than the value they describe; do not make two neighbouring things the same size when one matters more. **Tables are the exception (decided after review):** every cell, header and identifier (No., code) is 15px, normal weight, colour `#666666`, no blue links; rows alternate white / very light grey, grid lines are 1px light grey, the header row is light grey, and the whole list (filters, table, paging) sits in one white box with a faint shadow all around (none below). This replaces the earlier "table text at least 16px" and "identifier 18px bold" rules.

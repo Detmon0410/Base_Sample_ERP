@@ -13,7 +13,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Foundation (F0) | 0 | 6 |
 | Authentication & shell | 3 | 5 |
 | Dashboard | 1 | 1 |
-| Sale | 0 | 8 |
+| Sale | 8 | 8 |
 | Factory | 0 | 5 |
 | Stock | 0 | 3 |
 | Purchase | 0 | 5 |
@@ -44,14 +44,14 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | A5 | Server error | `/500` | P2 | ⬜ | – | ⬜ | ⬜ | |
 | A6 | My profile | `/profile` | P2 | ⬜ | | ⬜ | ⬜ | |
 | D1 | Dashboard | `/` | P0 | ✅ | mock | ✅ | ⬜ | Spec: specs/f2-app-shell-dashboard.md · API: api/dashboard.md · tested as Admin, Manager+Worker, Worker |
-| S1 | Quotation list | `/sale/quotations` | P1 | ⬜ | | ⬜ | ⬜ | |
-| S2 | Quotation form | `/sale/quotations/new` | P1 | ⬜ | | ⬜ | ⬜ | Availability check |
-| S3 | Quotation detail | `/sale/quotations/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
-| S4 | Customer PO | `/sale/customer-pos` | P1 | ⬜ | | ⬜ | ⬜ | |
-| S5 | Sale Order list | `/sale/orders` | P1 | ⬜ | | ⬜ | ⬜ | |
-| S6 | Sale Order form | `/sale/orders/new` | P1 | ⬜ | | ⬜ | ⬜ | |
-| S7 | Sale Order detail | `/sale/orders/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
-| S8 | Delivery Note | `/sale/deliveries` | P1 | ⬜ | | ⬜ | ⬜ | |
+| S1 | Quotation list | `/sale/quotations` | P1 | ✅ | mock | ✅ | ⬜ | Search, status, customer and date filters in the URL; status badges (text + icon); empty / no result / error states. Tested as Sale Manager, Sale Worker and a non-Sale user. API: api/sale.md |
+| S2 | Quotation form | `/sale/quotations/new` | P1 | ✅ | mock | ✅ | ⬜ | One sheet with S3: customer and dates, line grid with default prices from the customer's price list, totals with 10 % tax, material availability. Tested as Sale Manager, Sale Worker and a non-Sale user. API: api/sale.md |
+| S3 | Quotation detail | `/sale/quotations/:id` | P1 | ✅ | mock | ✅ | ⬜ | Draft editable, other statuses read-only; manual Send / Mark accepted / rejected / expired / Create sale order / Revert, each with a confirmation and a history line. Tested as Sale Manager, Sale Worker and a non-Sale user. API: api/sale.md |
+| S4 | Customer PO list/form | `/sale/customer-pos` | P1 | ✅ | mock | ✅ | ⬜ | Duplicate PO number refused per customer; attachment name + size (no upload in the mock); locked once an order uses it. Tested as Sale Manager, Sale Worker and a non-Sale user. API: api/sale.md |
+| S5 | Sale Order list | `/sale/orders` | P1 | ✅ | mock | ✅ | ⬜ | Filters like quotations; "Waiting for approval" badge. Tested as Sale Manager, Sale Worker and a non-Sale user. API: api/sale.md |
+| S6 | Sale Order form | `/sale/orders/new` | P1 | ✅ | mock | ✅ | ⬜ | One sheet with S7; references limited to the customer's accepted quotations and POs. Tested as Sale Manager, Sale Worker and a non-Sale user. API: api/sale.md |
+| S7 | Sale Order detail | `/sale/orders/:id` | P1 | ✅ | mock | ✅ | ⬜ | Request confirmation → Approve / Reject → Send to factory → Mark ready → Create delivery note → Close order; Cancel; Revert; delivered column. Tested as Sale Manager, Sale Worker and a non-Sale user. API: api/sale.md |
+| S8 | Delivery Note list / detail | `/sale/deliveries` | P1 | ✅ | mock | ✅ | ⬜ | Created from a ready order; partial deliveries; Confirm delivery by hand (the order becomes Delivered when everything is delivered). Tested as Sale Manager, Sale Worker and a non-Sale user. API: api/sale.md |
 | F1 | Work Order list | `/factory/work-orders` | P1 | ⬜ | | ⬜ | ⬜ | |
 | F2 | Work Order form | `/factory/work-orders/new` | P1 | ⬜ | | ⬜ | ⬜ | |
 | F3 | Work Order detail | `/factory/work-orders/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
@@ -90,6 +90,11 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | **Table look**: zebra rows, thin 1px grid, light grey header, all table text 15px `#666666` (document numbers and codes included, no blue link), and each list in a white box with a faint shadow all around (`PANEL_CLASS`). Applies to every list and to the tables inside sheets (`ui/table.jsx`, `DataTable`, `ListPage`, `DocumentListPage`). |
+| 2026-10-05 | Type scale checked on Login, Master Data lists and sheets, Dashboard and Sale: nothing below 15px except the profile initials. Login labels and subtitle raised to 16px. **Bug fixed:** opening a detail sheet by its URL (or reloading with a sheet open) showed a white screen on Master Data pages because the page read `record.id` before the record was loaded; `useRecordForm` now gives an empty record while loading. |
+| 2026-10-05 | **Type scale**: text size now follows importance (see `index.css`, `@theme`): 22px sheet titles and totals, 18px document numbers and card titles, 16px body (table cells, field values, buttons), 15px secondary (labels, table headers, hints, dates, meta). Table headers and labels are smaller and quieter than the values; document numbers and codes are the largest text in a row; the page body default is 16px (the root stays 18px). |
+| 2026-10-05 | Sale module built with mock data (S1–S8): quotations, customer POs, sale orders and delivery notes as document sheets with line items, default prices from the price list, material availability and a **manual status workflow** (every step is a button with a confirmation and a history line; Manager approval, cancel, close and revert). New shared parts: document sheet, line items, availability card, action dialog, document list with filters. API doc: api/sale.md. |
+| 2026-10-05 | Sale module spec drafted (specs/f6-sale.md): S1–S8 as quotation / customer PO / sale order / delivery note sheets with line items, material availability check and approval; waiting for review: v2 is manual-first (every status is a button pressed in Sale) and each of Q1–Q16 has options. |
 | 2026-10-05 | Master Data: M10 Price lists built with mock data (price per product + customer + period, no customer groups; overlapping active periods are refused). **All 10 master data pages are done.** |
 | 2026-10-05 | Sidebar: wider by default (232px, "Master Data" fits on one line), all rows and arrows aligned, and its width can be changed by dragging the thin grey line on its right edge (208-360px, remembered; hidden while the sidebar is collapsed). The drag handle (`ResizeHandle`, a line that darkens on hover; no dots, no colored band) is shared with the detail sheet and sits last in the DOM so opening a sheet never focuses it. |
 | 2026-10-05 | Detail sheet: cards no longer fold and their icons have no background; the sheet is resizable by dragging its left edge (width remembered) and fields switch between one and two columns with the sheet width. |

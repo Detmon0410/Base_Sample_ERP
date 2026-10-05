@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { PAGE_SIZE } from "@/config/masterData";
+import { onMasterChanged } from "@/utils/masterEvents";
 
 /**
  * Loads one page of a master data list whenever `query` changes.
@@ -29,6 +30,9 @@ export function useResourceList(service, query) {
   }, [service, q, status, sort, page, key]);
 
   const retry = useCallback(() => setReloadKey((current) => current + 1), []);
+
+  // The detail sheet (open on top of this list) saved or removed a record: reload.
+  useEffect(() => onMasterChanged(retry), [retry]);
 
   return {
     status: state.status === "error" && state.key !== key ? "loading" : state.status,

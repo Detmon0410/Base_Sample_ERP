@@ -1,7 +1,7 @@
 import { CircleMinusIcon } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 import { ListPage } from "@/components/common/ListPage";
 import { StatusBadge } from "@/components/common/StatusBadge";
@@ -14,6 +14,7 @@ import { formatCurrency } from "@/utils/format";
 export function CustomersListPage() {
   const { t, i18n } = useTranslation(["master", "nav"]);
   const { query, setQuery } = useListQuery();
+  const { search } = useLocation(); // kept when a row opens the detail sheet
   const list = useResourceList(customerService, query);
 
   const columns = useMemo(
@@ -52,7 +53,7 @@ export function CustomersListPage() {
         align: "right",
         render: (row) => (
           <Link
-            to={`/master/customers/${row.id}`}
+            to={`/master/customers/${row.id}${search}`}
             className="inline-flex h-10 items-center rounded-md px-2 font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={`${t("master:common.edit")} ${row.code}`}
           >
@@ -61,7 +62,7 @@ export function CustomersListPage() {
         ),
       },
     ],
-    [t, i18n.language],
+    [t, i18n.language, search],
   );
 
   return (
@@ -72,8 +73,8 @@ export function CustomersListPage() {
       setQuery={setQuery}
       list={list}
       columns={columns}
-      rowTo={(row) => `/master/customers/${row.id}`}
-      newTo="/master/customers/new"
+      rowTo={(row) => `/master/customers/${row.id}${search}`}
+      newTo={`/master/customers/new${search}`}
       newLabel={t("master:customers.new")}
       emptyText={t("master:customers.empty")}
       noResultText={t("master:customers.noResult")}

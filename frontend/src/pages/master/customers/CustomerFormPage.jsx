@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleMinusIcon } from "lucide-react";
+
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
 import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
@@ -11,8 +11,8 @@ import { FormField } from "@/components/common/FormField";
 import { FormFooter } from "@/components/common/FormFooter";
 import { FormSection } from "@/components/common/FormSection";
 import { MoneyInput } from "@/components/common/MoneyInput";
-import { PageHeader } from "@/components/common/PageHeader";
-import { StatusBadge } from "@/components/common/StatusBadge";
+import { DetailSheet } from "@/components/common/DetailSheet";
+import { ActiveBadge } from "@/components/common/ActiveBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -22,6 +22,8 @@ import { PAYMENT_TERMS } from "@/config/masterData";
 import { customerService } from "@/services/customer.service";
 import { describedBy } from "@/utils/aria";
 import { formatDateTime } from "@/utils/format";
+import { useSheetExit } from "@/hooks/useSheetExit";
+import { notifyMasterChanged } from "@/utils/masterEvents";
 
 import { customerSchema, EMPTY_CUSTOMER, toFormValues, toPayload } from "./customerSchema";
 
@@ -33,9 +35,12 @@ const FIELD_ERROR_KEYS = { REQUIRED: "master:validation.required", INVALID_EMAIL
 /** M1 — /master/customers/new and /master/customers/:id */
 export function CustomerFormPage() {
   const { t, i18n } = useTranslation(["master", "nav"]);
-  const navigate = useNavigate();
+  const { leaving, exitTo } = useSheetExit();
   const { id } = useParams();
   const isNew = id === undefined;
+  // Keep the list's search / filter / page (they live in the URL) when the sheet opens and closes.
+  const { search } = useLocation();
+  const listPath = `${LIST_PATH}${search}`;
 
   const [customer, setCustomer] = useState(null);
   const [loadState, setLoadState] = useState(isNew ? "ready" : "loading");
@@ -105,19 +110,21 @@ export function CustomerFormPage() {
       if (isNew) {
         await customerService.create(toPayload(values));
         toast.success(t("master:common.saved"));
-        navigate(LIST_PATH);
+        notifyMasterChanged();
+        exitTo(listPath);
       } else {
         const saved = await customerService.update(id, toPayload(values));
         setCustomer(saved);
         reset(toFormValues(saved));
         toast.success(t("master:common.saved"));
+        notifyMasterChanged();
       }
     } catch (error) {
       handleServerError(error);
     }
   };
 
-  const goToList = () => (isDirty ? setDialog("leave") : navigate(LIST_PATH));
+  const goToList = () => (isDirty ? setDialog("leave") : exitTo(listPath));
 
   const toggleStatus = async () => {
     setBusy(true);
@@ -125,6 +132,7 @@ export function CustomerFormPage() {
       const next = customer.status === "active" ? "inactive" : "active";
       const saved = await customerService.setStatus(id, next);
       setCustomer(saved);
+      notifyMasterChanged();
       toast.success(t(next === "inactive" ? "master:common.deactivated" : "master:common.reactivated"));
       setDialog(null);
     } catch (error) {
@@ -140,7 +148,8 @@ export function CustomerFormPage() {
     try {
       await customerService.remove(id);
       toast.success(t("master:common.deleted"));
-      navigate(LIST_PATH);
+      notifyMasterChanged();
+      exitTo(listPath);
     } catch (error) {
       setDialog(null);
       handleServerError(error);
@@ -150,50 +159,38 @@ export function CustomerFormPage() {
   };
 
   // ---- states other than the form ----
+  const sheetTitle = isNew ? t("master:customers.new") : (customer ? `${customer.code} · ${customer.name}` : t("nav:items.customers"));
+
   if (loadState === "loading") {
     return (
-      <div className="flex flex-col gap-5" aria-busy="true">
-        <PageHeader title={t("nav:items.customers")} />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-40 w-full" />
-      </div>
+      <DetailSheet open={!leaving} title={t("nav:items.customers")} onClose={goToList}>
+        <div className="flex flex-col gap-5 p-6" aria-busy="true">
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-40 w-full" />
+        </div>
+      </DetailSheet>
     );
   }
   if (loadState === "notFound" || loadState === "error") {
     return (
-      <>
-        <PageHeader title={t("nav:items.customers")} />
-        <div role="alert" className="flex max-w-xl flex-col items-start gap-4 rounded-xl border bg-card p-6">
+      <DetailSheet open={!leaving} title={t("nav:items.customers")} onClose={goToList}>
+        <div role="alert" className="m-6 flex flex-col items-start gap-4 rounded-xl border bg-card p-6">
           <p>{t(loadState === "notFound" ? "master:common.notFound" : "master:common.loadError")}</p>
           <Button asChild variant="outline">
-            <Link to={LIST_PATH}>{t("master:common.backToList")}</Link>
+            <Link to={listPath}>{t("master:common.backToList")}</Link>
           </Button>
         </div>
-      </>
+      </DetailSheet>
     );
   }
 
   const isActive = customer?.status === "active";
-  const title = isNew ? t("master:customers.new") : `${customer.code} · ${customer.name}`;
 
   return (
     <>
-      <PageHeader title={t("nav:items.customers")} />
-
-      <form noValidate onSubmit={handleSubmit(onSubmit)} className="mx-auto flex max-w-4xl flex-col gap-5">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-bold">{title}</h2>
-          {!isNew ? (
-            isActive ? (
-              <StatusBadge tone="success">{t("master:common.active")}</StatusBadge>
-            ) : (
-              <StatusBadge tone="neutral" icon={CircleMinusIcon}>
-                {t("master:common.inactive")}
-              </StatusBadge>
-            )
-          ) : null}
-        </div>
-
+      <DetailSheet open={!leaving} title={sheetTitle} badge={!isNew ? <ActiveBadge status={customer.status} /> : null} onClose={goToList}>
+      <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+        <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
         <FormSection title={t("master:customers.form.sections.basic")}>
           <FormField
             id="customer-code"
@@ -303,7 +300,9 @@ export function CustomerFormPage() {
           </p>
         ) : null}
 
-        <FormFooter isSubmitting={isSubmitting} onCancel={goToList}>
+        </div>
+
+        <FormFooter inSheet isSubmitting={isSubmitting} onCancel={goToList}>
           {!isNew ? (
             <>
               <Button type="button" variant="outline" onClick={() => setDialog("status")}>
@@ -316,6 +315,7 @@ export function CustomerFormPage() {
           ) : null}
         </FormFooter>
       </form>
+      </DetailSheet>
 
       <ConfirmDialog
         open={dialog === "status"}
@@ -345,7 +345,7 @@ export function CustomerFormPage() {
         description={t("master:common.unsavedDescription")}
         confirmLabel={t("master:common.leave")}
         cancelLabel={t("master:common.stay")}
-        onConfirm={() => navigate(LIST_PATH)}
+        onConfirm={() => exitTo(listPath)}
       />
     </>
   );

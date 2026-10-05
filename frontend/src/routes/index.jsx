@@ -7,6 +7,7 @@ import { LoginPage } from "@/pages/auth/LoginPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { FoundationDemoPage } from "@/pages/dev/FoundationDemoPage";
 import { CustomersPage } from "@/pages/master/customers/CustomersPage";
+import { ProductsPage } from "@/pages/master/products/ProductsPage";
 import { MaterialsPage } from "@/pages/master/materials/MaterialsPage";
 import { SuppliersPage } from "@/pages/master/suppliers/SuppliersPage";
 import { EmployeesPage, MachinesPage, UomPage, WarehousesPage } from "@/pages/master/simple/SimpleMasterPage";
@@ -27,6 +28,7 @@ const IMPLEMENTED_PAGES = {
   employees: EmployeesPage,
   materials: MaterialsPage,
   suppliers: SuppliersPage,
+  products: ProductsPage,
 };
 
 /**
@@ -64,3 +66,4 @@ export function AppRoutes() {
     </Routes>
   );
 }
+

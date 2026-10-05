@@ -1,6 +1,7 @@
 import { buildDashboard } from "./dashboard.js";
 import { MockHttpError } from "./errors.js";
 import { masterDataRoutes } from "./masterData.js";
+import { saleRoutes } from "./sale.js";
 
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
 // The data below is demo-only; replace these handlers with the real API later.
@@ -35,6 +36,14 @@ const mockUsers = [
     memberships: [{ department: "Factory", role: "Worker" }],
   },
   {
+    id: 5,
+    name: "Nina Sato",
+    email: "nina@kanou.test",
+    password: "nina1234",
+    status: "active",
+    memberships: [{ department: "Sale", role: "Worker" }],
+  },
+  {
     id: 4,
     name: "Ken Suzuki",
     email: "ken@kanou.test",
@@ -58,6 +67,11 @@ function userFromAuthorization(authorization) {
   return user;
 }
 
+/** Any signed-in user. */
+function requireUser(authorization) {
+  return userFromAuthorization(authorization);
+}
+
 function requireAdmin(authorization) {
   const user = userFromAuthorization(authorization);
   if (!user.memberships.some((membership) => membership.role === "Admin")) {
@@ -65,6 +79,8 @@ function requireAdmin(authorization) {
   }
   return user;
 }
+
+let masterStore = null;
 
 export const mockRoutes = {
   "POST /auth/login": ({ body }) => {
@@ -89,5 +105,10 @@ export const mockRoutes = {
   "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization)),
 
   // Master data is maintained by Admin only (F3 spec, Q6/Q7).
-  ...masterDataRoutes(requireAdmin),
+  ...masterDataRoutes(requireAdmin, requireUser, (store) => {
+    masterStore = store;
+  }),
+
+  // Sale documents: Sale department members and Admin (the role decides what they may press).
+  ...saleRoutes({ userFromAuthorization, getStore: () => masterStore }),
 };

@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router";
  * Search text, status filter, sort and page of a list live in the URL (?q=&status=&sort=&page=),
  * so Back / forward and a reload keep them. Defaults are left out of the URL.
  */
-export function useListQuery({ defaultSort = "code" } = {}) {
+export function useListQuery({ defaultSort = "code", extra = [] } = {}) {
   const [params, setParams] = useSearchParams();
 
   const query = {
@@ -13,6 +13,8 @@ export function useListQuery({ defaultSort = "code" } = {}) {
     status: params.get("status") ?? "all",
     sort: params.get("sort") ?? defaultSort,
     page: Math.max(1, Number(params.get("page")) || 1),
+    // Extra filters of a list (documents: customer, from, to), "" when not set.
+    ...Object.fromEntries(extra.map((key) => [key, params.get(key) ?? ""])),
   };
 
   const setQuery = useCallback(
@@ -20,7 +22,7 @@ export function useListQuery({ defaultSort = "code" } = {}) {
       setParams(
         (previous) => {
           const next = new URLSearchParams(previous);
-          const resetsPage = ["q", "status", "sort"].some((key) => key in changes);
+          const resetsPage = ["q", "status", "sort", ...extra].some((key) => key in changes);
           for (const [key, value] of Object.entries(changes)) {
             const isDefault =
               value === "" || value == null || (key === "status" && value === "all") ||
@@ -34,7 +36,8 @@ export function useListQuery({ defaultSort = "code" } = {}) {
         { replace: true },
       );
     },
-    [setParams, defaultSort],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [setParams, defaultSort, extra.join(",")],
   );
 
   return { query, setQuery };

@@ -677,7 +677,7 @@ function priceListRoutes({ guard, rows, customers, products }) {
 }
 
 /** Master data routes. `guard` throws 401/403 unless the caller is an Admin (Q6/Q7). */
-export function masterDataRoutes(guard) {
+export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}) {
   const customers = sampleCustomers();
   const uomRows = sampleUom();
   const materialRows = sampleMaterials();
@@ -687,7 +687,10 @@ export function masterDataRoutes(guard) {
   const bom = sampleBom();
   const routing = sampleRouting();
   const machineRows = sampleMachines();
-  return {
+  const employeeRows = sampleEmployees();
+  const priceRows = samplePrices();
+  const warehouseRows = sampleWarehouses();
+  const routes = {
     ...createMockCrud("/master/customers", customers, {
       searchFields: ["code", "name"],
       sortable: ["code", "name", "paymentTerms", "creditLimit", "status"],
@@ -704,7 +707,7 @@ export function masterDataRoutes(guard) {
       isInUse: (row) => row.code !== "box",
       guard,
     }),
-    ...createMockCrud("/master/warehouses", sampleWarehouses(), {
+    ...createMockCrud("/master/warehouses", warehouseRows, {
       searchFields: ["code", "name"],
       sortable: ["code", "name", "type", "status"],
       validate: simpleValidator({ required: ["type"], select: { type: ["RAW_MATERIAL", "FINISHED_GOODS"] } }),
@@ -753,13 +756,37 @@ export function masterDataRoutes(guard) {
       guard,
     }),
     ...bomRoutes({ guard, bom, products: productRows, materials: materialRows }),
-    ...priceListRoutes({ guard, rows: samplePrices(), customers, products: productRows }),
+    ...priceListRoutes({ guard, rows: priceRows, customers, products: productRows }),
     ...routingRoutes({ guard, routing, products: productRows, machines: machineRows }),
-    ...createMockCrud("/master/employees", sampleEmployees(), {
+    ...createMockCrud("/master/employees", employeeRows, {
       searchFields: ["code", "name", "position"],
       sortable: ["code", "name", "position", "status"],
       validate: simpleValidator({ max: { position: 50 } }),
       guard,
     }),
   };
+
+  // Reading master data is open to every signed-in user (the pick-lists of documents use it);
+  // creating, changing and deleting stays with the guard (Admin only).
+  const ADMIN_PASS = "Bearer mock-token-1";
+  for (const key of Object.keys(routes)) {
+    if (!key.startsWith("GET ")) continue;
+    const handler = routes[key];
+    routes[key] = (context) => {
+      readGuard(context.authorization);
+      return handler({ ...context, authorization: ADMIN_PASS });
+    };
+  }
+
+  // The rows other mock modules (Sale) work with.
+  onStore({
+    customers,
+    products: productRows,
+    materials: materialRows,
+    bom,
+    prices: priceRows,
+    employees: employeeRows,
+    warehouses: warehouseRows,
+  });
+  return routes;
 }

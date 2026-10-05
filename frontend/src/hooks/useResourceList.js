@@ -12,13 +12,14 @@ import { rememberRecords } from "@/utils/recordCache";
 export function useResourceList(service, query) {
   const [state, setState] = useState({ key: null, status: "loading", items: [], meta: null, error: null });
   const [reloadKey, setReloadKey] = useState(0);
-  const { q, status, sort, page } = query;
-  const key = JSON.stringify([q, status, sort, page, reloadKey]);
+  // Every part of the query (search, status, sort, page and any extra filter) reloads the list.
+  const queryJson = JSON.stringify(query);
+  const key = JSON.stringify([query, reloadKey]);
 
   useEffect(() => {
     let cancelled = false;
     service
-      .list({ q, status, sort, page, pageSize: PAGE_SIZE })
+      .list({ ...JSON.parse(queryJson), pageSize: PAGE_SIZE })
       .then(({ items, meta }) => {
         rememberRecords(service.key, items);
         if (!cancelled) setState({ key, status: "ready", items, meta, error: null });
@@ -29,7 +30,7 @@ export function useResourceList(service, query) {
     return () => {
       cancelled = true;
     };
-  }, [service, q, status, sort, page, key]);
+  }, [service, queryJson, key]);
 
   const retry = useCallback(() => setReloadKey((current) => current + 1), []);
 

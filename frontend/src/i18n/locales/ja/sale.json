@@ -1,0 +1,336 @@
+{
+  "status": {
+    "draft": "",
+    "sent": "",
+    "accepted": "",
+    "rejected": "",
+    "expired": "",
+    "confirmed": "",
+    "in_production": "",
+    "ready_to_deliver": "",
+    "delivered": "",
+    "closed": "",
+    "cancelled": "",
+    "waiting": ""
+  },
+  "columns": {
+    "number": "",
+    "date": "",
+    "customer": "",
+    "salesPerson": "",
+    "total": "",
+    "validUntil": "",
+    "status": "",
+    "deliveryDate": "",
+    "quotation": "",
+    "customerPo": "",
+    "saleOrder": "",
+    "lines": "",
+    "poNumber": "",
+    "poDate": "",
+    "attachment": "",
+    "linkedQuotation": "",
+    "linkedOrder": ""
+  },
+  "filters": {
+    "label": "",
+    "status": "",
+    "customer": "",
+    "anyCustomer": "",
+    "all": "",
+    "from": "",
+    "to": "",
+    "clear": ""
+  },
+  "fields": {
+    "customer": "",
+    "chooseCustomer": "",
+    "salesPerson": "",
+    "chooseSalesPerson": "",
+    "date": "",
+    "validUntil": "",
+    "deliveryDate": "",
+    "remarks": "",
+    "quotation": "",
+    "customerPo": "",
+    "chooseQuotation": "",
+    "chooseCustomerPo": "",
+    "warehouse": "",
+    "saleOrder": ""
+  },
+  "cards": {
+    "header": "",
+    "history": "",
+    "links": "",
+    "reference": ""
+  },
+  "lines": {
+    "title": "",
+    "product": "",
+    "qty": "",
+    "unitPrice": "",
+    "amount": "",
+    "delivered": "",
+    "remove": "",
+    "add": "",
+    "empty": "",
+    "chooseProduct": "",
+    "lineNumber": "",
+    "totals": "",
+    "subtotal": "",
+    "tax": "",
+    "total": ""
+  },
+  "availability": {
+    "title": "",
+    "check": "",
+    "checking": "",
+    "addLines": "",
+    "note": "",
+    "canProduce": "",
+    "cannotProduce": "",
+    "noBom": "",
+    "material": "",
+    "required": "",
+    "available": "",
+    "missing": "",
+    "stale": "",
+    "error": ""
+  },
+  "sheet": {
+    "save": "",
+    "saving": "",
+    "delete": "",
+    "deleting": "",
+    "deleteTitle": "",
+    "deleteDescription": "",
+    "unsavedTitle": "",
+    "unsavedDescription": "",
+    "stay": "",
+    "leave": "",
+    "notFound": "",
+    "loadError": "",
+    "backToList": ""
+  },
+  "dialog": {
+    "cancel": "",
+    "working": "",
+    "noteLabel": "",
+    "reasonLabel": "",
+    "optional": "",
+    "required": "",
+    "reasonRequired": ""
+  },
+  "toast": {
+    "orderCreated": "",
+    "deliveryNoteCreated": ""
+  },
+  "history": {
+    "created": "",
+    "send": "",
+    "accept": "",
+    "reject": "",
+    "expire": "",
+    "request-confirm": "",
+    "approve": "",
+    "reject-confirm": "",
+    "send-to-factory": "",
+    "mark-ready": "",
+    "delivered": "",
+    "confirm": "",
+    "close": "",
+    "cancel": "",
+    "revert": ""
+  },
+  "links": {
+    "quotation": "",
+    "order": "",
+    "customerPo": "",
+    "delivery": "",
+    "workOrder": "",
+    "invoice": "",
+    "notRecorded": ""
+  },
+  "validation": {
+    "required": "",
+    "qty": "",
+    "price": "",
+    "linesRequired": "",
+    "duplicate": "",
+    "dateOrder": "",
+    "maxLength": "",
+    "qty0": "",
+    "deliverSomething": "",
+    "poNumberExists": ""
+  },
+  "errors": {
+    "FORBIDDEN": "",
+    "INVALID_STATUS": "",
+    "ALREADY_LINKED": "",
+    "NOTHING_TO_DELIVER": "",
+    "IN_USE": "",
+    "VALIDATION_ERROR": "",
+    "NOT_FOUND": "",
+    "UNKNOWN": ""
+  },
+  "actions": {
+    "saveFirst": "",
+    "send": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "accept": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "reject": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "expire": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "create-order": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "request-confirm": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "approve": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "reject-confirm": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "send-to-factory": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "mark-ready": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "create-delivery-note": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "close": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "cancel": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "confirm": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "revert": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    }
+  },
+  "quotations": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "search": "",
+    "pastValidUntil": ""
+  },
+  "customerPos": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "search": "",
+    "cardPo": "",
+    "cardAttachment": "",
+    "poNumber": "",
+    "poDate": "",
+    "note": "",
+    "linkedQuotation": "",
+    "chooseQuotation": "",
+    "chooseFile": "",
+    "replaceFile": "",
+    "removeFile": "",
+    "noFile": "",
+    "fileHint": "",
+    "fileTooBig": "",
+    "fileType": "",
+    "locked": ""
+  },
+  "orders": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "search": "",
+    "cardHeader": ""
+  },
+  "deliveries": {
+    "singular": "",
+    "empty": "",
+    "noResult": "",
+    "search": "",
+    "ordered": "",
+    "deliveredBefore": "",
+    "remaining": "",
+    "deliverNow": "",
+    "cardHeader": "",
+    "cardLines": "",
+    "emptyLines": "",
+    "qtyInvalid": ""
+  }
+}

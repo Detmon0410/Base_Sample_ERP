@@ -25,6 +25,17 @@ export function canApprove(user, department) {
   );
 }
 
+/**
+ * The role the user has in a department: "Admin" (everywhere), "Manager", "Worker", or null when the
+ * user has no role there. The UI uses it to decide which buttons to show.
+ */
+export function roleInDepartment(user, department) {
+  if (!user) return null;
+  if (isAdmin(user)) return "Admin";
+  const membership = user.memberships?.find((item) => item.department === department);
+  return membership?.role ?? null;
+}
+
 /** True when the user belongs to at least one department (Admin counts as all). */
 export function hasAnyDepartment(user) {
   if (!user) return false;

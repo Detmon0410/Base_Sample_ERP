@@ -14,14 +14,11 @@ const MARKERS = {
  * Status history, newest first. `events`: [{ id, label, actor, at, note, tone }]
  * Each marker has an icon as well as a color, so the outcome never depends on color alone.
  */
-export function StatusTimeline({ title, events }) {
+export function StatusTimeline({ title, events, bare = false }) {
   const { t, i18n } = useTranslation();
 
-  return (
-    <section className="rounded-xl border bg-card p-6" aria-labelledby="status-history-title">
-      <h3 id="status-history-title" className="mb-4 text-lg font-bold">
-        {title ?? t("detail.history")}
-      </h3>
+  const content = (
+    <>
       {events.length === 0 ? (
         <p className="text-muted-foreground">{t("detail.noHistory")}</p>
       ) : (
@@ -50,6 +47,17 @@ export function StatusTimeline({ title, events }) {
           })}
         </ol>
       )}
+    </>
+  );
+
+  // bare: only the list, for a parent that draws the card (SheetSection in a detail sheet)
+  if (bare) return content;
+  return (
+    <section className="rounded-xl border bg-card p-6" aria-labelledby="status-history-title">
+      <h3 id="status-history-title" className="mb-4 text-lg font-bold">
+        {title ?? t("detail.history")}
+      </h3>
+      {content}
     </section>
   );
 }

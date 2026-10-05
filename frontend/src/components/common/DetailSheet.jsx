@@ -6,7 +6,7 @@ import { ResizeHandle } from "@/components/common/ResizeHandle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
-const STORAGE_KEY = "kanou.sheetWidth";
+const DEFAULT_STORAGE_KEY = "kanou.sheetWidth";
 const DEFAULT_WIDTH = 672; // px
 const MIN_WIDTH = 440;
 const EDGE_GAP = 80; // the list always keeps this much visible on the left
@@ -14,18 +14,18 @@ const EDGE_GAP = 80; // the list always keeps this much visible on the left
 const maxWidth = () => Math.max(MIN_WIDTH, window.innerWidth - EDGE_GAP);
 const clamp = (value) => Math.min(Math.max(value, MIN_WIDTH), maxWidth());
 
-function readWidth() {
+function readWidth(storageKey, fallback) {
   try {
-    const saved = Number(window.localStorage.getItem(STORAGE_KEY));
-    return saved ? clamp(saved) : DEFAULT_WIDTH;
+    const saved = Number(window.localStorage.getItem(storageKey));
+    return saved ? clamp(saved) : clamp(fallback);
   } catch {
-    return DEFAULT_WIDTH;
+    return clamp(fallback);
   }
 }
 
-function saveWidth(width) {
+function saveWidth(storageKey, width) {
   try {
-    window.localStorage.setItem(STORAGE_KEY, String(Math.round(width)));
+    window.localStorage.setItem(storageKey, String(Math.round(width)));
   } catch {
     // private window or blocked storage: the width just is not remembered
   }
@@ -35,6 +35,9 @@ function saveWidth(width) {
  * Detail / form of a record, opened on the right side of the list (the list stays visible, slightly
  * blurred, behind it). It is always open while mounted: the route decides when it exists, and
  * `onClose` navigates back to the list (ask first when there are unsaved changes).
+ *
+ * `defaultWidth` / `widthKey`: a kind of sheet can have its own default width and its own remembered width
+ * (documents use a wider sheet than master data).
  *
  * Width: drag the thin line on the left edge (it darkens on hover) or use the arrow keys on it;
  * double-click resets. The width is remembered between visits. The handle comes last in the DOM so it is
@@ -50,9 +53,19 @@ function saveWidth(width) {
  *   </form>
  * and Save in the header submits it through form="...".
  */
-export function DetailSheet({ title, description, badge, actions, open = true, onClose, children }) {
+export function DetailSheet({
+  title,
+  description,
+  badge,
+  actions,
+  open = true,
+  onClose,
+  defaultWidth = DEFAULT_WIDTH,
+  widthKey = DEFAULT_STORAGE_KEY,
+  children,
+}) {
   const { t } = useTranslation();
-  const [width, setWidth] = useState(readWidth);
+  const [width, setWidth] = useState(() => readWidth(widthKey, defaultWidth));
 
   // Tell the toasts how wide the sheet is, so they stay beside it and never cover its header buttons.
   useEffect(() => {
@@ -86,7 +99,7 @@ export function DetailSheet({ title, description, badge, actions, open = true, o
             {badge}
           </div>
           <SheetDescription className="sr-only">{description ?? title}</SheetDescription>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex max-w-full flex-wrap items-center justify-end gap-2">
             {actions}
             <SheetClose asChild>
               <Button type="button" variant="outline" size="icon" aria-label={t("actions.cancel")}>
@@ -103,11 +116,11 @@ export function DetailSheet({ title, description, badge, actions, open = true, o
           value={width}
           min={MIN_WIDTH}
           max={maxWidth()}
-          defaultValue={DEFAULT_WIDTH}
+          defaultValue={defaultWidth}
           growKey="ArrowLeft"
           valueFromPointer={(clientX) => window.innerWidth - clientX}
           onChange={setWidth}
-          onCommit={saveWidth}
+          onCommit={(value) => saveWidth(widthKey, value)}
         />
       </SheetContent>
     </Sheet>

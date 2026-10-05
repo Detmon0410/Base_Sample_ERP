@@ -2,19 +2,26 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useLocation, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 
 import { useSheetExit } from "@/hooks/useSheetExit";
 import { describedBy } from "@/utils/aria";
 import { notifyMasterChanged } from "@/utils/masterEvents";
-import { getCachedRecord } from "@/utils/recordCache";
+import { getCachedRecord, rememberRecords } from "@/utils/recordCache";
+
+// While a saved record is still loading, `record` is this empty object instead of null. The page builds its whole
+// JSX (including `record.id`, `record.onHand`…) before the sheet decides to show the loading state, so a null would
+// crash a deep link or a reload with a white screen. The sheet never shows these empty values.
+const NOT_LOADED = Object.freeze({});
 
 // Server field error codes -> message keys.
 const FIELD_ERROR_KEYS = {
   REQUIRED: "master:validation.required",
   INVALID_EMAIL: "master:validation.emailInvalid",
   DATE_ORDER: "master:validation.dateOrder",
+  DUPLICATE: "sale:validation.duplicate",
+  PO_NUMBER_EXISTS: "sale:validation.poNumberExists",
 };
 
 /**
@@ -29,6 +36,8 @@ const FIELD_ERROR_KEYS = {
  *   idPrefix     prefix of the field element ids
  *   fieldErrors  server error code -> form field that shows it, e.g. { PERIOD_OVERLAP: "validFrom" }
  *                (CODE_ALREADY_EXISTS -> "code" is always known)
+ *   afterCreatePath(saved) -> path   stay in a sheet after creating (documents open on the new record)
+ *                instead of going back to the list
  */
 export function useRecordForm({
   service,
@@ -39,11 +48,13 @@ export function useRecordForm({
   listPath: basePath,
   idPrefix,
   fieldErrors = {},
+  afterCreatePath,
 }) {
   const { t } = useTranslation("master");
   const { id } = useParams();
   const { search } = useLocation();
   const { leaving, exitTo } = useSheetExit();
+  const navigate = useNavigate();
   const isNew = id === undefined;
   const listPath = `${basePath}${search}`;
 
@@ -104,7 +115,7 @@ export function useRecordForm({
       setError(field, { message: `master:errors.${error.code}` });
     } else if (error?.code === "VALIDATION_ERROR" && Array.isArray(error.details)) {
       for (const item of error.details) {
-        setError(item.path?.[0], { message: FIELD_ERROR_KEYS[item.message] ?? "master:errors.VALIDATION_ERROR" });
+        setError((item.path ?? []).join("."), { message: FIELD_ERROR_KEYS[item.message] ?? "master:errors.VALIDATION_ERROR" });
       }
     } else {
       toast.error(t(`errors.${error?.code}`, { defaultValue: t("errors.UNKNOWN") }));
@@ -114,10 +125,15 @@ export function useRecordForm({
   const onSubmit = handleSubmit(async (values) => {
     try {
       if (isNew) {
-        await service.create(toPayload(values));
+        const created = await service.create(toPayload(values));
         toast.success(t("common.saved"));
         notifyMasterChanged();
-        exitTo(listPath);
+        if (afterCreatePath) {
+          rememberRecords(service.key, [created]);
+          navigate(`${afterCreatePath(created)}${search}`, { replace: true });
+        } else {
+          exitTo(listPath);
+        }
       } else {
         const saved = await service.update(id, toPayload(values));
         setRecord(saved);
@@ -129,6 +145,13 @@ export function useRecordForm({
       handleServerError(error);
     }
   });
+
+  /** A record returned by the server (after a status action): show it and reload the lists behind the sheet. */
+  const applyRecord = (saved) => {
+    setRecord(saved);
+    reset(toValues(saved));
+    notifyMasterChanged();
+  };
 
   const goToList = () => (isDirty ? setDialog("leave") : exitTo(listPath));
 
@@ -166,7 +189,7 @@ export function useRecordForm({
   return {
     id,
     isNew,
-    record,
+    record: record ?? (isNew ? null : NOT_LOADED),
     loadState,
     form,
     errors,
@@ -179,6 +202,7 @@ export function useRecordForm({
     listPath,
     goToList,
     onSubmit,
+    applyRecord,
     toggleStatus,
     remove,
     message,

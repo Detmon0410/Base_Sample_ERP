@@ -6,22 +6,24 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { useSidebarWidth } from "@/hooks/useSidebarWidth";
 
 /**
  * Application frame for every page after login: collapsible sidebar on the left,
  * header (menu toggle, breadcrumb, language, user menu) on top, the page below.
- * Widths: 208px expanded, 64px collapsed. The top bar is 54px high.
+ * Widths: 232px expanded by default (drag its right edge to change it, 208-360px), 64px collapsed. The top bar is 54px high.
  */
 export function MainLayout() {
   const { t } = useTranslation("nav");
   const [open, setOpen] = useSidebarState();
+  const sidebarWidth = useSidebarWidth();
 
   return (
     <TooltipProvider delayDuration={200}>
       <SidebarProvider
         open={open}
         onOpenChange={setOpen}
-        style={{ "--sidebar-width": "208px", "--sidebar-width-icon": "64px" }}
+        style={{ "--sidebar-width": `${sidebarWidth.width}px`, "--sidebar-width-icon": "64px" }}
       >
         <a
           href="#main-content"
@@ -30,7 +32,7 @@ export function MainLayout() {
           {t("skipToContent")}
         </a>
 
-        <AppSidebar />
+        <AppSidebar width={sidebarWidth} />
 
         <SidebarInset className="min-w-0 bg-background">
           <AppHeader />

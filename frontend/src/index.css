@@ -179,3 +179,13 @@
 [data-slot="sheet-overlay"] {
   will-change: opacity;
 }
+
+/* While the sidebar width is being dragged it must follow the pointer at once, not ease toward it. */
+body.sidebar-resizing [data-slot="sidebar-gap"],
+body.sidebar-resizing [data-slot="sidebar-container"] {
+  transition: none !important;
+}
+body.sidebar-resizing {
+  cursor: col-resize;
+  user-select: none;
+}

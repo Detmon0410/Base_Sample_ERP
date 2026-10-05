@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 
+import { ResizeHandle } from "@/components/common/ResizeHandle";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Sidebar,
@@ -15,11 +16,11 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { DASHBOARD_ITEM, findActive, getVisibleGroups } from "@/config/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH } from "@/hooks/useSidebarWidth";
 
 // Soft background, primary text and a left bar for the page the user is on.
 const ACTIVE_STYLE = "data-active:shadow-[inset_3px_0_0_var(--primary)]";
@@ -66,7 +67,7 @@ function NavGroup({ group, activeGroupKey }) {
           <SidebarMenuButton isActive={isActiveGroup && !open} className={ACTIVE_STYLE}>
             <Icon />
             <span>{label}</span>
-            <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+            <ChevronRightIcon className="ml-auto size-4 shrink-0 transition-transform group-data-[state=open]/collapsible:rotate-90" />
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
@@ -90,7 +91,8 @@ function NavGroup({ group, activeGroupKey }) {
   );
 }
 
-export function AppSidebar() {
+/** `width`: result of useSidebarWidth. Dragging the dots on the right edge changes the width of the expanded sidebar. */
+export function AppSidebar({ width }) {
   const { t } = useTranslation(["nav", "common"]);
   const { user } = useAuth();
   const { pathname } = useLocation();
@@ -137,7 +139,20 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarRail />
+      <ResizeHandle
+        edge="right"
+        label={t("nav:resizeSidebar")}
+        value={width.width}
+        min={SIDEBAR_MIN_WIDTH}
+        max={SIDEBAR_MAX_WIDTH}
+        defaultValue={SIDEBAR_DEFAULT_WIDTH}
+        growKey="ArrowRight"
+        valueFromPointer={(clientX) => clientX}
+        onChange={width.setWidth}
+        onCommit={width.commit}
+        onDragChange={(dragging) => document.body.classList.toggle("sidebar-resizing", dragging)}
+        className="group-data-[collapsible=icon]:hidden"
+      />
     </Sidebar>
   );
 }

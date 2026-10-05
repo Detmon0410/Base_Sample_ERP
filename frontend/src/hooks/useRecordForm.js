@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "react-router";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useSheetExit } from "@/hooks/useSheetExit";
 import { describedBy } from "@/utils/aria";
 import { notifyMasterChanged } from "@/utils/masterEvents";
+import { getCachedRecord } from "@/utils/recordCache";
 
 // Server field error codes -> message keys.
 const FIELD_ERROR_KEYS = {
@@ -34,18 +35,22 @@ export function useRecordForm({ service, schema, emptyValues, toValues, toPayloa
   const isNew = id === undefined;
   const listPath = `${basePath}${search}`;
 
-  const [record, setRecord] = useState(null);
-  const [loadState, setLoadState] = useState(isNew ? "ready" : "loading");
+  // The row the list just showed fills the form at once; the full record is fetched in the background.
+  const [cached] = useState(() => (isNew ? undefined : getCachedRecord(service.key, id)));
+  const [record, setRecord] = useState(cached ?? null);
+  const [loadState, setLoadState] = useState(isNew || cached ? "ready" : "loading");
   const [dialog, setDialog] = useState(null); // "status" | "delete" | "leave" | null
   const [busy, setBusy] = useState(false);
 
-  const form = useForm({ resolver: zodResolver(schema), defaultValues: emptyValues });
+  const form = useForm({ resolver: zodResolver(schema), defaultValues: cached ? toValues(cached) : emptyValues });
   const {
     reset,
     setError,
     handleSubmit,
     formState: { errors, isDirty, isSubmitting },
   } = form;
+  const dirtyRef = useRef(false);
+  dirtyRef.current = isDirty;
 
   useEffect(() => {
     if (isNew) return undefined;
@@ -55,18 +60,18 @@ export function useRecordForm({ service, schema, emptyValues, toValues, toPayloa
       .then((loaded) => {
         if (cancelled) return;
         setRecord(loaded);
-        reset(toValues(loaded));
+        if (!dirtyRef.current) reset(toValues(loaded)); // never overwrite what the user has already typed
         setLoadState("ready");
       })
       .catch((error) => {
-        if (!cancelled) setLoadState(error?.status === 404 ? "notFound" : "error");
+        if (!cancelled && !cached) setLoadState(error?.status === 404 ? "notFound" : "error");
       });
     return () => {
       cancelled = true;
     };
     // toValues is a stable module function in every caller.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, isNew, reset, service]);
+  }, [id, isNew, reset, service, cached]);
 
   useEffect(() => {
     if (!isDirty) return undefined;

@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+/* The app has a light theme only. Without this, Tailwind applies every dark: style when the computer is set to dark mode. */
+@custom-variant dark (&:is(.dark *));
+
 /*
   Design tokens — Kanou ERP
   Brand: #1447e6 on #FFFFFF (contrast 6.8:1).
@@ -166,4 +169,13 @@
   [data-slot="sheet-content"][data-side="right"][data-state="closed"] {
     animation: sheet-fade-out 120ms ease-in both;
   }
+}
+
+/* Radix already pads the page for the removed scrollbar while the sheet is open, so nothing shifts. */
+[data-slot="sheet-content"] {
+  transition: none; /* the keyframes above do the moving; a second transition only adds work */
+  will-change: transform;
+}
+[data-slot="sheet-overlay"] {
+  will-change: opacity;
 }

@@ -41,7 +41,8 @@
     "noLinkedDocuments": "No linked documents yet.",
     "history": "Status history",
     "noHistory": "No history yet.",
-    "by": "by {{name}}"
+    "by": "by {{name}}",
+    "resize": "Drag to resize the panel"
   },
   "approval": {
     "waiting": "Waiting for approval by the {{department}} Manager.",

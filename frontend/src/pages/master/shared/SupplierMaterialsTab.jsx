@@ -1,4 +1,4 @@
-import { PlusIcon } from "lucide-react";
+import { ListIcon, PlusIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EntitySelect } from "@/components/common/EntitySelect";
 import { MoneyInput } from "@/components/common/MoneyInput";
+import { SheetSection } from "@/components/common/SheetSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -144,12 +145,13 @@ export function SupplierMaterialsTab({ mode, ownerId }) {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
+    <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-5">
       <p className="text-muted-foreground">{t(`links.${mode}Hint`)}</p>
 
       {state.items.length === 0 ? (
         <p className="rounded-xl border border-dashed p-5 text-center text-muted-foreground">{t(`links.${mode}Empty`)}</p>
       ) : (
+        <SheetSection title={t(`links.${mode}ListTitle`)} icon={ListIcon}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -226,17 +228,15 @@ export function SupplierMaterialsTab({ mode, ownerId }) {
             })}
           </TableBody>
         </Table>
+        </SheetSection>
       )}
 
-      <section className="rounded-xl border bg-card p-5" aria-labelledby="links-add-title">
-        <h3 id="links-add-title" className="mb-4 text-lg font-bold">
-          {t(`links.${mode}Add`)}
-        </h3>
+      <SheetSection title={t(`links.${mode}Add`)} icon={PlusIcon}>
         {optionsStatus === "ready" && available.length === 0 ? (
           <p className="text-muted-foreground">{t("links.nothingToAdd")}</p>
         ) : (
-          <div className="grid gap-4 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,0.8fr)]">
-            <div className="flex flex-col gap-1.5 md:col-span-3">
+          <div className="grid gap-4 @lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,0.8fr)]">
+            <div className="flex flex-col gap-1.5 @lg:col-span-3">
               <label htmlFor="link-other" className="text-base font-semibold">
                 {otherLabel}
               </label>
@@ -250,7 +250,7 @@ export function SupplierMaterialsTab({ mode, ownerId }) {
               />
               {addErrors.other ? <p className="text-sm text-destructive">{addErrors.other}</p> : null}
             </div>
-            <div className="flex flex-col gap-1.5 md:col-span-2">
+            <div className="flex flex-col gap-1.5 @lg:col-span-2">
               <label htmlFor="link-price" className="text-base font-semibold">
                 {t("links.price")}
               </label>
@@ -278,14 +278,14 @@ export function SupplierMaterialsTab({ mode, ownerId }) {
               />
               {addErrors.lead ? <p className="text-sm text-destructive">{addErrors.lead}</p> : null}
             </div>
-            <div className="md:col-span-3">
+            <div className="@lg:col-span-3">
               <Button type="button" disabled={busy} onClick={add}>
                 <PlusIcon aria-hidden="true" /> {t("links.add")}
               </Button>
             </div>
           </div>
         )}
-      </section>
+      </SheetSection>
 
       <ConfirmDialog
         open={Boolean(removing)}

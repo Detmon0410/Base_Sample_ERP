@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { PAGE_SIZE } from "@/config/masterData";
 import { onMasterChanged } from "@/utils/masterEvents";
+import { rememberRecords } from "@/utils/recordCache";
 
 /**
  * Loads one page of a master data list whenever `query` changes.
@@ -19,6 +20,7 @@ export function useResourceList(service, query) {
     service
       .list({ q, status, sort, page, pageSize: PAGE_SIZE })
       .then(({ items, meta }) => {
+        rememberRecords(service.key, items);
         if (!cancelled) setState({ key, status: "ready", items, meta, error: null });
       })
       .catch((error) => {

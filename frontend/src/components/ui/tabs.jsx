@@ -10,7 +10,7 @@ function TabsList({ className, ...props }) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={cn("flex items-end gap-1 border-b px-6", className)}
+      className={cn("flex items-end gap-1 overflow-x-auto border-b bg-card px-4", className)}
       {...props}
     />
   )
@@ -33,7 +33,7 @@ function TabsContent({ className, ...props }) {
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"
-      className={cn("min-h-0 flex-1 flex-col outline-none data-[state=active]:flex", className)}
+      className={cn("min-h-0 flex-1 flex-col outline-none data-[state=active]:flex data-[state=inactive]:hidden", className)}
       {...props}
     />
   )

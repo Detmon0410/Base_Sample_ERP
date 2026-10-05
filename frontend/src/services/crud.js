@@ -7,6 +7,7 @@ import { api, unwrap, unwrapList } from "./api.js";
  */
 export function createCrud(basePath) {
   return {
+    key: basePath,
     list: async (params) => unwrapList(await api.get(basePath, { params })),
     get: async (id) => unwrap(await api.get(`${basePath}/${id}`)),
     create: async (data) => unwrap(await api.post(basePath, data)),

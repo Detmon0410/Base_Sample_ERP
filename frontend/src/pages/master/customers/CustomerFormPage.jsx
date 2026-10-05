@@ -1,352 +1,118 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { BuildingIcon, ContactIcon, WalletIcon } from "lucide-react";
+import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link, useLocation, useParams } from "react-router";
-import { toast } from "sonner";
 
-import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { FormField } from "@/components/common/FormField";
-import { FormFooter } from "@/components/common/FormFooter";
 import { FormSection } from "@/components/common/FormSection";
 import { MoneyInput } from "@/components/common/MoneyInput";
-import { DetailSheet } from "@/components/common/DetailSheet";
-import { ActiveBadge } from "@/components/common/ActiveBadge";
-import { Button } from "@/components/ui/button";
+import { RecordInfoCard } from "@/components/common/RecordInfoCard";
+import { RecordSheet, SheetFormBody } from "@/components/common/RecordSheet";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { PAYMENT_TERMS } from "@/config/masterData";
+import { useRecordForm } from "@/hooks/useRecordForm";
 import { customerService } from "@/services/customer.service";
-import { describedBy } from "@/utils/aria";
-import { formatDateTime } from "@/utils/format";
-import { useSheetExit } from "@/hooks/useSheetExit";
-import { notifyMasterChanged } from "@/utils/masterEvents";
 
 import { customerSchema, EMPTY_CUSTOMER, toFormValues, toPayload } from "./customerSchema";
 
-const LIST_PATH = "/master/customers";
-
-// Server field error codes -> message keys.
-const FIELD_ERROR_KEYS = { REQUIRED: "master:validation.required", INVALID_EMAIL: "master:validation.emailInvalid" };
-
 /** M1 — /master/customers/new and /master/customers/:id */
 export function CustomerFormPage() {
-  const { t, i18n } = useTranslation(["master", "nav"]);
-  const { leaving, exitTo } = useSheetExit();
-  const { id } = useParams();
-  const isNew = id === undefined;
-  // Keep the list's search / filter / page (they live in the URL) when the sheet opens and closes.
-  const { search } = useLocation();
-  const listPath = `${LIST_PATH}${search}`;
-
-  const [customer, setCustomer] = useState(null);
-  const [loadState, setLoadState] = useState(isNew ? "ready" : "loading");
-  const [dialog, setDialog] = useState(null); // "status" | "delete" | "leave" | null
-  const [busy, setBusy] = useState(false);
-
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    setError,
-    formState: { errors, isDirty, isSubmitting },
-  } = useForm({
-    resolver: zodResolver(customerSchema),
-    defaultValues: EMPTY_CUSTOMER,
+  const { t } = useTranslation(["master", "nav"]);
+  const page = useRecordForm({
+    service: customerService,
+    schema: customerSchema,
+    emptyValues: EMPTY_CUSTOMER,
+    toValues: toFormValues,
+    toPayload,
+    listPath: "/master/customers",
+    idPrefix: "customer",
   });
+  const { isNew, record, form, errors, message, fieldProps } = page;
 
-  // Load the record being edited.
-  useEffect(() => {
-    if (isNew) return undefined;
-    let cancelled = false;
-    customerService
-      .get(id)
-      .then((record) => {
-        if (cancelled) return;
-        setCustomer(record);
-        reset(toFormValues(record));
-        setLoadState("ready");
-      })
-      .catch((error) => {
-        if (!cancelled) setLoadState(error?.status === 404 ? "notFound" : "error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [id, isNew, reset]);
-
-  // Browser reload / tab close with unsaved changes.
-  useEffect(() => {
-    if (!isDirty) return undefined;
-    const warn = (event) => event.preventDefault();
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, [isDirty]);
-
-  const message = (error) => (error?.message ? t(error.message) : undefined);
-  const fieldProps = (name, hint) => ({
-    "aria-invalid": errors[name] ? true : undefined,
-    "aria-describedby": describedBy(`customer-${name}`, { error: errors[name], hint }),
-  });
-
-  const handleServerError = (error) => {
-    if (error?.code === "CODE_ALREADY_EXISTS") {
-      setError("code", { message: "master:errors.CODE_ALREADY_EXISTS" });
-    } else if (error?.code === "VALIDATION_ERROR" && Array.isArray(error.details)) {
-      for (const item of error.details) {
-        setError(item.path?.[0], { message: FIELD_ERROR_KEYS[item.message] ?? "master:errors.VALIDATION_ERROR" });
-      }
-    } else {
-      toast.error(t(`master:errors.${error?.code}`, { defaultValue: t("master:errors.UNKNOWN") }));
-    }
-  };
-
-  const onSubmit = async (values) => {
-    try {
-      if (isNew) {
-        await customerService.create(toPayload(values));
-        toast.success(t("master:common.saved"));
-        notifyMasterChanged();
-        exitTo(listPath);
-      } else {
-        const saved = await customerService.update(id, toPayload(values));
-        setCustomer(saved);
-        reset(toFormValues(saved));
-        toast.success(t("master:common.saved"));
-        notifyMasterChanged();
-      }
-    } catch (error) {
-      handleServerError(error);
-    }
-  };
-
-  const goToList = () => (isDirty ? setDialog("leave") : exitTo(listPath));
-
-  const toggleStatus = async () => {
-    setBusy(true);
-    try {
-      const next = customer.status === "active" ? "inactive" : "active";
-      const saved = await customerService.setStatus(id, next);
-      setCustomer(saved);
-      notifyMasterChanged();
-      toast.success(t(next === "inactive" ? "master:common.deactivated" : "master:common.reactivated"));
-      setDialog(null);
-    } catch (error) {
-      setDialog(null);
-      handleServerError(error);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const remove = async () => {
-    setBusy(true);
-    try {
-      await customerService.remove(id);
-      toast.success(t("master:common.deleted"));
-      notifyMasterChanged();
-      exitTo(listPath);
-    } catch (error) {
-      setDialog(null);
-      handleServerError(error);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  // ---- states other than the form ----
-  const sheetTitle = isNew ? t("master:customers.new") : (customer ? `${customer.code} · ${customer.name}` : t("nav:items.customers"));
-
-  if (loadState === "loading") {
-    return (
-      <DetailSheet open={!leaving} title={t("nav:items.customers")} onClose={goToList}>
-        <div className="flex flex-col gap-5 p-6" aria-busy="true">
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="h-40 w-full" />
-        </div>
-      </DetailSheet>
-    );
-  }
-  if (loadState === "notFound" || loadState === "error") {
-    return (
-      <DetailSheet open={!leaving} title={t("nav:items.customers")} onClose={goToList}>
-        <div role="alert" className="m-6 flex flex-col items-start gap-4 rounded-xl border bg-card p-6">
-          <p>{t(loadState === "notFound" ? "master:common.notFound" : "master:common.loadError")}</p>
-          <Button asChild variant="outline">
-            <Link to={listPath}>{t("master:common.backToList")}</Link>
-          </Button>
-        </div>
-      </DetailSheet>
-    );
-  }
-
-  const isActive = customer?.status === "active";
+  const text = (name, label, extra = {}) => (
+    <FormField id={`customer-${name}`} label={label} error={message(errors[name])}>
+      <Input id={`customer-${name}`} {...extra} {...fieldProps(name)} {...form.register(name)} />
+    </FormField>
+  );
 
   return (
-    <>
-      <DetailSheet open={!leaving} title={sheetTitle} badge={!isNew ? <ActiveBadge status={customer.status} /> : null} onClose={goToList}>
-      <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
-        <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
-        <FormSection title={t("master:customers.form.sections.basic")}>
-          <FormField
-            id="customer-code"
-            label={t("master:customers.form.fields.code")}
-            required
-            error={message(errors.code)}
-            hint={isNew ? undefined : t("master:common.codeFixed")}
-          >
-            <Input
+    <RecordSheet
+      page={page}
+      entityTitle={t("nav:items.customers")}
+      newTitle={t("master:customers.new")}
+      singular={t("master:customers.singular")}
+      formId="customer-form"
+    >
+      <form id="customer-form" noValidate onSubmit={page.onSubmit} className="flex min-h-0 flex-1 flex-col">
+        <SheetFormBody>
+          <FormSection title={t("master:customers.form.sections.basic")} icon={BuildingIcon}>
+            <FormField
               id="customer-code"
-              autoFocus={isNew}
-              readOnly={!isNew}
-              placeholder={t("master:customers.form.placeholders.code")}
-              className={isNew ? undefined : "bg-muted"}
-              {...fieldProps("code", !isNew)}
-              {...register("code")}
-            />
-          </FormField>
-          <FormField id="customer-name" label={t("master:customers.form.fields.name")} required error={message(errors.name)}>
-            <Input id="customer-name" {...fieldProps("name")} {...register("name")} />
-          </FormField>
-          <FormField id="customer-taxId" label={t("master:customers.form.fields.taxId")} error={message(errors.taxId)}>
-            <Input
-              id="customer-taxId"
-              placeholder={t("master:customers.form.placeholders.taxId")}
-              {...fieldProps("taxId")}
-              {...register("taxId")}
-            />
-          </FormField>
-          <FormField
-            id="customer-address"
-            label={t("master:customers.form.fields.address")}
-            error={message(errors.address)}
-            className="md:col-span-2"
-          >
-            <Textarea id="customer-address" {...fieldProps("address")} {...register("address")} />
-          </FormField>
-        </FormSection>
+              label={t("master:customers.form.fields.code")}
+              required
+              error={message(errors.code)}
+              hint={isNew ? undefined : t("master:common.codeFixed")}
+            >
+              <Input
+                id="customer-code"
+                autoFocus={isNew}
+                readOnly={!isNew}
+                placeholder={t("master:customers.form.placeholders.code")}
+                className={isNew ? undefined : "bg-muted"}
+                {...fieldProps("code", !isNew)}
+                {...form.register("code")}
+              />
+            </FormField>
+            <FormField id="customer-name" label={t("master:customers.form.fields.name")} required error={message(errors.name)}>
+              <Input id="customer-name" {...fieldProps("name")} {...form.register("name")} />
+            </FormField>
+            {text("taxId", t("master:customers.form.fields.taxId"), { placeholder: t("master:customers.form.placeholders.taxId") })}
+            <FormField id="customer-address" label={t("master:customers.form.fields.address")} error={message(errors.address)} className="@lg:col-span-2">
+              <Textarea id="customer-address" {...fieldProps("address")} {...form.register("address")} />
+            </FormField>
+          </FormSection>
 
-        <FormSection title={t("master:customers.form.sections.billing")}>
-          <FormField
-            id="customer-paymentTerms"
-            label={t("master:customers.form.fields.paymentTerms")}
-            error={message(errors.paymentTerms)}
-          >
-            <Controller
-              control={control}
-              name="paymentTerms"
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger id="customer-paymentTerms" className="w-full" {...fieldProps("paymentTerms")}>
-                    <SelectValue placeholder={t("master:customers.form.placeholders.paymentTerms")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PAYMENT_TERMS.map((term) => (
-                      <SelectItem key={term} value={term}>
-                        {t(`master:paymentTerms.${term}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </FormField>
-          <FormField
-            id="customer-creditLimit"
-            label={t("master:customers.form.fields.creditLimit")}
-            error={message(errors.creditLimit)}
-          >
-            <MoneyInput
-              id="customer-creditLimit"
-              placeholder={t("master:customers.form.placeholders.creditLimit")}
-              {...fieldProps("creditLimit")}
-              {...register("creditLimit", { setValueAs: (value) => (value === "" || value == null ? null : Number(value)) })}
-            />
-          </FormField>
-        </FormSection>
+          <FormSection title={t("master:customers.form.sections.billing")} icon={WalletIcon}>
+            <FormField id="customer-paymentTerms" label={t("master:customers.form.fields.paymentTerms")} error={message(errors.paymentTerms)}>
+              <Controller
+                control={form.control}
+                name="paymentTerms"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="customer-paymentTerms" className="w-full" {...fieldProps("paymentTerms")}>
+                      <SelectValue placeholder={t("master:customers.form.placeholders.paymentTerms")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PAYMENT_TERMS.map((term) => (
+                        <SelectItem key={term} value={term}>
+                          {t(`master:paymentTerms.${term}`)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </FormField>
+            <FormField id="customer-creditLimit" label={t("master:customers.form.fields.creditLimit")} error={message(errors.creditLimit)}>
+              <MoneyInput
+                id="customer-creditLimit"
+                placeholder={t("master:customers.form.placeholders.creditLimit")}
+                {...fieldProps("creditLimit")}
+                {...form.register("creditLimit", { setValueAs: (value) => (value === "" || value == null ? null : Number(value)) })}
+              />
+            </FormField>
+          </FormSection>
 
-        <FormSection title={t("master:customers.form.sections.contact")}>
-          <FormField
-            id="customer-contactPerson"
-            label={t("master:customers.form.fields.contactPerson")}
-            error={message(errors.contactPerson)}
-          >
-            <Input id="customer-contactPerson" {...fieldProps("contactPerson")} {...register("contactPerson")} />
-          </FormField>
-          <FormField
-            id="customer-contactPhone"
-            label={t("master:customers.form.fields.contactPhone")}
-            error={message(errors.contactPhone)}
-          >
-            <Input id="customer-contactPhone" type="tel" {...fieldProps("contactPhone")} {...register("contactPhone")} />
-          </FormField>
-          <FormField
-            id="customer-contactEmail"
-            label={t("master:customers.form.fields.contactEmail")}
-            error={message(errors.contactEmail)}
-          >
-            <Input id="customer-contactEmail" type="email" {...fieldProps("contactEmail")} {...register("contactEmail")} />
-          </FormField>
-        </FormSection>
+          <FormSection title={t("master:customers.form.sections.contact")} icon={ContactIcon}>
+            {text("contactPerson", t("master:customers.form.fields.contactPerson"))}
+            {text("contactPhone", t("master:customers.form.fields.contactPhone"), { type: "tel" })}
+            {text("contactEmail", t("master:customers.form.fields.contactEmail"), { type: "email" })}
+          </FormSection>
 
-        {!isNew ? (
-          <p className="text-sm text-muted-foreground">
-            {t("master:common.createdAt")} {formatDateTime(customer.createdAt, i18n.language)} ·{" "}
-            {t("master:common.updatedAt")} {formatDateTime(customer.updatedAt, i18n.language)}
-          </p>
-        ) : null}
-
-        </div>
-
-        <FormFooter inSheet isSubmitting={isSubmitting} onCancel={goToList}>
-          {!isNew ? (
-            <>
-              <Button type="button" variant="outline" onClick={() => setDialog("status")}>
-                {isActive ? t("master:common.deactivate") : t("master:common.reactivate")}
-              </Button>
-              <Button type="button" variant="destructive" onClick={() => setDialog("delete")}>
-                {t("master:common.delete")}
-              </Button>
-            </>
-          ) : null}
-        </FormFooter>
+          {!isNew ? <RecordInfoCard record={record} /> : null}
+        </SheetFormBody>
       </form>
-      </DetailSheet>
-
-      <ConfirmDialog
-        open={dialog === "status"}
-        onOpenChange={(open) => !open && setDialog(null)}
-        title={t(isActive ? "master:customers.form.deactivateTitle" : "master:customers.form.reactivateTitle")}
-        description={t(isActive ? "master:customers.form.deactivateDescription" : "master:customers.form.reactivateDescription")}
-        confirmLabel={isActive ? t("master:common.deactivate") : t("master:common.reactivate")}
-        cancelLabel={t("master:common.cancel")}
-        onConfirm={toggleStatus}
-        busy={busy}
-      />
-      <ConfirmDialog
-        open={dialog === "delete"}
-        onOpenChange={(open) => !open && setDialog(null)}
-        title={t("master:customers.form.deleteTitle")}
-        description={t("master:customers.form.deleteDescription")}
-        confirmLabel={busy ? t("master:common.deleting") : t("master:common.delete")}
-        cancelLabel={t("master:common.cancel")}
-        onConfirm={remove}
-        destructive
-        busy={busy}
-      />
-      <ConfirmDialog
-        open={dialog === "leave"}
-        onOpenChange={(open) => !open && setDialog(null)}
-        title={t("master:common.unsavedTitle")}
-        description={t("master:common.unsavedDescription")}
-        confirmLabel={t("master:common.leave")}
-        cancelLabel={t("master:common.stay")}
-        onConfirm={() => exitTo(listPath)}
-      />
-    </>
+    </RecordSheet>
   );
 }

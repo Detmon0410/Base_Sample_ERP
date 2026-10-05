@@ -35,7 +35,10 @@
     "codeFixed": "The code cannot be changed after it is created.",
     "tabDetails": "Details",
     "searchOptions": "Search by code or name",
-    "noOptions": "No match."
+    "noOptions": "No match.",
+    "recordInfo": "Record information",
+    "activeToggle": "Active. Click to deactivate",
+    "inactiveToggle": "Inactive. Click to activate"
   },
   "validation": {
     "required": "This field is required.",
@@ -211,7 +214,9 @@
     "supplierAdd": "Add a material",
     "materialAdd": "Add a supplier",
     "nothingToAdd": "Every active record is already in the list.",
-    "choose": "Choose a {{name}}"
+    "choose": "Choose a {{name}}",
+    "supplierListTitle": "Materials sold",
+    "materialListTitle": "Suppliers of this material"
   },
   "materials": {
     "singular": "material",
@@ -245,7 +250,11 @@
         "reorderQty": "Suggested quantity when creating a purchase order.",
         "onHand": "Taken from Stock. It cannot be edited here."
       }
-    }
+    },
+    "tabUsedIn": "Used in",
+    "usedInHint": "Products whose BOM contains this material. Change the quantity on the product's BOM tab.",
+    "usedInEmpty": "No product uses this material yet.",
+    "usedInProduct": "Product"
   },
   "suppliers": {
     "singular": "supplier",
@@ -262,5 +271,58 @@
         "code": "S001"
       }
     }
+  },
+  "products": {
+    "singular": "product",
+    "new": "New product",
+    "empty": "No products yet.",
+    "noResult": "No product matches. Clear the search or the status filter.",
+    "tabBom": "BOM",
+    "tabRouting": "Routing",
+    "columns": {
+      "sellingPrice": "Selling price"
+    },
+    "form": {
+      "sections": {
+        "basic": "Basic information"
+      },
+      "fields": {
+        "category": "Category",
+        "sellingPrice": "Selling price"
+      },
+      "placeholders": {
+        "code": "RF-2D"
+      },
+      "hints": {
+        "sellingPrice": "Default price in yen per unit. Price lists can override it per customer."
+      }
+    }
+  },
+  "bom": {
+    "hint": "Materials needed to make ONE unit of this product. Material needs for an order are calculated from this list.",
+    "empty": "No materials yet. Add the first one below.",
+    "qtyPerUnit": "Quantity per unit",
+    "unit": "Unit",
+    "add": "Add a material",
+    "qtyInvalid": "Enter a number above 0 with up to 3 decimals.",
+    "removeTitle": "Remove this material from the BOM?",
+    "removeDescription": "Future orders will no longer count this material for the product. Existing work orders are not changed.",
+    "listTitle": "Materials in the BOM"
+  },
+  "routing": {
+    "hint": "The production steps in order. Each step names the process and the machine or line that does it.",
+    "empty": "No steps yet. Add the first one below.",
+    "listLabel": "Production steps",
+    "step": "Step",
+    "processName": "Process name",
+    "machine": "Machine / line (optional)",
+    "noMachine": "No machine selected",
+    "add": "Add a step",
+    "addStep": "Add step",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "moved": "Order changed",
+    "removeTitle": "Remove this step?",
+    "removeDescription": "The steps after it move up by one. Existing work orders are not changed."
   }
 }

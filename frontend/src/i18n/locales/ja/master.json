@@ -35,7 +35,10 @@
     "codeFixed": "",
     "tabDetails": "",
     "searchOptions": "",
-    "noOptions": ""
+    "noOptions": "",
+    "recordInfo": "",
+    "activeToggle": "",
+    "inactiveToggle": ""
   },
   "validation": {
     "required": "",
@@ -211,7 +214,9 @@
     "supplierAdd": "",
     "materialAdd": "",
     "nothingToAdd": "",
-    "choose": ""
+    "choose": "",
+    "supplierListTitle": "",
+    "materialListTitle": ""
   },
   "materials": {
     "singular": "",
@@ -245,7 +250,11 @@
         "reorderQty": "",
         "onHand": ""
       }
-    }
+    },
+    "tabUsedIn": "",
+    "usedInHint": "",
+    "usedInEmpty": "",
+    "usedInProduct": ""
   },
   "suppliers": {
     "singular": "",
@@ -262,5 +271,58 @@
         "code": ""
       }
     }
+  },
+  "products": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "tabBom": "",
+    "tabRouting": "",
+    "columns": {
+      "sellingPrice": ""
+    },
+    "form": {
+      "sections": {
+        "basic": ""
+      },
+      "fields": {
+        "category": "",
+        "sellingPrice": ""
+      },
+      "placeholders": {
+        "code": ""
+      },
+      "hints": {
+        "sellingPrice": ""
+      }
+    }
+  },
+  "bom": {
+    "hint": "",
+    "empty": "",
+    "qtyPerUnit": "",
+    "unit": "",
+    "add": "",
+    "qtyInvalid": "",
+    "removeTitle": "",
+    "removeDescription": "",
+    "listTitle": ""
+  },
+  "routing": {
+    "hint": "",
+    "empty": "",
+    "listLabel": "",
+    "step": "",
+    "processName": "",
+    "machine": "",
+    "noMachine": "",
+    "add": "",
+    "addStep": "",
+    "moveUp": "",
+    "moveDown": "",
+    "moved": "",
+    "removeTitle": "",
+    "removeDescription": ""
   }
 }

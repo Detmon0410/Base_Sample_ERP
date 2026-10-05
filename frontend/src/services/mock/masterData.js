@@ -349,6 +349,189 @@ function supplierMaterialRoutes({ guard, links, suppliers, materials }) {
   };
 }
 
+// ---- Products (M3) with BOM (M5) and routing ---------------------------------------------------------
+
+const sampleProducts = () =>
+  withIds([
+    { code: "RF-2D", name: "Refrigerator 2-Door 15Q", uom: "pcs", sellingPrice: 68000, category: "Refrigerator" },
+    { code: "RF-1D", name: "Refrigerator 1-Door 9Q", uom: "pcs", sellingPrice: 41000, category: "Refrigerator" },
+  ]);
+
+// Bill of materials: quantity of a material for ONE unit of the product.
+const sampleBom = () => [
+  { id: 1, productId: 1, materialId: 1, qty: 1 },
+  { id: 2, productId: 1, materialId: 2, qty: 2 },
+  { id: 3, productId: 1, materialId: 3, qty: 3.5 },
+  { id: 4, productId: 1, materialId: 4, qty: 12 },
+  { id: 5, productId: 1, materialId: 5, qty: 3 },
+  { id: 6, productId: 1, materialId: 6, qty: 1 },
+  { id: 7, productId: 2, materialId: 1, qty: 1 },
+  { id: 8, productId: 2, materialId: 2, qty: 1 },
+  { id: 9, productId: 2, materialId: 3, qty: 2 },
+  { id: 10, productId: 2, materialId: 4, qty: 8 },
+  { id: 11, productId: 2, materialId: 5, qty: 2 },
+];
+
+// Production steps of a product, in order (stepNo 1, 2, 3 …). The machine is optional.
+const sampleRouting = () => [
+  { id: 1, productId: 1, stepNo: 1, processName: "Press and form body", machineId: 1 },
+  { id: 2, productId: 1, stepNo: 2, processName: "Foam insulation", machineId: 2 },
+  { id: 3, productId: 1, stepNo: 3, processName: "Assembly and packing", machineId: 3 },
+  { id: 4, productId: 1, stepNo: 4, processName: "Quality check", machineId: 4 },
+  { id: 5, productId: 2, stepNo: 1, processName: "Press and form body", machineId: 1 },
+  { id: 6, productId: 2, stepNo: 2, processName: "Assembly and packing", machineId: 3 },
+];
+
+function productValidator(uomRows) {
+  return (body) => {
+    const errors = [];
+    const text = (field) => String(body[field] ?? "").trim();
+    for (const field of ["code", "name", "uom"]) if (!text(field)) errors.push({ path: [field], message: "REQUIRED" });
+    if (text("uom") && !uomRows.some((row) => row.code === body.uom)) errors.push({ path: ["uom"], message: "INVALID" });
+    if (body.sellingPrice != null && (!Number.isInteger(body.sellingPrice) || body.sellingPrice < 0)) {
+      errors.push({ path: ["sellingPrice"], message: "INVALID" });
+    }
+    if (text("category").length > 50) errors.push({ path: ["category"], message: "INVALID" });
+    return errors;
+  };
+}
+
+/** BOM lines: list by product or by material, add, change quantity, remove. */
+function bomRoutes({ guard, bom, products, materials }) {
+  let nextId = Math.max(0, ...bom.map((line) => line.id)) + 1;
+  const withNames = (line) => {
+    const product = products.find((row) => row.id === line.productId);
+    const material = materials.find((row) => row.id === line.materialId);
+    return {
+      ...line,
+      productCode: product?.code,
+      productName: product?.name,
+      materialCode: material?.code,
+      materialName: material?.name,
+      uom: material?.uom,
+    };
+  };
+  const validQty = (qty) => typeof qty === "number" && Number.isFinite(qty) && qty > 0 && Math.round(qty * 1000) / 1000 === qty;
+  const find = (id) => {
+    const line = bom.find((row) => row.id === Number(id));
+    if (!line) throw new MockHttpError(404, "NOT_FOUND", "Record not found");
+    return line;
+  };
+
+  return {
+    "GET /master/bom-lines": ({ authorization, query }) => {
+      guard(authorization);
+      if (listShouldFail()) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
+      const items = bom
+        .filter((line) => (!query.productId || line.productId === Number(query.productId)) && (!query.materialId || line.materialId === Number(query.materialId)))
+        .map(withNames);
+      return new MockResponse({ data: items, meta: { page: 1, pageSize: items.length, total: items.length } });
+    },
+    "POST /master/bom-lines": ({ authorization, body }) => {
+      guard(authorization);
+      const errors = [];
+      if (!products.some((row) => row.id === Number(body.productId))) errors.push({ path: ["productId"], message: "INVALID" });
+      if (!materials.some((row) => row.id === Number(body.materialId))) errors.push({ path: ["materialId"], message: "INVALID" });
+      if (!validQty(body.qty)) errors.push({ path: ["qty"], message: "INVALID" });
+      if (errors.length) throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", errors);
+      if (bom.some((line) => line.productId === Number(body.productId) && line.materialId === Number(body.materialId))) {
+        throw new MockHttpError(409, "ALREADY_LINKED", "This material is already in the BOM");
+      }
+      const line = { id: nextId++, productId: Number(body.productId), materialId: Number(body.materialId), qty: body.qty };
+      bom.push(line);
+      return new MockResponse({ data: withNames(line), status: 201, message: "Created" });
+    },
+    "PUT /master/bom-lines/:id": ({ authorization, params, body }) => {
+      guard(authorization);
+      const line = find(params.id);
+      if (!validQty(body.qty)) throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["qty"], message: "INVALID" }]);
+      line.qty = body.qty;
+      return withNames(line);
+    },
+    "DELETE /master/bom-lines/:id": ({ authorization, params }) => {
+      guard(authorization);
+      bom.splice(bom.indexOf(find(params.id)), 1);
+      return null;
+    },
+  };
+}
+
+/** Routing steps: list by product (in order), add at the end, change, remove (steps are renumbered), move up / down. */
+function routingRoutes({ guard, routing, products, machines }) {
+  let nextId = Math.max(0, ...routing.map((step) => step.id)) + 1;
+  const withNames = (step) => {
+    const machine = machines.find((row) => row.id === step.machineId);
+    return { ...step, machineCode: machine?.code ?? null, machineName: machine?.name ?? null };
+  };
+  const stepsOf = (productId) => routing.filter((step) => step.productId === productId).sort((a, b) => a.stepNo - b.stepNo);
+  const renumber = (productId) => stepsOf(productId).forEach((step, index) => (step.stepNo = index + 1));
+  const find = (id) => {
+    const step = routing.find((row) => row.id === Number(id));
+    if (!step) throw new MockHttpError(404, "NOT_FOUND", "Record not found");
+    return step;
+  };
+  const check = (body, { creating }) => {
+    const errors = [];
+    if (creating && !products.some((row) => row.id === Number(body.productId))) errors.push({ path: ["productId"], message: "INVALID" });
+    const name = String(body.processName ?? "").trim();
+    if (!name) errors.push({ path: ["processName"], message: "REQUIRED" });
+    else if (name.length > 100) errors.push({ path: ["processName"], message: "INVALID" });
+    if (body.machineId != null && !machines.some((row) => row.id === Number(body.machineId))) errors.push({ path: ["machineId"], message: "INVALID" });
+    if (errors.length) throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", errors);
+  };
+
+  return {
+    "GET /master/routing-steps": ({ authorization, query }) => {
+      guard(authorization);
+      if (listShouldFail()) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
+      const items = routing
+        .filter((step) => !query.productId || step.productId === Number(query.productId))
+        .sort((a, b) => a.productId - b.productId || a.stepNo - b.stepNo)
+        .map(withNames);
+      return new MockResponse({ data: items, meta: { page: 1, pageSize: items.length, total: items.length } });
+    },
+    "POST /master/routing-steps": ({ authorization, body }) => {
+      guard(authorization);
+      check(body, { creating: true });
+      const productId = Number(body.productId);
+      const step = {
+        id: nextId++,
+        productId,
+        stepNo: stepsOf(productId).length + 1,
+        processName: String(body.processName).trim(),
+        machineId: body.machineId == null ? null : Number(body.machineId),
+      };
+      routing.push(step);
+      return new MockResponse({ data: withNames(step), status: 201, message: "Created" });
+    },
+    "PUT /master/routing-steps/:id": ({ authorization, params, body }) => {
+      guard(authorization);
+      const step = find(params.id);
+      check(body, { creating: false });
+      step.processName = String(body.processName).trim();
+      step.machineId = body.machineId == null ? null : Number(body.machineId);
+      return withNames(step);
+    },
+    "POST /master/routing-steps/:id/move": ({ authorization, params, body }) => {
+      guard(authorization);
+      const step = find(params.id);
+      const steps = stepsOf(step.productId);
+      const index = steps.indexOf(step);
+      const target = body.direction === "up" ? index - 1 : body.direction === "down" ? index + 1 : -1;
+      if (target < 0 || target >= steps.length) throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["direction"], message: "INVALID" }]);
+      [steps[index].stepNo, steps[target].stepNo] = [steps[target].stepNo, steps[index].stepNo];
+      return withNames(step);
+    },
+    "DELETE /master/routing-steps/:id": ({ authorization, params }) => {
+      guard(authorization);
+      const step = find(params.id);
+      routing.splice(routing.indexOf(step), 1);
+      renumber(step.productId);
+      return null;
+    },
+  };
+}
+
 /** Master data routes. `guard` throws 401/403 unless the caller is an Admin (Q6/Q7). */
 export function masterDataRoutes(guard) {
   const customers = sampleCustomers();
@@ -356,6 +539,10 @@ export function masterDataRoutes(guard) {
   const materialRows = sampleMaterials();
   const supplierRows = sampleSuppliers();
   const links = sampleLinks();
+  const productRows = sampleProducts();
+  const bom = sampleBom();
+  const routing = sampleRouting();
+  const machineRows = sampleMachines();
   return {
     ...createMockCrud("/master/customers", customers, {
       searchFields: ["code", "name"],
@@ -380,7 +567,7 @@ export function masterDataRoutes(guard) {
       isInUse: (row) => row.code === "WH-R" || row.code === "WH-F",
       guard,
     }),
-    ...createMockCrud("/master/machines", sampleMachines(), {
+    ...createMockCrud("/master/machines", machineRows, {
       searchFields: ["code", "name"],
       sortable: ["code", "name", "capacityPerDay", "status"],
       validate: simpleValidator({ number: ["capacityPerDay"], max: { capacityUnit: 20 } }),
@@ -410,6 +597,19 @@ export function masterDataRoutes(guard) {
       guard,
     }),
     ...supplierMaterialRoutes({ guard, links, suppliers: supplierRows, materials: materialRows }),
+    ...createMockCrud("/master/products", productRows, {
+      searchFields: ["code", "name", "category"],
+      sortable: ["code", "name", "uom", "sellingPrice", "status"],
+      validate: productValidator(uomRows),
+      // Both products stand for products that Sale Orders and Work Orders already use.
+      isInUse: (row) => row.code === "RF-2D" || row.code === "RF-1D",
+      onRemove: (row) => {
+        for (const list of [bom, routing]) for (let index = list.length - 1; index >= 0; index -= 1) if (list[index].productId === row.id) list.splice(index, 1);
+      },
+      guard,
+    }),
+    ...bomRoutes({ guard, bom, products: productRows, materials: materialRows }),
+    ...routingRoutes({ guard, routing, products: productRows, machines: machineRows }),
     ...createMockCrud("/master/employees", sampleEmployees(), {
       searchFields: ["code", "name", "position"],
       sortable: ["code", "name", "position", "status"],

@@ -7,6 +7,8 @@ import { LoginPage } from "@/pages/auth/LoginPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { FoundationDemoPage } from "@/pages/dev/FoundationDemoPage";
 import { CustomersPage } from "@/pages/master/customers/CustomersPage";
+import { MaterialsPage } from "@/pages/master/materials/MaterialsPage";
+import { SuppliersPage } from "@/pages/master/suppliers/SuppliersPage";
 import { EmployeesPage, MachinesPage, UomPage, WarehousesPage } from "@/pages/master/simple/SimpleMasterPage";
 import { ForbiddenPage } from "@/pages/system/ForbiddenPage";
 import { NotFoundPage } from "@/pages/system/NotFoundPage";
@@ -23,6 +25,8 @@ const IMPLEMENTED_PAGES = {
   warehouses: WarehousesPage,
   machines: MachinesPage,
   employees: EmployeesPage,
+  materials: MaterialsPage,
+  suppliers: SuppliersPage,
 };
 
 /**

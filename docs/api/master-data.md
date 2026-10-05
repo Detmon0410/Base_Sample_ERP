@@ -181,8 +181,76 @@ model Employee {
 }
 ```
 
-## M2, M3, M4, M5, M10
-Fields are listed in the F3 spec (section 3) and will be copied here when each page is built (they have sub-lists: supplier materials, BOM, routing). Shared rules above apply unchanged.
+## M4 Materials — `/master/materials`
+Fields: `code`, `name`, `uom` (required, the **code** of an active unit from `/master/uom`), `reorderPoint` (required, number ≥ 0, up to 3 decimals), `reorderQty` (optional, number > 0), `status`. **`onHand` is read-only**: it comes from Stock (sum of the stock balances) and is ignored if sent in POST / PUT. A material is in **shortage** when `onHand <= reorderPoint`. Sort fields: `code`, `name`, `uom`, `reorderPoint`, `status`. Delete is blocked (`IN_USE`) while a BOM, stock record or purchase order uses it; deleting an unused material also removes its supplier links. Validation codes: `REQUIRED`, `INVALID`.
+
+## M2 Suppliers — `/master/suppliers`
+Fields: `code`, `name`, `taxId`, `address`, `contactPerson`, `contactPhone`, `contactEmail`, `paymentTerms` (same list as Customers), `status`. Same rules as Customers without `creditLimit`. Sort fields: `code`, `name`, `paymentTerms`, `status`. Delete is blocked while purchase orders use it; deleting an unused supplier also removes its links.
+
+## Supplier ↔ material links — `/master/supplier-materials`
+One row says "this supplier sells this material at this price". The Supplier page (tab "Materials supplied") and the Material page (tab "Suppliers") edit the same rows, each change is saved at once.
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/master/supplier-materials?supplierId=` or `?materialId=` | all links of one supplier or one material (no paging); each item carries the names of both sides |
+| POST | `/master/supplier-materials` | body `{ supplierId, materialId, priceJpy, leadTimeDays }`; `409 ALREADY_LINKED` when the pair exists |
+| PUT | `/master/supplier-materials/:id` | body `{ priceJpy, leadTimeDays }` only (the pair cannot change; remove and add instead) |
+| DELETE | `/master/supplier-materials/:id` | |
+
+`priceJpy` = whole yen per unit of the material (≥ 0). `leadTimeDays` = whole days (≥ 0). Response item:
+
+```json
+{ "id": 1, "supplierId": 1, "materialId": 1, "priceJpy": 3800, "leadTimeDays": 14,
+  "supplierCode": "S001", "supplierName": "CompCo", "materialCode": "COMP", "materialName": "Compressor", "uom": "pcs" }
+```
+
+```prisma
+model Material {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique @db.VarChar(20)
+  name         String   @db.VarChar(100)
+  uomId        Int
+  uom          Uom      @relation(fields: [uomId], references: [id])   // the API exposes the unit code
+  reorderPoint Decimal  @db.Decimal(12, 3)
+  reorderQty   Decimal? @db.Decimal(12, 3)
+  status       String   @default("active") @db.VarChar(10)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  suppliers    SupplierMaterial[]
+}
+
+model Supplier {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique @db.VarChar(20)
+  name          String   @db.VarChar(100)
+  taxId         String?  @db.VarChar(14)
+  address       String?  @db.VarChar(500)
+  contactPerson String?  @db.VarChar(100)
+  contactPhone  String?  @db.VarChar(30)
+  contactEmail  String?  @db.VarChar(100)
+  paymentTerms  String?  @db.VarChar(10)
+  status        String   @default("active") @db.VarChar(10)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  materials     SupplierMaterial[]
+}
+
+model SupplierMaterial {
+  id           Int      @id @default(autoincrement())
+  supplierId   Int
+  materialId   Int
+  priceJpy     Int
+  leadTimeDays Int
+  supplier     Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  material     Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  @@unique([supplierId, materialId])
+}
+```
+
+New error code: `ALREADY_LINKED` (409).
+
+## M3, M5, M10
+Fields are listed in the F3 spec (section 3) and will be copied here when each page is built (Products have sub-lists: BOM and routing). Shared rules above apply unchanged.
 
 ## Backend checklist
 - [ ] Prisma models + migration + seed (the sample rows from `master_data_req.md`)

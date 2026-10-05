@@ -32,7 +32,10 @@
     "unsavedDescription": "",
     "stay": "",
     "leave": "",
-    "codeFixed": ""
+    "codeFixed": "",
+    "tabDetails": "",
+    "searchOptions": "",
+    "noOptions": ""
   },
   "validation": {
     "required": "",
@@ -40,7 +43,9 @@
     "amountInvalid": "",
     "taxIdInvalid": "",
     "maxLength": "",
-    "numberInvalid": ""
+    "numberInvalid": "",
+    "quantityInvalid": "",
+    "quantityPositive": ""
   },
   "errors": {
     "CODE_ALREADY_EXISTS": "",
@@ -48,7 +53,8 @@
     "NOT_FOUND": "",
     "VALIDATION_ERROR": "",
     "FORBIDDEN": "",
-    "UNKNOWN": ""
+    "UNKNOWN": "",
+    "ALREADY_LINKED": ""
   },
   "paymentTerms": {
     "NET_15": "",
@@ -183,6 +189,77 @@
       "placeholders": {
         "code": "",
         "position": ""
+      }
+    }
+  },
+  "links": {
+    "supplier": "",
+    "material": "",
+    "price": "",
+    "leadTime": "",
+    "days_one": "",
+    "days_other": "",
+    "actions": "",
+    "remove": "",
+    "removeTitle": "",
+    "removeDescription": "",
+    "add": "",
+    "supplierHint": "",
+    "materialHint": "",
+    "supplierEmpty": "",
+    "materialEmpty": "",
+    "supplierAdd": "",
+    "materialAdd": "",
+    "nothingToAdd": "",
+    "choose": ""
+  },
+  "materials": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "tabSuppliers": "",
+    "shortage": "",
+    "stockOk": "",
+    "columns": {
+      "uom": "",
+      "reorderPoint": ""
+    },
+    "form": {
+      "sections": {
+        "basic": "",
+        "reorder": "",
+        "stock": ""
+      },
+      "fields": {
+        "uom": "",
+        "reorderPoint": "",
+        "reorderQty": ""
+      },
+      "placeholders": {
+        "code": "",
+        "uom": ""
+      },
+      "hints": {
+        "reorderPoint": "",
+        "reorderQty": "",
+        "onHand": ""
+      }
+    }
+  },
+  "suppliers": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "tabMaterials": "",
+    "form": {
+      "sections": {
+        "basic": "",
+        "contact": ""
+      },
+      "placeholders": {
+        "code": ""
       }
     }
   }

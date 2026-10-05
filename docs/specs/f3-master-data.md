@@ -1,6 +1,6 @@
 # F3 Spec — Master Data (M1–M10)
 
-Status: **APPROVED with the suggested answers (Q1–Q10). Pattern + M1 Customers + M9 UoM + M6 Warehouses + M7 Machines + M8 Employees BUILT; M2, M3, M4, M5, M10 not yet** · Plan: [../frontend-plan.md](../frontend-plan.md) · Data source: `BaseRequirement_md/master_data_req.md` (+ `Sale_req.md`, `Factory_req.md`)
+Status: **APPROVED with the suggested answers (Q1–Q10). Pattern + M1 Customers + M9 UoM + M6 Warehouses + M7 Machines + M8 Employees + M4 Materials + M2 Suppliers (with supplier–material links) BUILT; M3, M5, M10 not yet** · Plan: [../frontend-plan.md](../frontend-plan.md) · Data source: `BaseRequirement_md/master_data_req.md` (+ `Sale_req.md`, `Factory_req.md`)
 After approval: build the shared list/form pattern with mock data, then write `docs/api/master-data.md` for the backend.
 
 Why now: Sale, Factory, Stock, Purchase and Accounting all pick customers, suppliers, products, materials, BOM, warehouses and machines from these lists. The same screens (list, form, deactivate) are also the pattern for every later module.
@@ -189,3 +189,8 @@ List: search, status filter, sort, paging, URL restored on reload, empty / loadi
 | Employee link to a user account | Not built | Users (U1/U2) do not exist yet |
 | Order M9 → M6 → M4 → M2 → M3 → M7 → M8 | M9, M6, M7, M8 done together (flat fields); M4, M2, M3 (+BOM, routing, supplier materials) are next | They need tabs and a searchable select |
 | Form as a separate page (`/new`, `/:id`) | Opens as a **sheet on the right** over the list (list stays visible, blurred slightly). Same URLs; the list keeps its search / filter / page in the URL and reloads after save / delete. Close (X, Cancel, Esc) asks first when there are unsaved changes | Requested after review. `DetailSheet` (components/common) + `FormFooter inSheet`. `components/ui/sheet.jsx` overlay is customised (darker, 3px blur) — restore after a shadcn re-install |
+| Searchable select with `command` + `popover` | `EntitySelect` built on `popover` + a search box and a list; no `cmdk` | Fewer dependencies; the lists are short (≤ 100 options) |
+| Sub-list edited with the form's Save | Links (supplier ↔ material) are saved one by one (add / change / remove save at once); the tab is disabled until the record exists | A link needs both ids, and users edit prices without re-saving the form |
+| Tab "Used in" on a material | Not built yet | Needs Products and BOM (M3) |
+| Tabs | `Details` + one sub-list tab inside the detail sheet | `ui/tabs.jsx`, `ui/popover.jsx` written by hand with `radix-ui` |
+| One form page per entity | `useRecordForm` hook + `RecordDialogs` hold the load / save / deactivate / delete / leave logic for Materials and Suppliers (Customers and the flat entities keep their own copy) | Less repeated code; move the others onto it when they are next touched |

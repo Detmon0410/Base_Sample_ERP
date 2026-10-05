@@ -22,7 +22,8 @@ const matches = (value, text) => String(value ?? "").toLowerCase().includes(text
  * `options.guard(authorization)` — throws when the user may not use master data.
  */
 export function createMockCrud(basePath, rows, options) {
-  const { searchFields, sortable, validate, isInUse = () => false, guard } = options;
+  const { searchFields, sortable, validate, isInUse = () => false, guard, readOnly = [], onRemove } = options;
+  const stripReadOnly = (body) => Object.fromEntries(Object.entries(body).filter(([key]) => !readOnly.includes(key)));
   let nextId = Math.max(0, ...rows.map((row) => row.id)) + 1;
 
   const find = (id) => {
@@ -86,7 +87,7 @@ export function createMockCrud(basePath, rows, options) {
       guard(authorization);
       checkBody(body);
       const now = new Date().toISOString();
-      const row = { ...body, code: String(body.code).trim(), id: nextId++, status: "active", createdAt: now, updatedAt: now };
+      const row = { ...stripReadOnly(body), code: String(body.code).trim(), id: nextId++, status: "active", createdAt: now, updatedAt: now };
       rows.push(row);
       return new MockResponse({ data: row, status: 201, message: "Created" });
     },
@@ -96,7 +97,7 @@ export function createMockCrud(basePath, rows, options) {
       const row = find(params.id);
       // The code is fixed after creation: it is ignored on update.
       checkBody({ ...body, code: row.code }, row.id);
-      Object.assign(row, body, { id: row.id, code: row.code, status: row.status, updatedAt: new Date().toISOString() });
+      Object.assign(row, stripReadOnly(body), { id: row.id, code: row.code, status: row.status, updatedAt: new Date().toISOString() });
       return row;
     },
 
@@ -116,6 +117,7 @@ export function createMockCrud(basePath, rows, options) {
       const row = find(params.id);
       if (isInUse(row)) throw new MockHttpError(409, "IN_USE", "Record is used by other data");
       rows.splice(rows.indexOf(row), 1);
+      onRemove?.(row);
       return null;
     },
   };
@@ -220,9 +222,140 @@ const sampleEmployees = () =>
     { code: "E003", name: "Haruka Sato", position: "Operator" },
   ]);
 
+// ---- Materials (M4), Suppliers (M2) and the supplier–material links ----------------------------------
+
+const sampleMaterials = () =>
+  withIds([
+    { code: "COMP", name: "Compressor", uom: "pcs", reorderPoint: 20, reorderQty: 50, onHand: 35 },
+    { code: "DOOR", name: "Door panel", uom: "pcs", reorderPoint: 30, reorderQty: 100, onHand: 18 },
+    { code: "FOAM", name: "Insulation foam", uom: "kg", reorderPoint: 100, reorderQty: 300, onHand: 450 },
+    { code: "STEEL", name: "Steel sheet", uom: "kg", reorderPoint: 200, reorderQty: 800, onHand: 210 },
+    { code: "SHELF", name: "Shelf", uom: "pcs", reorderPoint: 50, reorderQty: 200, onHand: 300 },
+    { code: "THERMO", name: "Thermostat", uom: "pcs", reorderPoint: 40, reorderQty: 150, onHand: 25 },
+  ]);
+
+const sampleSuppliers = () =>
+  withIds([
+    { code: "S001", name: "CompCo", taxId: "1111111111", paymentTerms: "NET_30", contactPerson: "Mori", contactPhone: "06-1111-2222", contactEmail: "sales@compco.example.jp", address: "2-3-4 Umeda, Osaka" },
+    { code: "S002", name: "SteelCo", taxId: "2222222222", paymentTerms: "NET_45", contactPerson: "Ito", contactPhone: "052-333-4444", contactEmail: "info@steelco.example.jp", address: "5-6-7 Sakae, Nagoya" },
+    { code: "S003", name: "BackupCo", taxId: "3333333333", paymentTerms: "NET_30", contactPerson: "", contactPhone: "", contactEmail: "", address: "" },
+  ]).map((row) => ({ contactPerson: "", contactPhone: "", contactEmail: "", address: "", ...row }));
+
+// Which supplier sells which material (price per unit in JPY, lead time in days).
+const sampleLinks = () => [
+  { id: 1, supplierId: 1, materialId: 1, priceJpy: 3800, leadTimeDays: 14 },
+  { id: 2, supplierId: 1, materialId: 6, priceJpy: 650, leadTimeDays: 10 },
+  { id: 3, supplierId: 2, materialId: 4, priceJpy: 180, leadTimeDays: 7 },
+  { id: 4, supplierId: 2, materialId: 2, priceJpy: 2200, leadTimeDays: 12 },
+  { id: 5, supplierId: 3, materialId: 1, priceJpy: 4100, leadTimeDays: 7 },
+  { id: 6, supplierId: 3, materialId: 3, priceJpy: 520, leadTimeDays: 5 },
+  { id: 7, supplierId: 3, materialId: 5, priceJpy: 340, leadTimeDays: 9 },
+];
+
+const isQty = (value, { min = 0, allowZero = true } = {}) =>
+  typeof value === "number" && Number.isFinite(value) && (allowZero ? value >= min : value > min);
+
+function materialValidator(uomRows) {
+  return (body) => {
+    const errors = [];
+    const text = (field) => String(body[field] ?? "").trim();
+    for (const field of ["code", "name", "uom"]) if (!text(field)) errors.push({ path: [field], message: "REQUIRED" });
+    if (text("uom") && !uomRows.some((row) => row.code === body.uom)) errors.push({ path: ["uom"], message: "INVALID" });
+    if (!isQty(body.reorderPoint)) errors.push({ path: ["reorderPoint"], message: body.reorderPoint == null ? "REQUIRED" : "INVALID" });
+    if (body.reorderQty != null && !isQty(body.reorderQty, { allowZero: false })) errors.push({ path: ["reorderQty"], message: "INVALID" });
+    return errors;
+  };
+}
+
+function validateSupplier(body) {
+  const errors = [];
+  const text = (field) => String(body[field] ?? "").trim();
+  if (!text("code")) errors.push({ path: ["code"], message: "REQUIRED" });
+  if (!text("name")) errors.push({ path: ["name"], message: "REQUIRED" });
+  if (text("contactEmail") && !EMAIL.test(text("contactEmail"))) errors.push({ path: ["contactEmail"], message: "INVALID_EMAIL" });
+  if (body.paymentTerms && !PAYMENT_TERMS.includes(body.paymentTerms)) errors.push({ path: ["paymentTerms"], message: "INVALID" });
+  return errors;
+}
+
+/** Routes of the supplier–material links: list (by supplier or material), add, change, remove. */
+function supplierMaterialRoutes({ guard, links, suppliers, materials }) {
+  let nextId = Math.max(0, ...links.map((link) => link.id)) + 1;
+  const withNames = (link) => {
+    const supplier = suppliers.find((row) => row.id === link.supplierId);
+    const material = materials.find((row) => row.id === link.materialId);
+    return {
+      ...link,
+      supplierCode: supplier?.code,
+      supplierName: supplier?.name,
+      materialCode: material?.code,
+      materialName: material?.name,
+      uom: material?.uom,
+    };
+  };
+  const checkBody = (body, { creating }) => {
+    const errors = [];
+    if (creating) {
+      if (!suppliers.some((row) => row.id === Number(body.supplierId))) errors.push({ path: ["supplierId"], message: "INVALID" });
+      if (!materials.some((row) => row.id === Number(body.materialId))) errors.push({ path: ["materialId"], message: "INVALID" });
+    }
+    if (!Number.isInteger(body.priceJpy) || body.priceJpy < 0) errors.push({ path: ["priceJpy"], message: "INVALID" });
+    if (!Number.isInteger(body.leadTimeDays) || body.leadTimeDays < 0) errors.push({ path: ["leadTimeDays"], message: "INVALID" });
+    if (errors.length) throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", errors);
+  };
+  const find = (id) => {
+    const link = links.find((row) => row.id === Number(id));
+    if (!link) throw new MockHttpError(404, "NOT_FOUND", "Record not found");
+    return link;
+  };
+
+  return {
+    "GET /master/supplier-materials": ({ authorization, query }) => {
+      guard(authorization);
+      if (listShouldFail()) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
+      const items = links
+        .filter((link) => (!query.supplierId || link.supplierId === Number(query.supplierId)) && (!query.materialId || link.materialId === Number(query.materialId)))
+        .map(withNames);
+      return new MockResponse({ data: items, meta: { page: 1, pageSize: items.length, total: items.length } });
+    },
+    "POST /master/supplier-materials": ({ authorization, body }) => {
+      guard(authorization);
+      checkBody(body, { creating: true });
+      if (links.some((link) => link.supplierId === Number(body.supplierId) && link.materialId === Number(body.materialId))) {
+        throw new MockHttpError(409, "ALREADY_LINKED", "This supplier already supplies this material");
+      }
+      const link = {
+        id: nextId++,
+        supplierId: Number(body.supplierId),
+        materialId: Number(body.materialId),
+        priceJpy: body.priceJpy,
+        leadTimeDays: body.leadTimeDays,
+      };
+      links.push(link);
+      return new MockResponse({ data: withNames(link), status: 201, message: "Created" });
+    },
+    "PUT /master/supplier-materials/:id": ({ authorization, params, body }) => {
+      guard(authorization);
+      const link = find(params.id);
+      checkBody(body, { creating: false });
+      link.priceJpy = body.priceJpy;
+      link.leadTimeDays = body.leadTimeDays;
+      return withNames(link);
+    },
+    "DELETE /master/supplier-materials/:id": ({ authorization, params }) => {
+      guard(authorization);
+      links.splice(links.indexOf(find(params.id)), 1);
+      return null;
+    },
+  };
+}
+
 /** Master data routes. `guard` throws 401/403 unless the caller is an Admin (Q6/Q7). */
 export function masterDataRoutes(guard) {
   const customers = sampleCustomers();
+  const uomRows = sampleUom();
+  const materialRows = sampleMaterials();
+  const supplierRows = sampleSuppliers();
+  const links = sampleLinks();
   return {
     ...createMockCrud("/master/customers", customers, {
       searchFields: ["code", "name"],
@@ -233,7 +366,7 @@ export function masterDataRoutes(guard) {
       guard,
     }),
     // The first four units, both warehouses and the production lines stand for records that documents already use.
-    ...createMockCrud("/master/uom", sampleUom(), {
+    ...createMockCrud("/master/uom", uomRows, {
       searchFields: ["code", "name"],
       sortable: ["code", "name", "status"],
       validate: simpleValidator({}),
@@ -254,6 +387,29 @@ export function masterDataRoutes(guard) {
       isInUse: (row) => ["LN-01", "LN-02", "LN-03"].includes(row.code),
       guard,
     }),
+    ...createMockCrud("/master/materials", materialRows, {
+      searchFields: ["code", "name"],
+      sortable: ["code", "name", "uom", "reorderPoint", "status"],
+      validate: materialValidator(uomRows),
+      readOnly: ["onHand"],
+      // The first four materials stand for materials that BOMs and purchase orders already use.
+      isInUse: (row) => ["COMP", "DOOR", "FOAM", "STEEL"].includes(row.code),
+      onRemove: (row) => {
+        for (let index = links.length - 1; index >= 0; index -= 1) if (links[index].materialId === row.id) links.splice(index, 1);
+      },
+      guard,
+    }),
+    ...createMockCrud("/master/suppliers", supplierRows, {
+      searchFields: ["code", "name"],
+      sortable: ["code", "name", "paymentTerms", "status"],
+      validate: validateSupplier,
+      isInUse: (row) => row.code === "S001" || row.code === "S002",
+      onRemove: (row) => {
+        for (let index = links.length - 1; index >= 0; index -= 1) if (links[index].supplierId === row.id) links.splice(index, 1);
+      },
+      guard,
+    }),
+    ...supplierMaterialRoutes({ guard, links, suppliers: supplierRows, materials: materialRows }),
     ...createMockCrud("/master/employees", sampleEmployees(), {
       searchFields: ["code", "name", "position"],
       sortable: ["code", "name", "position", "status"],

@@ -32,7 +32,10 @@
     "unsavedDescription": "Your changes have not been saved.",
     "stay": "Keep editing",
     "leave": "Leave",
-    "codeFixed": "The code cannot be changed after it is created."
+    "codeFixed": "The code cannot be changed after it is created.",
+    "tabDetails": "Details",
+    "searchOptions": "Search by code or name",
+    "noOptions": "No match."
   },
   "validation": {
     "required": "This field is required.",
@@ -40,7 +43,9 @@
     "amountInvalid": "Enter a whole number of yen, 0 or more.",
     "taxIdInvalid": "Use digits only, with an optional T at the start.",
     "maxLength": "This is too long. Please shorten it.",
-    "numberInvalid": "Enter a whole number, 0 or more."
+    "numberInvalid": "Enter a whole number, 0 or more.",
+    "quantityInvalid": "Enter a number, 0 or more.",
+    "quantityPositive": "Enter a number greater than 0."
   },
   "errors": {
     "CODE_ALREADY_EXISTS": "This code is already used. Enter a different code.",
@@ -48,7 +53,8 @@
     "NOT_FOUND": "This record no longer exists.",
     "VALIDATION_ERROR": "Please check the highlighted fields.",
     "FORBIDDEN": "You do not have permission to change master data.",
-    "UNKNOWN": "Something went wrong. Please try again."
+    "UNKNOWN": "Something went wrong. Please try again.",
+    "ALREADY_LINKED": "This supplier is already linked to this material."
   },
   "paymentTerms": {
     "NET_15": "Net 15",
@@ -183,6 +189,77 @@
       "placeholders": {
         "code": "E001",
         "position": "Operator"
+      }
+    }
+  },
+  "links": {
+    "supplier": "Supplier",
+    "material": "Material",
+    "price": "Price per unit",
+    "leadTime": "Lead time",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "actions": "Actions",
+    "remove": "Remove",
+    "removeTitle": "Remove this link?",
+    "removeDescription": "The supplier will no longer be offered for this material. Existing purchase orders are not changed.",
+    "add": "Add",
+    "supplierHint": "Materials this supplier sells, with the price per unit and the lead time.",
+    "materialHint": "Suppliers that sell this material, with the price per unit and the lead time.",
+    "supplierEmpty": "No materials yet. Add the first one below.",
+    "materialEmpty": "No suppliers yet. Add the first one below.",
+    "supplierAdd": "Add a material",
+    "materialAdd": "Add a supplier",
+    "nothingToAdd": "Every active record is already in the list.",
+    "choose": "Choose a {{name}}"
+  },
+  "materials": {
+    "singular": "material",
+    "new": "New material",
+    "empty": "No materials yet.",
+    "noResult": "No material matches. Clear the search or the status filter.",
+    "tabSuppliers": "Suppliers",
+    "shortage": "Shortage",
+    "stockOk": "Enough stock",
+    "columns": {
+      "uom": "Unit",
+      "reorderPoint": "Reorder point"
+    },
+    "form": {
+      "sections": {
+        "basic": "Basic information",
+        "reorder": "Reordering",
+        "stock": "Stock"
+      },
+      "fields": {
+        "uom": "Unit of measure",
+        "reorderPoint": "Reorder point",
+        "reorderQty": "Reorder quantity"
+      },
+      "placeholders": {
+        "code": "COMP",
+        "uom": "Select a unit"
+      },
+      "hints": {
+        "reorderPoint": "At or below this quantity the material counts as in shortage.",
+        "reorderQty": "Suggested quantity when creating a purchase order.",
+        "onHand": "Taken from Stock. It cannot be edited here."
+      }
+    }
+  },
+  "suppliers": {
+    "singular": "supplier",
+    "new": "New supplier",
+    "empty": "No suppliers yet.",
+    "noResult": "No supplier matches. Clear the search or the status filter.",
+    "tabMaterials": "Materials supplied",
+    "form": {
+      "sections": {
+        "basic": "Basic information",
+        "contact": "Contact"
+      },
+      "placeholders": {
+        "code": "S001"
       }
     }
   }

@@ -30,7 +30,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | i18n (EN + empty JA, switcher) | ✅ | `react-i18next`, namespaces `common` / `auth` / `nav`, JA falls back to EN |
 | Router + protected routes | ✅ | `ProtectedRoute`, `GuestRoute`, `RequirePermission` (not applied to any route yet) |
 | `api.js` + interceptors + mock switch | ✅ | `VITE_USE_MOCK=true` serves `/auth/*` from `services/mock` |
-| `AuthLayout` / `MainLayout` | ✅ | F2 shell: collapsible sidebar (280px / 64px, remembered), header with breadcrumb, language and user menu |
+| `AuthLayout` / `MainLayout` | ✅ | F2 shell: collapsible sidebar (232px by default and draggable between 208 and 360px / 64px collapsed, both remembered), header with breadcrumb, language and user menu |
 | Common components | ✅ | LanguageSwitcher, PageHeader, MessagePage, StatusBadge, DataTable, Pagination, ListPage, FormField, FormSection, FormFooter (sticky Save/Cancel), MoneyInput, ConfirmDialog; detail pages: DetailLayout (+DetailHeader, DetailSection, DetailFields), StatusTimeline, LinkedDocuments, ApprovalActions (Approve/Reject by role, reject needs a reason). Demo: `/dev/foundation` (dev only) |
 
 ## Pages
@@ -90,6 +90,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | Sidebar: wider by default (232px, "Master Data" fits on one line), all rows and arrows aligned, and its width can be changed by dragging the thin grey line on its right edge (208-360px, remembered; hidden while the sidebar is collapsed). The drag handle (`ResizeHandle`, a line that darkens on hover; no dots, no colored band) is shared with the detail sheet and sits last in the DOM so opening a sheet never focuses it. |
 | 2026-10-05 | Detail sheet: cards no longer fold and their icons have no background; the sheet is resizable by dragging its left edge (width remembered) and fields switch between one and two columns with the sheet width. |
 | 2026-10-05 | Detail sheet redesigned: grey body with white shadowed cards (with icons), Save + icon buttons (deactivate, delete, close) in the header instead of a footer; opens at once from the list row instead of showing a skeleton. All master data forms now use `useRecordForm` + `RecordSheet`. |
 | 2026-10-05 | Master Data: M3 Products with the BOM (M5) and Routing tabs, and a "Used in" tab on materials. Only M10 Price lists is left. Dev page `/dev/testcomponents` lists every UI component of the app. |

@@ -101,8 +101,8 @@
   body {
     @apply bg-background text-foreground;
     margin: 0;
-    min-width: 1280px;
-    /* desktop only */
+    min-width: 640px;
+    /* designed for desktop; 640px keeps 200% zoom on a 1280px screen usable without side scrolling */
     min-height: 100vh;
     line-height: 1.6;
   }

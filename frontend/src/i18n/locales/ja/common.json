@@ -11,7 +11,11 @@
     "cancel": "",
     "back": "",
     "backToDashboard": "",
-    "retry": ""
+    "retry": "",
+    "saving": "",
+    "approve": "",
+    "reject": "",
+    "confirm": ""
   },
   "pages": {
     "notFound": {
@@ -31,5 +35,22 @@
     "previous": "",
     "next": "",
     "page": ""
+  },
+  "detail": {
+    "linkedDocuments": "",
+    "noLinkedDocuments": "",
+    "history": "",
+    "noHistory": "",
+    "by": ""
+  },
+  "approval": {
+    "waiting": "",
+    "approveTitle": "",
+    "approveDescription": "",
+    "rejectTitle": "",
+    "rejectDescription": "",
+    "reasonLabel": "",
+    "reasonRequired": "",
+    "reasonPlaceholder": ""
   }
 }

@@ -5,6 +5,7 @@ import { AuthLayout } from "@/layouts/AuthLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import { FoundationDemoPage } from "@/pages/dev/FoundationDemoPage";
 import { CustomersPage } from "@/pages/master/customers/CustomersPage";
 import { ForbiddenPage } from "@/pages/system/ForbiddenPage";
 import { NotFoundPage } from "@/pages/system/NotFoundPage";
@@ -37,6 +38,7 @@ export function AppRoutes() {
         <Route element={<MainLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="403" element={<ForbiddenPage />} />
+          {import.meta.env.DEV ? <Route path="dev/foundation" element={<FoundationDemoPage />} /> : null}
 
           {NAV_GROUPS.map((group) => (
             <Route key={group.key} element={<RequirePermission access={group.access} />}>

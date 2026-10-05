@@ -31,7 +31,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Router + protected routes | ✅ | `ProtectedRoute`, `GuestRoute`, `RequirePermission` (not applied to any route yet) |
 | `api.js` + interceptors + mock switch | ✅ | `VITE_USE_MOCK=true` serves `/auth/*` from `services/mock` |
 | `AuthLayout` / `MainLayout` | ✅ | F2 shell: collapsible sidebar (280px / 64px, remembered), header with breadcrumb, language and user menu |
-| Common components | ✅ | LanguageSwitcher, PageHeader, MessagePage, StatusBadge, DataTable, Pagination, ListPage, FormField, FormSection, MoneyInput, ConfirmDialog |
+| Common components | ✅ | LanguageSwitcher, PageHeader, MessagePage, StatusBadge, DataTable, Pagination, ListPage, FormField, FormSection, FormFooter (sticky Save/Cancel), MoneyInput, ConfirmDialog; detail pages: DetailLayout (+DetailHeader, DetailSection, DetailFields), StatusTimeline, LinkedDocuments, ApprovalActions (Approve/Reject by role, reject needs a reason). Demo: `/dev/foundation` (dev only) |
 
 ## Pages
 
@@ -90,6 +90,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | Shared UX/UI foundation completed: detail layout, status history, linked documents, role-based Approve/Reject, shared save/cancel footer; page minimum width lowered from 1280px to 640px so 200% zoom on a 1280px screen reflows without side scrolling (forms, detail and dashboard grids stack, sidebar becomes a menu button). Checked in the browser with fake records; Approve/Reject shown only to Admin and the Manager of the owning department, others see a "waiting" note. |
 | 2026-10-02 | Plan and tracker created. No pages implemented yet. |
 | 2026-10-02 | Foundation (F0) built: tokens, i18n, API client + mock, layouts, 403/404 pages. |
 | 2026-10-02 | F3 Master Data spec drafted (specs/f3-master-data.md); suggested answers Q1–Q10 approved. |

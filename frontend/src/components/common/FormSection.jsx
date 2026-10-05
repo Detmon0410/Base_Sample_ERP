@@ -3,7 +3,7 @@ export function FormSection({ title, children, columns = 2 }) {
   return (
     <section className="rounded-xl border bg-card p-6">
       <h2 className="mb-5 text-lg font-bold">{title}</h2>
-      <div className={columns === 1 ? "grid gap-5" : "grid grid-cols-2 gap-x-6 gap-y-5"}>{children}</div>
+      <div className={columns === 1 ? "grid gap-5" : "grid gap-x-6 gap-y-5 md:grid-cols-2"}>{children}</div>
     </section>
   );
 }

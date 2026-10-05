@@ -55,7 +55,7 @@ export function DashboardPage() {
         </Alert>
       ) : null}
 
-      <section aria-label={t("title")} className="mb-6 grid grid-cols-4 gap-5">
+      <section aria-label={t("title")} className="mb-6 grid grid-cols-2 gap-5 xl:grid-cols-4">
         {loading || status === "error"
           ? KPI_DEFS.map((def) => <KpiCardSkeleton key={def.key} />)
           : KPI_DEFS.map((def) => {
@@ -76,7 +76,7 @@ export function DashboardPage() {
             })}
       </section>
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid gap-5 xl:grid-cols-2">
         {showApprovals ? (
           <ApprovalsBlock {...block("approvals")} />
         ) : (

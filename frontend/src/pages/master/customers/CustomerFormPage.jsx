@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { FormField } from "@/components/common/FormField";
+import { FormFooter } from "@/components/common/FormFooter";
 import { FormSection } from "@/components/common/FormSection";
 import { MoneyInput } from "@/components/common/MoneyInput";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -226,7 +227,7 @@ export function CustomerFormPage() {
             id="customer-address"
             label={t("master:customers.form.fields.address")}
             error={message(errors.address)}
-            className="col-span-2"
+            className="md:col-span-2"
           >
             <Textarea id="customer-address" {...fieldProps("address")} {...register("address")} />
           </FormField>
@@ -302,25 +303,18 @@ export function CustomerFormPage() {
           </p>
         ) : null}
 
-        <div className="sticky bottom-0 -mx-8 mt-2 flex items-center gap-3 border-t bg-card px-8 py-4">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? t("master:common.saving") : t("master:common.save")}
-          </Button>
-          <Button type="button" variant="outline" onClick={goToList}>
-            {t("master:common.cancel")}
-          </Button>
-
+        <FormFooter isSubmitting={isSubmitting} onCancel={goToList}>
           {!isNew ? (
-            <div className="ml-auto flex items-center gap-3">
+            <>
               <Button type="button" variant="outline" onClick={() => setDialog("status")}>
                 {isActive ? t("master:common.deactivate") : t("master:common.reactivate")}
               </Button>
               <Button type="button" variant="destructive" onClick={() => setDialog("delete")}>
                 {t("master:common.delete")}
               </Button>
-            </div>
+            </>
           ) : null}
-        </div>
+        </FormFooter>
       </form>
 
       <ConfirmDialog

@@ -8,6 +8,7 @@ import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { FoundationDemoPage } from "@/pages/dev/FoundationDemoPage";
 import { TestComponentsPage } from "@/pages/dev/TestComponentsPage";
 import { CustomersPage } from "@/pages/master/customers/CustomersPage";
+import { PriceListsPage } from "@/pages/master/price-lists/PriceListsPage";
 import { ProductsPage } from "@/pages/master/products/ProductsPage";
 import { MaterialsPage } from "@/pages/master/materials/MaterialsPage";
 import { SuppliersPage } from "@/pages/master/suppliers/SuppliersPage";
@@ -30,6 +31,7 @@ const IMPLEMENTED_PAGES = {
   materials: MaterialsPage,
   suppliers: SuppliersPage,
   products: ProductsPage,
+  priceLists: PriceListsPage,
 };
 
 /**

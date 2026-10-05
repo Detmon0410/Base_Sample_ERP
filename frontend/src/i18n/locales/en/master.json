@@ -48,7 +48,9 @@
     "maxLength": "This is too long. Please shorten it.",
     "numberInvalid": "Enter a whole number, 0 or more.",
     "quantityInvalid": "Enter a number, 0 or more.",
-    "quantityPositive": "Enter a number greater than 0."
+    "quantityPositive": "Enter a number greater than 0.",
+    "dateOrder": "The end date must be on the same day as the start date or later.",
+    "dateInvalid": "Enter a valid date."
   },
   "errors": {
     "CODE_ALREADY_EXISTS": "This code is already used. Enter a different code.",
@@ -57,7 +59,8 @@
     "VALIDATION_ERROR": "Please check the highlighted fields.",
     "FORBIDDEN": "You do not have permission to change master data.",
     "UNKNOWN": "Something went wrong. Please try again.",
-    "ALREADY_LINKED": "This supplier is already linked to this material."
+    "ALREADY_LINKED": "This supplier is already linked to this material.",
+    "PERIOD_OVERLAP": "This customer already has an active price for this product in that period. Change the dates, or deactivate the other price first."
   },
   "paymentTerms": {
     "NET_15": "Net 15",
@@ -324,5 +327,42 @@
     "moved": "Order changed",
     "removeTitle": "Remove this step?",
     "removeDescription": "The steps after it move up by one. Existing work orders are not changed."
+  },
+  "priceLists": {
+    "singular": "price",
+    "new": "New price",
+    "empty": "No prices yet.",
+    "noResult": "No price matches. Clear the search or the status filter.",
+    "search": "Search by product or customer",
+    "noEndDate": "No end date",
+    "columns": {
+      "product": "Product",
+      "customer": "Customer",
+      "price": "Price per unit",
+      "validFrom": "Valid from",
+      "validTo": "Valid until"
+    },
+    "form": {
+      "sections": {
+        "pair": "Product and customer",
+        "price": "Price and period"
+      },
+      "fields": {
+        "productId": "Product",
+        "customerId": "Customer",
+        "price": "Price per unit",
+        "validFrom": "Valid from",
+        "validTo": "Valid until"
+      },
+      "placeholders": {
+        "product": "Select a product",
+        "customer": "Select a customer"
+      },
+      "hints": {
+        "pairFixed": "The product and the customer cannot be changed. To price another pair, add a new price.",
+        "price": "Whole yen per unit. It replaces the product's selling price for this customer.",
+        "validTo": "Leave empty when there is no end date."
+      }
+    }
   }
 }

@@ -532,6 +532,150 @@ function routingRoutes({ guard, routing, products, machines }) {
   };
 }
 
+// ---- Price lists (M10): the price of a product for one customer in a period ------------------------------
+
+const STAMP_ISO = "2026-09-01T09:00:00.000Z";
+
+// customerId / productId refer to sampleCustomers (C001 = 1, C002 = 2) and sampleProducts (RF-2D = 1, RF-1D = 2).
+const samplePrices = () => [
+  { id: 1, productId: 1, customerId: 1, price: 64000, validFrom: "2026-04-01", validTo: null, status: "active" },
+  { id: 2, productId: 1, customerId: 2, price: 66000, validFrom: "2026-04-01", validTo: "2026-12-31", status: "active" },
+  { id: 3, productId: 2, customerId: 1, price: 38500, validFrom: "2026-04-01", validTo: null, status: "active" },
+  { id: 4, productId: 2, customerId: 2, price: 39800, validFrom: "2025-04-01", validTo: "2026-03-31", status: "inactive" },
+  { id: 5, productId: 1, customerId: 3, price: 67500, validFrom: "2027-01-01", validTo: null, status: "active" },
+].map((row) => ({ ...row, createdAt: STAMP_ISO, updatedAt: STAMP_ISO }));
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Price list routes. Same 6 calls as every resource, but a row has no code: it is identified by product + customer + period. */
+function priceListRoutes({ guard, rows, customers, products }) {
+  let nextId = Math.max(0, ...rows.map((row) => row.id)) + 1;
+  const withNames = (row) => {
+    const product = products.find((item) => item.id === row.productId);
+    const customer = customers.find((item) => item.id === row.customerId);
+    return { ...row, productCode: product?.code, productName: product?.name, customerCode: customer?.code, customerName: customer?.name };
+  };
+  const find = (id) => {
+    const row = rows.find((item) => item.id === Number(id));
+    if (!row) throw new MockHttpError(404, "NOT_FOUND", "Record not found");
+    return row;
+  };
+
+  // Two active prices of the same product + customer must not cover the same day (no end date = open ended).
+  const overlaps = (candidate, ignoreId) =>
+    rows.some(
+      (row) =>
+        row.id !== ignoreId &&
+        row.status === "active" &&
+        row.productId === candidate.productId &&
+        row.customerId === candidate.customerId &&
+        candidate.validFrom <= (row.validTo ?? "9999-12-31") &&
+        row.validFrom <= (candidate.validTo ?? "9999-12-31"),
+    );
+
+  const validate = (body, { creating }) => {
+    const errors = [];
+    if (creating) {
+      if (!products.some((item) => item.id === Number(body.productId))) errors.push({ path: ["productId"], message: "REQUIRED" });
+      if (!customers.some((item) => item.id === Number(body.customerId))) errors.push({ path: ["customerId"], message: "REQUIRED" });
+    }
+    if (!Number.isInteger(body.price) || body.price < 0) errors.push({ path: ["price"], message: "INVALID" });
+    if (!DATE_RE.test(String(body.validFrom ?? ""))) errors.push({ path: ["validFrom"], message: "REQUIRED" });
+    if (body.validTo != null && body.validTo !== "" && !DATE_RE.test(String(body.validTo))) errors.push({ path: ["validTo"], message: "INVALID" });
+    else if (body.validTo && body.validFrom && body.validTo < body.validFrom) errors.push({ path: ["validTo"], message: "DATE_ORDER" });
+    if (errors.length) throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", errors);
+  };
+
+  const sortValue = (row, field) => withNames(row)[field];
+
+  return {
+    "GET /master/price-lists": ({ authorization, query }) => {
+      guard(authorization);
+      if (listShouldFail()) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
+      const text = String(query.q ?? "").trim().toLowerCase();
+      const status = query.status && query.status !== "all" ? query.status : null;
+      let result = rows
+        .map(withNames)
+        .filter(
+          (row) =>
+            (!status || row.status === status) &&
+            (!text || [row.productCode, row.productName, row.customerCode, row.customerName].some((value) => matches(value, text))),
+        );
+
+      const sortKey = String(query.sort ?? "productCode");
+      const descending = sortKey.startsWith("-");
+      const field = descending ? sortKey.slice(1) : sortKey;
+      if (["productCode", "customerCode", "price", "validFrom", "validTo", "status"].includes(field)) {
+        result = [...result].sort((a, b) => {
+          const left = sortValue(a, field);
+          const right = sortValue(b, field);
+          let order;
+          if (left == null || left === "") order = right == null || right === "" ? 0 : 1; // no end date = open ended, sorts last
+          else if (right == null || right === "") order = -1;
+          else order = typeof left === "number" ? left - right : String(left).localeCompare(String(right));
+          return descending ? -order : order;
+        });
+      }
+
+      const pageSize = Math.min(Number(query.pageSize) || 20, 100);
+      const total = result.length;
+      const page = Math.min(Math.max(Number(query.page) || 1, 1), Math.max(1, Math.ceil(total / pageSize)));
+      return new MockResponse({ data: result.slice((page - 1) * pageSize, page * pageSize), meta: { page, pageSize, total } });
+    },
+
+    "GET /master/price-lists/:id": ({ authorization, params }) => {
+      guard(authorization);
+      return withNames(find(params.id));
+    },
+
+    "POST /master/price-lists": ({ authorization, body }) => {
+      guard(authorization);
+      validate(body, { creating: true });
+      const candidate = {
+        productId: Number(body.productId),
+        customerId: Number(body.customerId),
+        price: body.price,
+        validFrom: body.validFrom,
+        validTo: body.validTo || null,
+      };
+      if (overlaps(candidate)) throw new MockHttpError(409, "PERIOD_OVERLAP", "Another active price covers this period");
+      const now = new Date().toISOString();
+      const row = { ...candidate, id: nextId++, status: "active", createdAt: now, updatedAt: now };
+      rows.push(row);
+      return new MockResponse({ data: withNames(row), status: 201, message: "Created" });
+    },
+
+    "PUT /master/price-lists/:id": ({ authorization, params, body }) => {
+      guard(authorization);
+      const row = find(params.id);
+      validate(body, { creating: false });
+      // The product and the customer are fixed after creation.
+      const candidate = { productId: row.productId, customerId: row.customerId, validFrom: body.validFrom, validTo: body.validTo || null };
+      if (row.status === "active" && overlaps(candidate, row.id)) throw new MockHttpError(409, "PERIOD_OVERLAP", "Another active price covers this period");
+      Object.assign(row, { price: body.price, validFrom: body.validFrom, validTo: body.validTo || null, updatedAt: new Date().toISOString() });
+      return withNames(row);
+    },
+
+    "PATCH /master/price-lists/:id/status": ({ authorization, params, body }) => {
+      guard(authorization);
+      const row = find(params.id);
+      if (!["active", "inactive"].includes(body.status)) {
+        throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["status"], message: "INVALID" }]);
+      }
+      if (body.status === "active" && overlaps(row, row.id)) throw new MockHttpError(409, "PERIOD_OVERLAP", "Another active price covers this period");
+      row.status = body.status;
+      row.updatedAt = new Date().toISOString();
+      return withNames(row);
+    },
+
+    "DELETE /master/price-lists/:id": ({ authorization, params }) => {
+      guard(authorization);
+      rows.splice(rows.indexOf(find(params.id)), 1);
+      return null;
+    },
+  };
+}
+
 /** Master data routes. `guard` throws 401/403 unless the caller is an Admin (Q6/Q7). */
 export function masterDataRoutes(guard) {
   const customers = sampleCustomers();
@@ -609,6 +753,7 @@ export function masterDataRoutes(guard) {
       guard,
     }),
     ...bomRoutes({ guard, bom, products: productRows, materials: materialRows }),
+    ...priceListRoutes({ guard, rows: samplePrices(), customers, products: productRows }),
     ...routingRoutes({ guard, routing, products: productRows, machines: machineRows }),
     ...createMockCrud("/master/employees", sampleEmployees(), {
       searchFields: ["code", "name", "position"],

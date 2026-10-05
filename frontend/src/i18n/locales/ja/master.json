@@ -48,7 +48,9 @@
     "maxLength": "",
     "numberInvalid": "",
     "quantityInvalid": "",
-    "quantityPositive": ""
+    "quantityPositive": "",
+    "dateOrder": "",
+    "dateInvalid": ""
   },
   "errors": {
     "CODE_ALREADY_EXISTS": "",
@@ -57,7 +59,8 @@
     "VALIDATION_ERROR": "",
     "FORBIDDEN": "",
     "UNKNOWN": "",
-    "ALREADY_LINKED": ""
+    "ALREADY_LINKED": "",
+    "PERIOD_OVERLAP": ""
   },
   "paymentTerms": {
     "NET_15": "",
@@ -324,5 +327,42 @@
     "moved": "",
     "removeTitle": "",
     "removeDescription": ""
+  },
+  "priceLists": {
+    "singular": "",
+    "new": "",
+    "empty": "",
+    "noResult": "",
+    "search": "",
+    "noEndDate": "",
+    "columns": {
+      "product": "",
+      "customer": "",
+      "price": "",
+      "validFrom": "",
+      "validTo": ""
+    },
+    "form": {
+      "sections": {
+        "pair": "",
+        "price": ""
+      },
+      "fields": {
+        "productId": "",
+        "customerId": "",
+        "price": "",
+        "validFrom": "",
+        "validTo": ""
+      },
+      "placeholders": {
+        "product": "",
+        "customer": ""
+      },
+      "hints": {
+        "pairFixed": "",
+        "price": "",
+        "validTo": ""
+      }
+    }
   }
 }

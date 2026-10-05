@@ -14,10 +14,11 @@ import { CARD_CLASS } from "@/components/common/SheetSection";
  *
  *   entityTitle  name of the list ("Materials"), used while nothing is loaded
  *   newTitle     title of a new record ("New material")
+ *   titleOf      (record) => title of a saved record; default "CODE · Name"
  *   singular     "material", used in the confirmation texts
  *   formId       id of the <form> that Save in the header submits
  */
-export function RecordSheet({ page, entityTitle, newTitle, singular, formId, children }) {
+export function RecordSheet({ page, entityTitle, newTitle, titleOf = (record) => `${record.code} · ${record.name}`, singular, formId, children }) {
   const { t } = useTranslation("master");
   const { isNew, record, loadState, leaving, goToList, listPath } = page;
 
@@ -50,7 +51,7 @@ export function RecordSheet({ page, entityTitle, newTitle, singular, formId, chi
     <>
       <DetailSheet
         open={!leaving}
-        title={isNew ? newTitle : `${record.code} · ${record.name}`}
+        title={isNew ? newTitle : titleOf(record)}
         onClose={goToList}
         actions={
           <RecordActions

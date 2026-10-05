@@ -14,6 +14,7 @@ import { getCachedRecord } from "@/utils/recordCache";
 const FIELD_ERROR_KEYS = {
   REQUIRED: "master:validation.required",
   INVALID_EMAIL: "master:validation.emailInvalid",
+  DATE_ORDER: "master:validation.dateOrder",
 };
 
 /**
@@ -26,8 +27,19 @@ const FIELD_ERROR_KEYS = {
  *   toValues(record) -> form values        toPayload(values) -> request body (default: values as they are)
  *   listPath     list route, e.g. "/master/materials" (the list's query string is kept)
  *   idPrefix     prefix of the field element ids
+ *   fieldErrors  server error code -> form field that shows it, e.g. { PERIOD_OVERLAP: "validFrom" }
+ *                (CODE_ALREADY_EXISTS -> "code" is always known)
  */
-export function useRecordForm({ service, schema, emptyValues, toValues, toPayload = (values) => values, listPath: basePath, idPrefix }) {
+export function useRecordForm({
+  service,
+  schema,
+  emptyValues,
+  toValues,
+  toPayload = (values) => values,
+  listPath: basePath,
+  idPrefix,
+  fieldErrors = {},
+}) {
   const { t } = useTranslation("master");
   const { id } = useParams();
   const { search } = useLocation();
@@ -87,8 +99,9 @@ export function useRecordForm({ service, schema, emptyValues, toValues, toPayloa
   });
 
   const handleServerError = (error) => {
-    if (error?.code === "CODE_ALREADY_EXISTS") {
-      setError("code", { message: "master:errors.CODE_ALREADY_EXISTS" });
+    const field = { CODE_ALREADY_EXISTS: "code", ...fieldErrors }[error?.code];
+    if (field) {
+      setError(field, { message: `master:errors.${error.code}` });
     } else if (error?.code === "VALIDATION_ERROR" && Array.isArray(error.details)) {
       for (const item of error.details) {
         setError(item.path?.[0], { message: FIELD_ERROR_KEYS[item.message] ?? "master:errors.VALIDATION_ERROR" });

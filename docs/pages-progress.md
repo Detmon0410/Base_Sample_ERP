@@ -19,7 +19,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Purchase | 0 | 5 |
 | Accounting | 0 | 6 |
 | Traceability | 0 | 1 |
-| Master data | 9 | 10 |
+| Master data | 10 | 10 |
 | Administration | 0 | 3 |
 
 ## Foundation
@@ -81,7 +81,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | M7 | Machines / Lines | `/master/machines` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
 | M8 | Employees | `/master/employees` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
 | M9 | Units of measure | `/master/uom` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
-| M10 | Price lists | `/master/price-lists` | P2 | ⬜ | | ⬜ | ⬜ | |
+| M10 | Price lists | `/master/price-lists` | P2 | ✅ | mock | ✅ | ⬜ | Details sheet. Tested as Admin: list, search by product or customer, create, validation (required, price, end before start), overlapping period blocked, pair read-only after creation, edit from the header, status button, delete. API: api/master-data.md |
 | U1 | Users | `/admin/users` | P1 | ⬜ | | ⬜ | ⬜ | |
 | U2 | User form (dept + role) | `/admin/users/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
 | U3 | Departments & roles | `/admin/roles` | P2 | ⬜ | | ⬜ | ⬜ | |
@@ -90,6 +90,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | Master Data: M10 Price lists built with mock data (price per product + customer + period, no customer groups; overlapping active periods are refused). **All 10 master data pages are done.** |
 | 2026-10-05 | Sidebar: wider by default (232px, "Master Data" fits on one line), all rows and arrows aligned, and its width can be changed by dragging the thin grey line on its right edge (208-360px, remembered; hidden while the sidebar is collapsed). The drag handle (`ResizeHandle`, a line that darkens on hover; no dots, no colored band) is shared with the detail sheet and sits last in the DOM so opening a sheet never focuses it. |
 | 2026-10-05 | Detail sheet: cards no longer fold and their icons have no background; the sheet is resizable by dragging its left edge (width remembered) and fields switch between one and two columns with the sheet width. |
 | 2026-10-05 | Detail sheet redesigned: grey body with white shadowed cards (with icons), Save + icon buttons (deactivate, delete, close) in the header instead of a footer; opens at once from the list row instead of showing a skeleton. All master data forms now use `useRecordForm` + `RecordSheet`. |

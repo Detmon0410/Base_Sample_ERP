@@ -321,9 +321,48 @@ model RoutingStep {
 
 Note for the backend: renumbering and `move` must run in one transaction (the unique `[productId, stepNo]` forbids two steps with the same number, so swap through a temporary value).
 
-## M10
+## M10 Price lists — `/master/price-lists`
+One row = the price of **one product for one customer** in a period (spec Q5: no customer groups in v1). The price replaces the product's `sellingPrice` for that customer. A row has **no code**; it is identified by product + customer + period.
 
-Price lists: fields are in the F3 spec (section 3) and will be copied here when the page is built. Shared rules above apply unchanged.
+Same 6 endpoints as every resource, with these differences:
+
+| Item | Rule |
+|---|---|
+| Fields (POST) | `productId`, `customerId` (both required, must exist), `price` (whole yen ≥ 0), `validFrom` (`YYYY-MM-DD`, required), `validTo` (`YYYY-MM-DD` or `null` = no end date; must be ≥ `validFrom`) |
+| Fields (PUT) | `price`, `validFrom`, `validTo` only. The product and the customer are fixed after creation (add a new row to price another pair) |
+| Search `q` | product code / name and customer code / name |
+| Sort | `productCode` (default), `customerCode`, `price`, `validFrom`, `validTo` (no end date sorts last when ascending), `status` |
+| Response item | the row plus `productCode`, `productName`, `customerCode`, `customerName` |
+| Status | `active` / `inactive` as usual; an inactive price is ignored when quoting |
+| Delete | allowed (a price is not referenced by documents; documents copy the price they used) |
+
+**Overlap rule:** two **active** rows of the same product + customer must not cover the same day (no `validTo` = open ended). Creating, editing the period, or reactivating a row that would overlap returns `409 PERIOD_OVERLAP` (UI shows it under "Valid from"). Date order problems return `400 VALIDATION_ERROR` with `path: ["validTo"], message: "DATE_ORDER"`.
+
+```json
+{ "id": 2, "productId": 1, "customerId": 2, "price": 66000, "validFrom": "2026-04-01", "validTo": "2026-12-31", "status": "active",
+  "productCode": "RF-2D", "productName": "Refrigerator 2-Door 15Q", "customerCode": "C002", "customerName": "Best Home Mart" }
+```
+
+```prisma
+model PriceListItem {
+  id         Int       @id @default(autoincrement())
+  productId  Int
+  customerId Int
+  price      Int
+  validFrom  DateTime  @db.Date
+  validTo    DateTime? @db.Date
+  status     String    @default("active") @db.VarChar(10)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  product    Product   @relation(fields: [productId], references: [id])
+  customer   Customer  @relation(fields: [customerId], references: [id])
+  @@index([productId, customerId])
+}
+```
+
+How a document picks the price (for the Sale module later): the **active** row of the product + customer whose period contains the document date; if there is none, the product's `sellingPrice`.
+
+New error code: `PERIOD_OVERLAP` (409).
 
 ## Backend checklist
 - [ ] Prisma models + migration + seed (the sample rows from `master_data_req.md`)

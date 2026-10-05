@@ -34,4 +34,4 @@ What the frontend expects from the backend, written **per page**. The frontend a
 |---|---|---|
 | A1 Login (and the session / logout used by the app header) | [auth.md](auth.md) | Frontend done, **backend not implemented** |
 | D1 Dashboard | [dashboard.md](dashboard.md) | Frontend done (mock), **backend not implemented** |
-| M1–M10 Master data (Customers built) | [master-data.md](master-data.md) | M1 frontend done (mock), **backend not implemented** |
+| M1–M10 Master data (all built) | [master-data.md](master-data.md) | Frontend done for all 10 (mock), **backend not implemented** |

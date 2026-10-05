@@ -10,7 +10,7 @@ import { useSidebarState } from "@/hooks/useSidebarState";
 /**
  * Application frame for every page after login: collapsible sidebar on the left,
  * header (menu toggle, breadcrumb, language, user menu) on top, the page below.
- * Widths: 280px expanded, 64px collapsed.
+ * Widths: 208px expanded, 64px collapsed. The top bar is 54px high.
  */
 export function MainLayout() {
   const { t } = useTranslation("nav");
@@ -21,7 +21,7 @@ export function MainLayout() {
       <SidebarProvider
         open={open}
         onOpenChange={setOpen}
-        style={{ "--sidebar-width": "280px", "--sidebar-width-icon": "64px" }}
+        style={{ "--sidebar-width": "208px", "--sidebar-width-icon": "64px" }}
       >
         <a
           href="#main-content"

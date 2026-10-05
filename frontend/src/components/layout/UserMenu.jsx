@@ -1,20 +1,16 @@
-import { LogOutIcon, UserIcon } from "lucide-react";
+import { ChevronDownIcon, LogOutIcon, UserIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { LanguageFlag } from "@/components/common/LanguageFlag";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { initials } from "@/utils/format";
 
 const DEPARTMENT_KEYS = {
@@ -24,8 +20,9 @@ const DEPARTMENT_KEYS = {
   Accounting: "groups.accounting",
 };
 
+/** Profile button of the top bar (avatar, name, arrow). The language has its own button (LanguageMenu). */
 export function UserMenu() {
-  const { t, i18n } = useTranslation(["nav", "auth", "common"]);
+  const { t } = useTranslation(["nav", "auth"]);
   const { user, logout } = useAuth();
   if (!user) return null;
 
@@ -33,15 +30,15 @@ export function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={t("nav:userMenu.open")}
-        title={user.name}
-        className="grid size-11 place-items-center rounded-full outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-muted"
+        className="flex h-9 items-center gap-2 rounded-lg pr-2 pl-1 text-left outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-muted"
       >
-        {/* Only the avatar is shown; the name is in the menu, the tooltip and the accessible name. */}
-        <Avatar className="size-9">
-          <AvatarFallback className="bg-primary text-sm font-semibold text-primary-foreground">
+        <Avatar className="size-7">
+          <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
             {initials(user.name)}
           </AvatarFallback>
         </Avatar>
+        <span className="max-w-40 truncate text-base font-semibold">{user.name}</span>
+        <ChevronDownIcon className="size-4 text-muted-foreground" aria-hidden="true" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-72">
@@ -60,28 +57,6 @@ export function UserMenu() {
             </p>
           ))}
         </div>
-        <DropdownMenuSeparator />
-        <p className="px-2 pt-1 pb-1.5 text-sm text-muted-foreground">{t("common:language.label")}</p>
-        {/* Small round flags; the language name is the accessible name and the tooltip. */}
-        <DropdownMenuRadioGroup
-          value={i18n.resolvedLanguage}
-          onValueChange={(code) => i18n.changeLanguage(code)}
-          className="flex gap-2 px-2 pb-2"
-        >
-          {SUPPORTED_LANGUAGES.map(({ code, label }) => (
-            <DropdownMenuRadioItem
-              key={code}
-              value={code}
-              lang={code}
-              aria-label={label}
-              title={label}
-              onSelect={(event) => event.preventDefault()}
-              className="h-10 w-14 justify-center rounded-md border-2 border-transparent p-0 data-[state=checked]:border-primary data-[state=checked]:bg-secondary [&_[data-slot=dropdown-menu-radio-item-indicator]]:hidden"
-            >
-              <LanguageFlag code={code} />
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled className="h-10 text-base">
           <UserIcon /> {t("nav:userMenu.profile")}

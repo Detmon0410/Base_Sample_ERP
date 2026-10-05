@@ -100,21 +100,21 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" aria-label={t("nav:mainMenu")}>
-      <SidebarHeader className="h-16 justify-center border-b border-sidebar-border px-4 py-0 group-data-[collapsible=icon]:px-0">
+      <SidebarHeader className="h-12 justify-center border-b border-sidebar-border px-3 py-0 group-data-[collapsible=icon]:px-0">
         <div className="flex w-full items-center gap-3 overflow-hidden group-data-[collapsible=icon]:justify-center">
           <div
             aria-hidden="true"
-            className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground"
+            className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground"
           >
-            <FactoryIcon className="size-5" />
+            <FactoryIcon className="size-4.5" />
           </div>
-          <span className="truncate text-lg font-bold tracking-wide text-primary group-data-[collapsible=icon]:hidden">
+          <span className="truncate text-base font-bold tracking-wide text-primary group-data-[collapsible=icon]:hidden">
             {t("common:app.name")}
           </span>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-3 group-data-[collapsible=icon]:px-1.5">
+      <SidebarContent className="px-2 py-2 group-data-[collapsible=icon]:px-1.5">
         <SidebarGroup className="p-0">
           <SidebarMenu className="gap-1">
             <SidebarMenuItem>

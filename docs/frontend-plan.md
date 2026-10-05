@@ -15,7 +15,7 @@ Source requirements: `BaseRequirement_md/` (Sale, Factory, Accounting, master_da
 |---|---|
 | Users | Japanese office staff, mostly 40–50+ → readability and predictability beat visual flair |
 | Language | i18n with **EN (primary)** and **JA** (keys created now, values filled later; JA falls back to EN) |
-| Theme | Primary `#1447E6`, surface `#FFFFFF`. Contrast of `#1447E6` on white ≈ **6.8:1** (passes WCAG AA; white text on it also 6.8:1) |
+| Theme | Primary `#0D6EB3` (changed from `#1447E6`), surface `#FFFFFF`. Contrast of `#0D6EB3` on white ≈ **5.4:1** (passes WCAG AA; white text on it also 6.8:1) |
 | Accessibility target | WCAG 2.1 AA minimum |
 | Look and feel | Structured ERP: top bar + left sidebar by department + breadcrumb + page title + content |
 | Stack | React 19, Vite, react-router, Axios, shadcn/ui (Tailwind), react-i18next, Zod (forms) |
@@ -39,7 +39,7 @@ Source requirements: `BaseRequirement_md/` (Sale, Factory, Accounting, master_da
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-primary` | `#1447E6` | Header, primary buttons, links, focus ring |
+| `--color-primary` | `#0D6EB3` | Top bar (white text), primary buttons, links, focus ring |
 | `--color-primary-hover` | `#0F3BC4` | Hover / pressed |
 | `--color-primary-soft` | `#E8EFFD` | Selected row, active menu background |
 | `--color-surface` | `#FFFFFF` | Cards, tables, forms |

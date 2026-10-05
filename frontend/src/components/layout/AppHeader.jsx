@@ -16,12 +16,12 @@ export function AppHeader() {
   const { toggleSidebar, open } = useSidebar();
 
   return (
-    <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center gap-3 border-b bg-card px-4">
+    <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center gap-3 bg-primary px-4 text-primary-foreground">
       <Button
         type="button"
         variant="ghost"
         size="icon-sm"
-        className="size-9"
+        className="size-9 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground focus-visible:border-white focus-visible:ring-white/60 aria-expanded:bg-transparent aria-expanded:text-primary-foreground"
         aria-label={t("toggleMenu")}
         aria-expanded={open}
         title={t("toggleMenu")}
@@ -36,7 +36,7 @@ export function AppHeader() {
 
       <div className="flex items-center gap-1">
         <UserMenu />
-        <span aria-hidden="true" className="mx-1.5 h-5 w-px bg-border" />
+        <span aria-hidden="true" className="mx-1.5 h-5 w-px bg-white/40" />
         <LanguageMenu />
       </div>
     </header>

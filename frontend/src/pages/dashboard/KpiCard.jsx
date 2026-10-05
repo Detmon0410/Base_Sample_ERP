@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const DEPARTMENT_STYLE = {
-  Sale: { color: "#1447e6", labelKey: "groups.sale" },
+  Sale: { color: "#0d6eb3", labelKey: "groups.sale" },
   Factory: { color: "#0f766e", labelKey: "groups.factory" },
   Purchase: { color: "#b45309", labelKey: "groups.purchase" },
   Accounting: { color: "#be185d", labelKey: "groups.accounting" },

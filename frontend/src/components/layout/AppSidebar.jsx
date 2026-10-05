@@ -101,20 +101,24 @@ export function AppSidebar({ width }) {
   const dashboardActive = pathname === "/";
 
   return (
-    <Sidebar collapsible="icon" aria-label={t("nav:mainMenu")}>
-      <SidebarHeader className="h-12 justify-center border-b border-sidebar-border px-3 py-0 group-data-[collapsible=icon]:px-0">
+    <Sidebar collapsible="icon" aria-label={t("nav:mainMenu")} className="group-data-[side=left]:border-r-0">
+      {/* The same blue band as the top bar. The line on the right edge of the sidebar is drawn by the element below,
+          which starts under this header, so no line is ever behind or over the band. */}
+      <SidebarHeader className="h-12 justify-center bg-primary px-3 py-0 text-primary-foreground group-data-[collapsible=icon]:px-0">
         <div className="flex w-full items-center gap-3 overflow-hidden group-data-[collapsible=icon]:justify-center">
           <div
             aria-hidden="true"
-            className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground"
+            className="grid size-8 shrink-0 place-items-center rounded-lg bg-white text-primary"
           >
             <FactoryIcon className="size-4.5" />
           </div>
-          <span className="truncate text-base font-bold tracking-wide text-primary group-data-[collapsible=icon]:hidden">
+          <span className="truncate text-base font-bold tracking-wide text-primary-foreground group-data-[collapsible=icon]:hidden">
             {t("common:app.name")}
           </span>
         </div>
       </SidebarHeader>
+
+      <div aria-hidden="true" className="pointer-events-none absolute top-12 right-0 bottom-0 w-px bg-sidebar-border" />
 
       <SidebarContent className="px-2 py-2 group-data-[collapsible=icon]:px-1.5">
         <SidebarGroup className="p-0">
@@ -151,7 +155,7 @@ export function AppSidebar({ width }) {
         onChange={width.setWidth}
         onCommit={width.commit}
         onDragChange={(dragging) => document.body.classList.toggle("sidebar-resizing", dragging)}
-        className="group-data-[collapsible=icon]:hidden"
+        className="top-12 group-data-[collapsible=icon]:hidden"
       />
     </Sidebar>
   );

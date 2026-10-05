@@ -15,7 +15,7 @@ export function FormFooter({ isSubmitting = false, inSheet = false, onCancel, sa
     <div
       className={cn(
         "flex flex-wrap items-center gap-3 border-t bg-card py-4",
-        inSheet ? "shrink-0 px-6" : "sticky bottom-0 -mx-8 mt-2 px-8",
+        inSheet ? "shrink-0 px-6" : "sticky bottom-0 -mx-5 mt-2 px-5",
       )}
     >
       <Button type="submit" disabled={isSubmitting}>

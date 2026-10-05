@@ -8,7 +8,7 @@
 
 /*
   Design tokens — Kanou ERP
-  Brand: #1447e6 on #FFFFFF (contrast 6.8:1).
+  Brand: #0D6EB3 on #FFFFFF (contrast 5.4:1). White text on the brand colour is also 5.4:1.
   Target users are 40-50+, desktop only, so the root size is 18px: every rem-based
   Tailwind size scales with it (h-11 = 49.5px, text-sm = 15.75px).
 */
@@ -19,30 +19,30 @@
   --card-foreground: #1a2230;
   --popover: #ffffff;
   --popover-foreground: #1a2230;
-  --primary: #1447e6;
+  --primary: #0d6eb3;
   --primary-foreground: #ffffff;
-  --secondary: #e8effd;
-  --secondary-foreground: #1447e6;
+  --secondary: #e5f1fa;
+  --secondary-foreground: #0d6eb3;
   --muted: #eef1f5;
   --muted-foreground: #4a5568;
-  --accent: #e8effd;
-  --accent-foreground: #1447e6;
+  --accent: #e5f1fa;
+  --accent-foreground: #0d6eb3;
   --destructive: #b42318;
   --success: #1b6e3c;
   --warning: #8a5a00;
   /* --border is decorative; --input is a control boundary and must reach 3:1 (WCAG 1.4.11) */
   --border: #c5ceda;
   --input: #6b7a90;
-  --ring: #1447e6;
+  --ring: #0d6eb3;
   --radius: 0.5rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #1a2230;
-  --sidebar-primary: #1447e6;
+  --sidebar-primary: #0d6eb3;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8effd;
-  --sidebar-accent-foreground: #1447e6;
+  --sidebar-accent: #e5f1fa;
+  --sidebar-accent-foreground: #0d6eb3;
   --sidebar-border: #c5ceda;
-  --sidebar-ring: #1447e6;
+  --sidebar-ring: #0d6eb3;
 }
 
 /*

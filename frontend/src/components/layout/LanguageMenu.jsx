@@ -24,7 +24,7 @@ export function LanguageMenu() {
       <DropdownMenuTrigger
         aria-label={`${t("language.label")}: ${current.label}`}
         title={`${t("language.label")}: ${current.label}`}
-        className="grid h-9 w-11 place-items-center rounded-lg outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-muted"
+        className="grid h-9 w-11 place-items-center rounded-lg outline-none hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white data-[state=open]:bg-white/15"
       >
         <LanguageFlag code={current.code} size="sm" />
       </DropdownMenuTrigger>

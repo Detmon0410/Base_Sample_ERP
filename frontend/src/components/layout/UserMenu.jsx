@@ -30,15 +30,15 @@ export function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={t("nav:userMenu.open")}
-        className="flex h-9 items-center gap-2 rounded-lg pr-2 pl-1 text-left outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-muted"
+        className="flex h-9 items-center gap-2 rounded-lg pr-2 pl-1 text-left text-primary-foreground outline-none hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white data-[state=open]:bg-white/15"
       >
         <Avatar className="size-7">
-          <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
+          <AvatarFallback className="bg-white text-xs font-semibold text-primary">
             {initials(user.name)}
           </AvatarFallback>
         </Avatar>
         <span className="max-w-40 truncate text-base font-semibold">{user.name}</span>
-        <ChevronDownIcon className="size-4 text-muted-foreground" aria-hidden="true" />
+        <ChevronDownIcon className="size-4 text-white/80" aria-hidden="true" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-72">

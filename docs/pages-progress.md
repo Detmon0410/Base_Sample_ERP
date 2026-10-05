@@ -26,7 +26,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Item | Status | Notes |
 |---|---|---|
-| Tailwind + shadcn/ui + tokens (`#1447E6` / `#FFFFFF`) | ✅ | Root font 18px, buttons/inputs 45–54px, JA font fallback stack |
+| Tailwind + shadcn/ui + tokens (`#0D6EB3` / `#FFFFFF`) | ✅ | Root font 18px, buttons/inputs 45–54px, JA font fallback stack |
 | i18n (EN + empty JA, switcher) | ✅ | `react-i18next`, namespaces `common` / `auth` / `nav`, JA falls back to EN |
 | Router + protected routes | ✅ | `ProtectedRoute`, `GuestRoute`, `RequirePermission` (not applied to any route yet) |
 | `api.js` + interceptors + mock switch | ✅ | `VITE_USE_MOCK=true` serves `/auth/*` from `services/mock` |
@@ -90,6 +90,11 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | **Brand colour changed to `#0D6EB3`** (was `#1447E6`; white on it and it on white are both 5.4:1). The soft tint behind selected menu items is `#E5F1FA`. **The top bar (AppHeader) is now the brand colour with white text**: menu toggle, breadcrumb, profile, divider and language button are white / translucent white, the avatar is white with a brand-colour initial, hover is a white 15 % wash and focus rings are white. The Sale colour on the Dashboard follows the new brand colour. |
+| 2026-10-05 | The sidebar header (factory logo + "Kanou ERP") is now the same brand-colour band as the top bar, with a white logo badge and a white name, and **no line** between the two: the band runs across the whole top of the page (the sidebar header also covers the 1px right border of the sidebar). |
+| 2026-10-05 | Content starts closer to the top bar: a page with no description or actions renders only its hidden h1 (no empty header block), and the main area has 18px top padding, so the first box sits 18px under the top bar on every page (it was about 50px). |
+| 2026-10-05 | Fluid layout: the main content has no maximum width any more (it was 1600px, centred) and fills the space right of the sidebar with 20px (`p-5`) padding on every side; checked at 640, 1280 and 2200px. |
+| 2026-10-05 | Page background: the content area of every signed-in page is now `#F1F5F9`, the same grey as the detail sheet body, with white cards, boxes and the white top bar and sidebar on it. Loading placeholders use a slightly darker grey so they stay visible on it. |
 | 2026-10-05 | **Table look**: zebra rows, thin 1px grid, light grey header, all table text 15px `#666666` (document numbers and codes included, no blue link), and each list in a white box with a faint shadow all around (`PANEL_CLASS`). Applies to every list and to the tables inside sheets (`ui/table.jsx`, `DataTable`, `ListPage`, `DocumentListPage`). |
 | 2026-10-05 | Type scale checked on Login, Master Data lists and sheets, Dashboard and Sale: nothing below 15px except the profile initials. Login labels and subtitle raised to 16px. **Bug fixed:** opening a detail sheet by its URL (or reloading with a sheet open) showed a white screen on Master Data pages because the page read `record.id` before the record was loaded; `useRecordForm` now gives an empty record while loading. |
 | 2026-10-05 | **Type scale**: text size now follows importance (see `index.css`, `@theme`): 22px sheet titles and totals, 18px document numbers and card titles, 16px body (table cells, field values, buttons), 15px secondary (labels, table headers, hints, dates, meta). Table headers and labels are smaller and quieter than the values; document numbers and codes are the largest text in a row; the page body default is 16px (the root stays 18px). |

@@ -38,20 +38,20 @@ export function Breadcrumbs() {
 
   return (
     <Breadcrumb aria-label={t("breadcrumb.label")}>
-      <BreadcrumbList className="text-base">
+      <BreadcrumbList className="text-base text-white/80 [&_a]:text-white/85 [&_a:hover]:text-white">
         {crumbs.map((crumb, index) => {
           const isLast = index === crumbs.length - 1;
           return (
             <Fragment key={`${crumb.label}-${index}`}>
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                  <BreadcrumbPage className="font-semibold text-white">{crumb.label}</BreadcrumbPage>
                 ) : crumb.to ? (
                   <BreadcrumbLink asChild>
                     <Link to={crumb.to}>{crumb.label}</Link>
                   </BreadcrumbLink>
                 ) : (
-                  <span className="text-muted-foreground">{crumb.label}</span>
+                  <span>{crumb.label}</span>
                 )}
               </BreadcrumbItem>
               {isLast ? null : <BreadcrumbSeparator />}

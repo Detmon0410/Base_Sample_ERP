@@ -34,9 +34,9 @@ export function MainLayout() {
 
         <AppSidebar width={sidebarWidth} />
 
-        <SidebarInset className="min-w-0 bg-background">
+        <SidebarInset className="min-w-0 bg-[#F1F5F9]">
           <AppHeader />
-          <main id="main-content" className="mx-auto w-full max-w-[1600px] flex-1 p-8">
+          <main id="main-content" className="w-full flex-1 px-5 pt-4 pb-5">
             <Outlet />
           </main>
         </SidebarInset>

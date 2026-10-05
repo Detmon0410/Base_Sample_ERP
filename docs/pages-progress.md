@@ -19,7 +19,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Purchase | 0 | 5 |
 | Accounting | 0 | 6 |
 | Traceability | 0 | 1 |
-| Master data | 0 | 10 |
+| Master data | 1 | 10 |
 | Administration | 0 | 3 |
 
 ## Foundation
@@ -31,7 +31,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Router + protected routes | ✅ | `ProtectedRoute`, `GuestRoute`, `RequirePermission` (not applied to any route yet) |
 | `api.js` + interceptors + mock switch | ✅ | `VITE_USE_MOCK=true` serves `/auth/*` from `services/mock` |
 | `AuthLayout` / `MainLayout` | ✅ | F2 shell: collapsible sidebar (280px / 64px, remembered), header with breadcrumb, language and user menu |
-| Common components | 🟦 | Done: LanguageSwitcher, PageHeader, MessagePage, StatusBadge. Later: ConfirmDialog, DataTable (need alert-dialog) |
+| Common components | ✅ | LanguageSwitcher, PageHeader, MessagePage, StatusBadge, DataTable, Pagination, ListPage, FormField, FormSection, MoneyInput, ConfirmDialog |
 
 ## Pages
 
@@ -72,7 +72,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | C5 | Journal entries | `/accounting/journal` | P2 | ⬜ | | ⬜ | ⬜ | |
 | C6 | Accounting master | `/accounting/master/*` | P2 | ⬜ | | ⬜ | ⬜ | |
 | R1 | Product trace | `/trace` | P2 | ⬜ | | ⬜ | ⬜ | |
-| M1 | Customers | `/master/customers` | P1 | ⬜ | | ⬜ | ⬜ | |
+| M1 | Customers | `/master/customers` | P1 | ✅ | mock | ✅ | ⬜ | Shared list/form pattern built here. Tested as Admin; non-Admin gets 403. API: api/master-data.md |
 | M2 | Suppliers | `/master/suppliers` | P1 | ⬜ | | ⬜ | ⬜ | |
 | M3 | Products | `/master/products` | P1 | ⬜ | | ⬜ | ⬜ | |
 | M4 | Materials | `/master/materials` | P1 | ⬜ | | ⬜ | ⬜ | |
@@ -92,7 +92,12 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 |---|---|
 | 2026-10-02 | Plan and tracker created. No pages implemented yet. |
 | 2026-10-02 | Foundation (F0) built: tokens, i18n, API client + mock, layouts, 403/404 pages. |
+| 2026-10-02 | F3 Master Data spec drafted (specs/f3-master-data.md); suggested answers Q1–Q10 approved. |
+| 2026-10-02 | F3: shared list/form pattern + M1 Customers built with mock data (search, filter, sort, paging in URL, create, edit, deactivate, delete, unsaved-changes guard). |
 | 2026-10-02 | Dashboard: removed the Refresh button; it updates itself every 15 s while the tab is visible (polling; push later). No Live / Updated label is shown. |
+| 2026-10-02 | Dashboard v2 proposed (specs/d1-dashboard-v2.md): department tiles + overview panel + chart cards, based on the POS reference; waiting for review. |
+| 2026-10-02 | Sidebar narrowed again to 208px (menu rows 45px, sub-page labels 16px and wrapping instead of truncating); divider line added between the profile and language buttons. |
+| 2026-10-02 | Top bar made compact (54px, sidebar 240px): profile button shows avatar + name; language is a separate flag button with a flag + name list (replaces the flags-in-profile-menu design). |
 | 2026-10-02 | Language choice moved into the user menu as small rectangular flags (UK / Japan); login screen shows the same flags. Header user button is avatar-only; Log out is red. |
 | 2026-10-02 | F2 review: removed Dashboard quick actions, hid visible page titles (screen-reader-only h1), fixed the logo badge in the collapsed sidebar. |
 | 2026-10-02 | F2: app shell (collapsible sidebar by department, breadcrumb, user menu), Dashboard D1 with mock data, placeholder page for every unbuilt menu entry. |

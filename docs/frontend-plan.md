@@ -32,7 +32,7 @@ Source requirements: `BaseRequirement_md/` (Sale, Factory, Accounting, master_da
 8. Visible focus ring (3px), full keyboard operation, no hover-only information.
 9. Predictable lists: search box + filters on top, table, pagination at the bottom, same on every list page.
 10. Date format by locale (EN `2026-10-01`, JA `2026年10月1日`); numbers with thousands separators; currency shown explicitly.
-11. Language is chosen with two small rectangular flags: in the **user (profile) menu** inside the app, and next to the logo on the login screen (no profile yet). Choice persisted.
+11. Language: a **separate flag button in the top bar** that opens a list of flag + language name (rectangular flags). On the login screen two flag buttons sit beside the logo. Choice persisted.
 12. Layout must survive 200% zoom; min width 1280px is the design target (office desktops), tablet works, phone is out of scope.
 
 ### Design tokens (defined once in `src/index.css`)
@@ -69,7 +69,7 @@ Master Data     Customers · Suppliers · Products · Materials · BOM · Wareho
 Administration  Users · Departments & Roles
 ```
 
-Header: menu toggle · breadcrumb · user menu (avatar only; the menu shows name, department/role, **language flags**, Profile, and Log out in red).
+Header: menu toggle · breadcrumb · profile button (avatar + name; its menu shows e-mail, department/role, Profile, and Log out in red) · separate language flag button. Top bar 54px, sidebar 208px; a thin divider separates the two buttons.
 
 ### Standard page templates (reuse everywhere)
 

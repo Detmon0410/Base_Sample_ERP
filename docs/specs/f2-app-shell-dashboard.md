@@ -11,7 +11,7 @@ Decisions already made: sidebar is **collapsible**; the Dashboard is an **overvi
 
 ```text
 ┌──────────────┬──────────────────────────────────────────────────────────┐
-│ Sidebar      │ Header:  [☰]  Breadcrumb                          [User ▾]  │
+│ Sidebar      │ Header:  [☰]  Breadcrumb                [User ▾] [flag]    │
 │ (collapsible)├──────────────────────────────────────────────────────────┤
 │              │ Page title (h1)                       [primary action]    │
 │  menu groups │                                                           │
@@ -23,11 +23,11 @@ Decisions already made: sidebar is **collapsible**; the Dashboard is an **overvi
 
 | Item | Spec |
 |---|---|
-| Width | Expanded **280px**, collapsed **64px** (icons only). Fixed, full height, own scroll if the menu is long |
+| Width | Expanded **208px**, collapsed **64px** (icons only). Fixed, full height, own scroll if the menu is long |
 | Top | Factory icon + "Kanou ERP" (name hides when collapsed) |
 | Toggle | Button in the header (☰ icon) with `aria-label` "Collapse / Expand menu", `aria-expanded`; keyboard shortcut `Ctrl/Cmd + B` |
 | Memory | Open/closed state saved per browser in `localStorage` key `kanou.sidebar` (default: expanded) |
-| Item size | Height 48px, label 16px, icon 22px. Collapsed: icon only, the label shows as a **tooltip** on hover and on keyboard focus |
+| Item size | Height 45px, label 18px (sub-pages 16px, wrapping onto two lines when a name is long, never cut with "…"), icon 20px. Collapsed: icon only, the label shows as a **tooltip** on hover and on keyboard focus |
 | Active page | Highlighted (soft blue background, primary text, left bar). The group that contains the current page is open |
 | Groups | Collapsible sections. Collapsed sidebar shows one icon per group; clicking opens that group's first page |
 | Visibility | A group is **not listed at all** if the user has no role in that department. **Admin** sees everything. Dashboard is always listed |
@@ -53,9 +53,9 @@ Menu (order, icon, pages). Permission = department the user must belong to (Admi
 |---|---|
 | Sidebar toggle | Left, text-free icon button with `aria-label` |
 | Breadcrumb | `Dashboard / Sale / Quotations / QT-0012`. Last item is plain text (current page); earlier items are links. Built from route metadata, translated |
-| Language | **Not in the header.** Two small rectangular flags (UK = English, Japan = 日本語) inside the user menu; the name is the accessible name and the tooltip. The login screen keeps the two flags beside the logo |
-| User menu | **Avatar with initials only** (no name, no arrow; the name is the tooltip and the accessible name); opens a dropdown: name, e-mail, list of `Department · Role` (e.g. "Sale · Manager"), **language flags**, **Profile** (A6, disabled until built), **Log out** (red) |
-| Height | 64px, white background, bottom border. The login screen's transparent navbar is unchanged |
+| Language | **Its own button, separate from the profile button:** the flag of the current language; opens a list of flag + language name (selected one in bold with a check). The login screen keeps two flag buttons beside the logo |
+| User menu | Compact button: avatar with initials + name + arrow; opens a dropdown: name, e-mail, list of `Department · Role` (e.g. "Sale · Manager"), **Profile** (A6, disabled until built), **Log out** (red). No language rows here |
+| Height | **54px** (compact), white background, bottom border; the sidebar header block has the same height. The login screen's transparent navbar is unchanged |
 
 ### 1.3 Content area
 Background `#F4F6F9`, padding 32px, max content width 1600px, centered on wider screens. One `h1` per page. Skip-to-content link stays (already built).
@@ -203,3 +203,4 @@ Admin, Manager (Sale + Purchase Worker), Worker (Factory) each see the right men
 | Logo badge in the collapsed sidebar | Centered, no side padding when collapsed | It was clipped by the 64px width |
 | Language switch as EN / 日本語 text buttons in the header | Small rectangular **flags** in the user menu (and on the login screen) | Decision after review: keeps the header clean. Flags are SVG because flag emoji do not render on Windows |
 | Refresh button + update after 5 minutes (Q7) | **No Refresh button.** Self-updating every 15 s while the tab is visible; nothing is shown about it (no button, no "Live" label, no time) | Decision after review: the Dashboard must update in real time |
+| Language flags inside the profile menu; avatar-only profile button | **Reversed again after review (latest decision):** profile button shows avatar + name + arrow, the language is a separate flag button with its own list (flag + name), **with a thin divider line between the profile and language buttons**; top bar 54px, sidebar 208px | Matches the reference the user showed; supersedes the two rows above |

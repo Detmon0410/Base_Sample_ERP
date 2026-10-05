@@ -12,7 +12,12 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <AuthProvider>
         <App />
-        <Toaster position="top-right" />
+        <Toaster
+          position="top-right"
+          // While a detail sheet is open (it publishes its width as --sheet-offset) the messages appear to the left of it
+          // instead of on top of its buttons. On a narrow window the offset is capped so they stay on screen.
+          offset={{ top: 16, right: "calc(min(var(--sheet-offset, 0px), 100vw - 24rem) + 16px)" }}
+        />
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

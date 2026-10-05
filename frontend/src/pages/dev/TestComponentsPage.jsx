@@ -558,7 +558,7 @@ export function TestComponentsPage() {
           <form id="demo-form" onSubmit={(event) => { event.preventDefault(); toast.success("Saved"); }} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-5">
               <SheetSection title="Basic information" icon={BuildingIcon}>
-                <p>Save in the header submits this form. Drag the three dots on the left edge of the sheet to make it wider or narrower.</p>
+                <p>Save in the header submits this form. Drag the thin line on the left edge of the sheet to make it wider or narrower.</p>
               </SheetSection>
               <SheetSection title="Second card" icon={InfoIcon}>
                 <p>Cards do not fold.</p>

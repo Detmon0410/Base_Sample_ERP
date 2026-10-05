@@ -1,14 +1,14 @@
 import { XIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ResizeHandle } from "@/components/common/ResizeHandle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 const STORAGE_KEY = "kanou.sheetWidth";
 const DEFAULT_WIDTH = 672; // px
 const MIN_WIDTH = 440;
-const KEY_STEP = 32;
 const EDGE_GAP = 80; // the list always keeps this much visible on the left
 
 const maxWidth = () => Math.max(MIN_WIDTH, window.innerWidth - EDGE_GAP);
@@ -36,8 +36,9 @@ function saveWidth(width) {
  * blurred, behind it). It is always open while mounted: the route decides when it exists, and
  * `onClose` navigates back to the list (ask first when there are unsaved changes).
  *
- * Width: drag the three dots on the left edge (a light blue band shows on hover) (or use the arrow keys on it) to make the sheet wider or
- * narrower; double-click resets. The width is remembered between visits.
+ * Width: drag the thin line on the left edge (it darkens on hover) or use the arrow keys on it;
+ * double-click resets. The width is remembered between visits. The handle comes last in the DOM so it is
+ * not the first stop of the Tab key.
  *
  * Closing: render with `open={!leaving}` from useSheetExit so the panel slides out before the route changes.
  *
@@ -52,7 +53,12 @@ function saveWidth(width) {
 export function DetailSheet({ title, description, badge, actions, open = true, onClose, children }) {
   const { t } = useTranslation();
   const [width, setWidth] = useState(readWidth);
-  const [dragging, setDragging] = useState(false);
+
+  // Tell the toasts how wide the sheet is, so they stay beside it and never cover its header buttons.
+  useEffect(() => {
+    document.documentElement.style.setProperty("--sheet-offset", `${width}px`);
+    return () => document.documentElement.style.removeProperty("--sheet-offset");
+  }, [width]);
 
   // Keep the sheet inside the window when the window gets smaller.
   useEffect(() => {
@@ -61,65 +67,19 @@ export function DetailSheet({ title, description, badge, actions, open = true, o
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const change = useCallback((next, { persist = false } = {}) => {
-    const value = clamp(next);
-    setWidth(value);
-    if (persist) saveWidth(value);
-  }, []);
-
-  const onPointerDown = (event) => {
-    event.preventDefault();
-    event.currentTarget.setPointerCapture(event.pointerId);
-    setDragging(true);
-  };
-  const onPointerMove = (event) => {
-    if (dragging) change(window.innerWidth - event.clientX);
-  };
-  const onPointerUp = (event) => {
-    if (!dragging) return;
-    event.currentTarget.releasePointerCapture(event.pointerId);
-    setDragging(false);
-    saveWidth(clamp(window.innerWidth - event.clientX)); // the width where the pointer was let go
-  };
-  const onKeyDown = (event) => {
-    if (event.key === "ArrowLeft") change(width + KEY_STEP, { persist: true });
-    else if (event.key === "ArrowRight") change(width - KEY_STEP, { persist: true });
-    else if (event.key === "Home") change(DEFAULT_WIDTH, { persist: true });
-    else return;
-    event.preventDefault();
-  };
-
   return (
     <Sheet open={open} onOpenChange={(next) => !next && onClose()}>
       <SheetContent
         showCloseButton={false}
+        // Focus the panel itself, not its first button: a focused header button would open its tooltip and
+        // the first Esc would only close that tooltip.
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          event.currentTarget.focus();
+        }}
         className="gap-0 p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-none"
         style={{ width: `min(${width}px, 100vw)` }}
       >
-        <div
-          role="separator"
-          aria-orientation="vertical"
-          aria-label={t("detail.resize")}
-          aria-valuemin={MIN_WIDTH}
-          aria-valuemax={maxWidth()}
-          aria-valuenow={Math.round(width)}
-          tabIndex={0}
-          title={t("detail.resize")}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
-          onDoubleClick={() => change(DEFAULT_WIDTH, { persist: true })}
-          onKeyDown={onKeyDown}
-          className={`group absolute inset-y-0 left-0 z-10 hidden w-3.5 cursor-col-resize touch-none items-center justify-center outline-none transition-colors sm:flex ${dragging ? "bg-sky-200" : "hover:bg-sky-200 focus-visible:bg-sky-200"}`}
-        >
-          <span aria-hidden="true" className="flex flex-col gap-1">
-            <span className="size-1 rounded-full bg-slate-400 group-hover:bg-sky-700 group-focus-visible:bg-sky-700" />
-            <span className="size-1 rounded-full bg-slate-400 group-hover:bg-sky-700 group-focus-visible:bg-sky-700" />
-            <span className="size-1 rounded-full bg-slate-400 group-hover:bg-sky-700 group-focus-visible:bg-sky-700" />
-          </span>
-        </div>
-
         <SheetHeader className="flex-row flex-wrap items-center gap-x-3 gap-y-2 border-b bg-card px-5 py-3">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
             <SheetTitle className="text-xl font-bold break-words">{title}</SheetTitle>
@@ -136,6 +96,19 @@ export function DetailSheet({ title, description, badge, actions, open = true, o
           </div>
         </SheetHeader>
         <div className="@container flex min-h-0 flex-1 flex-col bg-[#F1F5F9]">{children}</div>
+
+        <ResizeHandle
+          edge="left"
+          label={t("detail.resize")}
+          value={width}
+          min={MIN_WIDTH}
+          max={maxWidth()}
+          defaultValue={DEFAULT_WIDTH}
+          growKey="ArrowLeft"
+          valueFromPointer={(clientX) => window.innerWidth - clientX}
+          onChange={setWidth}
+          onCommit={saveWidth}
+        />
       </SheetContent>
     </Sheet>
   );

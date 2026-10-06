@@ -1,5 +1,5 @@
-import { PlusIcon, SearchIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { PlusIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -7,9 +7,7 @@ import { DataTable } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Pagination } from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FILTER_CONTROL, FilterField } from "@/components/common/FilterField";
+import { ListToolbar } from "@/components/common/ListToolbar";
 import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { PAGE_SIZE } from "@/config/masterData";
 
@@ -50,6 +48,21 @@ export function ListPage({
     return () => clearTimeout(timer);
   }, [text, query.q, setQuery]);
 
+  const filters = useMemo(
+    () => [
+      {
+        key: "status",
+        label: t("common.statusFilter"),
+        kind: "options",
+        emptyValue: "all",
+        options: [
+          { value: "active", label: t("common.active") },
+          { value: "inactive", label: t("common.inactive") },
+        ],
+      },
+    ],
+    [t],
+  );
   const filtered = query.q !== "" || query.status !== "all";
   const clearFilters = () => {
     setText("");
@@ -81,34 +94,16 @@ export function ListPage({
       <PageHeader title={title} />
 
       <div className={`${PANEL_CLASS} p-5`}>
-      {/* Row 1: search on the left, New on the right, both 36px high. Row 2: the filters, which wrap among themselves. */}
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <div className="relative h-9 min-w-0 max-w-md flex-1">
-            <SearchIcon aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 my-auto size-4 text-muted-foreground" />
-            <Input type="search" value={text} onChange={(event) => setText(event.target.value)} placeholder={searchLabel} aria-label={searchLabel} className="h-9 pl-9" />
-          </div>
-        {newTo ? (
-          <Button asChild className="h-9 shrink-0">
-            <Link to={newTo}>
-              <PlusIcon /> {newLabel}
-            </Link>
-          </Button>
-        ) : null}
-      </div>
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-          <FilterField label={t("common.statusFilter")} className="w-52">
-            <Select value={query.status} onValueChange={(status) => setQuery({ status })}>
-              <SelectTrigger className={`${FILTER_CONTROL} w-full`} aria-label={t("common.statusFilter")}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" align="start" className="min-w-44">
-                <SelectItem value="all">{t("common.all")}</SelectItem>
-                <SelectItem value="active">{t("common.active")}</SelectItem>
-                <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
-              </SelectContent>
-            </Select>
-          </FilterField>
-      </div>
+      <ListToolbar
+        searchValue={text}
+        onSearchChange={setText}
+        searchLabel={searchLabel}
+        filters={filters}
+        values={query}
+        onChange={setQuery}
+        newTo={newTo}
+        newLabel={newLabel}
+      />
 
       <DataTable
         ariaLabel={ariaLabel}
@@ -129,6 +124,7 @@ export function ListPage({
           pageSize={list.meta.pageSize ?? PAGE_SIZE}
           total={list.meta.total}
           onChange={(page) => setQuery({ page })}
+          onPageSizeChange={(size) => setQuery({ size })}
         />
       ) : null}
       </div>

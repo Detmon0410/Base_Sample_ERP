@@ -2,6 +2,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PAGE_SIZES } from "@/config/masterData";
 import { formatNumber } from "@/utils/format";
 
 /** Page numbers around the current page, e.g. 1 … 4 5 6 … 12 */
@@ -17,14 +19,32 @@ function pageWindow(page, pages) {
 }
 
 /** "Showing 1–20 of 134" and numbered buttons, all text buttons of at least 40px. */
-export function Pagination({ page, pageSize, total, onChange }) {
+export function Pagination({ page, pageSize, total, onChange, onPageSizeChange }) {
   const { t, i18n } = useTranslation("common");
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, total);
 
   return (
-    <div className="mt-4 flex items-center justify-between gap-4">
+    <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        {onPageSizeChange ? (
+          <label className="flex items-center gap-2 text-muted-foreground">
+            {t("pagination.show")}
+            <Select value={String(pageSize)} onValueChange={(value) => onPageSizeChange(Number(value))}>
+              <SelectTrigger className="h-9 w-20" aria-label={t("pagination.perPage")}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" align="start">
+                {PAGE_SIZES.map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </label>
+        ) : null}
       <p className="text-muted-foreground">
         {total === 0
           ? t("pagination.none")
@@ -34,6 +54,7 @@ export function Pagination({ page, pageSize, total, onChange }) {
               total: formatNumber(total, i18n.language),
             })}
       </p>
+      </div>
 
       {pages > 1 ? (
         <nav aria-label={t("pagination.label")} className="flex items-center gap-1">

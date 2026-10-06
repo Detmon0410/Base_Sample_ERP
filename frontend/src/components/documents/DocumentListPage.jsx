@@ -1,17 +1,14 @@
-import { PlusIcon, SearchIcon, XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { PlusIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { DataTable } from "@/components/common/DataTable";
-import { EntitySelect } from "@/components/common/EntitySelect";
-import { FILTER_CONTROL, FilterField } from "@/components/common/FilterField";
+import { ListToolbar } from "@/components/common/ListToolbar";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { Pagination } from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PAGE_SIZE } from "@/config/masterData";
 import { useListQuery } from "@/hooks/useListQuery";
 import { useOptions } from "@/hooks/useOptions";
@@ -20,7 +17,6 @@ import { customerService } from "@/services/customer.service";
 
 const SEARCH_DELAY_MS = 300;
 const EXTRA = ["customer", "from", "to"];
-const DATE_INPUT = `${FILTER_CONTROL} w-36 px-2`;
 
 /**
  * List of a Sale document (quotations, customer POs, sale orders, delivery notes): search, status, customer and
@@ -59,6 +55,14 @@ export function DocumentListPage({
     return () => clearTimeout(timer);
   }, [text, query.q, setQuery]);
 
+  const filters = useMemo(
+    () => [
+      ...(statuses ? [{ key: "status", label: t("sale:filters.status"), kind: "options", emptyValue: "all", options: statuses.map((status) => ({ value: status, label: t(`sale:status.${status}`) })) }] : []),
+      { key: "customer", label: t("sale:filters.customer"), kind: "search", options: customers.map((customer) => ({ value: String(customer.id), label: `${customer.code} · ${customer.name}` })) },
+      { key: "date", label: t("sale:filters.date"), kind: "dateRange", fromKey: "from", toKey: "to" },
+    ],
+    [statuses, customers, t],
+  );
   const filtered = query.q !== "" || query.status !== "all" || query.customer !== "" || query.from !== "" || query.to !== "";
   const clear = () => {
     setText("");
@@ -90,63 +94,16 @@ export function DocumentListPage({
       <PageHeader title={title} />
 
       <div className={`${PANEL_CLASS} p-5`}>
-      {/* Row 1: search on the left, New on the right, both 36px high. Row 2: the filters, which wrap among themselves. */}
-      <div className="mb-3 flex items-center justify-between gap-3" role="search" aria-label={t("sale:filters.label")}>
-        <div className="relative h-9 min-w-0 max-w-md flex-1">
-            <SearchIcon aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 my-auto size-4 text-muted-foreground" />
-            <Input type="search" value={text} onChange={(event) => setText(event.target.value)} placeholder={searchLabel} aria-label={searchLabel} className="h-9 pl-9" />
-          </div>
-        {newTo ? (
-          <Button asChild className="h-9 shrink-0">
-            <Link to={newTo}>
-              <PlusIcon /> {newLabel}
-            </Link>
-          </Button>
-        ) : null}
-      </div>
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-          {statuses ? (
-            <FilterField label={t("sale:filters.status")} className="w-52">
-              <Select value={query.status} onValueChange={(status) => setQuery({ status })}>
-                <SelectTrigger className={`${FILTER_CONTROL} w-full`} aria-label={t("sale:filters.status")}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent position="popper" align="start" className="min-w-44">
-                  <SelectItem value="all">{t("sale:filters.all")}</SelectItem>
-                  {statuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {t(`sale:status.${status}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FilterField>
-          ) : null}
-
-          <FilterField label={t("sale:filters.customer")} className="w-64">
-            <EntitySelect
-              id="filter-customer"
-              options={customers}
-              value={query.customer ? Number(query.customer) : ""}
-              onChange={(id) => setQuery({ customer: id ? String(id) : "" })}
-              emptyLabel={t("sale:filters.all")}
-              className={FILTER_CONTROL}
-              aria-label={t("sale:filters.customer")}
-            />
-          </FilterField>
-
-          <FilterField label={t("sale:filters.date")}>
-            <Input type="date" value={query.from} max={query.to || undefined} onChange={(event) => setQuery({ from: event.target.value })} aria-label={t("sale:filters.from")} className={DATE_INPUT} />
-            <span aria-hidden="true" className="flex items-center text-muted-foreground">–</span>
-            <Input type="date" value={query.to} min={query.from || undefined} onChange={(event) => setQuery({ to: event.target.value })} aria-label={t("sale:filters.to")} className={DATE_INPUT} />
-          </FilterField>
-
-          {filtered ? (
-            <Button type="button" variant="outline" size="sm" className="h-9" onClick={clear}>
-              <XIcon aria-hidden="true" /> {t("sale:filters.clear")}
-            </Button>
-          ) : null}
-      </div>
+      <ListToolbar
+        searchValue={text}
+        onSearchChange={setText}
+        searchLabel={searchLabel}
+        filters={filters}
+        values={query}
+        onChange={setQuery}
+        newTo={newTo}
+        newLabel={newLabel}
+      />
 
       <DataTable
         ariaLabel={title}
@@ -161,7 +118,7 @@ export function DocumentListPage({
         emptyContent={emptyContent}
       />
 
-      {list.meta ? <Pagination page={list.meta.page} pageSize={list.meta.pageSize ?? PAGE_SIZE} total={list.meta.total} onChange={(page) => setQuery({ page })} /> : null}
+      {list.meta ? <Pagination page={list.meta.page} pageSize={list.meta.pageSize ?? PAGE_SIZE} total={list.meta.total} onChange={(page) => setQuery({ page })} onPageSizeChange={(size) => setQuery({ size })} /> : null}
       </div>
     </>
   );

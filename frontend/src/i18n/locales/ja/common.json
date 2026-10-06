@@ -34,7 +34,9 @@
     "none": "",
     "previous": "",
     "next": "",
-    "page": ""
+    "page": "",
+    "show": "",
+    "perPage": ""
   },
   "detail": {
     "linkedDocuments": "",
@@ -53,5 +55,16 @@
     "reasonLabel": "",
     "reasonRequired": "",
     "reasonPlaceholder": ""
+  },
+  "toolbar": {
+    "filters": "",
+    "search": "",
+    "all": "",
+    "from": "",
+    "to": "",
+    "done": "",
+    "noMatch": "",
+    "clearAll": "",
+    "remove": ""
   }
 }

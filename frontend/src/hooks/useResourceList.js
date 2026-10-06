@@ -4,6 +4,8 @@ import { PAGE_SIZE } from "@/config/masterData";
 import { onMasterChanged } from "@/utils/masterEvents";
 import { rememberRecords } from "@/utils/recordCache";
 
+const withPageSize = (params) => ({ ...params, pageSize: params.size ?? PAGE_SIZE });
+
 /**
  * Loads one page of a master data list whenever `query` changes.
  * status: "loading" (first load, nothing to show) | "ready" | "error"
@@ -19,7 +21,7 @@ export function useResourceList(service, query) {
   useEffect(() => {
     let cancelled = false;
     service
-      .list({ ...JSON.parse(queryJson), pageSize: PAGE_SIZE })
+      .list(withPageSize(JSON.parse(queryJson)))
       .then(({ items, meta }) => {
         rememberRecords(service.key, items);
         if (!cancelled) setState({ key, status: "ready", items, meta, error: null });

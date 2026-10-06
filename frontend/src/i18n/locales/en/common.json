@@ -34,7 +34,9 @@
     "none": "No records",
     "previous": "Previous",
     "next": "Next",
-    "page": "Page {{page}}"
+    "page": "Page {{page}}",
+    "show": "Show",
+    "perPage": "Rows per page"
   },
   "detail": {
     "linkedDocuments": "Linked documents",
@@ -53,5 +55,16 @@
     "reasonLabel": "Reason",
     "reasonRequired": "A reason is required.",
     "reasonPlaceholder": "What needs to change?"
+  },
+  "toolbar": {
+    "filters": "Filters",
+    "search": "Search",
+    "all": "All",
+    "from": "From",
+    "to": "To",
+    "done": "Done",
+    "noMatch": "No match",
+    "clearAll": "Clear filters",
+    "remove": "Remove filter"
   }
 }

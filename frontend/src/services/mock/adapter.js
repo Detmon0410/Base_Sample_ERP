@@ -3,7 +3,7 @@ import { AxiosError } from "axios";
 import { MockHttpError, MockResponse } from "./errors.js";
 import { mockRoutes } from "./routes.js";
 
-const LATENCY_MS = 400;
+const LATENCY_MS = 150;
 
 function respond(config, status, body) {
   return {

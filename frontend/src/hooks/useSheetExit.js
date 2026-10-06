@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
-// A little longer than the closing animation in index.css (280ms), so the panel has slid out
+// A little longer than the closing animation in index.css (140ms), so the panel has slid out
 // before the route (and the sheet with it) is removed.
-const EXIT_MS = 300;
+const EXIT_MS = 150;
 
 /**
  * Leaving a detail sheet: first `leaving` becomes true (give it to <DetailSheet open={!leaving}> so the

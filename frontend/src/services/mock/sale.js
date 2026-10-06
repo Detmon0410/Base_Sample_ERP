@@ -388,6 +388,26 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
       quotations.splice(quotations.indexOf(doc), 1);
       return null;
     },
+    "POST /sale/quotations/:id/duplicate": ({ authorization, params }) => {
+      const { user } = guard(authorization);
+      const source = findIn(quotations, params.id);
+      const date = today();
+      const doc = {
+        id: seq.qt++,
+        number: nextNumber("QT", date),
+        date,
+        customerId: source.customerId,
+        salesPersonId: source.salesPersonId,
+        validUntil: addDays(date, 30),
+        remarks: source.remarks,
+        status: "draft",
+        lines: source.lines.map((line) => ({ ...line })),
+        log: [],
+      };
+      logEntry(doc, "created", "draft", user.name, `Copied from ${source.number}`);
+      quotations.push(doc);
+      return new MockResponse({ data: shapeQuotation(doc), status: 201, message: "Created" });
+    },
     "POST /sale/quotations/:id/create-order": ({ authorization, params }) => {
       const { user } = guard(authorization);
       const qt = findIn(quotations, params.id);

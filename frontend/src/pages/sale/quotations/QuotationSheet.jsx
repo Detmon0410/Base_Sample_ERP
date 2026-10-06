@@ -63,6 +63,17 @@ export function QuotationSheet() {
   const editable = isNew || (record?.status === "draft" && canWork(user));
   const actions = !isNew && record ? quotationActions(record, user) : [];
 
+  const duplicate = async () => {
+    try {
+      const copy = await quotationService.duplicate(record.id);
+      toast.success(t("sale:toast.quotationCopied", { number: copy.number }));
+      notifyMasterChanged();
+      navigate(`/sale/quotations/${copy.id}`);
+    } catch (error) {
+      toast.error(saleErrorText(t, error));
+    }
+  };
+
   const run = async (action, note) => {
     try {
       if (action.key === "create-order") {
@@ -90,6 +101,8 @@ export function QuotationSheet() {
       heading={isNew ? t("sale:quotations.new") : t(editable ? "sale:quotations.edit" : "sale:quotations.view")}
       status={record?.status}
       singular={t("sale:quotations.singular")}
+      printKind="quotation"
+      onDuplicate={canWork(user) ? duplicate : undefined}
       formId="qt-form"
       canEdit={editable}
       actions={<DocumentActions actions={actions} onRun={run} disabled={form.formState.isDirty} />}

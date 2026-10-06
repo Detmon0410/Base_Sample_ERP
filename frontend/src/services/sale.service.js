@@ -17,6 +17,7 @@ const documentApi = (path) => {
 export const quotationService = {
   ...documentApi("/sale/quotations"),
   createOrder: async (id) => unwrap(await api.post(`/sale/quotations/${id}/create-order`)),
+  duplicate: async (id) => unwrap(await api.post(`/sale/quotations/${id}/duplicate`)),
 };
 
 export const saleOrderService = {

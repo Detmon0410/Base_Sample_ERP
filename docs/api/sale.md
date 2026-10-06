@@ -56,6 +56,7 @@ Master data **reads** (`GET /master/customers`, `/products`, `/employees`, `/war
 | PUT | `/sale/quotations/:id` | change a **draft** only (`409 INVALID_STATUS` otherwise) |
 | DELETE | `/sale/quotations/:id` | delete a **draft** only |
 | POST | `/sale/quotations/:id/:action` | `send` (draft → sent), `accept` (sent → accepted), `reject` (sent → rejected, **`note` required**), `expire` (sent → expired), `revert` (Manager, `note` required). Body `{ note? }` |
+| POST | `/sale/quotations/:id/duplicate` | any status, Sale Worker / Manager / Admin; makes a **new draft** with the next number, today as the date, `validUntil` = today + 30 days, the same customer, sales person, remarks and lines (prices and `priceEdited` as they are); the history of the new one starts with `created` and the note `Copied from <number>`. Answers `201` with the new quotation |
 | POST | `/sale/quotations/:id/create-order` | accepted only; creates a **draft sale order** with the customer, lines and prices of the quotation (and the customer PO that references this quotation); `409 ALREADY_LINKED` if a non-cancelled order already exists |
 
 Extra response field `pastValidUntil` (true when status is `sent` and `validUntil` is before today): the UI shows a warning; **nothing expires by itself** (Q16).
@@ -186,6 +187,10 @@ model DocumentHistory {
 // *Line models: id, <doc>Id, productId, qty Int, unitPrice Int (delivery note line: productId, deliverNow Int)
 ```
 
+## Printing
+
+The paper version (A4 quotation, sale order, delivery note: company header, customer, lines, totals, remarks; the delivery note has no prices and two signature lines) is drawn by the UI from the document and printed with the browser: the Print icon of the sheet opens the browser print dialog straight away (Print / Save as PDF), with no page in between. **No endpoint is needed.** Company details (name, address, phone, e-mail) are placeholders in `frontend/src/config/company.js`; later a company setting of the backend should supply them (and the qualified invoice number `T` + 13 digits). Server-side PDF generation can replace this later without changing the UI contract.
+
 ## Backend checklist
 
 - [ ] Sale-department middleware (Worker / Manager / Admin) on `/sale/*`; the rules in the access table, including the role checks per action
@@ -195,5 +200,6 @@ model DocumentHistory {
 - [ ] Price lookup service shared with the line forms
 - [ ] Master data `GET` open to every signed-in user, writes Admin only
 - [ ] File upload for the customer PO attachment (the `attachment.url` is what the UI opens in a new tab)
+- [ ] `POST /sale/quotations/:id/duplicate` (copy as a new draft, see Quotations)
 - [ ] `meta.statusCounts`, `meta.sums` and `pageSize` up to 100 on the four lists (see List responses)
 - [ ] Turn off `VITE_USE_MOCK` and re-run the test list in the spec

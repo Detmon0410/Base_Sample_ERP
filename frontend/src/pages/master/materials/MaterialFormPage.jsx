@@ -45,6 +45,7 @@ export function MaterialFormPage() {
       page={page}
       entityTitle={t("nav:items.materials")}
       newTitle={t("master:materials.new")}
+      editTitle={t("master:materials.edit")}
       singular={t("master:materials.singular")}
       formId="material-form"
     >

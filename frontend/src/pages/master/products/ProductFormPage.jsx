@@ -44,6 +44,7 @@ export function ProductFormPage() {
       page={page}
       entityTitle={t("nav:items.products")}
       newTitle={t("master:products.new")}
+      editTitle={t("master:products.edit")}
       singular={t("master:products.singular")}
       formId="product-form"
     >

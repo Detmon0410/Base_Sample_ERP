@@ -14,11 +14,12 @@ import { CARD_CLASS } from "@/components/common/SheetSection";
  *
  *   entityTitle  name of the list ("Materials"), used while nothing is loaded
  *   newTitle     title of a new record ("New material")
+ *   editTitle    title of a saved record ("Edit material"); when it is not given titleOf is used
  *   titleOf      (record) => title of a saved record; default "CODE · Name"
  *   singular     "material", used in the confirmation texts
  *   formId       id of the <form> that Save in the header submits
  */
-export function RecordSheet({ page, entityTitle, newTitle, titleOf = (record) => `${record.code} · ${record.name}`, singular, formId, children }) {
+export function RecordSheet({ page, entityTitle, newTitle, editTitle, titleOf = (record) => `${record.code} · ${record.name}`, singular, formId, children }) {
   const { t } = useTranslation("master");
   const { isNew, record, loadState, leaving, goToList, listPath } = page;
 
@@ -51,7 +52,7 @@ export function RecordSheet({ page, entityTitle, newTitle, titleOf = (record) =>
     <>
       <DetailSheet
         open={!leaving}
-        title={isNew ? newTitle : titleOf(record)}
+        title={isNew ? newTitle : (editTitle ?? titleOf(record))}
         onClose={goToList}
         actions={
           <RecordActions

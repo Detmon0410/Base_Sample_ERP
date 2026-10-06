@@ -41,6 +41,7 @@ export function CustomerFormPage() {
       page={page}
       entityTitle={t("nav:items.customers")}
       newTitle={t("master:customers.new")}
+      editTitle={t("master:customers.edit")}
       singular={t("master:customers.singular")}
       formId="customer-form"
     >

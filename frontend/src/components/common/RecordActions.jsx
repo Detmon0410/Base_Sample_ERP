@@ -1,9 +1,9 @@
-import { PowerIcon, SaveIcon, Trash2Icon } from "lucide-react";
+import { SaveIcon, Trash2Icon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 
 function IconAction({ label, onClick, destructive, children }) {
   return (
@@ -19,8 +19,8 @@ function IconAction({ label, onClick, destructive, children }) {
 }
 
 /**
- * Buttons in the header of a detail sheet. The power button is the status: green while the record is
- * active, grey while it is inactive; one click switches it at once (no confirmation) and the tooltip
+ * Buttons in the header of a detail sheet. The toggle is the status: green and on while the record is
+ * active, grey and off while it is inactive; one click switches it at once (no confirmation) and the tooltip
  * says what it does. Then Delete (icon, asks first) and Save. Save submits the form `formId`, which can
  * be on another tab.
  */
@@ -33,23 +33,9 @@ export function RecordActions({ formId, isSubmitting, isNew, isActive, busy, onT
         <>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                type="button"
-                role="switch"
-                aria-checked={isActive}
-                aria-label={statusLabel}
-                variant="outline"
-                size="icon"
-                disabled={busy}
-                onClick={onToggleStatus}
-                className={cn(
-                  isActive
-                    ? "border-success/50 bg-success/15 text-success hover:bg-success/25 hover:text-success"
-                    : "border-border bg-muted text-muted-foreground hover:bg-muted/70",
-                )}
-              >
-                <PowerIcon />
-              </Button>
+              <span className="inline-flex">
+                <Switch checked={isActive} onCheckedChange={() => onToggleStatus()} disabled={busy} aria-label={statusLabel} />
+              </span>
             </TooltipTrigger>
             <TooltipContent>{statusLabel}</TooltipContent>
           </Tooltip>

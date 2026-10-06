@@ -83,6 +83,7 @@ export function SimpleFormPage({ entity }) {
       page={page}
       entityTitle={t(`nav:${entity.nav}`)}
       newTitle={t(`master:${entity.key}.new`)}
+      editTitle={t(`master:${entity.key}.edit`)}
       singular={t(`master:${entity.key}.singular`)}
       formId={`${prefix}-form`}
     >

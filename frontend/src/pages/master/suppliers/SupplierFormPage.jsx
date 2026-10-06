@@ -42,6 +42,7 @@ export function SupplierFormPage() {
       page={page}
       entityTitle={t("nav:items.suppliers")}
       newTitle={t("master:suppliers.new")}
+      editTitle={t("master:suppliers.edit")}
       singular={t("master:suppliers.singular")}
       formId="supplier-form"
     >

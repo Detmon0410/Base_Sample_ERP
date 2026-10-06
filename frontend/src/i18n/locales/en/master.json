@@ -107,7 +107,8 @@
       "reactivateDescription": "It will be offered again when creating new documents.",
       "deleteTitle": "Delete this customer?",
       "deleteDescription": "This cannot be undone. A customer used by documents cannot be deleted; deactivate it instead."
-    }
+    },
+    "edit": "Edit customer"
   },
   "generic": {
     "deactivateTitle": "Deactivate this {{name}}?",
@@ -130,7 +131,8 @@
       "placeholders": {
         "code": "pcs"
       }
-    }
+    },
+    "edit": "Edit unit of measure"
   },
   "warehouses": {
     "singular": "warehouse",
@@ -155,7 +157,8 @@
         "code": "WH-R",
         "type": "Select type"
       }
-    }
+    },
+    "edit": "Edit warehouse"
   },
   "machines": {
     "singular": "machine or line",
@@ -177,7 +180,8 @@
         "capacityPerDay": "200",
         "capacityUnit": "pcs"
       }
-    }
+    },
+    "edit": "Edit machine / line"
   },
   "employees": {
     "singular": "employee",
@@ -197,7 +201,8 @@
         "code": "E001",
         "position": "Operator"
       }
-    }
+    },
+    "edit": "Edit employee"
   },
   "links": {
     "supplier": "Supplier",
@@ -220,7 +225,9 @@
     "nothingToAdd": "Every active record is already in the list.",
     "choose": "Choose a {{name}}",
     "supplierListTitle": "Materials sold",
-    "materialListTitle": "Suppliers of this material"
+    "materialListTitle": "Suppliers of this material",
+    "no": "No.",
+    "daysUnit": "days"
   },
   "materials": {
     "singular": "material",
@@ -258,7 +265,8 @@
     "tabUsedIn": "Used in",
     "usedInHint": "Products whose BOM contains this material. Change the quantity on the product's BOM tab.",
     "usedInEmpty": "No product uses this material yet.",
-    "usedInProduct": "Product"
+    "usedInProduct": "Product",
+    "edit": "Edit material"
   },
   "suppliers": {
     "singular": "supplier",
@@ -274,7 +282,8 @@
       "placeholders": {
         "code": "S001"
       }
-    }
+    },
+    "edit": "Edit supplier"
   },
   "products": {
     "singular": "product",
@@ -300,7 +309,8 @@
       "hints": {
         "sellingPrice": "Default price in yen per unit. Price lists can override it per customer."
       }
-    }
+    },
+    "edit": "Edit product"
   },
   "bom": {
     "hint": "Materials needed to make ONE unit of this product. Material needs for an order are calculated from this list.",
@@ -327,7 +337,8 @@
     "moveDown": "Move down",
     "moved": "Order changed",
     "removeTitle": "Remove this step?",
-    "removeDescription": "The steps after it move up by one. Existing work orders are not changed."
+    "removeDescription": "The steps after it move up by one. Existing work orders are not changed.",
+    "machineShort": "Machine / line"
   },
   "priceLists": {
     "singular": "price",
@@ -364,6 +375,7 @@
         "price": "Whole yen per unit. It replaces the product's selling price for this customer.",
         "validTo": "Leave empty when there is no end date."
       }
-    }
+    },
+    "edit": "Edit price"
   }
 }

@@ -107,7 +107,8 @@
       "reactivateDescription": "",
       "deleteTitle": "",
       "deleteDescription": ""
-    }
+    },
+    "edit": ""
   },
   "generic": {
     "deactivateTitle": "",
@@ -130,7 +131,8 @@
       "placeholders": {
         "code": ""
       }
-    }
+    },
+    "edit": ""
   },
   "warehouses": {
     "singular": "",
@@ -155,7 +157,8 @@
         "code": "",
         "type": ""
       }
-    }
+    },
+    "edit": ""
   },
   "machines": {
     "singular": "",
@@ -177,7 +180,8 @@
         "capacityPerDay": "",
         "capacityUnit": ""
       }
-    }
+    },
+    "edit": ""
   },
   "employees": {
     "singular": "",
@@ -197,7 +201,8 @@
         "code": "",
         "position": ""
       }
-    }
+    },
+    "edit": ""
   },
   "links": {
     "supplier": "",
@@ -220,7 +225,9 @@
     "nothingToAdd": "",
     "choose": "",
     "supplierListTitle": "",
-    "materialListTitle": ""
+    "materialListTitle": "",
+    "no": "",
+    "daysUnit": ""
   },
   "materials": {
     "singular": "",
@@ -258,7 +265,8 @@
     "tabUsedIn": "",
     "usedInHint": "",
     "usedInEmpty": "",
-    "usedInProduct": ""
+    "usedInProduct": "",
+    "edit": ""
   },
   "suppliers": {
     "singular": "",
@@ -274,7 +282,8 @@
       "placeholders": {
         "code": ""
       }
-    }
+    },
+    "edit": ""
   },
   "products": {
     "singular": "",
@@ -300,7 +309,8 @@
       "hints": {
         "sellingPrice": ""
       }
-    }
+    },
+    "edit": ""
   },
   "bom": {
     "hint": "",
@@ -327,7 +337,8 @@
     "moveDown": "",
     "moved": "",
     "removeTitle": "",
-    "removeDescription": ""
+    "removeDescription": "",
+    "machineShort": ""
   },
   "priceLists": {
     "singular": "",
@@ -364,6 +375,7 @@
         "price": "",
         "validTo": ""
       }
-    }
+    },
+    "edit": ""
   }
 }

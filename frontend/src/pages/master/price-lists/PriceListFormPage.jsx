@@ -73,6 +73,7 @@ export function PriceListFormPage() {
       page={page}
       entityTitle={t("nav:items.priceLists")}
       newTitle={t("master:priceLists.new")}
+      editTitle={t("master:priceLists.edit")}
       titleOf={(row) => `${row.productCode} · ${row.customerCode}`}
       singular={t("master:priceLists.singular")}
       formId="price-form"

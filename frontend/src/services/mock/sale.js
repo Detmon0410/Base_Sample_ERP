@@ -243,16 +243,20 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
     const text = String(query.q ?? "").trim().toLowerCase();
     const status = query.status && query.status !== "all" ? query.status : null;
     const customer = query.customer ? Number(query.customer) : null;
-    let result = items
+    const others = items
       .map(shape)
       .filter(
         (row) =>
-          (!status || row.status === status) &&
           (!customer || row.customerId === customer) &&
           (!query.from || row.date >= query.from) &&
           (!query.to || row.date <= query.to) &&
           (!text || searchFields.some((field) => matches(row[field], text))),
       );
+    const statusCounts = {};
+    others.forEach((row) => {
+      statusCounts[row.status] = (statusCounts[row.status] ?? 0) + 1;
+    });
+    let result = status ? others.filter((row) => row.status === status) : others;
     const sortKey = String(query.sort ?? defaultSort);
     const descending = sortKey.startsWith("-");
     const field = descending ? sortKey.slice(1) : sortKey;
@@ -270,7 +274,7 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
     const pageSize = Math.min(Number(query.pageSize) || 20, 100);
     const total = result.length;
     const page = Math.min(Math.max(Number(query.page) || 1, 1), Math.max(1, Math.ceil(total / pageSize)));
-    return new MockResponse({ data: result.slice((page - 1) * pageSize, page * pageSize).map((row) => ({ ...row, lineCount: row.lines?.length })), meta: { page, pageSize, total } });
+    return new MockResponse({ data: result.slice((page - 1) * pageSize, page * pageSize).map((row) => ({ ...row, lineCount: row.lines?.length })), meta: { page, pageSize, total, statusCounts, sums: result.some((row) => row.totals) ? { total: result.reduce((sum, row) => sum + (row.totals?.total ?? 0), 0) } : undefined } });
   }
 
   const findIn = (items, id) => {

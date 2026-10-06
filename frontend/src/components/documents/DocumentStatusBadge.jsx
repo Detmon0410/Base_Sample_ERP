@@ -12,7 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { STATUS_TONES } from "@/config/sale";
+import { STATUS_COLORS, STATUS_TONES } from "@/config/sale";
 
 // Every status has an icon, so its meaning never depends on color alone.
 const ICONS = {
@@ -38,7 +38,7 @@ export function DocumentStatusBadge({ status, waiting = false }) {
     );
   }
   return (
-    <StatusBadge tone={STATUS_TONES[status] ?? "neutral"} icon={ICONS[status]}>
+    <StatusBadge tone={STATUS_TONES[status] ?? "neutral"} icon={ICONS[status]} className={STATUS_COLORS[status]?.badge}>
       {t(`status.${status}`)}
     </StatusBadge>
   );

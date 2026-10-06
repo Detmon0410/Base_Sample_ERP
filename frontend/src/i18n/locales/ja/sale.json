@@ -341,5 +341,16 @@
     "cardLines": "",
     "emptyLines": "",
     "qtyInvalid": ""
+  },
+  "stepper": {
+    "label": "",
+    "step": "",
+    "none": "",
+    "count": {
+      "orders_one": "",
+      "orders_other": "",
+      "quotations_one": "",
+      "quotations_other": ""
+    }
   }
 }

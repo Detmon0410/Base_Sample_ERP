@@ -5,6 +5,7 @@ import { DataTable } from "@/components/common/DataTable";
 import { ListToolbar } from "@/components/common/ListToolbar";
 import { ListEmpty } from "@/components/common/ListEmpty";
 import { PageHeader } from "@/components/common/PageHeader";
+import { StatusStepper } from "@/components/documents/StatusStepper";
 import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { Pagination } from "@/components/common/Pagination";
 import { PAGE_SIZE } from "@/config/masterData";
@@ -21,6 +22,7 @@ const EXTRA = ["customer", "from", "to"];
  * date range above the table, paging below, New on the right. The filters live in the URL.
  *
  *   statuses   status keys for the status filter, or null when the document has no status (customer PO)
+ *   stepper    show the status stepper above the list (sale orders): every status with its count, a step filters the list
  *   newTo      route of the New button, or null when the user may not create
  */
 export function DocumentListPage({
@@ -34,6 +36,8 @@ export function DocumentListPage({
   emptyText,
   noResultText,
   searchLabel,
+  stepper = false,
+  stepperUnit = "orders",
 }) {
   const { t } = useTranslation(["sale", "master"]);
   const { query, setQuery } = useListQuery({ defaultSort: "-date", extra: EXTRA });
@@ -82,6 +86,8 @@ export function DocumentListPage({
     <>
       <PageHeader title={title} />
 
+      {stepper ? <StatusStepper unit={stepperUnit} statuses={statuses} counts={list.meta?.statusCounts} value={query.status} onSelect={(status) => setQuery({ status })} /> : null}
+
       <div className={`${PANEL_CLASS} p-5`}>
       <ListToolbar
         searchValue={text}
@@ -105,6 +111,8 @@ export function DocumentListPage({
         fetching={list.fetching}
         onRetry={list.retry}
         emptyContent={emptyContent}
+        total={list.meta?.total}
+        sums={list.meta?.sums}
       />
 
       {list.meta ? <Pagination page={list.meta.page} pageSize={list.meta.pageSize ?? PAGE_SIZE} total={list.meta.total} onChange={(page) => setQuery({ page })} onPageSizeChange={(size) => setQuery({ size })} /> : null}

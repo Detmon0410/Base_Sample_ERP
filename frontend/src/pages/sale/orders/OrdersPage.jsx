@@ -36,7 +36,7 @@ function OrdersListPage() {
       { key: "quotationNumber", header: t("sale:columns.quotation"), render: (row) => row.quotationNumber ?? "—" },
       { key: "customerPoNumber", header: t("sale:columns.customerPo"), render: (row) => row.customerPoNumber ?? "—" },
       { key: "deliveryDate", header: t("sale:columns.deliveryDate"), sortable: true, render: (row) => (row.deliveryDate ? formatDate(row.deliveryDate, i18n.language) : "—") },
-      { key: "total", header: t("sale:columns.total"), sortable: true, align: "right", render: (row) => formatCurrency(row.totals.total, i18n.language) },
+      { key: "total", header: t("sale:columns.total"), sortable: true, align: "right", render: (row) => formatCurrency(row.totals.total, i18n.language), sum: (value) => formatCurrency(value, i18n.language) },
       {
         key: "status",
         header: t("sale:columns.status"),
@@ -52,6 +52,7 @@ function OrdersListPage() {
       title={t("nav:items.saleOrders")}
       service={saleOrderService}
       statuses={ORDER_STATUSES}
+      stepper
       columns={columns}
       rowTo={(row) => `${PATH}/${row.id}${search}`}
       newTo={canWork(user) ? `${PATH}/new${search}` : null}

@@ -341,5 +341,16 @@
     "cardLines": "Delivered lines",
     "emptyLines": "No lines.",
     "qtyInvalid": "Enter a whole number from 0 up to the remaining quantity."
+  },
+  "stepper": {
+    "label": "Documents by status",
+    "step": "Step {{number}}",
+    "none": "None",
+    "count": {
+      "orders_one": "{{count}} order",
+      "orders_other": "{{count}} orders",
+      "quotations_one": "{{count}} quotation",
+      "quotations_other": "{{count}} quotations"
+    }
   }
 }

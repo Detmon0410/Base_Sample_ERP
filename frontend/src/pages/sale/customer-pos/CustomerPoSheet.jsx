@@ -3,6 +3,7 @@ import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { DetailFields } from "@/components/common/DetailLayout";
+import { DateField } from "@/components/common/DateField";
 import { EntitySelect } from "@/components/common/EntitySelect";
 import { FileField } from "@/components/common/FileField";
 import { FormField } from "@/components/common/FormField";
@@ -74,7 +75,7 @@ export function CustomerPoSheet() {
                 <Input id="po-poNumber" autoFocus={isNew} {...fieldProps("poNumber")} {...form.register("poNumber")} />
               </FormField>
               <FormField id="po-poDate" label={t("sale:customerPos.poDate")} required error={message(errors.poDate)}>
-                <Input id="po-poDate" type="date" {...fieldProps("poDate")} {...form.register("poDate")} />
+                <DateField id="po-poDate" control={form.control} name="poDate" clearable={false} {...fieldProps("poDate")} />
               </FormField>
               <FormField id="po-customerId" label={t("sale:fields.customer")} required error={message(errors.customerId)}>
                 <Controller

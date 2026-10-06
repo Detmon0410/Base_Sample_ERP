@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
+import { DateField } from "@/components/common/DateField";
 import { EntitySelect } from "@/components/common/EntitySelect";
 import { DetailFields } from "@/components/common/DetailLayout";
 import { FormField } from "@/components/common/FormField";
@@ -16,7 +17,6 @@ import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { LineItemsCard } from "@/components/documents/LineItemsCard";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { canWork, quotationActions } from "@/config/sale";
 import { useAuth } from "@/hooks/useAuth";
@@ -133,10 +133,10 @@ export function QuotationSheet() {
                 />
               </FormField>
               <FormField id="qt-date" label={t("sale:fields.date")} required error={message(errors.date)}>
-                <Input id="qt-date" type="date" {...fieldProps("date")} {...form.register("date", { onChange: () => repriceAll() })} />
+                <DateField id="qt-date" control={form.control} name="date" onValueChange={() => repriceAll()} {...fieldProps("date")} />
               </FormField>
               <FormField id="qt-validUntil" label={t("sale:fields.validUntil")} required error={message(errors.validUntil)}>
-                <Input id="qt-validUntil" type="date" {...fieldProps("validUntil")} {...form.register("validUntil")} />
+                <DateField id="qt-validUntil" control={form.control} name="validUntil" min={form.watch("date")} {...fieldProps("validUntil")} />
               </FormField>
               <FormField id="qt-remarks" label={t("sale:fields.remarks")} error={message(errors.remarks)} className="@lg:col-span-2">
                 <Textarea id="qt-remarks" {...fieldProps("remarks")} {...form.register("remarks")} />

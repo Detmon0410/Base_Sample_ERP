@@ -2,6 +2,7 @@ import { BoxIcon, CalendarRangeIcon } from "lucide-react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { DateField } from "@/components/common/DateField";
 import { EntitySelect } from "@/components/common/EntitySelect";
 import { FormField } from "@/components/common/FormField";
 import { FormSection } from "@/components/common/FormSection";
@@ -100,7 +101,7 @@ export function PriceListFormPage() {
               />
             </FormField>
             <FormField id="price-validFrom" label={t("master:priceLists.form.fields.validFrom")} required error={message(errors.validFrom)}>
-              <Input id="price-validFrom" type="date" {...fieldProps("validFrom")} {...form.register("validFrom")} />
+              <DateField id="price-validFrom" control={form.control} name="validFrom" clearable={false} {...fieldProps("validFrom")} />
             </FormField>
             <FormField
               id="price-validTo"
@@ -108,7 +109,7 @@ export function PriceListFormPage() {
               error={message(errors.validTo)}
               hint={t("master:priceLists.form.hints.validTo")}
             >
-              <Input id="price-validTo" type="date" {...fieldProps("validTo", true)} {...form.register("validTo")} />
+              <DateField id="price-validTo" control={form.control} name="validTo" min={form.watch("validFrom")} {...fieldProps("validTo", true)} />
             </FormField>
           </FormSection>
 

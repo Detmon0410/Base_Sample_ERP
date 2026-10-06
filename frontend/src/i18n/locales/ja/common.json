@@ -70,5 +70,10 @@
   "empty": {
     "noRecordsTitle": "",
     "noResultTitle": ""
+  },
+  "datePicker": {
+    "choose": "",
+    "clear": "",
+    "today": ""
   }
 }

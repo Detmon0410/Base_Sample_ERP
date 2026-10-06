@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
+import { DatePicker } from "@/components/common/DateField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -61,11 +62,11 @@ function FilterChoices({ filter, values, onChange, close }) {
       <div className="flex flex-col gap-3 p-3">
         <label className="flex flex-col gap-1 text-sm font-semibold text-muted-foreground">
           {t("toolbar.from")}
-          <Input type="date" value={values[filter.fromKey]} max={values[filter.toKey] || undefined} onChange={(event) => onChange({ [filter.fromKey]: event.target.value })} />
+          <DatePicker value={values[filter.fromKey]} max={values[filter.toKey] || undefined} onChange={(iso) => onChange({ [filter.fromKey]: iso })} />
         </label>
         <label className="flex flex-col gap-1 text-sm font-semibold text-muted-foreground">
           {t("toolbar.to")}
-          <Input type="date" value={values[filter.toKey]} min={values[filter.fromKey] || undefined} onChange={(event) => onChange({ [filter.toKey]: event.target.value })} />
+          <DatePicker value={values[filter.toKey]} min={values[filter.fromKey] || undefined} onChange={(iso) => onChange({ [filter.toKey]: iso })} />
         </label>
         <Button type="button" size="sm" className="h-9" onClick={close}>
           {t("toolbar.done")}

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { DetailFields } from "@/components/common/DetailLayout";
+import { DateField } from "@/components/common/DateField";
 import { EntitySelect } from "@/components/common/EntitySelect";
 import { FormField } from "@/components/common/FormField";
 import { SheetFormBody } from "@/components/common/RecordSheet";
@@ -76,7 +77,7 @@ export function DeliverySheet() {
               {editable ? (
                 <div className="grid gap-x-6 gap-y-5 @lg:grid-cols-2">
                   <FormField id="dn-date" label={t("sale:fields.date")} required error={message(errors.date)}>
-                    <Input id="dn-date" type="date" {...fieldProps("date")} {...form.register("date")} />
+                    <DateField id="dn-date" control={form.control} name="date" clearable={false} {...fieldProps("date")} />
                   </FormField>
                   <FormField id="dn-warehouseId" label={t("sale:fields.warehouse")} required error={message(errors.warehouseId)}>
                     <Controller

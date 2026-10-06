@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { ApprovalActions } from "@/components/common/ApprovalActions";
 import { DetailFields } from "@/components/common/DetailLayout";
+import { DateField } from "@/components/common/DateField";
 import { EntitySelect } from "@/components/common/EntitySelect";
 import { FormField } from "@/components/common/FormField";
 import { FormSection } from "@/components/common/FormSection";
@@ -16,7 +17,6 @@ import { DocumentActions } from "@/components/documents/DocumentActions";
 import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { LineItemsCard } from "@/components/documents/LineItemsCard";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { canWork, orderActions } from "@/config/sale";
 import { useAuth } from "@/hooks/useAuth";
@@ -155,10 +155,10 @@ export function OrderSheet() {
                   />
                 </FormField>
                 <FormField id="so-date" label={t("sale:fields.date")} required error={message(errors.date)}>
-                  <Input id="so-date" type="date" {...fieldProps("date")} {...form.register("date", { onChange: () => repriceAll() })} />
+                  <DateField id="so-date" control={form.control} name="date" onValueChange={() => repriceAll()} {...fieldProps("date")} />
                 </FormField>
                 <FormField id="so-deliveryDate" label={t("sale:fields.deliveryDate")} error={message(errors.deliveryDate)}>
-                  <Input id="so-deliveryDate" type="date" {...fieldProps("deliveryDate")} {...form.register("deliveryDate")} />
+                  <DateField id="so-deliveryDate" control={form.control} name="deliveryDate" {...fieldProps("deliveryDate")} />
                 </FormField>
                 <FormField id="so-remarks" label={t("sale:fields.remarks")} error={message(errors.remarks)} className="@lg:col-span-2">
                   <Textarea id="so-remarks" {...fieldProps("remarks")} {...form.register("remarks")} />

@@ -1,0 +1,6626 @@
+{
+  "generatedAt": "2026-10-06T02:31:04.332Z",
+  "sale": {
+    "quotations": {
+      "existing": [
+        {
+          "id": 12,
+          "number": "QT-2026-0012",
+          "date": "2026-10-02",
+          "customerId": 6,
+          "salesPersonId": 3,
+          "validUntil": "2026-11-01",
+          "remarks": "",
+          "status": "draft",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 2,
+              "unitPrice": 68000,
+              "amount": 136000,
+              "priceEdited": false
+            },
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 2,
+              "unitPrice": 41000,
+              "amount": 82000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C006",
+          "customerName": "Nippon Living",
+          "salesPersonName": "Haruka Sato",
+          "history": [
+            {
+              "id": 26,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-10-02T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 218000,
+            "tax": 21800,
+            "total": 239800,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 2
+        },
+        {
+          "id": 11,
+          "number": "QT-2026-0011",
+          "date": "2026-10-01",
+          "customerId": 1,
+          "salesPersonId": 1,
+          "validUntil": "2026-10-31",
+          "remarks": "",
+          "status": "sent",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 25,
+              "unitPrice": 64000,
+              "amount": 1600000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 25,
+              "action": "send",
+              "status": "sent",
+              "actor": "Nina Sato",
+              "at": "2026-10-02T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 24,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-10-01T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 1600000,
+            "tax": 160000,
+            "total": 1760000,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 1
+        },
+        {
+          "id": 10,
+          "number": "QT-2026-0010",
+          "date": "2026-09-27",
+          "customerId": 5,
+          "salesPersonId": 2,
+          "validUntil": "2026-10-27",
+          "remarks": "",
+          "status": "accepted",
+          "lines": [
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 50,
+              "unitPrice": 41000,
+              "amount": 2050000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C005",
+          "customerName": "Hikari Electric",
+          "salesPersonName": "Yuki Tanaka",
+          "history": [
+            {
+              "id": 23,
+              "action": "accept",
+              "status": "accepted",
+              "actor": "Alice Sato",
+              "at": "2026-10-02T15:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 22,
+              "action": "send",
+              "status": "sent",
+              "actor": "Alice Sato",
+              "at": "2026-09-28T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 21,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-09-27T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "so-3",
+              "type": "order",
+              "number": "SO-2026-0003",
+              "status": "draft",
+              "to": "/sale/orders/3"
+            },
+            {
+              "id": "po-4",
+              "type": "customerPo",
+              "number": "FJI-1177",
+              "to": "/sale/customer-pos/4"
+            }
+          ],
+          "totals": {
+            "subtotal": 2050000,
+            "tax": 205000,
+            "total": 2255000,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 1
+        },
+        {
+          "id": 9,
+          "number": "QT-2026-0009",
+          "date": "2026-09-25",
+          "customerId": 4,
+          "salesPersonId": 1,
+          "validUntil": "2026-10-25",
+          "remarks": "",
+          "status": "draft",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 4,
+              "unitPrice": 68000,
+              "amount": 272000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C004",
+          "customerName": "Fuji Home Mart",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 20,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-09-25T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 272000,
+            "tax": 27200,
+            "total": 299200,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 1
+        },
+        {
+          "id": 8,
+          "number": "QT-2026-0008",
+          "date": "2026-09-22",
+          "customerId": 2,
+          "salesPersonId": 3,
+          "validUntil": "2026-10-22",
+          "remarks": "",
+          "status": "sent",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 12,
+              "unitPrice": 66000,
+              "amount": 792000,
+              "priceEdited": false
+            },
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 6,
+              "unitPrice": 39800,
+              "amount": 238800,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C002",
+          "customerName": "Best Home Mart",
+          "salesPersonName": "Haruka Sato",
+          "history": [
+            {
+              "id": 19,
+              "action": "send",
+              "status": "sent",
+              "actor": "Nina Sato",
+              "at": "2026-09-23T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 18,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-09-22T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 1030800,
+            "tax": 103080,
+            "total": 1133880,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 2
+        },
+        {
+          "id": 6,
+          "number": "QT-2026-0006",
+          "date": "2026-09-15",
+          "customerId": 3,
+          "salesPersonId": 2,
+          "validUntil": "2026-10-15",
+          "remarks": "",
+          "status": "accepted",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 30,
+              "unitPrice": 67500,
+              "amount": 2025000,
+              "priceEdited": false
+            },
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 20,
+              "unitPrice": 41000,
+              "amount": 820000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C003",
+          "customerName": "Sakura Appliance Store",
+          "salesPersonName": "Yuki Tanaka",
+          "history": [
+            {
+              "id": 14,
+              "action": "accept",
+              "status": "accepted",
+              "actor": "Nina Sato",
+              "at": "2026-09-20T15:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 13,
+              "action": "send",
+              "status": "sent",
+              "actor": "Nina Sato",
+              "at": "2026-09-16T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 12,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-09-15T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "so-2",
+              "type": "order",
+              "number": "SO-2026-0002",
+              "status": "ready_to_deliver",
+              "to": "/sale/orders/2"
+            },
+            {
+              "id": "po-2",
+              "type": "customerPo",
+              "number": "SKR-2290",
+              "to": "/sale/customer-pos/2"
+            }
+          ],
+          "totals": {
+            "subtotal": 2845000,
+            "tax": 284500,
+            "total": 3129500,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 2
+        },
+        {
+          "id": 3,
+          "number": "QT-2026-0003",
+          "date": "2026-09-08",
+          "customerId": 3,
+          "salesPersonId": 1,
+          "validUntil": "2026-10-08",
+          "remarks": "",
+          "status": "draft",
+          "lines": [
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 40,
+              "unitPrice": 41000,
+              "amount": 1640000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C003",
+          "customerName": "Sakura Appliance Store",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 6,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-09-08T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 1640000,
+            "tax": 164000,
+            "total": 1804000,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 1
+        },
+        {
+          "id": 2,
+          "number": "QT-2026-0002",
+          "date": "2026-09-04",
+          "customerId": 2,
+          "salesPersonId": 2,
+          "validUntil": "2026-10-04",
+          "remarks": "",
+          "status": "sent",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 10,
+              "unitPrice": 66000,
+              "amount": 660000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C002",
+          "customerName": "Best Home Mart",
+          "salesPersonName": "Yuki Tanaka",
+          "history": [
+            {
+              "id": 5,
+              "action": "send",
+              "status": "sent",
+              "actor": "Nina Sato",
+              "at": "2026-09-05T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 4,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-09-04T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 660000,
+            "tax": 66000,
+            "total": 726000,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": true,
+          "lineCount": 1
+        },
+        {
+          "id": 1,
+          "number": "QT-2026-0001",
+          "date": "2026-09-02",
+          "customerId": 1,
+          "salesPersonId": 1,
+          "validUntil": "2026-10-02",
+          "remarks": "",
+          "status": "accepted",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 20,
+              "unitPrice": 64000,
+              "amount": 1280000,
+              "priceEdited": false
+            },
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 10,
+              "unitPrice": 38500,
+              "amount": 385000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 3,
+              "action": "accept",
+              "status": "accepted",
+              "actor": "Alice Sato",
+              "at": "2026-09-07T15:00:00.000Z",
+              "note": "Customer accepted by phone"
+            },
+            {
+              "id": 2,
+              "action": "send",
+              "status": "sent",
+              "actor": "Alice Sato",
+              "at": "2026-09-03T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 1,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-09-02T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "so-1",
+              "type": "order",
+              "number": "SO-2026-0001",
+              "status": "in_production",
+              "to": "/sale/orders/1"
+            },
+            {
+              "id": "po-1",
+              "type": "customerPo",
+              "number": "ABC-PO-0912",
+              "to": "/sale/customer-pos/1"
+            }
+          ],
+          "totals": {
+            "subtotal": 1665000,
+            "tax": 166500,
+            "total": 1831500,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 2
+        },
+        {
+          "id": 4,
+          "number": "QT-2026-0004",
+          "date": "2026-08-20",
+          "customerId": 1,
+          "salesPersonId": 3,
+          "validUntil": "2026-09-19",
+          "remarks": "",
+          "status": "rejected",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 5,
+              "unitPrice": 64000,
+              "amount": 320000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": "Haruka Sato",
+          "history": [
+            {
+              "id": 9,
+              "action": "reject",
+              "status": "rejected",
+              "actor": "Alice Sato",
+              "at": "2026-08-25T15:00:00.000Z",
+              "note": "Price too high"
+            },
+            {
+              "id": 8,
+              "action": "send",
+              "status": "sent",
+              "actor": "Alice Sato",
+              "at": "2026-08-21T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 7,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-08-20T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 320000,
+            "tax": 32000,
+            "total": 352000,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 1
+        },
+        {
+          "id": 5,
+          "number": "QT-2026-0005",
+          "date": "2026-07-01",
+          "customerId": 2,
+          "salesPersonId": 1,
+          "validUntil": "2026-07-31",
+          "remarks": "",
+          "status": "sent",
+          "lines": [
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 15,
+              "unitPrice": 39800,
+              "amount": 597000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C002",
+          "customerName": "Best Home Mart",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 11,
+              "action": "send",
+              "status": "sent",
+              "actor": "Alice Sato",
+              "at": "2026-07-02T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 10,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-07-01T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 597000,
+            "tax": 59700,
+            "total": 656700,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": true,
+          "lineCount": 1
+        },
+        {
+          "id": 7,
+          "number": "QT-2026-0007",
+          "date": "2026-06-10",
+          "customerId": 1,
+          "salesPersonId": 1,
+          "validUntil": "2026-07-10",
+          "remarks": "",
+          "status": "expired",
+          "lines": [
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 8,
+              "unitPrice": 38500,
+              "amount": 308000,
+              "priceEdited": false
+            }
+          ],
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 17,
+              "action": "expire",
+              "status": "expired",
+              "actor": "Alice Sato",
+              "at": "2026-06-15T15:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 16,
+              "action": "send",
+              "status": "sent",
+              "actor": "Alice Sato",
+              "at": "2026-06-11T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 15,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-06-10T09:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 308000,
+            "tax": 30800,
+            "total": 338800,
+            "taxRate": 0.1
+          },
+          "pastValidUntil": false,
+          "lineCount": 1
+        }
+      ],
+      "examples": [
+        {
+          "id": "QT-202604-01",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-02",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-03",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-04",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-05",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-06",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-07",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-08",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-09",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202604-10",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-04-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-01",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-02",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-03",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-04",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-05",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-06",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-07",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-08",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-09",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202605-10",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-05-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-01",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-02",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-03",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-04",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-05",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-06",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-07",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-08",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-09",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202606-10",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-06-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-01",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-02",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-03",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-04",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-05",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-06",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-07",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-08",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-09",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202607-10",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-07-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-01",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-02",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-03",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-04",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-05",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-06",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-07",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-08",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-09",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202608-10",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-08-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-01",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-02",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-03",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-04",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-05",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-06",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-07",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-08",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-09",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "QT-202609-10",
+          "department": "Sale",
+          "type": "quotations",
+          "date": "2026-09-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        }
+      ]
+    },
+    "customerPos": {
+      "existing": [
+        {
+          "id": 5,
+          "poNumber": "ABC-PO-1001",
+          "poDate": "2026-10-02",
+          "customerId": 1,
+          "quotationId": null,
+          "attachment": null,
+          "note": "",
+          "date": "2026-10-02",
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 31,
+              "action": "created",
+              "status": null,
+              "actor": "Alice Sato",
+              "at": "2026-10-02T11:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "inUse": false,
+          "quotationNumber": null,
+          "orderNumber": null
+        },
+        {
+          "id": 4,
+          "poNumber": "FJI-1177",
+          "poDate": "2026-09-29",
+          "customerId": 5,
+          "quotationId": 10,
+          "attachment": null,
+          "note": "",
+          "date": "2026-09-29",
+          "customerCode": "C005",
+          "customerName": "Hikari Electric",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 30,
+              "action": "created",
+              "status": null,
+              "actor": "Alice Sato",
+              "at": "2026-09-29T11:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "qt-10",
+              "type": "quotation",
+              "number": "QT-2026-0010",
+              "status": "accepted",
+              "to": "/sale/quotations/10"
+            },
+            {
+              "id": "so-3",
+              "type": "order",
+              "number": "SO-2026-0003",
+              "status": "draft",
+              "to": "/sale/orders/3"
+            }
+          ],
+          "inUse": true,
+          "quotationNumber": "QT-2026-0010",
+          "orderNumber": "SO-2026-0003"
+        },
+        {
+          "id": 2,
+          "poNumber": "SKR-2290",
+          "poDate": "2026-09-20",
+          "customerId": 3,
+          "quotationId": 6,
+          "attachment": null,
+          "note": "",
+          "date": "2026-09-20",
+          "customerCode": "C003",
+          "customerName": "Sakura Appliance Store",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 28,
+              "action": "created",
+              "status": null,
+              "actor": "Alice Sato",
+              "at": "2026-09-20T11:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "qt-6",
+              "type": "quotation",
+              "number": "QT-2026-0006",
+              "status": "accepted",
+              "to": "/sale/quotations/6"
+            },
+            {
+              "id": "so-2",
+              "type": "order",
+              "number": "SO-2026-0002",
+              "status": "ready_to_deliver",
+              "to": "/sale/orders/2"
+            }
+          ],
+          "inUse": true,
+          "quotationNumber": "QT-2026-0006",
+          "orderNumber": "SO-2026-0002"
+        },
+        {
+          "id": 3,
+          "poNumber": "BHM-0045",
+          "poDate": "2026-09-12",
+          "customerId": 2,
+          "quotationId": null,
+          "attachment": {
+            "name": "BHM-0045.png",
+            "size": 92160
+          },
+          "note": "",
+          "date": "2026-09-12",
+          "customerCode": "C002",
+          "customerName": "Best Home Mart",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 29,
+              "action": "created",
+              "status": null,
+              "actor": "Alice Sato",
+              "at": "2026-09-12T11:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "so-4",
+              "type": "order",
+              "number": "SO-2026-0004",
+              "status": "delivered",
+              "to": "/sale/orders/4"
+            }
+          ],
+          "inUse": true,
+          "quotationNumber": null,
+          "orderNumber": "SO-2026-0004"
+        },
+        {
+          "id": 1,
+          "poNumber": "ABC-PO-0912",
+          "poDate": "2026-09-10",
+          "customerId": 1,
+          "quotationId": 1,
+          "attachment": {
+            "name": "ABC-PO-0912.pdf",
+            "size": 184320
+          },
+          "note": "",
+          "date": "2026-09-10",
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 27,
+              "action": "created",
+              "status": null,
+              "actor": "Alice Sato",
+              "at": "2026-09-10T11:00:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "qt-1",
+              "type": "quotation",
+              "number": "QT-2026-0001",
+              "status": "accepted",
+              "to": "/sale/quotations/1"
+            },
+            {
+              "id": "so-1",
+              "type": "order",
+              "number": "SO-2026-0001",
+              "status": "in_production",
+              "to": "/sale/orders/1"
+            }
+          ],
+          "inUse": true,
+          "quotationNumber": "QT-2026-0001",
+          "orderNumber": "SO-2026-0001"
+        }
+      ],
+      "examples": [
+        {
+          "id": "CPO-202604-01",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-02",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-03",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-04",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-05",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-06",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-07",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-08",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-09",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202604-10",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-04-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-01",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-02",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-03",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-04",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-05",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-06",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-07",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-08",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-09",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202605-10",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-05-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-01",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-02",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-03",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-04",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-05",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-06",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-07",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-08",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-09",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202606-10",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-06-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-01",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-02",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-03",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-04",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-05",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-06",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-07",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-08",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-09",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202607-10",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-07-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-01",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-02",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-03",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-04",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-05",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-06",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-07",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-08",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-09",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202608-10",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-08-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-01",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-02",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-03",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-04",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-05",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-06",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-07",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-08",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-09",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "CPO-202609-10",
+          "department": "Sale",
+          "type": "customerPos",
+          "date": "2026-09-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        }
+      ]
+    },
+    "orders": {
+      "existing": [
+        {
+          "id": 8,
+          "number": "SO-2026-0008",
+          "date": "2026-10-03",
+          "customerId": 1,
+          "quotationId": null,
+          "customerPoId": null,
+          "salesPersonId": 1,
+          "deliveryDate": null,
+          "remarks": "",
+          "status": "draft",
+          "approval": null,
+          "lines": [
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 5,
+              "unitPrice": 38500,
+              "amount": 192500,
+              "priceEdited": false,
+              "delivered": 0
+            }
+          ],
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 56,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-10-03T09:30:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 192500,
+            "tax": 19250,
+            "total": 211750,
+            "taxRate": 0.1
+          },
+          "quotationNumber": null,
+          "customerPoNumber": null,
+          "lineCount": 1
+        },
+        {
+          "id": 7,
+          "number": "SO-2026-0007",
+          "date": "2026-10-01",
+          "customerId": 6,
+          "quotationId": null,
+          "customerPoId": null,
+          "salesPersonId": 3,
+          "deliveryDate": "2026-10-30",
+          "remarks": "",
+          "status": "confirmed",
+          "approval": null,
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 10,
+              "unitPrice": 68000,
+              "amount": 680000,
+              "priceEdited": false,
+              "delivered": 0
+            }
+          ],
+          "customerCode": "C006",
+          "customerName": "Nippon Living",
+          "salesPersonName": "Haruka Sato",
+          "history": [
+            {
+              "id": 55,
+              "action": "approve",
+              "status": "confirmed",
+              "actor": "Alice Sato",
+              "at": "2026-10-02T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 54,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-10-01T09:30:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 680000,
+            "tax": 68000,
+            "total": 748000,
+            "taxRate": 0.1
+          },
+          "quotationNumber": null,
+          "customerPoNumber": null,
+          "lineCount": 1
+        },
+        {
+          "id": 3,
+          "number": "SO-2026-0003",
+          "date": "2026-09-30",
+          "customerId": 5,
+          "quotationId": 10,
+          "customerPoId": 4,
+          "salesPersonId": 2,
+          "deliveryDate": "2026-11-05",
+          "remarks": "",
+          "status": "draft",
+          "approval": "requested",
+          "lines": [
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 50,
+              "unitPrice": 41000,
+              "amount": 2050000,
+              "priceEdited": false,
+              "delivered": 0
+            }
+          ],
+          "customerCode": "C005",
+          "customerName": "Hikari Electric",
+          "salesPersonName": "Yuki Tanaka",
+          "history": [
+            {
+              "id": 40,
+              "action": "request-confirm",
+              "status": null,
+              "actor": "Nina Sato",
+              "at": "2026-09-30T10:00:00.000Z",
+              "note": "Please confirm, delivery date agreed"
+            },
+            {
+              "id": 39,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-09-30T09:30:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "qt-10",
+              "type": "quotation",
+              "number": "QT-2026-0010",
+              "status": "accepted",
+              "to": "/sale/quotations/10"
+            },
+            {
+              "id": "po-4",
+              "type": "customerPo",
+              "number": "FJI-1177",
+              "to": "/sale/customer-pos/4"
+            }
+          ],
+          "totals": {
+            "subtotal": 2050000,
+            "tax": 205000,
+            "total": 2255000,
+            "taxRate": 0.1
+          },
+          "quotationNumber": "QT-2026-0010",
+          "customerPoNumber": "FJI-1177",
+          "lineCount": 1
+        },
+        {
+          "id": 2,
+          "number": "SO-2026-0002",
+          "date": "2026-09-21",
+          "customerId": 3,
+          "quotationId": 6,
+          "customerPoId": 2,
+          "salesPersonId": 2,
+          "deliveryDate": "2026-10-12",
+          "remarks": "",
+          "status": "ready_to_deliver",
+          "approval": null,
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 30,
+              "unitPrice": 67500,
+              "amount": 2025000,
+              "priceEdited": false,
+              "delivered": 18
+            },
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 20,
+              "unitPrice": 41000,
+              "amount": 820000,
+              "priceEdited": false,
+              "delivered": 20
+            }
+          ],
+          "customerCode": "C003",
+          "customerName": "Sakura Appliance Store",
+          "salesPersonName": "Yuki Tanaka",
+          "history": [
+            {
+              "id": 38,
+              "action": "mark-ready",
+              "status": "ready_to_deliver",
+              "actor": "Alice Sato",
+              "at": "2026-09-24T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 37,
+              "action": "send-to-factory",
+              "status": "in_production",
+              "actor": "Alice Sato",
+              "at": "2026-09-23T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 36,
+              "action": "approve",
+              "status": "confirmed",
+              "actor": "Alice Sato",
+              "at": "2026-09-22T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 35,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-09-21T09:30:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "qt-6",
+              "type": "quotation",
+              "number": "QT-2026-0006",
+              "status": "accepted",
+              "to": "/sale/quotations/6"
+            },
+            {
+              "id": "po-2",
+              "type": "customerPo",
+              "number": "SKR-2290",
+              "to": "/sale/customer-pos/2"
+            },
+            {
+              "id": "dn-2",
+              "type": "delivery",
+              "number": "DN-2026-0002",
+              "status": "delivered",
+              "to": "/sale/deliveries/2"
+            },
+            {
+              "id": "dn-3",
+              "type": "delivery",
+              "number": "DN-2026-0003",
+              "status": "draft",
+              "to": "/sale/deliveries/3"
+            },
+            {
+              "id": "wo-2",
+              "type": "workOrder",
+              "number": null
+            }
+          ],
+          "totals": {
+            "subtotal": 2845000,
+            "tax": 284500,
+            "total": 3129500,
+            "taxRate": 0.1
+          },
+          "quotationNumber": "QT-2026-0006",
+          "customerPoNumber": "SKR-2290",
+          "lineCount": 2
+        },
+        {
+          "id": 4,
+          "number": "SO-2026-0004",
+          "date": "2026-09-14",
+          "customerId": 2,
+          "quotationId": null,
+          "customerPoId": 3,
+          "salesPersonId": 3,
+          "deliveryDate": "2026-09-28",
+          "remarks": "",
+          "status": "delivered",
+          "approval": null,
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 6,
+              "unitPrice": 66000,
+              "amount": 396000,
+              "priceEdited": false,
+              "delivered": 6
+            }
+          ],
+          "customerCode": "C002",
+          "customerName": "Best Home Mart",
+          "salesPersonName": "Haruka Sato",
+          "history": [
+            {
+              "id": 45,
+              "action": "delivered",
+              "status": "delivered",
+              "actor": "Alice Sato",
+              "at": "2026-09-18T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 44,
+              "action": "mark-ready",
+              "status": "ready_to_deliver",
+              "actor": "Alice Sato",
+              "at": "2026-09-17T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 43,
+              "action": "send-to-factory",
+              "status": "in_production",
+              "actor": "Alice Sato",
+              "at": "2026-09-16T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 42,
+              "action": "approve",
+              "status": "confirmed",
+              "actor": "Alice Sato",
+              "at": "2026-09-15T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 41,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-09-14T09:30:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "po-3",
+              "type": "customerPo",
+              "number": "BHM-0045",
+              "to": "/sale/customer-pos/3"
+            },
+            {
+              "id": "dn-1",
+              "type": "delivery",
+              "number": "DN-2026-0001",
+              "status": "delivered",
+              "to": "/sale/deliveries/1"
+            },
+            {
+              "id": "wo-4",
+              "type": "workOrder",
+              "number": null
+            },
+            {
+              "id": "inv-4",
+              "type": "invoice",
+              "number": null
+            }
+          ],
+          "totals": {
+            "subtotal": 396000,
+            "tax": 39600,
+            "total": 435600,
+            "taxRate": 0.1
+          },
+          "quotationNumber": null,
+          "customerPoNumber": "BHM-0045",
+          "lineCount": 1
+        },
+        {
+          "id": 1,
+          "number": "SO-2026-0001",
+          "date": "2026-09-11",
+          "customerId": 1,
+          "quotationId": 1,
+          "customerPoId": 1,
+          "salesPersonId": 1,
+          "deliveryDate": "2026-10-20",
+          "remarks": "",
+          "status": "in_production",
+          "approval": null,
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 20,
+              "unitPrice": 64000,
+              "amount": 1280000,
+              "priceEdited": false,
+              "delivered": 0
+            },
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 10,
+              "unitPrice": 38500,
+              "amount": 385000,
+              "priceEdited": false,
+              "delivered": 0
+            }
+          ],
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 34,
+              "action": "send-to-factory",
+              "status": "in_production",
+              "actor": "Alice Sato",
+              "at": "2026-09-13T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 33,
+              "action": "approve",
+              "status": "confirmed",
+              "actor": "Alice Sato",
+              "at": "2026-09-12T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 32,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-09-11T09:30:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "qt-1",
+              "type": "quotation",
+              "number": "QT-2026-0001",
+              "status": "accepted",
+              "to": "/sale/quotations/1"
+            },
+            {
+              "id": "po-1",
+              "type": "customerPo",
+              "number": "ABC-PO-0912",
+              "to": "/sale/customer-pos/1"
+            },
+            {
+              "id": "wo-1",
+              "type": "workOrder",
+              "number": null
+            }
+          ],
+          "totals": {
+            "subtotal": 1665000,
+            "tax": 166500,
+            "total": 1831500,
+            "taxRate": 0.1
+          },
+          "quotationNumber": "QT-2026-0001",
+          "customerPoNumber": "ABC-PO-0912",
+          "lineCount": 2
+        },
+        {
+          "id": 6,
+          "number": "SO-2026-0006",
+          "date": "2026-09-05",
+          "customerId": 4,
+          "quotationId": null,
+          "customerPoId": null,
+          "salesPersonId": 1,
+          "deliveryDate": null,
+          "remarks": "",
+          "status": "cancelled",
+          "approval": null,
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "uom": "pcs",
+              "qty": 3,
+              "unitPrice": 68000,
+              "amount": 204000,
+              "priceEdited": false,
+              "delivered": 0
+            }
+          ],
+          "customerCode": "C004",
+          "customerName": "Fuji Home Mart",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 53,
+              "action": "cancel",
+              "status": "cancelled",
+              "actor": "Nina Sato",
+              "at": "2026-09-07T10:00:00.000Z",
+              "note": "Customer postponed the project"
+            },
+            {
+              "id": 52,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-09-05T09:30:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [],
+          "totals": {
+            "subtotal": 204000,
+            "tax": 20400,
+            "total": 224400,
+            "taxRate": 0.1
+          },
+          "quotationNumber": null,
+          "customerPoNumber": null,
+          "lineCount": 1
+        },
+        {
+          "id": 5,
+          "number": "SO-2026-0005",
+          "date": "2026-08-15",
+          "customerId": 1,
+          "quotationId": null,
+          "customerPoId": null,
+          "salesPersonId": 1,
+          "deliveryDate": "2026-09-05",
+          "remarks": "",
+          "status": "closed",
+          "approval": null,
+          "lines": [
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "uom": "pcs",
+              "qty": 12,
+              "unitPrice": 38500,
+              "amount": 462000,
+              "priceEdited": false,
+              "delivered": 12
+            }
+          ],
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": "Ken Suzuki",
+          "history": [
+            {
+              "id": 51,
+              "action": "close",
+              "status": "closed",
+              "actor": "Alice Sato",
+              "at": "2026-08-20T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 50,
+              "action": "delivered",
+              "status": "delivered",
+              "actor": "Alice Sato",
+              "at": "2026-08-19T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 49,
+              "action": "mark-ready",
+              "status": "ready_to_deliver",
+              "actor": "Alice Sato",
+              "at": "2026-08-18T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 48,
+              "action": "send-to-factory",
+              "status": "in_production",
+              "actor": "Alice Sato",
+              "at": "2026-08-17T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 47,
+              "action": "approve",
+              "status": "confirmed",
+              "actor": "Alice Sato",
+              "at": "2026-08-16T10:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 46,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-08-15T09:30:00.000Z",
+              "note": null
+            }
+          ],
+          "links": [
+            {
+              "id": "dn-4",
+              "type": "delivery",
+              "number": "DN-2026-0004",
+              "status": "delivered",
+              "to": "/sale/deliveries/4"
+            },
+            {
+              "id": "wo-5",
+              "type": "workOrder",
+              "number": null
+            },
+            {
+              "id": "inv-5",
+              "type": "invoice",
+              "number": null
+            }
+          ],
+          "totals": {
+            "subtotal": 462000,
+            "tax": 46200,
+            "total": 508200,
+            "taxRate": 0.1
+          },
+          "quotationNumber": null,
+          "customerPoNumber": null,
+          "lineCount": 1
+        }
+      ],
+      "examples": [
+        {
+          "id": "SO-202604-01",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-02",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-03",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-04",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-05",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-06",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-07",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-08",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-09",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202604-10",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-04-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-01",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-02",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-03",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-04",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-05",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-06",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-07",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-08",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-09",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202605-10",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-05-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-01",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-02",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-03",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-04",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-05",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-06",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-07",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-08",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-09",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202606-10",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-06-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-01",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-02",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-03",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-04",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-05",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-06",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-07",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-08",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-09",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202607-10",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-07-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-01",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-02",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-03",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-04",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-05",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-06",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-07",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-08",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-09",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202608-10",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-08-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-01",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-02",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-03",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-04",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-05",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-06",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-07",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-08",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-09",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "SO-202609-10",
+          "department": "Sale",
+          "type": "orders",
+          "date": "2026-09-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        }
+      ]
+    },
+    "deliveries": {
+      "existing": [
+        {
+          "id": 3,
+          "number": "DN-2026-0003",
+          "date": "2026-10-04",
+          "saleOrderId": 2,
+          "customerId": 3,
+          "warehouseId": 2,
+          "status": "draft",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "ordered": 30,
+              "deliveredBefore": 18,
+              "remaining": 12,
+              "deliverNow": 12
+            }
+          ],
+          "customerCode": "C003",
+          "customerName": "Sakura Appliance Store",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 61,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-10-04T08:00:00.000Z",
+              "note": "From SO-2026-0002"
+            }
+          ],
+          "links": [
+            {
+              "id": "so-2",
+              "type": "order",
+              "number": "SO-2026-0002",
+              "status": "ready_to_deliver",
+              "to": "/sale/orders/2"
+            }
+          ],
+          "saleOrderNumber": "SO-2026-0002",
+          "warehouseName": "Finished Goods Warehouse",
+          "lineCount": 1
+        },
+        {
+          "id": 2,
+          "number": "DN-2026-0002",
+          "date": "2026-10-03",
+          "saleOrderId": 2,
+          "customerId": 3,
+          "warehouseId": 2,
+          "status": "delivered",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "ordered": 30,
+              "deliveredBefore": 0,
+              "remaining": 30,
+              "deliverNow": 18
+            },
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "ordered": 20,
+              "deliveredBefore": 0,
+              "remaining": 20,
+              "deliverNow": 20
+            }
+          ],
+          "customerCode": "C003",
+          "customerName": "Sakura Appliance Store",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 60,
+              "action": "confirm",
+              "status": "delivered",
+              "actor": "Nina Sato",
+              "at": "2026-10-03T16:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 59,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-10-03T08:00:00.000Z",
+              "note": "From SO-2026-0002"
+            }
+          ],
+          "links": [
+            {
+              "id": "so-2",
+              "type": "order",
+              "number": "SO-2026-0002",
+              "status": "ready_to_deliver",
+              "to": "/sale/orders/2"
+            }
+          ],
+          "saleOrderNumber": "SO-2026-0002",
+          "warehouseName": "Finished Goods Warehouse",
+          "lineCount": 2
+        },
+        {
+          "id": 1,
+          "number": "DN-2026-0001",
+          "date": "2026-09-28",
+          "saleOrderId": 4,
+          "customerId": 2,
+          "warehouseId": 2,
+          "status": "delivered",
+          "lines": [
+            {
+              "productId": 1,
+              "productCode": "RF-2D",
+              "productName": "Refrigerator 2-Door 15Q",
+              "ordered": 6,
+              "deliveredBefore": 0,
+              "remaining": 6,
+              "deliverNow": 6
+            }
+          ],
+          "customerCode": "C002",
+          "customerName": "Best Home Mart",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 58,
+              "action": "confirm",
+              "status": "delivered",
+              "actor": "Nina Sato",
+              "at": "2026-09-28T16:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 57,
+              "action": "created",
+              "status": "draft",
+              "actor": "Nina Sato",
+              "at": "2026-09-28T08:00:00.000Z",
+              "note": "From SO-2026-0004"
+            }
+          ],
+          "links": [
+            {
+              "id": "so-4",
+              "type": "order",
+              "number": "SO-2026-0004",
+              "status": "delivered",
+              "to": "/sale/orders/4"
+            }
+          ],
+          "saleOrderNumber": "SO-2026-0004",
+          "warehouseName": "Finished Goods Warehouse",
+          "lineCount": 1
+        },
+        {
+          "id": 4,
+          "number": "DN-2026-0004",
+          "date": "2026-09-04",
+          "saleOrderId": 5,
+          "customerId": 1,
+          "warehouseId": 2,
+          "status": "delivered",
+          "lines": [
+            {
+              "productId": 2,
+              "productCode": "RF-1D",
+              "productName": "Refrigerator 1-Door 9Q",
+              "ordered": 12,
+              "deliveredBefore": 0,
+              "remaining": 12,
+              "deliverNow": 12
+            }
+          ],
+          "customerCode": "C001",
+          "customerName": "ABC Appliance Store",
+          "salesPersonName": null,
+          "history": [
+            {
+              "id": 63,
+              "action": "confirm",
+              "status": "delivered",
+              "actor": "Alice Sato",
+              "at": "2026-09-04T16:00:00.000Z",
+              "note": null
+            },
+            {
+              "id": 62,
+              "action": "created",
+              "status": "draft",
+              "actor": "Alice Sato",
+              "at": "2026-09-04T08:00:00.000Z",
+              "note": "From SO-2026-0005"
+            }
+          ],
+          "links": [
+            {
+              "id": "so-5",
+              "type": "order",
+              "number": "SO-2026-0005",
+              "status": "closed",
+              "to": "/sale/orders/5"
+            }
+          ],
+          "saleOrderNumber": "SO-2026-0005",
+          "warehouseName": "Finished Goods Warehouse",
+          "lineCount": 1
+        }
+      ],
+      "examples": [
+        {
+          "id": "DN-202604-01",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-02",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-03",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-04",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-05",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-06",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-07",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-08",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-09",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202604-10",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-04-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-01",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-02",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-03",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-04",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-05",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-06",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-07",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-08",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-09",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202605-10",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-05-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-01",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-02",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-03",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-04",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-05",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-06",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-07",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-08",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-09",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202606-10",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-06-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-01",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-02",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-03",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-04",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-05",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-06",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-07",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-08",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-09",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202607-10",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-07-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-01",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-02",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-03",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-04",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-05",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-06",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-07",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-08",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-09",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202608-10",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-08-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-01",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-02",
+          "status": "draft",
+          "quantity": 5,
+          "amountJpy": 192500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-02",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-04",
+          "status": "in_progress",
+          "quantity": 7,
+          "amountJpy": 269500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-03",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-06",
+          "status": "completed",
+          "quantity": 9,
+          "amountJpy": 346500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-04",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-08",
+          "status": "draft",
+          "quantity": 11,
+          "amountJpy": 423500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-05",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-10",
+          "status": "in_progress",
+          "quantity": 13,
+          "amountJpy": 500500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-06",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-12",
+          "status": "completed",
+          "quantity": 15,
+          "amountJpy": 577500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-07",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-14",
+          "status": "draft",
+          "quantity": 17,
+          "amountJpy": 654500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-08",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-16",
+          "status": "in_progress",
+          "quantity": 19,
+          "amountJpy": 731500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-09",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-18",
+          "status": "completed",
+          "quantity": 21,
+          "amountJpy": 808500,
+          "note": "Example record"
+        },
+        {
+          "id": "DN-202609-10",
+          "department": "Sale",
+          "type": "deliveries",
+          "date": "2026-09-20",
+          "status": "draft",
+          "quantity": 23,
+          "amountJpy": 885500,
+          "note": "Example record"
+        }
+      ]
+    }
+  },
+  "departments": {
+    "Factory": [
+      {
+        "id": "WO-202604-01",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-02",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-03",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-04",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-05",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-06",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-07",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-08",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-09",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202604-10",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-04-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-01",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-02",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-03",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-04",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-05",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-06",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-07",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-08",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-09",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202605-10",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-05-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-01",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-02",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-03",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-04",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-05",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-06",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-07",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-08",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-09",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202606-10",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-06-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-01",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-02",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-03",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-04",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-05",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-06",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-07",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-08",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-09",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202607-10",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-07-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-01",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-02",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-03",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-04",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-05",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-06",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-07",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-08",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-09",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202608-10",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-08-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-01",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-02",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-03",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-04",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-05",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-06",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-07",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-08",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-09",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "WO-202609-10",
+        "department": "Factory",
+        "type": "workOrder",
+        "date": "2026-09-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      }
+    ],
+    "Stock": [
+      {
+        "id": "SM-202604-01",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-02",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-03",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-04",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-05",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-06",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-07",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-08",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-09",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202604-10",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-04-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-01",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-02",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-03",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-04",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-05",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-06",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-07",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-08",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-09",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202605-10",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-05-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-01",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-02",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-03",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-04",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-05",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-06",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-07",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-08",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-09",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202606-10",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-06-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-01",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-02",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-03",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-04",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-05",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-06",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-07",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-08",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-09",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202607-10",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-07-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-01",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-02",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-03",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-04",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-05",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-06",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-07",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-08",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-09",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202608-10",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-08-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-01",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-02",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-03",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-04",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-05",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-06",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-07",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-08",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-09",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": null,
+        "note": "Example record"
+      },
+      {
+        "id": "SM-202609-10",
+        "department": "Stock",
+        "type": "movement",
+        "date": "2026-09-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": null,
+        "note": "Example record"
+      }
+    ],
+    "Purchase": [
+      {
+        "id": "PO-202604-01",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-02",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-03",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-04",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-05",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-06",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-07",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-08",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-09",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202604-10",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-04-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-01",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-02",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-03",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-04",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-05",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-06",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-07",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-08",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-09",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202605-10",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-05-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-01",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-02",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-03",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-04",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-05",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-06",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-07",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-08",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-09",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202606-10",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-06-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-01",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-02",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-03",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-04",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-05",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-06",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-07",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-08",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-09",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202607-10",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-07-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-01",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-02",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-03",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-04",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-05",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-06",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-07",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-08",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-09",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202608-10",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-08-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-01",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-02",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-03",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-04",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-05",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-06",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-07",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-08",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-09",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "PO-202609-10",
+        "department": "Purchase",
+        "type": "purchaseOrder",
+        "date": "2026-09-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      }
+    ],
+    "Accounting": [
+      {
+        "id": "INV-202604-01",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-02",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-03",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-04",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-05",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-06",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-07",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-08",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-09",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202604-10",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-04-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-01",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-02",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-03",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-04",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-05",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-06",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-07",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-08",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-09",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202605-10",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-05-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-01",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-02",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-03",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-04",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-05",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-06",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-07",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-08",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-09",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202606-10",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-06-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-01",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-02",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-03",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-04",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-05",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-06",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-07",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-08",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-09",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202607-10",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-07-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-01",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-02",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-03",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-04",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-05",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-06",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-07",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-08",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-09",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202608-10",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-08-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-01",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-02",
+        "status": "draft",
+        "quantity": 5,
+        "amountJpy": 192500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-02",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-04",
+        "status": "in_progress",
+        "quantity": 7,
+        "amountJpy": 269500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-03",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-06",
+        "status": "completed",
+        "quantity": 9,
+        "amountJpy": 346500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-04",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-08",
+        "status": "draft",
+        "quantity": 11,
+        "amountJpy": 423500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-05",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-10",
+        "status": "in_progress",
+        "quantity": 13,
+        "amountJpy": 500500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-06",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-12",
+        "status": "completed",
+        "quantity": 15,
+        "amountJpy": 577500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-07",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-14",
+        "status": "draft",
+        "quantity": 17,
+        "amountJpy": 654500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-08",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-16",
+        "status": "in_progress",
+        "quantity": 19,
+        "amountJpy": 731500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-09",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-18",
+        "status": "completed",
+        "quantity": 21,
+        "amountJpy": 808500,
+        "note": "Example record"
+      },
+      {
+        "id": "INV-202609-10",
+        "department": "Accounting",
+        "type": "invoice",
+        "date": "2026-09-20",
+        "status": "draft",
+        "quantity": 23,
+        "amountJpy": 885500,
+        "note": "Example record"
+      }
+    ]
+  }
+}

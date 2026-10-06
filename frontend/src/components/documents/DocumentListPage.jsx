@@ -135,9 +135,10 @@ export function DocumentListPage({
             />
           </FilterField>
 
-          <FilterField label={t("sale:filters.date")}>
+          <FilterField label={t("sale:filters.from")}>
             <Input type="date" value={query.from} max={query.to || undefined} onChange={(event) => setQuery({ from: event.target.value })} aria-label={t("sale:filters.from")} className={DATE_INPUT} />
-            <span aria-hidden="true" className="flex items-center text-muted-foreground">–</span>
+          </FilterField>
+          <FilterField label={t("sale:filters.to")}>
             <Input type="date" value={query.to} min={query.from || undefined} onChange={(event) => setQuery({ to: event.target.value })} aria-label={t("sale:filters.to")} className={DATE_INPUT} />
           </FilterField>
 

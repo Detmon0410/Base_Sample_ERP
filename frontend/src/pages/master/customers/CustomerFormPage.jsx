@@ -30,8 +30,8 @@ export function CustomerFormPage() {
   });
   const { isNew, record, form, errors, message, fieldProps } = page;
 
-  const text = (name, label, extra = {}) => (
-    <FormField id={`customer-${name}`} label={label} error={message(errors[name])}>
+  const text = (name, label, extra = {}, className) => (
+    <FormField id={`customer-${name}`} label={label} error={message(errors[name])} className={className}>
       <Input id={`customer-${name}`} {...extra} {...fieldProps(name)} {...form.register(name)} />
     </FormField>
   );
@@ -47,7 +47,7 @@ export function CustomerFormPage() {
     >
       <form id="customer-form" noValidate onSubmit={page.onSubmit} className="flex min-h-0 flex-1 flex-col">
         <SheetFormBody>
-          <FormSection title={t("master:customers.form.sections.basic")} icon={BuildingIcon}>
+          <FormSection title={t("master:customers.form.sections.basic")} icon={BuildingIcon} aside={isNew ? undefined : <span>{record.code}</span>}>
             <FormField
               id="customer-code"
               label={t("master:customers.form.fields.code")}
@@ -108,7 +108,7 @@ export function CustomerFormPage() {
           <FormSection title={t("master:customers.form.sections.contact")} icon={ContactIcon}>
             {text("contactPerson", t("master:customers.form.fields.contactPerson"))}
             {text("contactPhone", t("master:customers.form.fields.contactPhone"), { type: "tel" })}
-            {text("contactEmail", t("master:customers.form.fields.contactEmail"), { type: "email" })}
+            {text("contactEmail", t("master:customers.form.fields.contactEmail"), { type: "email" }, "@lg:col-span-2")}
           </FormSection>
 
           {!isNew ? <RecordInfoCard record={record} /> : null}

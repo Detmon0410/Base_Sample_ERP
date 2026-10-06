@@ -66,5 +66,6 @@
     "title": "This page is not built yet",
     "description": "It is part of the plan and will be added soon. You can keep using the other pages from the menu."
   },
-  "resizeSidebar": "Drag to change the menu width"
+  "resizeSidebar": "Drag to change the menu width",
+  "refresh": "Refresh the data on this page"
 }

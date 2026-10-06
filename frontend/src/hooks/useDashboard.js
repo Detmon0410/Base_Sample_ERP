@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getDashboard } from "@/services/dashboard.service";
+import { onRefresh } from "@/utils/masterEvents";
 
 // "Real time" without a push channel: ask again every few seconds while the tab is visible.
 // When the backend offers SSE / WebSocket, replace this hook's internals; the page does not change.
@@ -40,6 +41,9 @@ export function useDashboard() {
     }, DASHBOARD_POLL_MS);
     return () => clearInterval(timer);
   }, [load]);
+
+  // The Refresh button in the header.
+  useEffect(() => onRefresh(load), [load]);
 
   // Catch up immediately when the user comes back to the tab.
   useEffect(() => {

@@ -9,3 +9,8 @@ export function onMasterChanged(callback) {
   window.addEventListener(EVENT, callback);
   return () => window.removeEventListener(EVENT, callback);
 }
+
+// The Refresh button in the header asks every open list and the dashboard to load again, so the user
+// can see new data without reloading the whole page (which would also drop the page state).
+export const requestRefresh = notifyMasterChanged;
+export const onRefresh = onMasterChanged;

@@ -33,8 +33,6 @@ import { notifyMasterChanged } from "@/utils/masterEvents";
 import { saleErrorText } from "../saleErrors";
 import { emptyQuotation, quotationSchema, toFormValues } from "./quotationSchema";
 
-const ROW = 1;
-
 /** S2 + S3 — /sale/quotations/new and /sale/quotations/:id (a draft is editable, every other status is read-only). */
 export function QuotationSheet() {
   const { t, i18n } = useTranslation(["sale", "nav"]);
@@ -105,7 +103,7 @@ export function QuotationSheet() {
           ) : null}
 
           {editable ? (
-            <FormSection title={t("sale:cards.header")} icon={CalendarIcon} columns={ROW} aside={numberAside}>
+            <FormSection title={t("sale:cards.header")} icon={CalendarIcon} aside={numberAside}>
               <FormField id="qt-customerId" label={t("sale:fields.customer")} required error={message(errors.customerId)}>
                 <Controller
                   control={form.control}
@@ -140,14 +138,13 @@ export function QuotationSheet() {
               <FormField id="qt-validUntil" label={t("sale:fields.validUntil")} required error={message(errors.validUntil)}>
                 <Input id="qt-validUntil" type="date" {...fieldProps("validUntil")} {...form.register("validUntil")} />
               </FormField>
-              <FormField id="qt-remarks" label={t("sale:fields.remarks")} error={message(errors.remarks)} >
+              <FormField id="qt-remarks" label={t("sale:fields.remarks")} error={message(errors.remarks)} className="@lg:col-span-2">
                 <Textarea id="qt-remarks" {...fieldProps("remarks")} {...form.register("remarks")} />
               </FormField>
             </FormSection>
           ) : record ? (
             <SheetSection title={t("sale:cards.header")} icon={CalendarIcon} aside={numberAside}>
               <DetailFields
-                columns={ROW}
                 items={[
                   { label: t("sale:fields.customer"), value: `${record.customerCode} · ${record.customerName}` },
                   { label: t("sale:fields.salesPerson"), value: record.salesPersonName },

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  * The list is filtered by code or name as the user types. Keyboard: type to search, Tab to the list,
  * Enter to choose, Esc to close.
  */
-export function EntitySelect({ id, options, value, onChange, placeholder, emptyLabel, className, disabled, "aria-invalid": invalid, "aria-describedby": describedby }) {
+export function EntitySelect({ id, options, value, onChange, placeholder, emptyLabel, className, chevronClassName, disabled, "aria-invalid": invalid, "aria-describedby": describedby }) {
   const { t } = useTranslation("master");
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
@@ -52,7 +52,7 @@ export function EntitySelect({ id, options, value, onChange, placeholder, emptyL
           )}
         >
           <span className="truncate">{selected ? `${selected.code} · ${selected.name}` : (emptyLabel ?? placeholder)}</span>
-          <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          <ChevronDownIcon className={cn("size-4 shrink-0 text-muted-foreground", chevronClassName)} aria-hidden="true" />
         </button>
       </PopoverTrigger>
       <PopoverContent>

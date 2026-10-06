@@ -37,6 +37,7 @@ export function LineItemsCard({ form, products, readOnly = false, rows = [], sho
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-12 text-center">{t("lines.no")}</TableHead>
               <TableHead>{t("lines.product")}</TableHead>
               <TableHead className="text-right">{t("lines.qty")}</TableHead>
               {showDelivered ? <TableHead className="text-right">{t("lines.delivered")}</TableHead> : null}
@@ -45,8 +46,9 @@ export function LineItemsCard({ form, products, readOnly = false, rows = [], sho
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map((line) => (
+            {rows.map((line, index) => (
               <TableRow key={line.productId}>
+                <TableCell className="text-center text-muted-foreground">{index + 1}</TableCell>
                 <TableCell className="font-semibold whitespace-normal">
                   {line.productCode} <span className="font-normal text-muted-foreground">· {line.productName}</span>
                 </TableCell>
@@ -73,15 +75,16 @@ export function LineItemsCard({ form, products, readOnly = false, rows = [], sho
       {fields.length === 0 ? (
         <p className="rounded-xl border border-dashed p-5 text-center text-muted-foreground">{t("lines.empty")}</p>
       ) : (
-        <div>
+        <div className="overflow-hidden rounded-lg border border-slate-200">
           <table className="block w-full text-base @xl:table @xl:table-fixed">
-            <thead className="hidden @xl:table-header-group">
-              <tr className="text-left text-sm font-semibold text-muted-foreground">
-                <th className="pb-2 pr-2">{t("lines.product")}</th>
-                <th className="w-20 pb-2 pr-2 text-right">{t("lines.qty")}</th>
-                <th className="w-32 pb-2 pr-2 text-right">{t("lines.unitPrice")}</th>
-                <th className="w-28 pb-2 pr-2 text-right">{t("lines.amount")}</th>
-                <th className="w-11 pb-2">
+            <thead className="hidden bg-[#EEEEEE] text-[#4C4C4C] @xl:table-header-group">
+              <tr className="text-left text-sm font-semibold">
+                <th className="h-10 w-12 px-2 text-center">{t("lines.no")}</th>
+                <th className="h-10 px-2">{t("lines.product")}</th>
+                <th className="h-10 w-24 px-2 text-right">{t("lines.qty")}</th>
+                <th className="h-10 w-32 px-2 text-right">{t("lines.unitPrice")}</th>
+                <th className="h-10 w-28 px-2 text-right">{t("lines.amount")}</th>
+                <th className="h-10 w-12 px-2">
                   <span className="sr-only">{t("lines.remove")}</span>
                 </th>
               </tr>
@@ -93,8 +96,9 @@ export function LineItemsCard({ form, products, readOnly = false, rows = [], sho
                 const options = products.filter((product) => product.id === line.productId || !chosen.has(product.id));
                 const label = (name) => `${t(`lines.${name}`)}, ${t("lines.lineNumber", { number: index + 1 })}`;
                 return (
-                  <tr key={field.id} className="grid grid-cols-[4.5rem_minmax(0,1fr)_auto_2.25rem] items-end gap-x-2 border-b py-3 align-top @xl:table-row @xl:border-0 @xl:py-0">
-                    <td className="col-span-4 block py-1.5 pr-0 @xl:table-cell @xl:pr-2">
+                  <tr key={field.id} className="grid grid-cols-[2rem_4.5rem_minmax(0,1fr)_auto_2.25rem] items-end gap-x-2 border-b border-slate-200 px-2 py-3 align-top last:border-b-0 odd:bg-card even:bg-slate-50 @xl:table-row @xl:px-0 @xl:py-0">
+                    <td className="block py-1.5 text-center text-muted-foreground @xl:table-cell @xl:px-2 @xl:py-2">{index + 1}</td>
+                    <td className="col-span-4 block py-1.5 @xl:table-cell @xl:px-1 @xl:py-1">
                       <Controller
                         control={control}
                         name={`lines.${index}.productId`}
@@ -105,6 +109,8 @@ export function LineItemsCard({ form, products, readOnly = false, rows = [], sho
                             value={productField.value}
                             placeholder={t("lines.chooseProduct")}
                             aria-label={label("product")}
+                            className="h-11 border-input @xl:border-transparent @xl:bg-transparent @xl:hover:border-input @xl:hover:bg-card @xl:focus-visible:border-input @xl:focus-visible:bg-card @xl:h-10"
+                            chevronClassName="@xl:hidden"
                             aria-invalid={cellError(index, "productId") ? true : undefined}
                             onChange={(id) => {
                               productField.onChange(id);
@@ -115,23 +121,24 @@ export function LineItemsCard({ form, products, readOnly = false, rows = [], sho
                       />
                       {cellError(index, "productId") ? <p className="mt-1 text-sm text-destructive">{t(cellError(index, "productId"))}</p> : null}
                     </td>
-                    <td className="block py-1.5 pr-0 @xl:table-cell @xl:pr-2">
+                    <td className="col-start-2 block py-1.5 @xl:table-cell @xl:px-1 @xl:py-1">
                       <span className="mb-1 block text-sm text-muted-foreground @xl:hidden">{t("lines.qty")}</span>
                       <Input
                         type="number"
                         min={1}
                         step={1}
                         inputMode="numeric"
-                        className="text-right"
+                        className="text-right border-input @xl:border-transparent @xl:bg-transparent @xl:hover:border-input @xl:hover:bg-card @xl:focus-visible:border-input @xl:focus-visible:bg-card @xl:h-10"
                         aria-label={label("qty")}
                         aria-invalid={cellError(index, "qty") ? true : undefined}
                         {...register(`lines.${index}.qty`, { setValueAs: (value) => (value === "" || value == null ? null : Number(value)) })}
                       />
                       {cellError(index, "qty") ? <p className="mt-1 text-sm text-destructive">{t(cellError(index, "qty"))}</p> : null}
                     </td>
-                    <td className="block py-1.5 pr-0 @xl:table-cell @xl:pr-2">
+                    <td className="block py-1.5 @xl:table-cell @xl:px-1 @xl:py-1">
                       <span className="mb-1 block text-sm text-muted-foreground @xl:hidden">{t("lines.unitPrice")}</span>
                       <MoneyInput
+                        className="border-input @xl:border-transparent @xl:bg-transparent @xl:hover:border-input @xl:hover:bg-card @xl:focus-visible:border-input @xl:focus-visible:bg-card @xl:h-10"
                         aria-label={label("unitPrice")}
                         aria-invalid={cellError(index, "unitPrice") ? true : undefined}
                         {...register(`lines.${index}.unitPrice`, {
@@ -142,12 +149,12 @@ export function LineItemsCard({ form, products, readOnly = false, rows = [], sho
                       />
                       {cellError(index, "unitPrice") ? <p className="mt-1 text-sm text-destructive">{t(cellError(index, "unitPrice"))}</p> : null}
                     </td>
-                    <td className="block min-w-24 py-1.5 pr-0 text-right font-semibold whitespace-nowrap @xl:table-cell @xl:pr-2 @xl:pt-3">
+                    <td className="block min-w-24 py-1.5 text-right font-semibold whitespace-nowrap @xl:table-cell @xl:px-2 @xl:py-1">
                       <span className="mb-1 block text-sm font-normal text-muted-foreground @xl:hidden">{t("lines.amount")}</span>
-                      <span className="flex h-11 items-center justify-end @xl:inline">{money(amount)}</span>
+                      <span className="flex h-11 items-center justify-end @xl:h-10">{money(amount)}</span>
                     </td>
-                    <td className="block py-1.5 text-right @xl:table-cell">
-                      <Button type="button" variant="outline" size="icon" className="size-9" aria-label={`${t("lines.remove")}, ${t("lines.lineNumber", { number: index + 1 })}`} onClick={() => remove(index)}>
+                    <td className="block py-1.5 text-right @xl:table-cell @xl:px-1 @xl:py-1">
+                      <Button type="button" variant="ghost" size="icon" className="size-9 text-destructive hover:bg-destructive/10 hover:text-destructive" aria-label={`${t("lines.remove")}, ${t("lines.lineNumber", { number: index + 1 })}`} onClick={() => remove(index)}>
                         <Trash2Icon />
                       </Button>
                     </td>

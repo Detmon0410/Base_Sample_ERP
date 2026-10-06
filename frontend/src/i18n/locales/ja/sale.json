@@ -80,7 +80,8 @@
     "totals": "",
     "subtotal": "",
     "tax": "",
-    "total": ""
+    "total": "",
+    "no": ""
   },
   "availability": {
     "title": "",
@@ -96,7 +97,10 @@
     "available": "",
     "missing": "",
     "stale": "",
-    "error": ""
+    "error": "",
+    "checkAgain": "",
+    "summary": "",
+    "remaining": ""
   },
   "sheet": {
     "save": "",

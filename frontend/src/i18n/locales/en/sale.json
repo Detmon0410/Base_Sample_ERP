@@ -80,7 +80,8 @@
     "totals": "Totals",
     "subtotal": "Subtotal",
     "tax": "Consumption tax ({{percent}}%)",
-    "total": "Total"
+    "total": "Total",
+    "no": "No."
   },
   "availability": {
     "title": "Material availability",
@@ -92,11 +93,14 @@
     "cannotProduce": "Cannot fully produce: material is missing",
     "noBom": "{{product}} has no BOM, so it cannot be checked.",
     "material": "Material",
-    "required": "Required",
-    "available": "On hand",
+    "required": "Needed",
+    "available": "In stock",
     "missing": "Missing",
     "stale": "The lines changed after this check. Check again.",
-    "error": "Could not check the availability. Try again."
+    "error": "Could not check the availability. Try again.",
+    "checkAgain": "Check again",
+    "summary": "{{short}} of {{total}} materials are short",
+    "remaining": "Left after use"
   },
   "sheet": {
     "save": "Save",

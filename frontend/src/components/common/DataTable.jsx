@@ -46,13 +46,13 @@ export function DataTable({
       aria-busy={fetching}
     >
       <Table aria-label={ariaLabel}>
-        <TableHeader className="bg-slate-100">
+        <TableHeader>
           <TableRow>
             {columns.map((column) => (
               <TableHead
                 key={column.key}
                 aria-sort={ariaSort(column)}
-                className={cn("h-11 px-3 text-sm font-semibold text-[#666666]", column.align === "right" && "text-right")}
+                className={cn("h-11 px-3 text-sm font-semibold text-[#4C4C4C]", column.align === "right" && "text-right")}
               >
                 {column.sortable ? (
                   <button

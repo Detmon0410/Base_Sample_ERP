@@ -9,7 +9,14 @@ function IconAction({ label, onClick, destructive, children }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button type="button" variant={destructive ? "destructive" : "outline"} size="icon" aria-label={label} onClick={onClick}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={destructive ? "size-9 text-destructive hover:bg-destructive/10 hover:text-destructive" : "size-9 text-slate-600"}
+          aria-label={label}
+          onClick={onClick}
+        >
           {children}
         </Button>
       </TooltipTrigger>
@@ -21,7 +28,7 @@ function IconAction({ label, onClick, destructive, children }) {
 /**
  * Buttons in the header of a detail sheet. The toggle is the status: green and on while the record is
  * active, grey and off while it is inactive; one click switches it at once (no confirmation) and the tooltip
- * says what it does. Then Delete (icon, asks first) and Save. Save submits the form `formId`, which can
+ * says what it does. Then Delete (a quiet red icon, asks first) and Save (the only filled button, like the header of a Sale document). Save submits the form `formId`, which can
  * be on another tab.
  */
 export function RecordActions({ formId, isSubmitting, isNew, isActive, busy, onToggleStatus, onDelete }) {
@@ -44,7 +51,7 @@ export function RecordActions({ formId, isSubmitting, isNew, isActive, busy, onT
           </IconAction>
         </>
       ) : null}
-      <Button type="submit" form={formId} disabled={isSubmitting}>
+      <Button type="submit" form={formId} size="sm" className="h-9" disabled={isSubmitting}>
         <SaveIcon aria-hidden="true" /> {isSubmitting ? t("common.saving") : t("common.save")}
       </Button>
     </>

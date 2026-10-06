@@ -105,6 +105,7 @@ export function ListPage({
         fetching={list.fetching}
         onRetry={list.retry}
         emptyContent={emptyContent}
+        total={list.meta?.total}
       />
 
       {list.meta ? (

@@ -38,7 +38,8 @@
     "noOptions": "",
     "recordInfo": "",
     "activeToggle": "",
-    "inactiveToggle": ""
+    "inactiveToggle": "",
+    "totalItems": ""
   },
   "validation": {
     "required": "",

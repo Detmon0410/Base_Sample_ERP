@@ -38,7 +38,8 @@
     "noOptions": "No match.",
     "recordInfo": "Record information",
     "activeToggle": "Active. Click to deactivate",
-    "inactiveToggle": "Inactive. Click to activate"
+    "inactiveToggle": "Inactive. Click to activate",
+    "totalItems": "Total {{count}} items"
   },
   "validation": {
     "required": "This field is required.",

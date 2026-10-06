@@ -4,13 +4,16 @@ import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 /**
  * Server-side table: the parent owns sort, page and data.
  * columns: [{ key, header, sortable?, align?: "right", render?(row), className? }]
  * sort: "code" (ascending) or "-code" (descending). status: "loading" | "ready" | "error".
+ * Last row (summary): "Total N items" under the first column(s), and under every column that has `sum` the sum
+ * the server sent for it. `total` = number of records of the whole list (all pages), `sums` = { [column key]: value }
+ * for the whole list; a column says how to show its sum with `sum: (value) => node`.
  * A click on a row opens `rowTo(row)`; links and buttons inside a row keep their own action.
  */
 export function DataTable({
@@ -24,6 +27,8 @@ export function DataTable({
   fetching = false,
   onRetry,
   emptyContent,
+  total,
+  sums,
   ariaLabel,
   skeletonRows = 8,
 }) {
@@ -34,6 +39,10 @@ export function DataTable({
 
   const ariaSort = (column) =>
     column.sortable && sortField === column.key ? (descending ? "descending" : "ascending") : undefined;
+
+  // The label spans the columns before the first column that has a sum (or all of them when none has).
+  const firstSum = columns.findIndex((column) => column.sum && sums?.[column.key] != null);
+  const labelSpan = firstSum === -1 ? columns.length : Math.max(1, firstSum);
 
   const onRowClick = (event, row) => {
     if (!rowTo || event.target.closest("a,button")) return;
@@ -135,6 +144,20 @@ export function DataTable({
               ))
             : null}
         </TableBody>
+        {status === "ready" && rows.length > 0 && total != null ? (
+          <TableFooter>
+            <TableRow className="bg-slate-100 odd:bg-slate-100 even:bg-slate-100 hover:bg-slate-100">
+              <TableCell colSpan={labelSpan} className="px-3 py-3 font-bold text-slate-900">
+                {t("common.totalItems", { count: total })}
+              </TableCell>
+              {columns.slice(labelSpan).map((column) => (
+                <TableCell key={column.key} className={cn("px-3 py-3 font-bold text-slate-900", column.align === "right" && "text-right")}>
+                  {column.sum && sums?.[column.key] != null ? column.sum(sums[column.key]) : null}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableFooter>
+        ) : null}
       </Table>
     </div>
   );

@@ -128,9 +128,14 @@ export function ListToolbar({ searchValue, onSearchChange, searchLabel, filters 
               }}
             >
               <PopoverTrigger asChild>
-                <Button type="button" variant="secondary" size="sm" className="h-8 shrink-0 rounded-full px-3 text-primary">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className={cn("h-8 shrink-0 rounded-full px-3 hover:bg-muted", active.length > 0 ? "text-[#0EA5E9] hover:text-[#0EA5E9]" : "text-foreground")}
+                >
                   <FunnelIcon aria-hidden="true" /> {t("toolbar.filters")}
-                  {active.length > 0 ? <span className="grid size-5 place-items-center rounded-full bg-primary text-xs text-primary-foreground">{active.length}</span> : null}
+                  {active.length > 0 ? <span className="font-semibold">({active.length})</span> : null}
                   <ChevronRightIcon aria-hidden="true" className="rotate-90" />
                 </Button>
               </PopoverTrigger>

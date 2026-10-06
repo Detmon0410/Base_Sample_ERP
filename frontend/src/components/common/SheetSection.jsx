@@ -17,7 +17,7 @@ export function SheetSection({ title, icon: Icon, aside, className, children }) 
     <section className={cn(CARD_CLASS, className)}>
       <h3 className="m-0 flex min-h-14 items-center gap-3 px-5 py-3 text-lg font-bold">
         {Icon ? <Icon className="size-6 shrink-0 text-primary" aria-hidden="true" /> : null}
-        <span className="min-w-0 flex-1">{title}</span>
+        <span className="min-w-0 flex-1 truncate">{title}</span>
         {aside}
       </h3>
       <div className="border-t border-slate-200/70 px-5 pt-5 pb-5">{children}</div>

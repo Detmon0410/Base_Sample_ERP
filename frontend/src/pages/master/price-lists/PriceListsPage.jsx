@@ -26,9 +26,9 @@ function PriceListsListPage() {
         header: t("master:priceLists.columns.product"),
         sortable: true,
         render: (row) => (
-          <span className="font-semibold">
+          <Link to={`/master/price-lists/${row.id}${search}`} className="rounded-sm font-semibold underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring">
             {row.productCode} <span className="font-normal text-muted-foreground">· {row.productName}</span>
-          </span>
+          </Link>
         ),
       },
       {
@@ -52,20 +52,6 @@ function PriceListsListPage() {
         render: (row) => (row.validTo ? formatDate(row.validTo, i18n.language) : t("master:priceLists.noEndDate")),
       },
       { key: "status", header: t("master:common.status"), sortable: true, render: (row) => <ActiveBadge status={row.status} /> },
-      {
-        key: "edit",
-        header: <span className="sr-only">{t("master:common.edit")}</span>,
-        align: "right",
-        render: (row) => (
-          <Link
-            to={`${PATH}/${row.id}${search}`}
-            className="inline-flex h-6 items-center rounded-md px-2 font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label={`${t("master:common.edit")} ${row.productCode} ${row.customerCode}`}
-          >
-            {t("master:common.edit")}
-          </Link>
-        ),
-      },
     ],
     [t, i18n.language, search],
   );

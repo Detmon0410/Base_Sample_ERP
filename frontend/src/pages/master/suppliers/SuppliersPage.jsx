@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Route, Routes, useLocation } from "react-router";
+import { Route, Routes, useLocation } from "react-router";
 
 import { ActiveBadge } from "@/components/common/ActiveBadge";
 import { ListPage } from "@/components/common/ListPage";
@@ -29,22 +29,8 @@ function SuppliersListPage() {
         render: (row) => (row.paymentTerms ? t(`master:paymentTerms.${row.paymentTerms}`) : "—"),
       },
       { key: "status", header: t("master:common.status"), sortable: true, render: (row) => <ActiveBadge status={row.status} /> },
-      {
-        key: "edit",
-        header: <span className="sr-only">{t("master:common.edit")}</span>,
-        align: "right",
-        render: (row) => (
-          <Link
-            to={`${PATH}/${row.id}${search}`}
-            className="inline-flex h-6 items-center rounded-md px-2 font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label={`${t("master:common.edit")} ${row.code}`}
-          >
-            {t("master:common.edit")}
-          </Link>
-        ),
-      },
     ],
-    [t, search],
+    [t],
   );
 
   return (

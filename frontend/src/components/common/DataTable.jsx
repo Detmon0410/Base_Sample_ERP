@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,12 +9,13 @@ import { cn } from "@/lib/utils";
 
 /**
  * Server-side table: the parent owns sort, page and data.
- * columns: [{ key, header, sortable?, align?: "right", render?(row), className? }]
+ * columns: [{ key, header, sortable?, align?: "right" | "center", width?: "w-40" (class of the header cell), render?(row), className? }]
  * sort: "code" (ascending) or "-code" (descending). status: "loading" | "ready" | "error".
  * Last row (summary): "Total N items" under the first column(s), and under every column that has `sum` the sum
  * the server sent for it. `total` = number of records of the whole list (all pages), `sums` = { [column key]: value }
  * for the whole list; a column says how to show its sum with `sum: (value) => node`.
- * A click on a row opens `rowTo(row)`; links and buttons inside a row keep their own action.
+ * A click on a row opens `rowTo(row)`; links and buttons inside a row keep their own action. The first column
+ * (when it has no `render`) is a link to the same place, for the keyboard.
  */
 export function DataTable({
   columns,
@@ -61,7 +62,7 @@ export function DataTable({
               <TableHead
                 key={column.key}
                 aria-sort={ariaSort(column)}
-                className={cn("h-11 px-3 text-sm font-semibold text-[#4C4C4C]", column.align === "right" && "text-right")}
+                className={cn("h-11 px-3 text-sm font-semibold text-[#4C4C4C]", column.align === "right" && "text-right", column.align === "center" && "text-center", column.width)}
               >
                 {column.sortable ? (
                   <button
@@ -132,14 +133,24 @@ export function DataTable({
                   onClick={(event) => onRowClick(event, row)}
                   className={cn(rowTo && "cursor-pointer")}
                 >
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.key}
-                      className={cn("px-3 py-2", column.align === "right" && "text-right", column.className)}
-                    >
-                      {column.render ? column.render(row) : row[column.key]}
-                    </TableCell>
-                  ))}
+                  {columns.map((column, index) => {
+                    const content = column.render ? column.render(row) : row[column.key];
+                    return (
+                      <TableCell
+                        key={column.key}
+                        className={cn("px-3 py-2", column.align === "right" && "text-right", column.align === "center" && "text-center", column.className)}
+                      >
+                        {/* the first column is also a real link, so a row can be opened with the keyboard */}
+                        {index === 0 && rowTo && !column.render ? (
+                          <Link to={rowTo(row)} className="rounded-sm underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring">
+                            {content}
+                          </Link>
+                        ) : (
+                          content
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             : null}

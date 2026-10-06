@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router";
+import { useLocation } from "react-router";
 
 import { ActiveBadge } from "@/components/common/ActiveBadge";
 import { ListPage } from "@/components/common/ListPage";
@@ -33,31 +33,18 @@ export function SimpleListPage({ entity }) {
     }));
 
     return [
-      { key: "code", header: t("master:common.code"), sortable: true },
+      { key: "code", header: t("master:common.code"), sortable: true, width: "w-40" },
       { key: "name", header: t("master:common.name"), sortable: true },
       ...own,
       {
         key: "status",
         header: t("master:common.status"),
         sortable: true,
+        width: "w-44",
         render: (row) => <ActiveBadge status={row.status} />,
       },
-      {
-        key: "edit",
-        header: <span className="sr-only">{t("master:common.edit")}</span>,
-        align: "right",
-        render: (row) => (
-          <Link
-            to={`${entity.path}/${row.id}${search}`}
-            className="inline-flex h-6 items-center rounded-md px-2 font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label={`${t("master:common.edit")} ${row.code}`}
-          >
-            {t("master:common.edit")}
-          </Link>
-        ),
-      },
     ];
-  }, [entity, t, i18n.language, search]);
+  }, [entity, t, i18n.language]);
 
   return (
     <ListPage

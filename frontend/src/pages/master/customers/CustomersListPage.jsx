@@ -1,7 +1,7 @@
 import { CircleMinusIcon } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router";
+import { useLocation } from "react-router";
 
 import { ListPage } from "@/components/common/ListPage";
 import { StatusBadge } from "@/components/common/StatusBadge";
@@ -47,22 +47,8 @@ export function CustomersListPage() {
             </StatusBadge>
           ),
       },
-      {
-        key: "edit",
-        header: <span className="sr-only">{t("master:common.edit")}</span>,
-        align: "right",
-        render: (row) => (
-          <Link
-            to={`/master/customers/${row.id}${search}`}
-            className="inline-flex h-6 items-center rounded-md px-2 font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label={`${t("master:common.edit")} ${row.code}`}
-          >
-            {t("master:common.edit")}
-          </Link>
-        ),
-      },
     ],
-    [t, i18n.language, search],
+    [t, i18n.language],
   );
 
   return (

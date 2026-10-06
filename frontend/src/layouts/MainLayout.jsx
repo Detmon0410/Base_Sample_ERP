@@ -1,5 +1,8 @@
 import { useTranslation } from "react-i18next";
+import { Suspense } from "react";
 import { Outlet } from "react-router";
+
+import { RouteLoading } from "@/components/common/RouteLoading";
 
 import { AppHeader } from "@/components/layout/AppHeader";
 import { AppSidebar } from "@/components/layout/AppSidebar";
@@ -37,7 +40,9 @@ export function MainLayout() {
         <SidebarInset className="min-w-0 bg-[#F1F5F9]">
           <AppHeader />
           <main id="main-content" className="w-full flex-1 px-5 pt-4 pb-5">
-            <Outlet />
+            <Suspense fallback={<RouteLoading />}>
+              <Outlet />
+            </Suspense>
           </main>
         </SidebarInset>
       </SidebarProvider>

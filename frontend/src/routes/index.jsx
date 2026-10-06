@@ -1,22 +1,10 @@
+import { lazy } from "react";
 import { Route, Routes } from "react-router";
 
 import { NAV_GROUPS } from "@/config/navigation";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import { LoginPage } from "@/pages/auth/LoginPage";
-import { DashboardPage } from "@/pages/dashboard/DashboardPage";
-import { FoundationDemoPage } from "@/pages/dev/FoundationDemoPage";
-import { TestComponentsPage } from "@/pages/dev/TestComponentsPage";
-import { CustomerPosPage } from "@/pages/sale/customer-pos/CustomerPosPage";
-import { DeliveriesPage } from "@/pages/sale/deliveries/DeliveriesPage";
-import { OrdersPage } from "@/pages/sale/orders/OrdersPage";
-import { QuotationsPage } from "@/pages/sale/quotations/QuotationsPage";
-import { CustomersPage } from "@/pages/master/customers/CustomersPage";
-import { PriceListsPage } from "@/pages/master/price-lists/PriceListsPage";
-import { ProductsPage } from "@/pages/master/products/ProductsPage";
-import { MaterialsPage } from "@/pages/master/materials/MaterialsPage";
-import { SuppliersPage } from "@/pages/master/suppliers/SuppliersPage";
-import { EmployeesPage, MachinesPage, UomPage, WarehousesPage } from "@/pages/master/simple/SimpleMasterPage";
 import { ForbiddenPage } from "@/pages/system/ForbiddenPage";
 import { NotFoundPage } from "@/pages/system/NotFoundPage";
 import { UnderConstructionPage } from "@/pages/system/UnderConstructionPage";
@@ -24,6 +12,27 @@ import { UnderConstructionPage } from "@/pages/system/UnderConstructionPage";
 import { GuestRoute } from "./GuestRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { RequirePermission } from "./RequirePermission";
+
+// Every page is its own file that the browser loads when the route is opened (the sign-in screen, the layout and
+// the small system pages stay in the first file). MainLayout shows a short "Loading" while a page arrives.
+const page = (load, name) => lazy(() => load().then((module) => ({ default: module[name] })));
+const DashboardPage = page(() => import("@/pages/dashboard/DashboardPage"), "DashboardPage");
+const CustomerPosPage = page(() => import("@/pages/sale/customer-pos/CustomerPosPage"), "CustomerPosPage");
+const DeliveriesPage = page(() => import("@/pages/sale/deliveries/DeliveriesPage"), "DeliveriesPage");
+const OrdersPage = page(() => import("@/pages/sale/orders/OrdersPage"), "OrdersPage");
+const QuotationsPage = page(() => import("@/pages/sale/quotations/QuotationsPage"), "QuotationsPage");
+const CustomersPage = page(() => import("@/pages/master/customers/CustomersPage"), "CustomersPage");
+const PriceListsPage = page(() => import("@/pages/master/price-lists/PriceListsPage"), "PriceListsPage");
+const ProductsPage = page(() => import("@/pages/master/products/ProductsPage"), "ProductsPage");
+const MaterialsPage = page(() => import("@/pages/master/materials/MaterialsPage"), "MaterialsPage");
+const SuppliersPage = page(() => import("@/pages/master/suppliers/SuppliersPage"), "SuppliersPage");
+const SimpleMaster = () => import("@/pages/master/simple/SimpleMasterPage");
+const EmployeesPage = page(SimpleMaster, "EmployeesPage");
+const MachinesPage = page(SimpleMaster, "MachinesPage");
+const UomPage = page(SimpleMaster, "UomPage");
+const WarehousesPage = page(SimpleMaster, "WarehousesPage");
+const FoundationDemoPage = import.meta.env.DEV ? page(() => import("@/pages/dev/FoundationDemoPage"), "FoundationDemoPage") : null;
+const TestComponentsPage = import.meta.env.DEV ? page(() => import("@/pages/dev/TestComponentsPage"), "TestComponentsPage") : null;
 
 // Menu entries whose page is built. Everything else opens the "not built yet" placeholder.
 const IMPLEMENTED_PAGES = {

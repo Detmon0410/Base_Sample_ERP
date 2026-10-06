@@ -288,7 +288,9 @@
     "empty": "",
     "noResult": "",
     "search": "",
-    "pastValidUntil": ""
+    "pastValidUntil": "",
+    "edit": "",
+    "view": ""
   },
   "customerPos": {
     "singular": "",

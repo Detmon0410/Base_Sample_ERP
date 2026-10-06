@@ -288,7 +288,9 @@
     "empty": "No quotations yet.",
     "noResult": "No quotation matches. Clear the search or the filters.",
     "search": "Search by number or customer",
-    "pastValidUntil": "The valid-until date has passed. Mark the quotation as expired, or accept it if the customer agreed."
+    "pastValidUntil": "The valid-until date has passed. Mark the quotation as expired, or accept it if the customer agreed.",
+    "edit": "Edit quotation",
+    "view": "Quotation"
   },
   "customerPos": {
     "singular": "customer PO",

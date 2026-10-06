@@ -41,12 +41,9 @@ Runs backend and frontend together:
 ```bash
 pnpm run db:migrate   # run Prisma migrations
 pnpm run db:studio    # open Prisma Studio (http://localhost:5555)
-pnpm run seed:demo    # export six months of mock ERP examples to seed/demo.json
 ```
 
 ## Environment
-
-The frontend uses the local mock API when `VITE_USE_MOCK=true`. Run `pnpm run seed:demo` to create `seed/demo.json` with 10 examples per month for each operational department and Sale document type across the previous six complete months. The file also includes the current Sale mock records under `existing`. This export is for inspection or later import; the frontend does not read it automatically. It does not write to MySQL, whose schema currently contains only `User`.
 
 Never commit real credentials — commit `.env.example`, not `.env`.
 

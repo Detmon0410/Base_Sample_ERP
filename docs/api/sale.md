@@ -36,6 +36,16 @@ Master data **reads** (`GET /master/customers`, `/products`, `/employees`, `/war
 
 **Availability** (aditional_req §1): for every line explode the BOM (`qty per unit × line qty`), **sum per material over all lines**, compare with the material's `onHand` (raw material warehouse). `materials[]`: `{ materialId, materialCode, materialName, uom, required, available, missing }` (`missing` = 0 when enough); `shortages` = the rows with `missing > 0`; `noBom` = products without a BOM (cannot be checked). `canProduce = shortages empty and noBom empty`. Stock already needed by other orders is **not** subtracted (Q7) and the result **never blocks** anything (Q8).
 
+## List responses (all four lists)
+
+`{ success, data: [...], meta }` with `meta = { page, pageSize, total, statusCounts?, sums? }`.
+
+- `pageSize`: the UI offers 10, 20, 50 and 100 (the "Show" box under a list, `size` in its URL); the server caps it at 100.
+- `total`: number of records the filters match, **all pages**. The table's last row shows it ("Total 12 items").
+- `statusCounts`: `{ [status]: n }` for the status stepper above the quotation and sale order lists. Counted with every filter **except** `status` (search, customer, dates still apply), so the stepper shows where the documents are while one step is selected.
+- `sums`: `{ total }` = the sum of `totals.total` of **all** records the filters match (not only this page), only for quotations and sale orders. The table's last row shows it under the Total column.
+- Dates in filters and bodies are ISO `YYYY-MM-DD` (the date picker works with the same string).
+
 ## Quotations — `/sale/quotations`
 
 | Method | Path | Notes |
@@ -184,5 +194,6 @@ model DocumentHistory {
 - [ ] Availability service (BOM explosion × stock on hand) shared with Purchase later
 - [ ] Price lookup service shared with the line forms
 - [ ] Master data `GET` open to every signed-in user, writes Admin only
-- [ ] File upload for the customer PO attachment
+- [ ] File upload for the customer PO attachment (the `attachment.url` is what the UI opens in a new tab)
+- [ ] `meta.statusCounts`, `meta.sums` and `pageSize` up to 100 on the four lists (see List responses)
 - [ ] Turn off `VITE_USE_MOCK` and re-run the test list in the spec

@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 import { ActionDialog } from "./ActionDialog";
 
@@ -35,6 +36,16 @@ const ICONS = {
   confirm: CheckIcon,
   revert: Undo2Icon,
 };
+
+// Status buttons have no border, only a light fill. The main button of a document (action.primary) is the light-blue
+// brand button; the others have their own colour: red for rejecting / cancelling, amber for expiring, grey for
+// the rest (revert, close).
+const OTHER = {
+  reject: "bg-destructive/10 text-destructive hover:bg-destructive/20",
+  cancel: "bg-destructive/10 text-destructive hover:bg-destructive/20",
+  expire: "bg-warning/10 text-warning hover:bg-warning/20",
+};
+const NEUTRAL = "bg-slate-100 text-slate-700 hover:bg-slate-200";
 
 /**
  * The status buttons of a document (see config/sale.js for who sees which). Pressing one opens a confirmation
@@ -63,8 +74,8 @@ export function DocumentActions({ actions, onRun, disabled = false }) {
             key={`${action.key}-${action.noteLabel}`}
             type="button"
             size="sm"
-            className={action.danger ? "h-9 text-destructive hover:text-destructive" : "h-9"}
-            variant={action.primary ? "secondary" : "outline"}
+            className={cn("h-9", !action.primary && (OTHER[action.key] ?? NEUTRAL))}
+            variant="secondary"
             disabled={disabled}
             title={disabled ? t("actions.saveFirst") : undefined}
             onClick={() => setPending(action)}

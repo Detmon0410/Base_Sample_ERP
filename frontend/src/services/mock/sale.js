@@ -239,7 +239,8 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
   };
 
   // ---- list helper shared by the four lists ----
-  function listOf(items, shape, { query, searchFields, sorts, defaultSort = "-date" }) {
+  // searchLines: the search text also matches the code and name of the products on the lines
+  function listOf(items, shape, { query, searchFields, searchLines = false, sorts, defaultSort = "-date" }) {
     const text = String(query.q ?? "").trim().toLowerCase();
     const status = query.status && query.status !== "all" ? query.status : null;
     const customer = query.customer ? Number(query.customer) : null;
@@ -250,7 +251,9 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
           (!customer || row.customerId === customer) &&
           (!query.from || row.date >= query.from) &&
           (!query.to || row.date <= query.to) &&
-          (!text || searchFields.some((field) => matches(row[field], text))),
+          (!text ||
+            searchFields.some((field) => matches(row[field], text)) ||
+            (searchLines && (row.lines ?? []).some((line) => matches(line.productCode, text) || matches(line.productName, text)))),
       );
     const statusCounts = {};
     others.forEach((row) => {
@@ -337,7 +340,7 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
     "GET /sale/quotations": ({ authorization, query }) => {
       guard(authorization);
       if (listShouldFail()) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
-      return listOf(quotations, shapeQuotation, { query, searchFields: ["number", "customerCode", "customerName"], sorts: ["number", "date", "customerCode", "validUntil", "status", "total"] });
+      return listOf(quotations, shapeQuotation, { query, searchFields: ["number", "customerCode", "customerName"], searchLines: true, sorts: ["number", "date", "customerCode", "validUntil", "status", "total"] });
     },
     "GET /sale/quotations/:id": ({ authorization, params }) => {
       guard(authorization);
@@ -496,7 +499,7 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
     "GET /sale/orders": ({ authorization, query }) => {
       guard(authorization);
       if (listShouldFail()) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
-      return listOf(orders, shapeOrder, { query, searchFields: ["number", "customerCode", "customerName", "quotationNumber", "customerPoNumber"], sorts: ["number", "date", "customerCode", "deliveryDate", "status", "total"] });
+      return listOf(orders, shapeOrder, { query, searchFields: ["number", "customerCode", "customerName", "quotationNumber", "customerPoNumber"], searchLines: true, sorts: ["number", "date", "customerCode", "deliveryDate", "status", "total"] });
     },
     "GET /sale/orders/:id": ({ authorization, params }) => {
       guard(authorization);
@@ -616,7 +619,7 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
     "GET /sale/deliveries": ({ authorization, query }) => {
       guard(authorization);
       if (listShouldFail()) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
-      return listOf(deliveries, shapeDelivery, { query, searchFields: ["number", "saleOrderNumber", "customerCode", "customerName"], sorts: ["number", "date", "saleOrderNumber", "customerCode", "status"] });
+      return listOf(deliveries, shapeDelivery, { query, searchFields: ["number", "saleOrderNumber", "customerCode", "customerName"], searchLines: true, sorts: ["number", "date", "saleOrderNumber", "customerCode", "status"] });
     },
     "GET /sale/deliveries/:id": ({ authorization, params }) => {
       guard(authorization);
@@ -821,12 +824,13 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
       const xref = pdf.length;
       pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n${offsets.map((o) => `${String(o).padStart(10, "0")} 00000 n \n`).join("")}`;
       pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
-      return URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
+      return typeof URL.createObjectURL === "function" ? URL.createObjectURL(new Blob([pdf], { type: "application/pdf" })) : undefined;
     }
     const canvas = document.createElement("canvas");
     canvas.width = 600;
     canvas.height = 400;
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext?.("2d");
+    if (!context) return undefined; // no canvas (a test environment): the attachment simply has no file to open
     context.fillStyle = "#ffffff";
     context.fillRect(0, 0, 600, 400);
     context.fillStyle = "#1f2937";

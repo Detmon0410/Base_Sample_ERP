@@ -50,7 +50,7 @@ Master data **reads** (`GET /master/customers`, `/products`, `/employees`, `/war
 
 | Method | Path | Notes |
 |---|---|---|
-| GET | `/sale/quotations` | list; params `q` (number, customer code / name), `status`, `customer` (id), `from`, `to` (document date), `sort` (`number, date, customerCode, validUntil, status, total`; default `-date`), `page`, `pageSize` |
+| GET | `/sale/quotations` | list; params `q` (number, customer code / name, **code or name of a product on the lines**), `status`, `customer` (id), `from`, `to` (document date), `sort` (`number, date, customerCode, validUntil, status, total`; default `-date`), `page`, `pageSize` |
 | GET | `/sale/quotations/:id` | one |
 | POST | `/sale/quotations` | create a draft: `{ customerId, date, validUntil, salesPersonId?, remarks, lines[] }` |
 | PUT | `/sale/quotations/:id` | change a **draft** only (`409 INVALID_STATUS` otherwise) |
@@ -70,7 +70,7 @@ Response adds `inUse` (a non-cancelled sale order references it), `quotationNumb
 
 ## Sale orders — `/sale/orders`
 
-Create / read / update / delete work like quotations (`PUT` and `DELETE` on **drafts** only; `GET` list sort `number, date, customerCode, deliveryDate, status, total`; search also matches the quotation and customer PO numbers). Body: `{ customerId, date, deliveryDate?, salesPersonId?, quotationId?, customerPoId?, remarks, lines[] }`; the quotation and the PO must belong to the same customer; `deliveryDate >= date`.
+Create / read / update / delete work like quotations (`PUT` and `DELETE` on **drafts** only; `GET` list sort `number, date, customerCode, deliveryDate, status, total`; search also matches the product code / name of the lines and the quotation and customer PO numbers). Body: `{ customerId, date, deliveryDate?, salesPersonId?, quotationId?, customerPoId?, remarks, lines[] }`; the quotation and the PO must belong to the same customer; `deliveryDate >= date`.
 Response adds `approval` (`null` | `"requested"`), `quotationNumber`, `customerPoNumber`, and per line `delivered` (sum of **confirmed** delivery note lines).
 
 Statuses: `draft → confirmed → in_production → ready_to_deliver → delivered → closed`, and `cancelled`.

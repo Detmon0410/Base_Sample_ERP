@@ -295,7 +295,7 @@
     "new": "New quotation",
     "empty": "No quotations yet.",
     "noResult": "No quotation matches. Clear the search or the filters.",
-    "search": "Search by number or customer",
+    "search": "Search by number, customer or product",
     "pastValidUntil": "The valid-until date has passed. Mark the quotation as expired, or accept it if the customer agreed.",
     "edit": "Edit quotation",
     "view": "Quotation"
@@ -328,14 +328,14 @@
     "new": "New sale order",
     "empty": "No sale orders yet.",
     "noResult": "No sale order matches. Clear the search or the filters.",
-    "search": "Search by number, customer, quotation or PO",
+    "search": "Search by number, customer, product, quotation or PO",
     "cardHeader": "Customer and dates"
   },
   "deliveries": {
     "singular": "delivery note",
     "empty": "No delivery notes yet. They are made from a sale order that is ready to deliver.",
     "noResult": "No delivery note matches. Clear the search or the filters.",
-    "search": "Search by number, order or customer",
+    "search": "Search by number, order, customer or product",
     "ordered": "Ordered",
     "deliveredBefore": "Delivered before",
     "remaining": "Remaining",

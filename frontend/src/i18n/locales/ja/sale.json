@@ -115,7 +115,9 @@
     "leave": "",
     "notFound": "",
     "loadError": "",
-    "backToList": ""
+    "backToList": "",
+    "print": "",
+    "duplicate": ""
   },
   "dialog": {
     "cancel": "",
@@ -128,7 +130,8 @@
   },
   "toast": {
     "orderCreated": "",
-    "deliveryNoteCreated": ""
+    "deliveryNoteCreated": "",
+    "quotationCopied": ""
   },
   "history": {
     "created": "",
@@ -352,5 +355,35 @@
       "quotations_one": "",
       "quotations_other": ""
     }
+  },
+  "print": {
+    "title": {
+      "quotation": "",
+      "order": "",
+      "delivery": ""
+    },
+    "tel": "",
+    "to": "",
+    "date": "",
+    "validUntil": "",
+    "deliveryDate": "",
+    "customerPo": "",
+    "quotation": "",
+    "saleOrder": "",
+    "warehouse": "",
+    "salesPerson": "",
+    "no": "",
+    "product": "",
+    "qty": "",
+    "unitPrice": "",
+    "amount": "",
+    "ordered": "",
+    "delivered": "",
+    "subtotal": "",
+    "tax": "",
+    "total": "",
+    "remarks": "",
+    "deliveredBy": "",
+    "receivedBy": ""
   }
 }

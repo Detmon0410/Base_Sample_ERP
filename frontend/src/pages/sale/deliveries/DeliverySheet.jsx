@@ -66,6 +66,7 @@ export function DeliverySheet() {
       titleOf={(doc) => doc.number}
       status={record?.status}
       singular={t("sale:deliveries.singular")}
+      printKind="delivery"
       formId="dn-form"
       canEdit={editable}
       actions={<DocumentActions actions={actions} onRun={run} disabled={form.formState.isDirty} />}

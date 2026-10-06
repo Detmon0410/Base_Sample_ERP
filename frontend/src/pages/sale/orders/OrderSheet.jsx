@@ -109,6 +109,7 @@ export function OrderSheet() {
       status={record?.status}
       waiting={pending}
       singular={t("sale:orders.singular")}
+      printKind="order"
       formId="so-form"
       canEdit={editable}
       actions={

@@ -1,4 +1,5 @@
-import { SaveIcon, Trash2Icon } from "lucide-react";
+import { CopyIcon, PrinterIcon, SaveIcon, Trash2Icon } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -10,6 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { DocumentStatusBadge } from "./DocumentStatusBadge";
+import { PrintDocument } from "./PrintDocument";
+import { PrintFrame } from "./PrintFrame";
 
 /**
  * The whole sheet of a Sale document: header (title, delete icon, status buttons, Save, close),
@@ -23,11 +26,17 @@ import { DocumentStatusBadge } from "./DocumentStatusBadge";
  *   waiting      the draft is waiting for approval (shows the "Waiting for approval" badge)
  *   actions      the status buttons (<DocumentActions>), shown before the icon buttons
  *   canEdit      draft + the user may work in Sale: shows Delete and Save
+ *   printKind    "quotation" | "order" | "delivery": shows the Print icon (opens the browser print dialog)
+ *   onDuplicate  shows the Copy icon: called to make a new document from this one
  *   singular     "quotation", used in the delete confirmation
  */
-export function DocumentSheet({ page, entityTitle, newTitle, titleOf, heading, status, waiting = false, actions, canEdit, formId, singular, children }) {
+export function DocumentSheet({ page, entityTitle, newTitle, titleOf, heading, status, waiting = false, actions, canEdit, formId, singular, printKind, onDuplicate, children }) {
   const { t } = useTranslation("sale");
   const { isNew, record, loadState, leaving, goToList, listPath } = page;
+
+  // Print: the paper version of the document is drawn in a hidden frame (PrintFrame), the browser print dialog opens
+  // (Print / Save as PDF) and the frame is removed when the dialog closes.
+  const [printing, setPrinting] = useState(false);
   const sheetProps = { open: !leaving, onClose: goToList, defaultWidth: 880, widthKey: "kanou.documentSheetWidth" };
 
   if (loadState === "loading") {
@@ -60,6 +69,34 @@ export function DocumentSheet({ page, entityTitle, newTitle, titleOf, heading, s
         badge={!heading && !isNew && (status || waiting) ? <DocumentStatusBadge status={status} waiting={waiting} /> : null}
         actions={
           <>
+            {!isNew && printKind ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-9 text-slate-600"
+                    aria-label={t("sheet.print")}
+                    disabled={page.form.formState.isDirty}
+                    onClick={() => setPrinting(true)}
+                  >
+                    <PrinterIcon />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{page.form.formState.isDirty ? t("actions.saveFirst") : t("sheet.print")}</TooltipContent>
+              </Tooltip>
+            ) : null}
+            {!isNew && onDuplicate ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button type="button" variant="ghost" size="icon" className="size-9 text-slate-600" aria-label={t("sheet.duplicate")} disabled={page.form.formState.isDirty} onClick={onDuplicate}>
+                    <CopyIcon />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{page.form.formState.isDirty ? t("actions.saveFirst") : t("sheet.duplicate")}</TooltipContent>
+              </Tooltip>
+            ) : null}
             {canEdit && !isNew ? (
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -82,6 +119,12 @@ export function DocumentSheet({ page, entityTitle, newTitle, titleOf, heading, s
       >
         {children}
       </DetailSheet>
+
+      {printing && printKind ? (
+        <PrintFrame onDone={() => setPrinting(false)}>
+          <PrintDocument kind={printKind} record={record} />
+        </PrintFrame>
+      ) : null}
 
       <ConfirmDialog
         open={page.dialog === "delete"}

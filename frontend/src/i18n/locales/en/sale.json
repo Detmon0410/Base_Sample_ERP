@@ -115,7 +115,9 @@
     "leave": "Leave",
     "notFound": "This document does not exist.",
     "loadError": "Could not load the document.",
-    "backToList": "Back to the list"
+    "backToList": "Back to the list",
+    "print": "Print / Save as PDF",
+    "duplicate": "Copy as a new quotation"
   },
   "dialog": {
     "cancel": "Cancel",
@@ -128,7 +130,8 @@
   },
   "toast": {
     "orderCreated": "Sale order {{number}} created",
-    "deliveryNoteCreated": "Delivery note {{number}} created"
+    "deliveryNoteCreated": "Delivery note {{number}} created",
+    "quotationCopied": "Copied as {{number}}"
   },
   "history": {
     "created": "Created",
@@ -352,5 +355,35 @@
       "quotations_one": "{{count}} quotation",
       "quotations_other": "{{count}} quotations"
     }
+  },
+  "print": {
+    "title": {
+      "quotation": "Quotation",
+      "order": "Sale order",
+      "delivery": "Delivery note"
+    },
+    "tel": "Tel",
+    "to": "To",
+    "date": "Date",
+    "validUntil": "Valid until",
+    "deliveryDate": "Delivery date",
+    "customerPo": "Customer PO",
+    "quotation": "Quotation",
+    "saleOrder": "Sale order",
+    "warehouse": "Warehouse",
+    "salesPerson": "Sales person",
+    "no": "No.",
+    "product": "Product",
+    "qty": "Quantity",
+    "unitPrice": "Unit price",
+    "amount": "Amount",
+    "ordered": "Ordered",
+    "delivered": "Delivered",
+    "subtotal": "Subtotal",
+    "tax": "Consumption tax ({{rate}}%)",
+    "total": "Total",
+    "remarks": "Remarks",
+    "deliveredBy": "Delivered by (name, date)",
+    "receivedBy": "Received by (name, stamp, date)"
   }
 }

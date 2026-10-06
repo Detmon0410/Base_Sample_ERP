@@ -12,19 +12,20 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { DocumentStatusBadge } from "./DocumentStatusBadge";
 
 /**
- * The whole sheet of a Sale document: header (number, status, status buttons, delete icon, Save, close),
+ * The whole sheet of a Sale document: header (title, delete icon, status buttons, Save, close),
  * the delete and leave confirmations, and the loading / not found / error states. `page` is the result of
  * useRecordForm.
  *
  *   entityTitle  "Quotations" (shown while nothing is loaded)
  *   newTitle     "New quotation"
+ *   heading      fixed page title ("Edit quotation"); when set, the number and status are not in the header
  *   status       status of the saved document (undefined while new)
  *   waiting      the draft is waiting for approval (shows the "Waiting for approval" badge)
  *   actions      the status buttons (<DocumentActions>), shown before the icon buttons
  *   canEdit      draft + the user may work in Sale: shows Delete and Save
  *   singular     "quotation", used in the delete confirmation
  */
-export function DocumentSheet({ page, entityTitle, newTitle, titleOf, status, waiting = false, actions, canEdit, formId, singular, children }) {
+export function DocumentSheet({ page, entityTitle, newTitle, titleOf, heading, status, waiting = false, actions, canEdit, formId, singular, children }) {
   const { t } = useTranslation("sale");
   const { isNew, record, loadState, leaving, goToList, listPath } = page;
   const sheetProps = { open: !leaving, onClose: goToList, defaultWidth: 880, widthKey: "kanou.documentSheetWidth" };
@@ -55,23 +56,23 @@ export function DocumentSheet({ page, entityTitle, newTitle, titleOf, status, wa
   return (
     <>
       <DetailSheet
-        title={isNew ? newTitle : titleOf(record)}
-        badge={!isNew && (status || waiting) ? <DocumentStatusBadge status={status} waiting={waiting} /> : null}
+        title={heading ?? (isNew ? newTitle : titleOf(record))}
+        badge={!heading && !isNew && (status || waiting) ? <DocumentStatusBadge status={status} waiting={waiting} /> : null}
         actions={
           <>
-            {actions}
             {canEdit && !isNew ? (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button type="button" variant="destructive" size="icon" aria-label={t("sheet.delete")} onClick={() => page.setDialog("delete")}>
+                  <Button type="button" variant="ghost" size="icon" className="size-9 text-destructive hover:bg-destructive/10 hover:text-destructive" aria-label={t("sheet.delete")} onClick={() => page.setDialog("delete")}>
                     <Trash2Icon />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>{t("sheet.delete")}</TooltipContent>
               </Tooltip>
             ) : null}
+            {actions}
             {canEdit ? (
-              <Button type="submit" form={formId} disabled={page.isSubmitting}>
+              <Button type="submit" form={formId} size="sm" className="h-9" disabled={page.isSubmitting}>
                 <SaveIcon aria-hidden="true" /> {page.isSubmitting ? t("sheet.saving") : t("sheet.save")}
               </Button>
             ) : null}

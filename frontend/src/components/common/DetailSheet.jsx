@@ -33,7 +33,7 @@ function saveWidth(storageKey, width) {
 
 /**
  * Detail / form of a record, opened on the right side of the list (the list stays visible, slightly
- * blurred, behind it). It is always open while mounted: the route decides when it exists, and
+ * dimmed, behind it). It is always open while mounted: the route decides when it exists, and
  * `onClose` navigates back to the list (ask first when there are unsaved changes).
  *
  * `defaultWidth` / `widthKey`: a kind of sheet can have its own default width and its own remembered width
@@ -67,6 +67,20 @@ export function DetailSheet({
   const { t } = useTranslation();
   const [width, setWidth] = useState(() => readWidth(widthKey, defaultWidth));
 
+  // The header and the panel slide in first; the heavy content (form, tables, cards) is drawn two frames later,
+  // so the first frames of the slide are not spent on rendering it.
+  const [bodyReady, setBodyReady] = useState(false);
+  useEffect(() => {
+    let second;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setBodyReady(true));
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
+  }, []);
+
   // Tell the toasts how wide the sheet is, so they stay beside it and never cover its header buttons.
   useEffect(() => {
     document.documentElement.style.setProperty("--sheet-offset", `${width}px`);
@@ -93,22 +107,22 @@ export function DetailSheet({
         className="gap-0 p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-none"
         style={{ width: `min(${width}px, 100vw)` }}
       >
-        <SheetHeader className="flex-row flex-wrap items-center gap-x-3 gap-y-2 border-b bg-card px-5 py-3">
-          <div className="flex min-w-max flex-1 items-center gap-x-3">
-            <SheetTitle className="text-xl font-bold whitespace-nowrap">{title}</SheetTitle>
+        <SheetHeader className="flex-row flex-nowrap items-center gap-3 border-b bg-card px-5 py-2">
+          <div className="flex min-w-0 flex-1 items-center gap-x-3">
+            <SheetTitle className="truncate text-lg font-bold">{title}</SheetTitle>
             {badge}
           </div>
           <SheetDescription className="sr-only">{description ?? title}</SheetDescription>
-          <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-2">
+          <div className="ml-auto flex shrink-0 items-center justify-end gap-2">
             {actions}
             <SheetClose asChild>
-              <Button type="button" variant="outline" size="icon" aria-label={t("actions.cancel")}>
+              <Button type="button" variant="ghost" size="icon" className="size-9" aria-label={t("actions.cancel")}>
                 <XIcon />
               </Button>
             </SheetClose>
           </div>
         </SheetHeader>
-        <div className="@container flex min-h-0 flex-1 flex-col bg-[#F1F5F9]">{children}</div>
+        <div className="@container flex min-h-0 flex-1 flex-col bg-[#F1F5F9]">{bodyReady ? children : null}</div>
 
         <ResizeHandle
           edge="left"

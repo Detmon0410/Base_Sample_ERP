@@ -62,7 +62,9 @@ export function DocumentActions({ actions, onRun, disabled = false }) {
           <Button
             key={`${action.key}-${action.noteLabel}`}
             type="button"
-            variant={action.primary ? "default" : action.danger ? "destructive" : "outline"}
+            size="sm"
+            className={action.danger ? "h-9 text-destructive hover:text-destructive" : "h-9"}
+            variant={action.primary ? "secondary" : "outline"}
             disabled={disabled}
             title={disabled ? t("actions.saveFirst") : undefined}
             onClick={() => setPending(action)}

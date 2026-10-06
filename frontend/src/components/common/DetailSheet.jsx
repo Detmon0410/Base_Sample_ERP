@@ -75,9 +75,12 @@ export function DetailSheet({
     const first = requestAnimationFrame(() => {
       second = requestAnimationFrame(() => setBodyReady(true));
     });
+    // Frames do not run while the tab is in the background; do not leave the sheet empty then.
+    const fallback = setTimeout(() => setBodyReady(true), 150);
     return () => {
       cancelAnimationFrame(first);
       cancelAnimationFrame(second);
+      clearTimeout(fallback);
     };
   }, []);
 

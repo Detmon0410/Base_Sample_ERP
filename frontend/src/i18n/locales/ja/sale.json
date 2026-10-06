@@ -145,7 +145,8 @@
     "confirm": "",
     "close": "",
     "cancel": "",
-    "revert": ""
+    "revert": "",
+    "none": ""
   },
   "links": {
     "quotation": "",
@@ -316,7 +317,8 @@
     "fileHint": "",
     "fileTooBig": "",
     "fileType": "",
-    "locked": ""
+    "locked": "",
+    "openFile": ""
   },
   "orders": {
     "singular": "",

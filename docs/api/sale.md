@@ -53,9 +53,9 @@ Validation: customer and dates required, `validUntil >= date` (`DATE_ORDER` on `
 
 ## Customer POs — `/sale/customer-pos`
 
-A record of a document that came from the customer; **no status**. Fields: `poNumber` (customer's own, unique per customer, case-insensitive → `400 VALIDATION_ERROR` `PO_NUMBER_EXISTS` on `poNumber`), `poDate`, `customerId`, `quotationId?` (must be a quotation of the same customer), `note`, `attachment?` (`{ name, size }`).
+A record of a document that came from the customer; **no status**. Fields: `poNumber` (customer's own, unique per customer, case-insensitive → `400 VALIDATION_ERROR` `PO_NUMBER_EXISTS` on `poNumber`), `poDate`, `customerId`, `quotationId?` (must be a quotation of the same customer), `note`, `attachment?` (`{ name, size, url }`; `url` is where the file can be opened).
 Response adds `inUse` (a non-cancelled sale order references it), `quotationNumber`, `orderNumber` (in the list). Once `inUse`, `PUT` and `DELETE` return `409 IN_USE` (Q5). List params: `q` (PO number, customer), `customer`, `from`, `to` (PO date), `sort` (`poNumber, date, customerCode`).
-**Attachment upload:** the mock keeps only name and size. The real API takes the file as `multipart/form-data` on `POST /sale/customer-pos/:id/attachment` (PDF, PNG or JPG, ≤ 10 MB), serves it back with `GET`, and removes it with `DELETE`; the JSON `attachment` object in the form only mirrors the stored file.
+**Attachment upload:** the mock keeps the name, the size and a browser link (`blob:` / `data:`) to the file, so the Open button and the image preview work in the demo; the link is lost on reload. The real API takes the file as `multipart/form-data` on `POST /sale/customer-pos/:id/attachment` (PDF, PNG or JPG, ≤ 10 MB), serves it back with `GET` (the `url` of the attachment points here, so the browser can open the PDF or image in a new tab), and removes it with `DELETE`; the JSON `attachment` object in the form only mirrors the stored file.
 
 ## Sale orders — `/sale/orders`
 

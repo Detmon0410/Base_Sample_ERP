@@ -145,7 +145,8 @@
     "confirm": "Delivery confirmed",
     "close": "Order closed",
     "cancel": "Cancelled",
-    "revert": "Reverted to the previous status"
+    "revert": "Reverted to the previous status",
+    "none": "No history yet."
   },
   "links": {
     "quotation": "Quotation",
@@ -316,7 +317,8 @@
     "fileHint": "PDF, PNG or JPG, up to 10 MB.",
     "fileTooBig": "The file is larger than 10 MB.",
     "fileType": "Use a PDF, PNG or JPG file.",
-    "locked": "A sale order uses this PO, so it can only be read."
+    "locked": "A sale order uses this PO, so it can only be read.",
+    "openFile": "Open"
   },
   "orders": {
     "singular": "sale order",

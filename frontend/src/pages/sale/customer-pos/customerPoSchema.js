@@ -10,7 +10,7 @@ export const customerPoSchema = z.object({
   customerId: z.number({ message: REQUIRED }),
   quotationId: z.number().nullable(),
   note: z.string().max(500, "sale:validation.maxLength"),
-  attachment: z.object({ name: z.string(), size: z.number() }).nullable(),
+  attachment: z.object({ name: z.string(), size: z.number(), url: z.string().optional() }).nullable(),
 });
 
 export const emptyCustomerPo = () => ({ poNumber: "", poDate: todayIso(), customerId: null, quotationId: null, note: "", attachment: null });

@@ -699,7 +699,7 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
       poDate: body.poDate,
       customerId: Number(body.customerId),
       quotationId: body.quotationId == null ? null : Number(body.quotationId),
-      attachment: body.attachment ? { name: body.attachment.name, size: body.attachment.size } : null,
+      attachment: body.attachment ? { name: body.attachment.name, size: body.attachment.size, url: body.attachment.url } : null,
       note: String(body.note ?? ""),
       log: existing?.log ?? [],
     };
@@ -777,6 +777,40 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
     quotations.push(doc);
   });
 
+  // A small real file for the seed attachments, so Open works in the demo (the real API serves the uploaded file).
+  function sampleFile(name, text) {
+    if (name.endsWith(".pdf")) {
+      const stream = `BT /F1 24 Tf 72 720 Td (${text}) Tj ET`;
+      const objects = [
+        "<< /Type /Catalog /Pages 2 0 R >>",
+        "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>",
+        `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+      ];
+      let pdf = "%PDF-1.4\n";
+      const offsets = [];
+      objects.forEach((body, index) => {
+        offsets.push(pdf.length);
+        pdf += `${index + 1} 0 obj\n${body}\nendobj\n`;
+      });
+      const xref = pdf.length;
+      pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n${offsets.map((o) => `${String(o).padStart(10, "0")} 00000 n \n`).join("")}`;
+      pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+      return URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = 600;
+    canvas.height = 400;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, 600, 400);
+    context.fillStyle = "#1f2937";
+    context.font = "28px sans-serif";
+    context.fillText(text, 40, 200);
+    return canvas.toDataURL("image/png");
+  }
+
   const seedPos = [
     { poNumber: "ABC-PO-0912", poDate: "2026-09-10", customerId: 1, quotationId: 1, attachment: { name: "ABC-PO-0912.pdf", size: 184320 } },
     { poNumber: "SKR-2290", poDate: "2026-09-20", customerId: 3, quotationId: 6, attachment: null },
@@ -786,6 +820,7 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
   ];
   seedPos.forEach((seed) => {
     const doc = { id: seq.po++, ...seed, note: "", log: [] };
+    if (doc.attachment) doc.attachment = { ...doc.attachment, url: sampleFile(doc.attachment.name, `Customer PO ${seed.poNumber} (sample file)`) };
     logEntry(doc, "created", null, "Alice Sato", null, `${seed.poDate}T11:00:00.000Z`);
     customerPos.push(doc);
   });

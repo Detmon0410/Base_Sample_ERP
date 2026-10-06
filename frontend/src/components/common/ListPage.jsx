@@ -1,12 +1,10 @@
-import { PlusIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 
 import { DataTable } from "@/components/common/DataTable";
+import { ListEmpty } from "@/components/common/ListEmpty";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Pagination } from "@/components/common/Pagination";
-import { Button } from "@/components/ui/button";
 import { ListToolbar } from "@/components/common/ListToolbar";
 import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { PAGE_SIZE } from "@/config/masterData";
@@ -69,24 +67,15 @@ export function ListPage({
     setQuery({ q: "", status: "all" });
   };
 
-  const emptyContent = filtered ? (
-    <div className="flex flex-col items-center gap-3">
-      <p>{noResultText}</p>
-      <Button type="button" variant="outline" onClick={clearFilters}>
-        {t("common.clearFilters")}
-      </Button>
-    </div>
-  ) : (
-    <div className="flex flex-col items-center gap-3">
-      <p>{emptyText}</p>
-      {newTo ? (
-        <Button asChild>
-          <Link to={newTo}>
-            <PlusIcon /> {newLabel}
-          </Link>
-        </Button>
-      ) : null}
-    </div>
+  const emptyContent = (
+    <ListEmpty
+      filtered={filtered}
+      text={filtered ? noResultText : emptyText}
+      onClear={clearFilters}
+      clearLabel={t("common.clearFilters")}
+      newTo={newTo}
+      newLabel={newLabel}
+    />
   );
 
   return (

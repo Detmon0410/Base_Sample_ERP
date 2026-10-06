@@ -66,5 +66,9 @@
     "noMatch": "",
     "clearAll": "",
     "remove": ""
+  },
+  "empty": {
+    "noRecordsTitle": "",
+    "noResultTitle": ""
   }
 }

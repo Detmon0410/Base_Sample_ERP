@@ -1,14 +1,12 @@
-import { PlusIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 
 import { DataTable } from "@/components/common/DataTable";
 import { ListToolbar } from "@/components/common/ListToolbar";
+import { ListEmpty } from "@/components/common/ListEmpty";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { Pagination } from "@/components/common/Pagination";
-import { Button } from "@/components/ui/button";
 import { PAGE_SIZE } from "@/config/masterData";
 import { useListQuery } from "@/hooks/useListQuery";
 import { useOptions } from "@/hooks/useOptions";
@@ -69,24 +67,15 @@ export function DocumentListPage({
     setQuery({ q: "", status: "all", customer: "", from: "", to: "" });
   };
 
-  const emptyContent = filtered ? (
-    <div className="flex flex-col items-center gap-3">
-      <p>{noResultText}</p>
-      <Button type="button" variant="outline" onClick={clear}>
-        {t("sale:filters.clear")}
-      </Button>
-    </div>
-  ) : (
-    <div className="flex flex-col items-center gap-3">
-      <p>{emptyText}</p>
-      {newTo ? (
-        <Button asChild>
-          <Link to={newTo}>
-            <PlusIcon /> {newLabel}
-          </Link>
-        </Button>
-      ) : null}
-    </div>
+  const emptyContent = (
+    <ListEmpty
+      filtered={filtered}
+      text={filtered ? noResultText : emptyText}
+      onClear={clear}
+      clearLabel={t("sale:filters.clear")}
+      newTo={newTo}
+      newLabel={newLabel}
+    />
   );
 
   return (

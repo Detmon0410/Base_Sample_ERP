@@ -66,5 +66,9 @@
     "noMatch": "No match",
     "clearAll": "Clear filters",
     "remove": "Remove filter"
+  },
+  "empty": {
+    "noRecordsTitle": "Nothing here yet",
+    "noResultTitle": "No results"
   }
 }

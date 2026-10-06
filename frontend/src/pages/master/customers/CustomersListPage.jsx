@@ -54,7 +54,7 @@ export function CustomersListPage() {
         render: (row) => (
           <Link
             to={`/master/customers/${row.id}${search}`}
-            className="inline-flex h-10 items-center rounded-md px-2 font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex h-6 items-center rounded-md px-2 font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={`${t("master:common.edit")} ${row.code}`}
           >
             {t("master:common.edit")}

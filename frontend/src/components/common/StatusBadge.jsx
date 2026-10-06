@@ -18,7 +18,7 @@ export function StatusBadge({ tone = "neutral", icon, children, className }) {
   const { icon: toneIcon, className: toneClass } = TONES[tone] ?? TONES.neutral;
   const Icon = icon ?? toneIcon;
   return (
-    <Badge variant="outline" className={cn("h-7 gap-1.5 px-2.5 text-sm font-semibold", toneClass, className)}>
+    <Badge variant="outline" className={cn("h-6 gap-1.5 px-2.5 text-sm font-semibold", toneClass, className)}>
       {Icon ? <Icon className="size-4" aria-hidden="true" /> : null}
       {children}
     </Badge>

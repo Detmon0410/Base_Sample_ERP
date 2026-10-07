@@ -374,3 +374,5 @@ New error code: `PERIOD_OVERLAP` (409).
 - [ ] Turn off `VITE_USE_MOCK` and re-run the frontend test list in the F3 spec
 
 > **Purchase:** a supplier or a material that a purchase order uses cannot be deleted (`409 IN_USE`); it can be deactivated. See [purchase.md](purchase.md).
+
+> **Accounting:** a customer, supplier, product or material used by an invoice or a bill cannot be deleted (`409 IN_USE`). The accounting master lists (`/master/accounts`, `taxRates`, `paymentMethods`, `bankAccounts`) are described in [accounting.md](accounting.md); only Accounting users read them and only their Manager changes them.

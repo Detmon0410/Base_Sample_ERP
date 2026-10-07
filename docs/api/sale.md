@@ -205,3 +205,5 @@ The paper version (A4 quotation, sale order, delivery note: company header, cust
 - [ ] `POST /sale/quotations/:id/duplicate` (copy as a new draft, see Quotations)
 - [ ] `meta.statusCounts`, `meta.sums` and `pageSize` up to 100 on the four lists (see List responses)
 - [ ] Turn off `VITE_USE_MOCK` and re-run the test list in the spec
+
+> **Accounting:** the `links` of a sale order and a delivery note include their invoices (`type: "invoice"`); a delivery note is invoiced once. See [accounting.md](accounting.md).

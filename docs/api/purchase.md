@@ -63,6 +63,7 @@ Rules: **R3** the PO must be **Sent or Partially received** (`INVALID_STATUS` on
 
 ## Other API changes
 
+- The `links` of a purchase order and of a goods receipt include their supplier bills (`type: "supplierBill"`, `to: "/accounting/bills/:id"`); a goods receipt is billed once ([accounting.md](accounting.md)).
 - `GET /stock/balances` rows and `GET /stock/items/materials/:id` get `onOrder`; the item also gets `openOrders: [{ id, number, supplier, expectedDate, status, qty }]` (see [stock.md](stock.md)). A movement's document link `GR` opens `/purchase/receipts/:id` for Purchase users.
 - `DELETE /master/suppliers/:id` and `DELETE /master/materials/:id` answer `409 IN_USE` when a purchase order uses them (they can be deactivated).
 - `GET /dashboard`: `kpis.poWaitingForGoods = { count (Sent + Partially received), nextDueDate }`; `approvals` of a Purchase Manager lists the **Draft** POs (`{ type: "PO", id, number, party: supplier, amountJpy: total }`) that wait to be sent.

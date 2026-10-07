@@ -17,7 +17,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Factory | 5 | 5 |
 | Stock | 3 | 3 |
 | Purchase | 5 | 5 |
-| Accounting | 0 | 6 |
+| Accounting | 6 | 6 |
 | Traceability | 0 | 1 |
 | Master data | 10 | 10 |
 | Administration | 0 | 3 |
@@ -65,12 +65,12 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | P3 | PO form | `/purchase/orders/new` | P1 | ✅ | mock | ✅ | ⬜ | One sheet with P4: supplier first, only its materials, price and lead time from the supplier-material links, totals with tax. API: api/purchase.md |
 | P4 | PO detail | `/purchase/orders/:id` | P1 | ✅ | mock | ✅ | ⬜ | Received / open per line, receipts card, Send (Manager) / Receive goods / Close remaining / Close / Cancel / Revert, history, linked documents. API: api/purchase.md |
 | P5 | Goods receipt | `/purchase/receipts` | P2 | ✅ | mock | ✅ | ⬜ | Delivered / accepted / rejected with a reason, lot number, Post once (accepted quantity enters Stock), cancel a posted receipt (Manager). API: api/purchase.md |
-| C1 | Customer invoices | `/accounting/invoices` | P2 | ⬜ | | ⬜ | ⬜ | |
-| C2 | Customer receipts | `/accounting/receipts` | P2 | ⬜ | | ⬜ | ⬜ | |
-| C3 | Supplier bills | `/accounting/bills` | P2 | ⬜ | | ⬜ | ⬜ | |
-| C4 | Supplier payments | `/accounting/payments` | P2 | ⬜ | | ⬜ | ⬜ | |
-| C5 | Journal entries | `/accounting/journal` | P2 | ⬜ | | ⬜ | ⬜ | |
-| C6 | Accounting master | `/accounting/master/*` | P2 | ⬜ | | ⬜ | ⬜ | |
+| C1 | Customer invoices | `/accounting/invoices` | P2 | ✅ | mock | ✅ | ⬜ | Made from a delivered delivery note (once), due date from the payment terms, tax rate per document, Issue by a Manager writes the entry, overdue shown, print, credit-limit warning. API: api/accounting.md |
+| C2 | Customer receipts | `/accounting/receipts` | P2 | ✅ | mock | ✅ | ⬜ | Against an open invoice, partial amounts up to the balance, method and bank account, Confirm moves the invoice to Partially paid / Paid. API: api/accounting.md |
+| C3 | Supplier bills | `/accounting/bills` | P2 | ✅ | mock | ✅ | ⬜ | Made from a posted goods receipt (once) at the PO price, supplier invoice no., Approve by a Manager. API: api/accounting.md |
+| C4 | Supplier payments | `/accounting/payments` | P2 | ✅ | mock | ✅ | ⬜ | Like receipts; only a Manager confirms. API: api/accounting.md |
+| C5 | Journal entries | `/accounting/journal` | P2 | ✅ | mock | ✅ | ⬜ | Entries written by the system, manual entries with a visible balance check, reversing entries, account filter with totals. API: api/accounting.md |
+| C6 | Accounting master | `/accounting/master/*` | P2 | ✅ | mock | ✅ | ⬜ | Chart of accounts (system roles), tax rates, payment methods, bank accounts under four tabs. API: api/accounting.md |
 | R1 | Product trace | `/trace` | P2 | ⬜ | | ⬜ | ⬜ | |
 | M1 | Customers | `/master/customers` | P1 | ✅ | mock | ✅ | ⬜ | Shared list/form pattern built here. Tested as Admin; non-Admin gets 403. API: api/master-data.md |
 | M2 | Suppliers | `/master/suppliers` | P1 | ✅ | mock | ✅ | ⬜ | Details sheet with tabs. Tested as Admin: validation, create, supplier links added / edited / removed from both sides, duplicate link blocked. API: api/master-data.md |
@@ -90,6 +90,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-07 | **Accounting module built with mock data (C1–C6 + links)** (spec f10-accounting): customer invoices from delivered delivery notes, receipts, supplier bills from posted goods receipts, payments, a journal that every posted money document writes (balanced, reversed when cancelled) plus manual entries with a visible balance check, and the accounting master (chart with system roles, tax rates, payment methods, bank accounts). A Manager issues invoices / approves bills / confirms payments; a Worker confirms receipts. Sale and Purchase documents link to the invoice / bill; the Dashboard shows the real overdue invoices and unpaid bills; two Accounting demo users (mika@, sora@). API: api/accounting.md; 25 new tests and a status coverage test (every status of every module has a colour, an icon and a text). |
 | 2026-10-07 | **Purchase module built with mock data (P1–P5 + links)** (spec f9-purchase): stock status board, purchase orders (stepper, list with received bar and total, one sheet: supplier first, only its materials, price and lead time from the supplier–material links, expected date from the lead time, Send to supplier by a Manager, Receive goods, Close remaining, Close, Cancel, Revert) and goods receipts (delivered / accepted / rejected with a reason, lot number, Post once, cancel a posted one by a Manager). Posting books the accepted quantity into Stock; Stock shows **On order** and the open POs of a material; the Dashboard counts the POs waiting for goods and lists Draft POs for the Purchase Manager; a supplier or material with a PO cannot be deleted. API: api/purchase.md; 28 new tests. |
 | 2026-10-07 | **Stock changes after `Sotck_req.md`**: Reserved and Available columns (scheduled work orders reserve materials, draft delivery notes reserve products; the availability checks use Available), opening quantities through an adjustment with the reason Opening balance, Movement No. (MV-2026-0001) and From → To in the movements list, movement types named as in the requirement, and the reorder point of a material is now optional (status "No reorder point"). 7 new tests. |
 | 2026-10-07 | **Stock module built with mock data (T1–T3 + links)** (spec f8-stock): the stock is a ledger of movements (balance = their sum). Work Order **Start** takes the BOM materials out of the raw material warehouse (refused with a list of what is short), revert / cancel give them back; a transferred **FG transfer** brings products into the warehouse; a confirmed **delivery note** takes them out; the material master data, the Sale / Factory availability checks and the Dashboard stock alerts read the same balances. New: Stock overview with an item sheet, Stock movements, Stock adjustments with approval, a Purchase Manager demo user (hana@kanou.test), a Materials issued card on the Work Order sheet. API: api/stock.md; 32 new tests. |

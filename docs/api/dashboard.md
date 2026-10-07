@@ -85,3 +85,5 @@ The dashboard is an **overview of all departments for every signed-in user** (de
 - [ ] Turn off `VITE_USE_MOCK` and compare with the mock for each role (Admin, Manager, Worker)
 
 > **Purchase:** `kpis.poWaitingForGoods` counts the purchase orders that are Sent or Partially received (with the next expected delivery date), and the `approvals` of a Purchase Manager list the Draft purchase orders that wait to be sent. See [purchase.md](purchase.md).
+
+> **Accounting:** `kpis.overdueInvoices` and `kpis.unpaidSupplierBills` come from the real invoices and bills, and the approvals of an Accounting Manager list the Draft invoices and bills. See [accounting.md](accounting.md).

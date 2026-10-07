@@ -1,0 +1,269 @@
+{
+  "noResult": "",
+  "overdueDays_one": "",
+  "overdueDays_other": "",
+  "overdueShort_one": "",
+  "overdueShort_other": "",
+  "columns": {
+    "date": "",
+    "dueDate": "",
+    "total": "",
+    "paid": "",
+    "balance": "",
+    "status": "",
+    "amount": "",
+    "method": "",
+    "bank": "",
+    "source": ""
+  },
+  "source": {
+    "auto": "",
+    "manual": ""
+  },
+  "cards": {
+    "document": "",
+    "receipts": "",
+    "payments": "",
+    "receiptsOf": "",
+    "paymentsOf": "",
+    "customerAccount": "",
+    "entry": "",
+    "bankLine": ""
+  },
+  "lines": {
+    "title": "",
+    "no": "",
+    "item": "",
+    "qty": "",
+    "unitPrice": "",
+    "amount": "",
+    "subtotal": "",
+    "tax": "",
+    "total": "",
+    "totals": "",
+    "upTo": ""
+  },
+  "paid": {
+    "paidOf": "",
+    "balance": ""
+  },
+  "invoices": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "pay": "",
+    "search": "",
+    "empty": "",
+    "chooseSource": "",
+    "chooseSourceFirst": "",
+    "noSource": "",
+    "sourceHint": "",
+    "noPayments": "",
+    "overLimit": "",
+    "columns": {
+      "number": "",
+      "party": "",
+      "ref": ""
+    }
+  },
+  "bills": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "pay": "",
+    "search": "",
+    "empty": "",
+    "chooseSource": "",
+    "chooseSourceFirst": "",
+    "noSource": "",
+    "sourceHint": "",
+    "noPayments": "",
+    "columns": {
+      "number": "",
+      "party": "",
+      "ref": ""
+    }
+  },
+  "receipts": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "search": "",
+    "empty": "",
+    "noOpen": "",
+    "chooseDoc": "",
+    "columns": {
+      "number": "",
+      "party": "",
+      "doc": ""
+    }
+  },
+  "payments": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "search": "",
+    "empty": "",
+    "noOpen": "",
+    "chooseDoc": "",
+    "columns": {
+      "number": "",
+      "party": "",
+      "doc": ""
+    }
+  },
+  "fields": {
+    "customer": "",
+    "supplier": "",
+    "saleOrder": "",
+    "delivery": "",
+    "po": "",
+    "receipt": "",
+    "invoice": "",
+    "bill": "",
+    "supplierInvoiceNo": "",
+    "reference": "",
+    "referenceHint": "",
+    "date": "",
+    "dueDate": "",
+    "dueHint": "",
+    "taxRate": "",
+    "chooseTaxRate": "",
+    "remarks": "",
+    "createdBy": "",
+    "openBalance": "",
+    "creditLimit": "",
+    "noLimit": "",
+    "docTotal": "",
+    "docBalance": "",
+    "amount": "",
+    "amountHint": "",
+    "method": "",
+    "chooseMethod": "",
+    "bankAccount": "",
+    "chooseBank": "",
+    "noBankForCash": "",
+    "memo": ""
+  },
+  "money": {
+    "booked": "",
+    "notBooked": ""
+  },
+  "journal": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "search": "",
+    "empty": "",
+    "ledger": "",
+    "reversalOf": "",
+    "lines": "",
+    "account": "",
+    "chooseAccount": "",
+    "debit": "",
+    "credit": "",
+    "balance": "",
+    "lineMemo": "",
+    "remove": "",
+    "totals": "",
+    "addLine": "",
+    "balanced": "",
+    "difference": "",
+    "columns": {
+      "number": "",
+      "reference": ""
+    }
+  },
+  "master": {
+    "tabs": "",
+    "accounts": "",
+    "taxRates": "",
+    "paymentMethods": "",
+    "bankAccounts": ""
+  },
+  "validation": {
+    "qtyPositive": "",
+    "qtyTooMany": "",
+    "priceWhole": "",
+    "priceNegative": "",
+    "amountPositive": "",
+    "sourceRequired": "",
+    "twoLines": "",
+    "oneSide": ""
+  },
+  "actions": {
+    "saveFirst": "",
+    "issue": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "approve": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "cancel": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "revert": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "confirmMoney": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "cancelMoney": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "post": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "reverse": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    }
+  },
+  "errors": {
+    "UNKNOWN": "",
+    "FORBIDDEN": "",
+    "NOT_FOUND": "",
+    "INVALID_STATUS": "",
+    "VALIDATION_ERROR": "",
+    "CONFIRM_INVALID": "",
+    "ACCOUNT_ROLE_MISSING": "",
+    "NOT_BALANCED": "",
+    "ALREADY_USED": ""
+  }
+}

@@ -6,13 +6,13 @@ const TOO_LONG = "master:validation.maxLength";
 const NUMBER = "master:validation.numberInvalid";
 
 function fieldSchema(field) {
-  if (field.type === "number") return z.number({ message: NUMBER }).int(NUMBER).min(0, NUMBER).nullable();
+  if (field.type === "number") return field.required ? z.number({ message: REQUIRED }).int(NUMBER).min(0, NUMBER) : z.number({ message: NUMBER }).int(NUMBER).min(0, NUMBER).nullable();
   if (field.type === "select") {
     return field.required
       ? z.string().refine((value) => field.options.includes(value), REQUIRED)
       : z.string().refine((value) => value === "" || field.options.includes(value), REQUIRED);
   }
-  return z.string().trim().max(field.max ?? 100, TOO_LONG);
+  return field.required ? z.string().trim().min(1, REQUIRED).max(field.max ?? 100, TOO_LONG) : z.string().trim().max(field.max ?? 100, TOO_LONG);
 }
 
 /** zod schema for an entity of config/simpleMaster.js: code + name + its own fields. */

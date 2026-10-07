@@ -35,6 +35,12 @@ const AdjustmentsPage = page(() => import("@/pages/stock/adjustments/Adjustments
 const StockStatusPage = page(() => import("@/pages/purchase/stock-status/StockStatusPage"), "StockStatusPage");
 const PurchaseOrdersPage = page(() => import("@/pages/purchase/orders/PurchaseOrdersPage"), "PurchaseOrdersPage");
 const GoodsReceiptsPage = page(() => import("@/pages/purchase/receipts/GoodsReceiptsPage"), "GoodsReceiptsPage");
+const InvoicesPage = page(() => import("@/pages/accounting/documents/MoneyDocumentsPage"), "InvoicesPage");
+const BillsPage = page(() => import("@/pages/accounting/documents/MoneyDocumentsPage"), "BillsPage");
+const ReceiptsPage = page(() => import("@/pages/accounting/payments/MoneyPage"), "ReceiptsPage");
+const PaymentsPage = page(() => import("@/pages/accounting/payments/MoneyPage"), "PaymentsPage");
+const JournalPage = page(() => import("@/pages/accounting/journal/JournalPage"), "JournalPage");
+const AccountingMasterPage = page(() => import("@/pages/accounting/master/AccountingMasterPage"), "AccountingMasterPage");
 const SimpleMaster = () => import("@/pages/master/simple/SimpleMasterPage");
 const EmployeesPage = page(SimpleMaster, "EmployeesPage");
 const MachinesPage = page(SimpleMaster, "MachinesPage");
@@ -67,6 +73,12 @@ const IMPLEMENTED_PAGES = {
   stockStatus: StockStatusPage,
   purchaseOrders: PurchaseOrdersPage,
   goodsReceipt: GoodsReceiptsPage,
+  invoices: InvoicesPage,
+  receipts: ReceiptsPage,
+  bills: BillsPage,
+  payments: PaymentsPage,
+  journal: JournalPage,
+  accountingMaster: AccountingMasterPage,
 };
 
 /**

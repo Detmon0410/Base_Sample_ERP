@@ -20,7 +20,12 @@
     "approved": "",
     "partially_received": "",
     "received": "",
-    "posted": ""
+    "posted": "",
+    "issued": "",
+    "partially_paid": "",
+    "paid": "",
+    "overdue": "",
+    "reversed": ""
   },
   "columns": {
     "number": "",
@@ -171,7 +176,13 @@
     "adjustment-approve": "",
     "receive": "",
     "close-remaining": "",
-    "post": ""
+    "post": "",
+    "issue": "",
+    "bill-approve": "",
+    "money-confirm": "",
+    "entry-post": "",
+    "pay": "",
+    "reverse": ""
   },
   "links": {
     "quotation": "",
@@ -185,7 +196,11 @@
     "movement": "",
     "purchaseOrder": "",
     "goodsReceipt": "",
-    "supplierBill": ""
+    "supplierBill": "",
+    "customerInvoice": "",
+    "customerReceipt": "",
+    "supplierPayment": "",
+    "journalEntry": ""
   },
   "validation": {
     "required": "",
@@ -390,14 +405,22 @@
       "purchaseOrders_one": "",
       "purchaseOrders_other": "",
       "receipts_one": "",
-      "receipts_other": ""
+      "receipts_other": "",
+      "invoices_one": "",
+      "invoices_other": "",
+      "bills_one": "",
+      "bills_other": "",
+      "payments_one": "",
+      "payments_other": ""
     }
   },
   "print": {
     "title": {
       "quotation": "",
       "order": "",
-      "delivery": ""
+      "delivery": "",
+      "invoice": "",
+      "bill": ""
     },
     "tel": "",
     "to": "",
@@ -421,6 +444,11 @@
     "total": "",
     "remarks": "",
     "deliveredBy": "",
-    "receivedBy": ""
+    "receivedBy": "",
+    "dueDate": "",
+    "deliveryNote": "",
+    "payTo": "",
+    "purchaseOrder": "",
+    "supplierInvoiceNo": ""
   }
 }

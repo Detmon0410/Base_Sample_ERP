@@ -20,7 +20,12 @@
     "approved": "Approved",
     "partially_received": "Partially received",
     "received": "Received",
-    "posted": "Posted"
+    "posted": "Posted",
+    "issued": "Issued",
+    "partially_paid": "Partially paid",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "reversed": "Reversed"
   },
   "columns": {
     "number": "No.",
@@ -171,7 +176,13 @@
     "adjustment-approve": "Approved",
     "receive": "Goods received",
     "close-remaining": "Remaining quantity closed",
-    "post": "Posted to stock"
+    "post": "Posted to stock",
+    "issue": "Issued",
+    "bill-approve": "Approved",
+    "money-confirm": "Confirmed",
+    "entry-post": "Posted",
+    "pay": "Payment recorded",
+    "reverse": "Reversed"
   },
   "links": {
     "quotation": "Quotation",
@@ -185,7 +196,11 @@
     "movement": "Stock movement",
     "purchaseOrder": "Purchase order",
     "goodsReceipt": "Goods receipt",
-    "supplierBill": "Supplier bill"
+    "supplierBill": "Supplier bill",
+    "customerInvoice": "Customer invoice",
+    "customerReceipt": "Customer receipt",
+    "supplierPayment": "Supplier payment",
+    "journalEntry": "Journal entry"
   },
   "validation": {
     "required": "This field is required.",
@@ -390,14 +405,22 @@
       "purchaseOrders_one": "{{count}} purchase order",
       "purchaseOrders_other": "{{count}} purchase orders",
       "receipts_one": "{{count}} receipt",
-      "receipts_other": "{{count}} receipts"
+      "receipts_other": "{{count}} receipts",
+      "invoices_one": "{{count}} invoice",
+      "invoices_other": "{{count}} invoices",
+      "bills_one": "{{count}} bill",
+      "bills_other": "{{count}} bills",
+      "payments_one": "{{count}} payment",
+      "payments_other": "{{count}} payments"
     }
   },
   "print": {
     "title": {
       "quotation": "Quotation",
       "order": "Sale order",
-      "delivery": "Delivery note"
+      "delivery": "Delivery note",
+      "invoice": "INVOICE",
+      "bill": "SUPPLIER BILL"
     },
     "tel": "Tel",
     "to": "To",
@@ -421,6 +444,11 @@
     "total": "Total",
     "remarks": "Remarks",
     "deliveredBy": "Delivered by (name, date)",
-    "receivedBy": "Received by (name, stamp, date)"
+    "receivedBy": "Received by (name, stamp, date)",
+    "dueDate": "Due date",
+    "deliveryNote": "Delivery note",
+    "payTo": "Please pay into",
+    "purchaseOrder": "Purchase order",
+    "supplierInvoiceNo": "Supplier's invoice no."
   }
 }

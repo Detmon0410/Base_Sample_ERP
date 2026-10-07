@@ -39,7 +39,8 @@
     "recordInfo": "Record information",
     "activeToggle": "Active. Click to deactivate",
     "inactiveToggle": "Inactive. Click to activate",
-    "totalItems": "Total {{count}} items"
+    "totalItems": "Total {{count}} items",
+    "none": "None"
   },
   "validation": {
     "required": "This field is required.",
@@ -377,5 +378,134 @@
       }
     },
     "edit": "Edit price"
+  },
+  "accounts": {
+    "singular": "account",
+    "new": "New account",
+    "edit": "Edit account",
+    "empty": "No accounts yet.",
+    "noResult": "No account matches. Clear the search.",
+    "columns": {
+      "type": "Type",
+      "role": "System role"
+    },
+    "form": {
+      "section": "Account",
+      "fields": {
+        "type": "Type",
+        "role": "System role"
+      },
+      "placeholders": {
+        "code": "e.g. 1200",
+        "type": "Choose a type",
+        "role": "Not a system account"
+      }
+    },
+    "options": {
+      "type": {
+        "asset": "Asset",
+        "liability": "Liability",
+        "equity": "Equity",
+        "income": "Income",
+        "expense": "Expense"
+      },
+      "role": {
+        "cash": "Cash",
+        "receivable": "Accounts receivable",
+        "raw_stock": "Raw material stock",
+        "input_tax": "Input tax",
+        "payable": "Accounts payable",
+        "output_tax": "Output tax",
+        "sales": "Sales revenue"
+      }
+    }
+  },
+  "taxRates": {
+    "singular": "tax rate",
+    "new": "New tax rate",
+    "edit": "Edit tax rate",
+    "empty": "No tax rates yet.",
+    "noResult": "No tax rate matches. Clear the search.",
+    "columns": {
+      "kind": "Kind",
+      "rate": "Rate",
+      "isDefault": "Default"
+    },
+    "form": {
+      "section": "Tax rate",
+      "fields": {
+        "kind": "Kind",
+        "rate": "Rate (%)",
+        "isDefault": "Default rate"
+      },
+      "placeholders": {
+        "code": "e.g. VAT10",
+        "kind": "Choose a kind",
+        "isDefault": "Choose"
+      }
+    },
+    "options": {
+      "kind": {
+        "vat": "Consumption tax (VAT)",
+        "wht": "Withholding tax (WHT)"
+      },
+      "isDefault": {
+        "yes": "Yes",
+        "no": "No"
+      }
+    }
+  },
+  "paymentMethods": {
+    "singular": "payment method",
+    "new": "New payment method",
+    "edit": "Edit payment method",
+    "empty": "No payment methods yet.",
+    "noResult": "No payment method matches. Clear the search.",
+    "columns": {
+      "type": "Type"
+    },
+    "form": {
+      "section": "Payment method",
+      "fields": {
+        "type": "Type"
+      },
+      "placeholders": {
+        "code": "e.g. BANK",
+        "type": "Choose a type"
+      }
+    },
+    "options": {
+      "type": {
+        "cash": "Cash",
+        "bank": "Bank transfer",
+        "cheque": "Cheque"
+      }
+    }
+  },
+  "bankAccounts": {
+    "singular": "bank account",
+    "new": "New bank account",
+    "edit": "Edit bank account",
+    "empty": "No bank accounts yet.",
+    "noResult": "No bank account matches. Clear the search.",
+    "columns": {
+      "bankName": "Bank",
+      "accountNo": "Account no.",
+      "glAccountCode": "GL account"
+    },
+    "form": {
+      "section": "Bank account",
+      "fields": {
+        "bankName": "Bank",
+        "branch": "Branch",
+        "accountNo": "Account no.",
+        "glAccountCode": "GL account code"
+      },
+      "placeholders": {
+        "code": "e.g. BA-01",
+        "glAccountCode": "An Asset account, e.g. 1110"
+      }
+    },
+    "options": {}
   }
 }

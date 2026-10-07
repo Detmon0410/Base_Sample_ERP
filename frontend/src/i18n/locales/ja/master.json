@@ -39,7 +39,8 @@
     "recordInfo": "",
     "activeToggle": "",
     "inactiveToggle": "",
-    "totalItems": ""
+    "totalItems": "",
+    "none": ""
   },
   "validation": {
     "required": "",
@@ -377,5 +378,134 @@
       }
     },
     "edit": ""
+  },
+  "accounts": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {
+      "type": "",
+      "role": ""
+    },
+    "form": {
+      "section": "",
+      "fields": {
+        "type": "",
+        "role": ""
+      },
+      "placeholders": {
+        "code": "",
+        "type": "",
+        "role": ""
+      }
+    },
+    "options": {
+      "type": {
+        "asset": "",
+        "liability": "",
+        "equity": "",
+        "income": "",
+        "expense": ""
+      },
+      "role": {
+        "cash": "",
+        "receivable": "",
+        "raw_stock": "",
+        "input_tax": "",
+        "payable": "",
+        "output_tax": "",
+        "sales": ""
+      }
+    }
+  },
+  "taxRates": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {
+      "kind": "",
+      "rate": "",
+      "isDefault": ""
+    },
+    "form": {
+      "section": "",
+      "fields": {
+        "kind": "",
+        "rate": "",
+        "isDefault": ""
+      },
+      "placeholders": {
+        "code": "",
+        "kind": "",
+        "isDefault": ""
+      }
+    },
+    "options": {
+      "kind": {
+        "vat": "",
+        "wht": ""
+      },
+      "isDefault": {
+        "yes": "",
+        "no": ""
+      }
+    }
+  },
+  "paymentMethods": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {
+      "type": ""
+    },
+    "form": {
+      "section": "",
+      "fields": {
+        "type": ""
+      },
+      "placeholders": {
+        "code": "",
+        "type": ""
+      }
+    },
+    "options": {
+      "type": {
+        "cash": "",
+        "bank": "",
+        "cheque": ""
+      }
+    }
+  },
+  "bankAccounts": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "empty": "",
+    "noResult": "",
+    "columns": {
+      "bankName": "",
+      "accountNo": "",
+      "glAccountCode": ""
+    },
+    "form": {
+      "section": "",
+      "fields": {
+        "bankName": "",
+        "branch": "",
+        "accountNo": "",
+        "glAccountCode": ""
+      },
+      "placeholders": {
+        "code": "",
+        "glAccountCode": ""
+      }
+    },
+    "options": {}
   }
 }

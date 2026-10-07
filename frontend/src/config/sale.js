@@ -29,6 +29,12 @@ export const STATUS_TONES = {
   partially_received: "warning",
   received: "success",
   posted: "success",
+  issued: "neutral",
+  partially_paid: "warning",
+  paid: "success",
+  overdue: "danger",
+  confirmed: "neutral",
+  reversed: "neutral",
 };
 
 /**
@@ -56,6 +62,11 @@ export const STATUS_COLORS = {
   partially_received: { badge: "border-amber-300 bg-amber-50 text-amber-800", ring: "border-amber-500 text-amber-700", hover: "group-hover:bg-amber-50", solid: "border-amber-600 bg-amber-600", soft: "bg-amber-50 text-amber-700", title: "text-amber-700" },
   received: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
   posted: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
+  issued: { badge: "border-sky-300 bg-sky-50 text-sky-800", ring: "border-sky-500 text-sky-700", hover: "group-hover:bg-sky-50", solid: "border-sky-600 bg-sky-600", soft: "bg-sky-50 text-sky-700", title: "text-sky-700" },
+  partially_paid: { badge: "border-amber-300 bg-amber-50 text-amber-800", ring: "border-amber-500 text-amber-700", hover: "group-hover:bg-amber-50", solid: "border-amber-600 bg-amber-600", soft: "bg-amber-50 text-amber-700", title: "text-amber-700" },
+  paid: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
+  overdue: { badge: "border-red-300 bg-red-50 text-red-800", ring: "border-red-500 text-red-700", hover: "group-hover:bg-red-50", solid: "border-red-600 bg-red-600", soft: "bg-red-50 text-red-700", title: "text-red-700" },
+  reversed: { badge: "border-slate-300 bg-slate-100 text-slate-700", ring: "border-slate-400 text-slate-600", hover: "group-hover:bg-slate-100", solid: "border-slate-600 bg-slate-600", soft: "bg-slate-100 text-slate-700", title: "text-slate-700" },
 };
 
 /** Tone of a history entry marker. */
@@ -64,6 +75,11 @@ export const HISTORY_TONES = {
   approve: "success",
   "adjustment-approve": "success",
   receive: "success",
+  issue: "success",
+  "bill-approve": "success",
+  "money-confirm": "success",
+  "entry-post": "success",
+  pay: "success",
   post: "success",
   confirm: "success",
   delivered: "success",

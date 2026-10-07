@@ -1,4 +1,4 @@
-import { CogIcon, RulerIcon, UserRoundIcon, WarehouseIcon } from "lucide-react";
+import { BookOpenIcon, CogIcon, LandmarkIcon, PercentIcon, RulerIcon, UserRoundIcon, WalletIcon, WarehouseIcon } from "lucide-react";
 import { useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -14,7 +14,7 @@ import { simpleMasterServices } from "@/services/simpleMaster.service";
 
 import { buildSchema, emptyValues, toFormValues } from "./simpleSchema";
 
-const ICONS = { uom: RulerIcon, warehouses: WarehouseIcon, machines: CogIcon, employees: UserRoundIcon };
+const ICONS = { uom: RulerIcon, warehouses: WarehouseIcon, machines: CogIcon, employees: UserRoundIcon, accounts: BookOpenIcon, taxRates: PercentIcon, paymentMethods: WalletIcon, bankAccounts: LandmarkIcon };
 
 /** Create / edit form of a flat master data entity (config/simpleMaster.js). */
 export function SimpleFormPage({ entity }) {
@@ -44,11 +44,14 @@ export function SimpleFormPage({ entity }) {
             control={form.control}
             name={field.name}
             render={({ field: controlled }) => (
-              <Select value={controlled.value} onValueChange={controlled.onChange}>
+              <Select value={controlled.value === "" && !field.required ? "__none" : controlled.value} onValueChange={(value) => controlled.onChange(value === "__none" ? "" : value)}>
                 <SelectTrigger id={id} className="w-full" {...fieldProps(field.name)}>
                   <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
                 <SelectContent>
+                  {field.required ? null : (
+                    <SelectItem value="__none">{t("master:common.none")}</SelectItem>
+                  )}
                   {field.options.map((option) => (
                     <SelectItem key={option} value={option}>
                       {t(`master:${entity.key}.options.${field.name}.${option}`)}

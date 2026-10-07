@@ -1,6 +1,11 @@
 import {
   BanIcon,
+  AlarmClockIcon,
+  BanknoteIcon,
+  CoinsIcon,
   CalendarCheckIcon,
+  FileTextIcon,
+  Undo2Icon,
   FileCheck2Icon,
   PackageOpenIcon,
   CircleCheckBigIcon,
@@ -42,6 +47,12 @@ const ICONS = {
   partially_received: PackageOpenIcon,
   received: PackageCheckIcon,
   posted: FileCheck2Icon,
+  issued: FileTextIcon,
+  partially_paid: CoinsIcon,
+  paid: BanknoteIcon,
+  overdue: AlarmClockIcon,
+  confirmed: CircleCheckIcon,
+  reversed: Undo2Icon,
 };
 
 /** Status of a Sale document as text + icon. `waiting` adds the "waiting for approval" state of a draft order. */

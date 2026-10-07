@@ -6,7 +6,8 @@ import { formatCurrency, formatDate, formatNumber } from "@/utils/format";
 /**
  * The paper version of a Sale document: A4, plain black on white, nothing that needs colour. DocumentSheet draws it
  * outside the app while the browser print dialog (Print / Save as PDF) is open; only this page is printed (see the
- * print rules in index.css). kind: "quotation" | "order" | "delivery". `record` is the document as the API sends it.
+ * print rules in index.css). kind: "quotation" | "order" | "delivery" | "invoice" | "bill" (the last two come from Accounting).
+ * `record` is the document as the API sends it.
  */
 export function PrintDocument({ kind, record }) {
   const { t, i18n } = useTranslation("sale");
@@ -14,6 +15,7 @@ export function PrintDocument({ kind, record }) {
   const money = (value) => formatCurrency(value, language);
   const number = (value) => formatNumber(value, language);
   const isDelivery = kind === "delivery";
+  const isMoney = kind === "invoice" || kind === "bill";
 
   const facts = [
     [t("print.date"), formatDate(record.date, language)],
@@ -23,7 +25,13 @@ export function PrintDocument({ kind, record }) {
     kind === "order" ? [t("print.quotation"), record.quotationNumber ?? "—"] : null,
     isDelivery ? [t("print.saleOrder"), record.saleOrderNumber ?? "—"] : null,
     isDelivery ? [t("print.warehouse"), record.warehouseName ?? "—"] : null,
-    !isDelivery ? [t("print.salesPerson"), record.salesPersonName ?? "—"] : null,
+    kind === "invoice" ? [t("print.dueDate"), formatDate(record.dueDate, language)] : null,
+    kind === "invoice" ? [t("print.saleOrder"), record.saleOrderNumber ?? "—"] : null,
+    kind === "invoice" ? [t("print.deliveryNote"), record.deliveryNumber ?? "—"] : null,
+    kind === "bill" ? [t("print.dueDate"), formatDate(record.dueDate, language)] : null,
+    kind === "bill" ? [t("print.purchaseOrder"), record.poNumber ?? "—"] : null,
+    kind === "bill" ? [t("print.supplierInvoiceNo"), record.supplierInvoiceNo || "—"] : null,
+    !isDelivery && !isMoney ? [t("print.salesPerson"), record.salesPersonName ?? "—"] : null,
   ].filter(Boolean);
 
   const cell = "border border-slate-400 px-2 py-1.5";
@@ -47,8 +55,8 @@ export function PrintDocument({ kind, record }) {
       <section className="mt-5 grid grid-cols-2 gap-8">
         <div>
           <p className="text-xs font-semibold text-slate-600">{t("print.to")}</p>
-          <p className="mt-1 text-lg font-bold">{record.customerName}</p>
-          <p className="text-slate-600">{record.customerCode}</p>
+          <p className="mt-1 text-lg font-bold">{record.partyName ?? record.customerName}</p>
+          <p className="text-slate-600">{record.partyCode ?? record.customerCode}</p>
         </div>
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
           {facts.map(([label, value]) => (
@@ -81,7 +89,7 @@ export function PrintDocument({ kind, record }) {
         </thead>
         <tbody>
           {record.lines.map((line, index) => (
-            <tr key={line.productId} className="break-inside-avoid">
+            <tr key={line.productId ?? line.itemId} className="break-inside-avoid">
               <td className={`${cell} text-center`}>{index + 1}</td>
               <td className={cell}>
                 <span className="font-semibold">{line.productCode}</span> · {line.productName}
@@ -122,6 +130,13 @@ export function PrintDocument({ kind, record }) {
             </tr>
           </tbody>
         </table>
+      ) : null}
+
+      {kind === "invoice" && record.payTo ? (
+        <p className="mt-6 break-inside-avoid">
+          <span className="text-xs font-semibold text-slate-600">{t("print.payTo")}: </span>
+          <span className="font-semibold">{record.payTo}</span>
+        </p>
       ) : null}
 
       {record.remarks ? (

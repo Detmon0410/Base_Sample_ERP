@@ -28,7 +28,8 @@
       "reorderPoint": "",
       "status": "",
       "reserved": "",
-      "available": ""
+      "available": "",
+      "onOrder": ""
     },
     "reservedHint": ""
   },
@@ -42,7 +43,8 @@
       "summary": "",
       "warehouses": "",
       "movements": "",
-      "usedIn": ""
+      "usedIn": "",
+      "openOrders": ""
     },
     "fields": {
       "onHand": "",
@@ -51,7 +53,8 @@
       "status": "",
       "category": "",
       "reserved": "",
-      "available": ""
+      "available": "",
+      "onOrder": ""
     },
     "noMovements": "",
     "usedInHint": "",
@@ -60,7 +63,14 @@
     "newAdjustment": "",
     "editMaster": "",
     "setOpening": "",
-    "noStockYet": ""
+    "noStockYet": "",
+    "openOrders": {
+      "hint": "",
+      "po": "",
+      "supplier": "",
+      "expected": "",
+      "open": ""
+    }
   },
   "movements": {
     "search": "",

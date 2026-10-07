@@ -8,6 +8,7 @@ import { DetailSheet } from "@/components/common/DetailSheet";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { CARD_CLASS, SheetSection } from "@/components/common/SheetSection";
 import { DocumentLink } from "@/components/stock/DocumentLink";
+import { OpenOrdersCard } from "@/components/stock/OpenOrdersCard";
 import { SignedQty } from "@/components/stock/SignedQty";
 import { StockStatusBadge } from "@/components/stock/StockStatusBadge";
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,7 @@ export function StockItemSheet({ kind }) {
           <DetailFields
             items={[
               { label: t("stock:item.fields.onHand"), value: <span className="text-lg font-bold text-slate-900">{`${formatNumber(item.onHand, language)} ${item.uom}`}</span> },
+              ...(isMaterial ? [{ label: t("stock:item.fields.onOrder"), value: item.onOrder > 0 ? `${formatNumber(item.onOrder, language)} ${item.uom}` : "—" }] : []),
               { label: t("stock:item.fields.reserved"), value: `${formatNumber(item.reserved, language)} ${item.uom}` },
               { label: t("stock:item.fields.available"), value: <span className="text-lg font-bold text-slate-900">{`${formatNumber(item.available, language)} ${item.uom}`}</span> },
               { label: t("stock:item.fields.status"), value: <StockStatusBadge status={item.status} /> },
@@ -171,6 +173,8 @@ export function StockItemSheet({ kind }) {
             </div>
           )}
         </SheetSection>
+
+        {isMaterial && item.openOrders?.length > 0 ? <OpenOrdersCard orders={item.openOrders} uom={item.uom} /> : null}
 
         {isMaterial ? (
           <SheetSection title={t("stock:item.cards.usedIn")} icon={BoxesIcon}>

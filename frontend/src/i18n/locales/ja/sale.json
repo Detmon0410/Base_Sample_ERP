@@ -17,7 +17,10 @@
     "finished": "",
     "transferred": "",
     "pending": "",
-    "approved": ""
+    "approved": "",
+    "partially_received": "",
+    "received": "",
+    "posted": ""
   },
   "columns": {
     "number": "",
@@ -165,7 +168,10 @@
     "step-reopen": "",
     "transfer": "",
     "request": "",
-    "adjustment-approve": ""
+    "adjustment-approve": "",
+    "receive": "",
+    "close-remaining": "",
+    "post": ""
   },
   "links": {
     "quotation": "",
@@ -176,7 +182,10 @@
     "invoice": "",
     "notRecorded": "",
     "transfer": "",
-    "movement": ""
+    "movement": "",
+    "purchaseOrder": "",
+    "goodsReceipt": "",
+    "supplierBill": ""
   },
   "validation": {
     "required": "",
@@ -377,7 +386,11 @@
       "transfers_one": "",
       "transfers_other": "",
       "adjustments_one": "",
-      "adjustments_other": ""
+      "adjustments_other": "",
+      "purchaseOrders_one": "",
+      "purchaseOrders_other": "",
+      "receipts_one": "",
+      "receipts_other": ""
     }
   },
   "print": {

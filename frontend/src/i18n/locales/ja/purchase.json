@@ -1,0 +1,231 @@
+{
+  "cards": {
+    "order": "",
+    "receipts": "",
+    "receipt": "",
+    "receiptLines": ""
+  },
+  "board": {
+    "scope": "",
+    "scopes": {
+      "attention": "",
+      "all": ""
+    },
+    "hint": "",
+    "search": "",
+    "empty": "",
+    "noResult": "",
+    "pick": "",
+    "pickRow": "",
+    "columns": {
+      "code": "",
+      "name": "",
+      "onHand": "",
+      "available": "",
+      "onOrder": "",
+      "reorderPoint": "",
+      "status": "",
+      "supplier": ""
+    },
+    "priceLead": "",
+    "noSupplier": "",
+    "noSupplierHint": "",
+    "create": "",
+    "createMany_one": "",
+    "createMany_other": "",
+    "noCommonSupplier": ""
+  },
+  "orders": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "search": "",
+    "empty": "",
+    "noResult": "",
+    "receiveGoods": "",
+    "noContact": "",
+    "late_one": "",
+    "late_other": "",
+    "received": "",
+    "acceptedQty": "",
+    "columns": {
+      "number": "",
+      "date": "",
+      "supplier": "",
+      "expectedDate": "",
+      "lines": "",
+      "received": "",
+      "total": "",
+      "status": ""
+    },
+    "filters": {
+      "supplier": "",
+      "material": "",
+      "expectedDate": "",
+      "date": ""
+    }
+  },
+  "receipts": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "search": "",
+    "empty": "",
+    "noResult": "",
+    "noOpenPo": "",
+    "choosePoFirst": "",
+    "nothingOpen": "",
+    "linesCount_one": "",
+    "linesCount_other": "",
+    "columns": {
+      "number": "",
+      "date": "",
+      "po": "",
+      "supplier": "",
+      "warehouse": "",
+      "accepted": "",
+      "receivedBy": "",
+      "status": ""
+    },
+    "filters": {
+      "supplier": "",
+      "date": ""
+    }
+  },
+  "fields": {
+    "supplier": "",
+    "chooseSupplier": "",
+    "supplierContact": "",
+    "date": "",
+    "expectedDate": "",
+    "expectedHint": "",
+    "warehouse": "",
+    "chooseWarehouse": "",
+    "buyer": "",
+    "remarks": "",
+    "po": "",
+    "choosePo": "",
+    "receiptDate": "",
+    "receivingWarehouse": "",
+    "deliveryNoteNo": "",
+    "receivedBy": ""
+  },
+  "lines": {
+    "title": "",
+    "no": "",
+    "material": "",
+    "qty": "",
+    "unitPrice": "",
+    "amount": "",
+    "remove": "",
+    "lineNumber": "",
+    "chooseMaterial": "",
+    "empty": "",
+    "add": "",
+    "chooseSupplierFirst": "",
+    "leadTime": "",
+    "listPrice": "",
+    "received": "",
+    "open": "",
+    "complete": "",
+    "ordered": "",
+    "delivered": "",
+    "accepted": "",
+    "rejected": "",
+    "rejectReason": "",
+    "chooseReason": "",
+    "noteHere": "",
+    "lot": ""
+  },
+  "reasons": {
+    "damaged": "",
+    "wrong_item": "",
+    "wrong_quantity": "",
+    "quality": "",
+    "other": ""
+  },
+  "validation": {
+    "notSupplied": "",
+    "inactive": "",
+    "qtyPositive": "",
+    "qtyNegative": "",
+    "priceWhole": "",
+    "priceNegative": "",
+    "linesRequired": "",
+    "receiptLinesRequired": "",
+    "acceptedTooMany": "",
+    "reasonRequired": "",
+    "noteRequired": "",
+    "nothingDelivered": ""
+  },
+  "actions": {
+    "saveFirst": "",
+    "send": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "back-to-draft": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "cancel": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "close-remaining": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "close": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "revert": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "postReceipt": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "cancelReceipt": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    }
+  },
+  "errors": {
+    "UNKNOWN": "",
+    "FORBIDDEN": "",
+    "NOT_FOUND": "",
+    "INVALID_STATUS": "",
+    "VALIDATION_ERROR": "",
+    "POST_INVALID": "",
+    "NOT_ENOUGH_STOCK": ""
+  }
+}

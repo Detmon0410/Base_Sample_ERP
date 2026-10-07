@@ -44,6 +44,10 @@ const ICONS = {
   start: PlayIcon,
   finish: FlagIcon,
   transfer: WarehouseIcon,
+  post: CheckIcon,
+  postReceipt: CheckIcon,
+  cancelReceipt: BanIcon,
+  "close-remaining": LockIcon,
 };
 
 // Status buttons have no border, only a light fill. The main button of a document (action.primary) is the light-blue
@@ -52,6 +56,7 @@ const ICONS = {
 const OTHER = {
   reject: "bg-destructive/10 text-destructive hover:bg-destructive/20",
   cancel: "bg-destructive/10 text-destructive hover:bg-destructive/20",
+  cancelReceipt: "bg-destructive/10 text-destructive hover:bg-destructive/20",
   expire: "bg-warning/10 text-warning hover:bg-warning/20",
 };
 const NEUTRAL = "bg-slate-100 text-slate-700 hover:bg-slate-200";

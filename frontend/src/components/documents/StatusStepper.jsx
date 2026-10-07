@@ -1,4 +1,4 @@
-import { BanIcon, CalendarCheckIcon, CheckIcon, CircleCheckBigIcon, CircleCheckIcon, HourglassIcon, ClockIcon, CogIcon, FactoryIcon, LockIcon, PackageCheckIcon, PencilIcon, SendIcon, ThumbsUpIcon, TruckIcon, WarehouseIcon, XIcon } from "lucide-react";
+import { BanIcon, CalendarCheckIcon, CheckIcon, CircleCheckBigIcon, CircleCheckIcon, FileCheck2Icon, PackageOpenIcon, HourglassIcon, ClockIcon, CogIcon, FactoryIcon, LockIcon, PackageCheckIcon, PencilIcon, SendIcon, ThumbsUpIcon, TruckIcon, WarehouseIcon, XIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { PANEL_CLASS } from "@/components/common/SheetSection";
@@ -24,6 +24,9 @@ const ICONS = {
   transferred: WarehouseIcon,
   pending: HourglassIcon,
   approved: CircleCheckBigIcon,
+  partially_received: PackageOpenIcon,
+  received: PackageCheckIcon,
+  posted: FileCheck2Icon,
 };
 
 const EMPTY = { ring: "border-slate-200 text-slate-400", hover: "group-hover:bg-muted", soft: "bg-slate-100 text-slate-500", title: "text-slate-500" };

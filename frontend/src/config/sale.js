@@ -24,6 +24,11 @@ export const STATUS_TONES = {
   in_process: "warning",
   finished: "success",
   transferred: "success",
+  pending: "warning",
+  approved: "success",
+  partially_received: "warning",
+  received: "success",
+  posted: "success",
 };
 
 /**
@@ -48,6 +53,9 @@ export const STATUS_COLORS = {
   cancelled: { badge: "border-red-300 bg-red-50 text-red-800", ring: "border-red-500 text-red-700", hover: "group-hover:bg-red-50", solid: "border-red-600 bg-red-600", soft: "bg-red-50 text-red-700", title: "text-red-700" },
   pending: { badge: "border-amber-300 bg-amber-50 text-amber-800", ring: "border-amber-500 text-amber-700", hover: "group-hover:bg-amber-50", solid: "border-amber-600 bg-amber-600", soft: "bg-amber-50 text-amber-700", title: "text-amber-700" },
   approved: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
+  partially_received: { badge: "border-amber-300 bg-amber-50 text-amber-800", ring: "border-amber-500 text-amber-700", hover: "group-hover:bg-amber-50", solid: "border-amber-600 bg-amber-600", soft: "bg-amber-50 text-amber-700", title: "text-amber-700" },
+  received: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
+  posted: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
 };
 
 /** Tone of a history entry marker. */
@@ -55,6 +63,8 @@ export const HISTORY_TONES = {
   accept: "success",
   approve: "success",
   "adjustment-approve": "success",
+  receive: "success",
+  post: "success",
   confirm: "success",
   delivered: "success",
   close: "success",

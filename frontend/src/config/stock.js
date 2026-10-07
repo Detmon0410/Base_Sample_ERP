@@ -32,7 +32,7 @@ export const isStockManager = (user) => ["Manager", "Admin"].includes(stockRole(
 
 /** The department that owns the document a movement came from, so the link is only shown to users who may open it. */
 export const DOC_DEPARTMENT = { WO: "Factory", FT: "Factory", DN: "Sale", GR: "Purchase", ADJ: null };
-export const DOC_PATH = { WO: "/factory/work-orders", FT: "/factory/transfers", DN: "/sale/deliveries", ADJ: "/stock/adjustments" };
+export const DOC_PATH = { WO: "/factory/work-orders", FT: "/factory/transfers", DN: "/sale/deliveries", ADJ: "/stock/adjustments", GR: "/purchase/receipts" };
 
 /**
  * The status buttons of a stock adjustment for this user (same idea as config/factory.js). A Worker drafts and

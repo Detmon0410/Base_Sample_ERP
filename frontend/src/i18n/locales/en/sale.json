@@ -17,7 +17,10 @@
     "finished": "Finished",
     "transferred": "Transferred",
     "pending": "Pending approval",
-    "approved": "Approved"
+    "approved": "Approved",
+    "partially_received": "Partially received",
+    "received": "Received",
+    "posted": "Posted"
   },
   "columns": {
     "number": "No.",
@@ -165,7 +168,10 @@
     "step-reopen": "Step reopened",
     "transfer": "Transferred to the warehouse",
     "request": "Approval requested",
-    "adjustment-approve": "Approved"
+    "adjustment-approve": "Approved",
+    "receive": "Goods received",
+    "close-remaining": "Remaining quantity closed",
+    "post": "Posted to stock"
   },
   "links": {
     "quotation": "Quotation",
@@ -176,7 +182,10 @@
     "invoice": "Invoice",
     "notRecorded": "Not recorded here",
     "transfer": "Finished goods transfer",
-    "movement": "Stock movement"
+    "movement": "Stock movement",
+    "purchaseOrder": "Purchase order",
+    "goodsReceipt": "Goods receipt",
+    "supplierBill": "Supplier bill"
   },
   "validation": {
     "required": "This field is required.",
@@ -377,7 +386,11 @@
       "transfers_one": "{{count}} transfer",
       "transfers_other": "{{count}} transfers",
       "adjustments_one": "{{count}} adjustment",
-      "adjustments_other": "{{count}} adjustments"
+      "adjustments_other": "{{count}} adjustments",
+      "purchaseOrders_one": "{{count}} purchase order",
+      "purchaseOrders_other": "{{count}} purchase orders",
+      "receipts_one": "{{count}} receipt",
+      "receipts_other": "{{count}} receipts"
     }
   },
   "print": {

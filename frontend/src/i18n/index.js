@@ -7,6 +7,7 @@ import enCommon from "./locales/en/common.json";
 import enDashboard from "./locales/en/dashboard.json";
 import enFactory from "./locales/en/factory.json";
 import enStock from "./locales/en/stock.json";
+import enPurchase from "./locales/en/purchase.json";
 import enMaster from "./locales/en/master.json";
 import enNav from "./locales/en/nav.json";
 import enSale from "./locales/en/sale.json";
@@ -15,6 +16,7 @@ import jaCommon from "./locales/ja/common.json";
 import jaDashboard from "./locales/ja/dashboard.json";
 import jaFactory from "./locales/ja/factory.json";
 import jaStock from "./locales/ja/stock.json";
+import jaPurchase from "./locales/ja/purchase.json";
 import jaMaster from "./locales/ja/master.json";
 import jaNav from "./locales/ja/nav.json";
 import jaSale from "./locales/ja/sale.json";
@@ -31,8 +33,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { common: enCommon, auth: enAuth, nav: enNav, dashboard: enDashboard, master: enMaster, sale: enSale, factory: enFactory, stock: enStock },
-      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, dashboard: jaDashboard, master: jaMaster, sale: jaSale, factory: jaFactory, stock: jaStock },
+      en: { common: enCommon, auth: enAuth, nav: enNav, dashboard: enDashboard, master: enMaster, sale: enSale, factory: enFactory, stock: enStock, purchase: enPurchase },
+      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, dashboard: jaDashboard, master: jaMaster, sale: jaSale, factory: jaFactory, stock: jaStock, purchase: jaPurchase },
     },
     supportedLngs: SUPPORTED_LANGUAGES.map((language) => language.code),
     // English is the primary language. JA files hold the same keys with empty
@@ -40,7 +42,7 @@ i18n
     fallbackLng: "en",
     returnEmptyString: false,
     defaultNS: "common",
-    ns: ["common", "auth", "nav", "dashboard", "master", "sale", "factory", "stock"],
+    ns: ["common", "auth", "nav", "dashboard", "master", "sale", "factory", "stock", "purchase"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
     detection: {

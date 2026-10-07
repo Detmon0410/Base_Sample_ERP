@@ -28,7 +28,8 @@
       "reorderPoint": "Reorder point",
       "status": "Status",
       "reserved": "Reserved",
-      "available": "Available"
+      "available": "Available",
+      "onOrder": "On order"
     },
     "reservedHint": "Reserved = promised to open documents: materials of scheduled work orders, products on draft delivery notes. Available = on hand - reserved."
   },
@@ -42,7 +43,8 @@
       "summary": "Stock",
       "warehouses": "By warehouse",
       "movements": "Last movements",
-      "usedIn": "Used in"
+      "usedIn": "Used in",
+      "openOrders": "Open purchase orders"
     },
     "fields": {
       "onHand": "On hand (all warehouses)",
@@ -51,7 +53,8 @@
       "status": "Status",
       "category": "Category",
       "reserved": "Reserved",
-      "available": "Available"
+      "available": "Available",
+      "onOrder": "On order"
     },
     "noMovements": "No movement yet.",
     "usedInHint": "Products whose bill of materials uses this material, with the quantity for one unit.",
@@ -60,7 +63,14 @@
     "newAdjustment": "New adjustment",
     "editMaster": "Edit in master data",
     "setOpening": "Set opening quantity",
-    "noStockYet": "This item has no stock and no movement yet. Set its opening quantity to start."
+    "noStockYet": "This item has no stock and no movement yet. Set its opening quantity to start.",
+    "openOrders": {
+      "hint": "Quantity that suppliers still owe: the open part of purchase orders that were sent.",
+      "po": "Purchase order",
+      "supplier": "Supplier",
+      "expected": "Expected",
+      "open": "Open quantity"
+    }
   },
   "movements": {
     "search": "Search by item or document number",

@@ -32,6 +32,9 @@ const TransfersPage = page(() => import("@/pages/factory/transfers/TransfersPage
 const StockOverviewPage = page(() => import("@/pages/stock/overview/StockOverviewPage"), "StockOverviewPage");
 const StockMovementsPage = page(() => import("@/pages/stock/movements/StockMovementsPage"), "StockMovementsPage");
 const AdjustmentsPage = page(() => import("@/pages/stock/adjustments/AdjustmentsPage"), "AdjustmentsPage");
+const StockStatusPage = page(() => import("@/pages/purchase/stock-status/StockStatusPage"), "StockStatusPage");
+const PurchaseOrdersPage = page(() => import("@/pages/purchase/orders/PurchaseOrdersPage"), "PurchaseOrdersPage");
+const GoodsReceiptsPage = page(() => import("@/pages/purchase/receipts/GoodsReceiptsPage"), "GoodsReceiptsPage");
 const SimpleMaster = () => import("@/pages/master/simple/SimpleMasterPage");
 const EmployeesPage = page(SimpleMaster, "EmployeesPage");
 const MachinesPage = page(SimpleMaster, "MachinesPage");
@@ -61,6 +64,9 @@ const IMPLEMENTED_PAGES = {
   stockOverview: StockOverviewPage,
   stockMovements: StockMovementsPage,
   stockAdjustment: AdjustmentsPage,
+  stockStatus: StockStatusPage,
+  purchaseOrders: PurchaseOrdersPage,
+  goodsReceipt: GoodsReceiptsPage,
 };
 
 /**

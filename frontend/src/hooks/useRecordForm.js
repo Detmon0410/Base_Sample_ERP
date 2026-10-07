@@ -24,6 +24,9 @@ const FIELD_ERROR_KEYS = {
   PO_NUMBER_EXISTS: "sale:validation.poNumberExists",
   TOO_MANY: "factory:validation.tooMany",
   HAS_MOVEMENTS: "stock:validation.openingNotAllowed",
+  NOT_SUPPLIED: "purchase:validation.notSupplied",
+  INACTIVE: "purchase:validation.inactive",
+  TOO_LONG: "sale:validation.maxLength",
 };
 
 /**

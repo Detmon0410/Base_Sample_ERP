@@ -16,7 +16,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Sale | 8 | 8 |
 | Factory | 5 | 5 |
 | Stock | 3 | 3 |
-| Purchase | 0 | 5 |
+| Purchase | 5 | 5 |
 | Accounting | 0 | 6 |
 | Traceability | 0 | 1 |
 | Master data | 10 | 10 |
@@ -60,11 +60,11 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | T1 | Stock overview | `/stock` | P1 | ✅ | mock | ✅ | ⬜ | Materials / Products switch, one row per item per warehouse, status Shortage / Near shortage / Normal (In stock / Out of stock for products), warehouse and status filters; read-only item sheet with warehouses, last movements and the products that use a material, New adjustment button. API: api/stock.md |
 | T2 | Stock movements | `/stock/movements` | P2 | ✅ | mock | ✅ | ⬜ | Read-only ledger, newest first: type, item, warehouse, +/− quantity, balance after, document link (only to documents the user may open); filters for type, kind, warehouse, item, date. API: api/stock.md |
 | T3 | Stock adjustment | `/stock/adjustments/new` | P2 | ✅ | mock | ✅ | ⬜ | ADJ numbers, status stepper (Draft, Pending approval, Approved, Rejected, Cancelled), form with the live on-hand and difference, required reason; a Manager who is not the author approves, which books the movement. API: api/stock.md |
-| P1 | Stock status board | `/purchase/stock-status` | P1 | ⬜ | | ⬜ | ⬜ | |
-| P2 | PO list | `/purchase/orders` | P1 | ⬜ | | ⬜ | ⬜ | |
-| P3 | PO form | `/purchase/orders/new` | P1 | ⬜ | | ⬜ | ⬜ | |
-| P4 | PO detail | `/purchase/orders/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
-| P5 | Goods receipt | `/purchase/receipts` | P2 | ⬜ | | ⬜ | ⬜ | |
+| P1 | Stock status board | `/purchase/stock-status` | P1 | ✅ | mock | ✅ | ⬜ | Shortage / near-shortage materials (switch to all), on hand, available, **on order**, reorder point, status, cheapest supplier with price and lead time; Create PO per row (reorder quantity and price filled in) or tick several rows of one supplier. API: api/purchase.md |
+| P2 | PO list | `/purchase/orders` | P1 | ✅ | mock | ✅ | ⬜ | Stepper with counts, filters (supplier, material, dates, expected delivery), received bar, total with footer sum, late warning. API: api/purchase.md |
+| P3 | PO form | `/purchase/orders/new` | P1 | ✅ | mock | ✅ | ⬜ | One sheet with P4: supplier first, only its materials, price and lead time from the supplier-material links, totals with tax. API: api/purchase.md |
+| P4 | PO detail | `/purchase/orders/:id` | P1 | ✅ | mock | ✅ | ⬜ | Received / open per line, receipts card, Send (Manager) / Receive goods / Close remaining / Close / Cancel / Revert, history, linked documents. API: api/purchase.md |
+| P5 | Goods receipt | `/purchase/receipts` | P2 | ✅ | mock | ✅ | ⬜ | Delivered / accepted / rejected with a reason, lot number, Post once (accepted quantity enters Stock), cancel a posted receipt (Manager). API: api/purchase.md |
 | C1 | Customer invoices | `/accounting/invoices` | P2 | ⬜ | | ⬜ | ⬜ | |
 | C2 | Customer receipts | `/accounting/receipts` | P2 | ⬜ | | ⬜ | ⬜ | |
 | C3 | Supplier bills | `/accounting/bills` | P2 | ⬜ | | ⬜ | ⬜ | |
@@ -90,6 +90,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-07 | **Purchase module built with mock data (P1–P5 + links)** (spec f9-purchase): stock status board, purchase orders (stepper, list with received bar and total, one sheet: supplier first, only its materials, price and lead time from the supplier–material links, expected date from the lead time, Send to supplier by a Manager, Receive goods, Close remaining, Close, Cancel, Revert) and goods receipts (delivered / accepted / rejected with a reason, lot number, Post once, cancel a posted one by a Manager). Posting books the accepted quantity into Stock; Stock shows **On order** and the open POs of a material; the Dashboard counts the POs waiting for goods and lists Draft POs for the Purchase Manager; a supplier or material with a PO cannot be deleted. API: api/purchase.md; 28 new tests. |
 | 2026-10-07 | **Stock changes after `Sotck_req.md`**: Reserved and Available columns (scheduled work orders reserve materials, draft delivery notes reserve products; the availability checks use Available), opening quantities through an adjustment with the reason Opening balance, Movement No. (MV-2026-0001) and From → To in the movements list, movement types named as in the requirement, and the reorder point of a material is now optional (status "No reorder point"). 7 new tests. |
 | 2026-10-07 | **Stock module built with mock data (T1–T3 + links)** (spec f8-stock): the stock is a ledger of movements (balance = their sum). Work Order **Start** takes the BOM materials out of the raw material warehouse (refused with a list of what is short), revert / cancel give them back; a transferred **FG transfer** brings products into the warehouse; a confirmed **delivery note** takes them out; the material master data, the Sale / Factory availability checks and the Dashboard stock alerts read the same balances. New: Stock overview with an item sheet, Stock movements, Stock adjustments with approval, a Purchase Manager demo user (hana@kanou.test), a Materials issued card on the Work Order sheet. API: api/stock.md; 32 new tests. |
 | 2026-10-07 | **Work Orders back to the plain sheet**: the detail opens as the side sheet again (not the dialog); the Kanban, Timeline and Dialog files and the spec f8 were removed. Kept: the status stepper + table list, Waiting for a work order as a table, the eye button for the steppers, and in the sheet one vertical step timeline (Progress + Production tracking together). |

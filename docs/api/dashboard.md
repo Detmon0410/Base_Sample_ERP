@@ -83,3 +83,5 @@ The dashboard is an **overview of all departments for every signed-in user** (de
 - [ ] Approval query follows the role rules in `user_account_req.md`
 - [ ] Indexes on status and date columns used by the KPIs
 - [ ] Turn off `VITE_USE_MOCK` and compare with the mock for each role (Admin, Manager, Worker)
+
+> **Purchase:** `kpis.poWaitingForGoods` counts the purchase orders that are Sent or Partially received (with the next expected delivery date), and the `approvals` of a Purchase Manager list the Draft purchase orders that wait to be sent. See [purchase.md](purchase.md).

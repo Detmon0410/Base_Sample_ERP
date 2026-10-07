@@ -32,13 +32,13 @@ Pieces are whole numbers; kg / m up to 3 decimals. A movement that would make a 
 
 | Method | Path | Notes |
 |---|---|---|
-| GET | `/stock/balances` | one row per item **per warehouse of the right kind** (materials in raw material warehouses, products in finished goods warehouses), also when the quantity is 0. Params `kind` (`material` default \| `product`), `q` (code or name), `warehouse` (id), `status` (`shortage \| near_shortage \| normal \| not_set` or `in_stock \| out_of_stock`, `all`), `sort` (`code, name, warehouseName, onHand, reserved, available, reorderPoint, status`, default `code`), `page`, `pageSize`. `meta = { page, pageSize, total, statusCounts }` (counted without the `status` filter) |
+| GET | `/stock/balances` | one row per item **per warehouse of the right kind** (materials in raw material warehouses, products in finished goods warehouses), also when the quantity is 0. Params `kind` (`material` default \| `product`), `q` (code or name), `warehouse` (id), `status` (`shortage \| near_shortage \| normal \| not_set` or `in_stock \| out_of_stock`, `all`), `sort` (`code, name, warehouseName, onHand, onOrder (material only: the open quantity of Sent / Partially received purchase orders), reserved, available, reorderPoint, status`, default `code`), `page`, `pageSize`. `meta = { page, pageSize, total, statusCounts }` (counted without the `status` filter) |
 | GET | `/stock/items/materials/:id`, `/stock/items/products/:id` | one item, see below |
 | GET | `/stock/balance` | params `itemType` (`material \| product`), `itemId`, `warehouseId` → `{ itemType, itemId, warehouseId, onHand, hasMovements, uom }` (the number the adjustment form shows as "on hand now"; `hasMovements` tells whether an opening quantity is still possible) |
 
 Balance row: `{ id ("<kind>-<itemId>-<warehouseId>"), itemType, itemId, code, name, uom, warehouseId, warehouseCode, warehouseName, onHand, reserved, available, reorderPoint (material only; null when not set), reorderQty, status }`.
 
-Item response: `{ itemType, id, code, name, uom, category, reorderPoint, reorderQty, onHand (all warehouses), status, reserved, available, hasMovements, byWarehouse: [{ warehouseId, code, name, onHand, reserved, available }], lastMovements: [<movement row>] (10, newest first), usedIn: [{ productId, code, name, qtyPerUnit }] (materials: the products whose BOM uses it) }`.
+Item response: `{ itemType, id, code, name, uom, category, reorderPoint, reorderQty, onHand (all warehouses), status, onOrder, openOrders: [{ id, number, supplier, expectedDate, status, qty }], reserved, available, hasMovements, byWarehouse: [{ warehouseId, code, name, onHand, reserved, available }], lastMovements: [<movement row>] (10, newest first), usedIn: [{ productId, code, name, qtyPerUnit }] (materials: the products whose BOM uses it) }`.
 
 ## Movements — T2 (read only)
 
@@ -61,7 +61,8 @@ Row: `{ id, number ("MV-2026-0001"), at, from, to, type, itemType, itemId, itemC
 | **Delivery note** `confirm` (draft → delivered) | `deliver` of every line's `deliverNow` from the delivery note's warehouse (`-`) | the warehouse holds less → `409 NOT_ENOUGH_STOCK`, the note stays a draft |
 | Delivery note `revert` | the opposite `deliver` | – |
 | **Adjustment** `approve` | one `adjust` line: counted quantity − quantity on hand at approval time | – |
-| Goods receipt (Purchase module, later) | `receipt` with the lot number | – |
+| **Goods receipt posted** (`POST /purchase/receipts/:id/post`, see [purchase.md](purchase.md)) | `receipt` of the **accepted** quantity of every line into the receiving warehouse (note `Lot <lot>`) | – |
+| Posted goods receipt **cancelled** | the opposite `receipt` lines | the materials were used and the balance would go negative → `409 NOT_ENOUGH_STOCK` |
 
 A work order `finish` and `schedule` do not move stock. Stock is **not reserved** for orders: the availability checks (`POST /sale/availability`, `POST /factory/availability`) compare the BOM requirement with the on-hand quantity only, and now read the same balances.
 

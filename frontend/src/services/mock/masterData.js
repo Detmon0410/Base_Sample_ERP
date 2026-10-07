@@ -2,6 +2,7 @@
 // The shapes and error codes are the contract in docs/api/master-data.md.
 
 import { MockHttpError, MockResponse } from "./errors.js";
+import { INTERNAL_TOKEN } from "./users.js";
 
 // Testing helper: localStorage "kanou.mockFail" containing "master" makes every list request fail (HTTP 500).
 function listShouldFail() {
@@ -773,7 +774,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
 
   // Reading master data is open to every signed-in user (the pick-lists of documents use it);
   // creating, changing and deleting stays with the guard (Admin only).
-  const ADMIN_PASS = "Bearer mock-token-1";
+  const ADMIN_PASS = INTERNAL_TOKEN; // a system call: the list itself was checked above
   for (const key of Object.keys(routes)) {
     if (!key.startsWith("GET ")) continue;
     const handler = routes[key];

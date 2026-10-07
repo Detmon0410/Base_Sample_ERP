@@ -5,6 +5,7 @@
 
 import { MockHttpError, MockResponse } from "./errors.js";
 import { createMockCrud } from "./masterData.js";
+import { INTERNAL_TOKEN } from "./users.js";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const matches = (value, text) => String(value ?? "").toLowerCase().includes(text);
@@ -888,7 +889,7 @@ export function accountingRoutes({ userFromAuthorization, getStore, getSale, get
     if (key.startsWith("GET ")) {
       masterRoutes[key] = (context) => {
         readGuard(context.authorization);
-        return handler({ ...context, authorization: "Bearer mock-token-1" }); // the admin token: the list itself is only checked above
+        return handler({ ...context, authorization: INTERNAL_TOKEN }); // a system call: the list itself is only checked above
       };
     }
   }

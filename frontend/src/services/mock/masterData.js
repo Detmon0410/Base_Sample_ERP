@@ -678,7 +678,11 @@ function priceListRoutes({ guard, rows, customers, products }) {
 }
 
 /** Master data routes. `guard` throws 401/403 unless the caller is an Admin (Q6/Q7). */
-export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}) {
+/**
+ * `usedByStock(kind, id)` (optional) tells whether the Stock ledger has movements of a material / product / warehouse:
+ * such a record cannot be deleted (it can be deactivated), like one that a BOM or a document uses.
+ */
+export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, usedByStock = () => false) {
   const customers = sampleCustomers();
   const uomRows = sampleUom();
   const materialRows = sampleMaterials();
@@ -712,7 +716,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}) {
       searchFields: ["code", "name"],
       sortable: ["code", "name", "type", "status"],
       validate: simpleValidator({ required: ["type"], select: { type: ["RAW_MATERIAL", "FINISHED_GOODS"] } }),
-      isInUse: (row) => row.code === "WH-R" || row.code === "WH-F",
+      isInUse: (row) => row.code === "WH-R" || row.code === "WH-F" || usedByStock("warehouse", row.id),
       guard,
     }),
     ...createMockCrud("/master/machines", machineRows, {
@@ -728,7 +732,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}) {
       validate: materialValidator(uomRows),
       readOnly: ["onHand"],
       // The first four materials stand for materials that BOMs and purchase orders already use.
-      isInUse: (row) => ["COMP", "DOOR", "FOAM", "STEEL"].includes(row.code),
+      isInUse: (row) => ["COMP", "DOOR", "FOAM", "STEEL"].includes(row.code) || usedByStock("material", row.id),
       onRemove: (row) => {
         for (let index = links.length - 1; index >= 0; index -= 1) if (links[index].materialId === row.id) links.splice(index, 1);
       },
@@ -750,7 +754,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}) {
       sortable: ["code", "name", "uom", "sellingPrice", "status"],
       validate: productValidator(uomRows),
       // Both products stand for products that Sale Orders and Work Orders already use.
-      isInUse: (row) => row.code === "RF-2D" || row.code === "RF-1D",
+      isInUse: (row) => row.code === "RF-2D" || row.code === "RF-1D" || usedByStock("product", row.id),
       onRemove: (row) => {
         for (const list of [bom, routing]) for (let index = list.length - 1; index >= 0; index -= 1) if (list[index].productId === row.id) list.splice(index, 1);
       },

@@ -128,9 +128,14 @@ export const mockRoutes = {
   "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? []),
 
   // Master data is maintained by Admin only (F3 spec, Q6/Q7).
-  ...masterDataRoutes(requireAdmin, requireUser, (store) => {
-    masterStore = store;
-  }),
+  ...masterDataRoutes(
+    requireAdmin,
+    requireUser,
+    (store) => {
+      masterStore = store;
+    },
+    (kind, id) => ledger.movements.some((move) => (kind === "warehouse" ? move.warehouseId === id : move.itemType === kind && move.itemId === id)),
+  ),
 
   // Sale documents: Sale department members and Admin (the role decides what they may press).
   ...saleRoutes({

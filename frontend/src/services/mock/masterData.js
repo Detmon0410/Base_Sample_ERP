@@ -787,6 +787,8 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}) {
     prices: priceRows,
     employees: employeeRows,
     warehouses: warehouseRows,
+    routing,
+    machines: machineRows,
   });
   return routes;
 }

@@ -1,6 +1,7 @@
 import { buildDashboard } from "./dashboard.js";
 import { MockHttpError } from "./errors.js";
 import { masterDataRoutes } from "./masterData.js";
+import { factoryRoutes } from "./factory.js";
 import { saleRoutes } from "./sale.js";
 
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
@@ -51,6 +52,14 @@ const mockUsers = [
     status: "active",
     memberships: [{ department: "Factory", role: "Worker" }],
   },
+  {
+    id: 6,
+    name: "Yuki Tanaka",
+    email: "yuki@kanou.test",
+    password: "yuki1234",
+    status: "active",
+    memberships: [{ department: "Factory", role: "Manager" }],
+  },
 ];
 
 function toPublicUser(user) {
@@ -81,6 +90,8 @@ function requireAdmin(authorization) {
 }
 
 let masterStore = null;
+let saleStore = null;
+let factoryStore = null;
 
 export const mockRoutes = {
   "POST /auth/login": ({ body }) => {
@@ -110,5 +121,22 @@ export const mockRoutes = {
   }),
 
   // Sale documents: Sale department members and Admin (the role decides what they may press).
-  ...saleRoutes({ userFromAuthorization, getStore: () => masterStore }),
+  ...saleRoutes({
+    userFromAuthorization,
+    getStore: () => masterStore,
+    onSale: (store) => {
+      saleStore = store;
+    },
+    getWorkOrders: () => factoryStore?.workOrders ?? [],
+  }),
+
+  // Factory documents: Factory department members and Admin. They read the sale orders that were sent to the factory.
+  ...factoryRoutes({
+    userFromAuthorization,
+    getStore: () => masterStore,
+    getSale: () => saleStore,
+    onFactory: (store) => {
+      factoryStore = store;
+    },
+  }),
 };

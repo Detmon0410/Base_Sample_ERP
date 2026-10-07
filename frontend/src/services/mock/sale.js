@@ -57,7 +57,7 @@ function totalsOf(lines) {
   return { subtotal, tax, total: subtotal + tax, taxRate: TAX_RATE };
 }
 
-export function saleRoutes({ userFromAuthorization, getStore }) {
+export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrders = () => [] }) {
   const store = () => getStore();
   const guard = (authorization) => requireSale(userFromAuthorization, authorization);
 
@@ -153,7 +153,10 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
       const po = customerPos.find((item) => item.id === doc.customerPoId);
       if (po) links.push({ id: `po-${po.id}`, type: "customerPo", number: po.poNumber, to: `/sale/customer-pos/${po.id}` });
       for (const dn of deliveries.filter((item) => item.saleOrderId === doc.id)) links.push({ id: `dn-${dn.id}`, type: "delivery", number: dn.number, status: dn.status, to: `/sale/deliveries/${dn.id}` });
-      if (["in_production", "ready_to_deliver", "delivered", "closed"].includes(doc.status)) links.push({ id: `wo-${doc.id}`, type: "workOrder", number: null });
+      // The Work Orders of the Factory; before the first one exists an order that is in production shows a placeholder.
+      const made = getWorkOrders().filter((wo) => wo.saleOrderId === doc.id);
+      for (const wo of made) links.push({ id: `wo-${wo.id}`, type: "workOrder", number: wo.number, status: wo.status, to: `/factory/work-orders/${wo.id}` });
+      if (made.length === 0 && ["in_production", "ready_to_deliver", "delivered", "closed"].includes(doc.status)) links.push({ id: `wo-${doc.id}`, type: "workOrder", number: null });
       if (["delivered", "closed"].includes(doc.status)) links.push({ id: `inv-${doc.id}`, type: "invoice", number: null });
     }
     if (kind === "delivery") {
@@ -921,5 +924,6 @@ export function saleRoutes({ userFromAuthorization, getStore }) {
     deliveries.push(doc);
   });
 
+  onSale?.({ orders });
   return routes;
 }

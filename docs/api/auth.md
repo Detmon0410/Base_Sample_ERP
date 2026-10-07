@@ -11,7 +11,7 @@ Conventions (envelope, error codes, 401 handling): [README.md](README.md)
 | 2 | `GET` | `/auth/me` | Bearer | App starts / page is reloaded with a saved token |
 | 3 | `POST` | `/auth/logout` | Bearer | User presses **Log out** in the header |
 
-No registration and no forgot-password endpoint: accounts and password resets are handled by an Admin (Users page, later).
+No registration and no forgot-password endpoint: accounts and password resets are handled by an Admin ([users.md](users.md)).
 
 ---
 
@@ -130,6 +130,13 @@ UserDepartmentRole(user_id, department_id NULL, role_id)
 ```
 
 `department_id` is nullable for the Admin row. Seed: the 4 departments, the 3 roles, and one Admin user.
+
+## Accounts, sessions and the user store ([users.md](users.md))
+
+* A successful login stores `lastLoginAt` (shown in the Users list).
+* **Sessions end** when an Admin resets the password of a user or deactivates the user: the next call with the old token answers `401 UNAUTHORIZED` (the frontend then goes to `/login`). The mock keeps a per-user counter inside the token for this; a real backend may use a token version or a deny-list.
+* A new user created by an Admin can sign in at once with the password the Admin set. Passwords are at least 8 characters with a letter and a digit.
+* The mock keeps its users in one store (`services/mock/users.js`), so users created in the Users page can sign in.
 
 ## Token
 

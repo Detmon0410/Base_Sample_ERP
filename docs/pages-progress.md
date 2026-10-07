@@ -20,7 +20,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Accounting | 6 | 6 |
 | Traceability | 0 | 1 |
 | Master data | 10 | 10 |
-| Administration | 0 | 3 |
+| Administration | 3 | 3 |
 
 ## Foundation
 
@@ -82,14 +82,15 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | M8 | Employees | `/master/employees` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
 | M9 | Units of measure | `/master/uom` | P2 | ✅ | mock | ✅ | ⬜ | Generic flat-field page (pages/master/simple). Tested as Admin: create, duplicate code, validation, deactivate, delete, in-use block. API: api/master-data.md |
 | M10 | Price lists | `/master/price-lists` | P2 | ✅ | mock | ✅ | ⬜ | Details sheet. Tested as Admin: list, search by product or customer, create, validation (required, price, end before start), overlapping period blocked, pair read-only after creation, edit from the header, status button, delete. API: api/master-data.md |
-| U1 | Users | `/admin/users` | P1 | ⬜ | | ⬜ | ⬜ | |
-| U2 | User form (dept + role) | `/admin/users/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
-| U3 | Departments & roles | `/admin/roles` | P2 | ⬜ | | ⬜ | ⬜ | |
+| U1 | Users | `/admin/users` | P1 | ✅ | mock | ✅ | ⬜ | List with search and Filters (status, department, role), chips of departments and roles, last sign-in, "You" marker. API: api/users.md |
+| U2 | User form (dept + role) | `/admin/users/:id` | P1 | ✅ | mock | ✅ | ⬜ | Side sheet: account, password (type or Generate), departments and roles rows (Admin alone), Reset password, status switch, delete only without activity; own account locked. API: api/users.md |
+| U3 | Departments & roles | `/admin/roles` | P2 | ✅ | static | ✅ | ⬜ | Read-only tables computed from the real rules: what Admin / Manager / Worker can do per department, and the menus each kind of user sees. |
 
 ## Change log
 
 | Date | Change |
 |---|---|
+| 2026-10-07 | **Users module built with mock data (U1–U3)** (spec f11-users): the demo users now live in one store behind the login, so users created in the Users page can sign in. Admin only: list with filters, user form with department + role rows (the Admin role stands alone, at least one row), password typed or generated, Reset password (ends that user's sessions), deactivate / reactivate (ends sessions), delete only without activity, last sign-in, protection of your own account and of the last active Admin. U3 is a read-only matrix computed from the same rules the buttons use. API: api/users.md; 19 new tests. |
 | 2026-10-07 | **Accounting module built with mock data (C1–C6 + links)** (spec f10-accounting): customer invoices from delivered delivery notes, receipts, supplier bills from posted goods receipts, payments, a journal that every posted money document writes (balanced, reversed when cancelled) plus manual entries with a visible balance check, and the accounting master (chart with system roles, tax rates, payment methods, bank accounts). A Manager issues invoices / approves bills / confirms payments; a Worker confirms receipts. Sale and Purchase documents link to the invoice / bill; the Dashboard shows the real overdue invoices and unpaid bills; two Accounting demo users (mika@, sora@). API: api/accounting.md; 25 new tests and a status coverage test (every status of every module has a colour, an icon and a text). |
 | 2026-10-07 | **Purchase module built with mock data (P1–P5 + links)** (spec f9-purchase): stock status board, purchase orders (stepper, list with received bar and total, one sheet: supplier first, only its materials, price and lead time from the supplier–material links, expected date from the lead time, Send to supplier by a Manager, Receive goods, Close remaining, Close, Cancel, Revert) and goods receipts (delivered / accepted / rejected with a reason, lot number, Post once, cancel a posted one by a Manager). Posting books the accepted quantity into Stock; Stock shows **On order** and the open POs of a material; the Dashboard counts the POs waiting for goods and lists Draft POs for the Purchase Manager; a supplier or material with a PO cannot be deleted. API: api/purchase.md; 28 new tests. |
 | 2026-10-07 | **Stock changes after `Sotck_req.md`**: Reserved and Available columns (scheduled work orders reserve materials, draft delivery notes reserve products; the availability checks use Available), opening quantities through an adjustment with the reason Opening balance, Movement No. (MV-2026-0001) and From → To in the movements list, movement types named as in the requirement, and the reorder point of a material is now optional (status "No reorder point"). 7 new tests. |

@@ -40,3 +40,4 @@ What the frontend expects from the backend, written **per page**. The frontend a
 | T1–T3 Stock (balances, movements, adjustments) and its links with Factory, Sale and the Dashboard | [stock.md](stock.md) | Frontend done for all 3 (mock), **backend not implemented** |
 | P1–P5 Purchase (stock status board, purchase orders, goods receipts) | [purchase.md](purchase.md) | Frontend done for all 5 (mock), **backend not implemented** |
 | C1–C6 Accounting (invoices, receipts, supplier bills, payments, journal, accounting master) | [accounting.md](accounting.md) | Frontend done for all 6 (mock), **backend not implemented** |
+| U1–U3 Users (user list and form with department + role rows, passwords, departments and roles matrix) | [users.md](users.md) | Frontend done for all 3 (mock), **backend not implemented** |

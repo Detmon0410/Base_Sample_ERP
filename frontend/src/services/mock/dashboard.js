@@ -3,6 +3,7 @@
 // (e.g. "stockAlerts,production") to see a block-level error, or "all" for a failed request.
 
 import { MockHttpError } from "./errors.js";
+import { stockStatusOf } from "./stock.js";
 
 const minutesAgo = (minutes) => new Date(Date.now() - minutes * 60 * 1000).toISOString();
 const daysFromNow = (days) => new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
@@ -63,14 +64,16 @@ function approvalsFor(user) {
 }
 
 // Demo only: a few numbers move every 15 s so the live updates of the page can be seen.
-function withLiveDrift(blocks) {
+function withLiveDrift(blocks, { stockIsReal = false } = {}) {
   const tick = Math.floor(Date.now() / 15000);
   const { kpis } = blocks;
   kpis.openSaleOrders = { count: 12 + (tick % 4), readyToDeliver: 3 + (tick % 2) };
   kpis.overdueInvoices = { count: 2, amountJpy: 1850000 + (tick % 5) * 50000 };
-  blocks.stockAlerts = blocks.stockAlerts.map((alert) =>
-    alert.code === "COMP" ? { ...alert, qtyOnHand: 40 - (tick % 4) } : alert,
-  );
+  if (!stockIsReal) {
+    blocks.stockAlerts = blocks.stockAlerts.map((alert) =>
+      alert.code === "COMP" ? { ...alert, qtyOnHand: 40 - (tick % 4) } : alert,
+    );
+  }
   blocks.activity = [
     { at: new Date(tick * 15000).toISOString(), type: "SO", number: `SO-${String(32 + (tick % 60)).padStart(4, "0")}`, action: "Created", user: "Alice Sato" },
     ...blocks.activity.slice(0, 7),
@@ -78,7 +81,24 @@ function withLiveDrift(blocks) {
   return blocks;
 }
 
-export function buildDashboard(user) {
+/** The materials that are short or near short, from the real stock balances (docs/specs/f8-stock.md). */
+function stockAlertsFrom(ledger, materials) {
+  const rows = materials
+    .map((material) => ({ material, onHand: ledger.onHandTotal("material", material.id) }))
+    .map(({ material, onHand }) => ({
+      materialId: material.id,
+      code: material.code,
+      name: material.name,
+      qtyOnHand: onHand,
+      reorderPoint: material.reorderPoint,
+      uom: material.uom,
+      status: stockStatusOf(onHand, material.reorderPoint).toUpperCase(),
+    }))
+    .filter((row) => ["SHORTAGE", "NEAR_SHORTAGE"].includes(row.status));
+  return rows.sort((a, b) => (a.status === b.status ? a.qtyOnHand / (a.reorderPoint || 1) - b.qtyOnHand / (b.reorderPoint || 1) : a.status === "SHORTAGE" ? -1 : 1)).slice(0, 5);
+}
+
+export function buildDashboard(user, ledger, getMaterials = () => []) {
   const fail = failedBlocks();
   if (fail.includes("all")) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
 
@@ -96,12 +116,16 @@ export function buildDashboard(user) {
     },
     approvals,
     myRecentDocuments: approvals === null ? MY_RECENT : null,
-    stockAlerts: STOCK_ALERTS,
+    stockAlerts: ledger ? stockAlertsFrom(ledger, getMaterials()) : STOCK_ALERTS,
     production: PRODUCTION,
     activity: ACTIVITY,
   };
 
-  withLiveDrift(blocks);
+  if (ledger) {
+    const shortage = blocks.stockAlerts.filter((alert) => alert.status === "SHORTAGE").length;
+    blocks.kpis.materialsInShortage = { count: shortage, nearShortage: blocks.stockAlerts.length - shortage };
+  }
+  withLiveDrift(blocks, { stockIsReal: Boolean(ledger) });
 
   const errors = {};
   for (const name of fail) {

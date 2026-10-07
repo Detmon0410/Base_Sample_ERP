@@ -57,7 +57,7 @@ function totalsOf(lines) {
   return { subtotal, tax, total: subtotal + tax, taxRate: TAX_RATE };
 }
 
-export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrders = () => [] }) {
+export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrders = () => [], ledger }) {
   const store = () => getStore();
   const guard = (authorization) => requireSale(userFromAuthorization, authorization);
 
@@ -67,6 +67,12 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
   const deliveries = [];
   let seq = { qt: 1, so: 1, po: 1, dn: 1 };
   let logId = 1;
+
+  ledger?.addReserver(() =>
+    deliveries
+      .filter((dn) => dn.status === "draft")
+      .flatMap((dn) => dn.lines.filter((line) => line.deliverNow > 0).map((line) => ({ itemType: "product", itemId: line.productId, warehouseId: dn.warehouseId, qty: line.deliverNow, doc: { type: "DN", id: dn.id } }))),
+  );
 
   const customerOf = (id) => store().customers.find((row) => row.id === Number(id));
   const productOf = (id) => store().products.find((row) => row.id === Number(id));
@@ -98,7 +104,7 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
     const materials = [];
     for (const [materialId, required] of needs) {
       const material = store().materials.find((row) => row.id === materialId);
-      const available = material?.onHand ?? 0;
+      const available = ledger ? ledger.availableTotal("material", materialId) : (material?.onHand ?? 0); // on hand - reserved by scheduled work orders
       const row = {
         materialId,
         materialCode: material?.code,
@@ -665,6 +671,11 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
       if (doc.lines.every((line) => line.deliverNow === 0)) {
         throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["lines"], message: "REQUIRED" }]);
       }
+      // the products leave the finished goods warehouse (docs/specs/f8-stock.md); refused when it holds less
+      ledger?.book(
+        doc.lines.filter((line) => line.deliverNow > 0).map((line) => ({ itemType: "product", itemId: line.productId, warehouseId: doc.warehouseId, qty: -line.deliverNow, type: "deliver" })),
+        { doc: { type: "DN", id: doc.id, number: doc.number }, by: user.name },
+      );
       doc.status = "delivered";
       logEntry(doc, "confirm", "delivered", user.name, String(body.note ?? "").trim() || null);
       // When every line of the order is delivered, the order is delivered (a person confirmed the last note).
@@ -756,6 +767,7 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
     const note = String(body.note ?? "").trim();
     if (!note) throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["note"], message: "REQUIRED" }]);
     if (doc.status !== "delivered") throw wrongStatus();
+    ledger?.reverseDoc("DN", doc.id, { by: user.name, note: "Reverted" });
     doc.status = "draft";
     logEntry(doc, "revert", "draft", user.name, note);
     const order = orders.find((item) => item.id === doc.saleOrderId);
@@ -920,7 +932,13 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
       log: [],
     };
     logEntry(doc, "created", "draft", seed.by, `From ${order.number}`, `${seed.date}T08:00:00.000Z`);
-    if (seed.status === "delivered") logEntry(doc, "confirm", "delivered", seed.by, null, `${seed.date}T16:00:00.000Z`);
+    if (seed.status === "delivered") {
+      logEntry(doc, "confirm", "delivered", seed.by, null, `${seed.date}T16:00:00.000Z`);
+      ledger?.book(
+        seed.lines.map((line) => ({ itemType: "product", itemId: line.productId, warehouseId: doc.warehouseId, qty: -line.deliverNow, type: "deliver" })),
+        { doc: { type: "DN", id: doc.id, number: doc.number }, by: seed.by, at: `${seed.date}T16:00:00.000Z`, seed: true },
+      );
+    }
     deliveries.push(doc);
   });
 

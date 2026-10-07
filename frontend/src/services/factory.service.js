@@ -25,5 +25,5 @@ export const listWaitingOrders = async () => unwrap(await api.get("/factory/wait
 export const listTracking = async (params) => unwrap(await api.get("/factory/tracking", { params }));
 
 /** Material availability for lines [{ productId, qty }]; the same answer as the Sale check. */
-export const checkFactoryAvailability = async (lines) =>
-  unwrap(await api.post("/factory/availability", { lines: lines.map(({ productId, qty }) => ({ productId, qty })) }));
+export const checkFactoryAvailability = async (lines, workOrderId) =>
+  unwrap(await api.post("/factory/availability", { lines: lines.map(({ productId, qty }) => ({ productId, qty })), ...(workOrderId ? { workOrderId } : {}) }));

@@ -3,6 +3,7 @@ import { MockHttpError } from "./errors.js";
 import { masterDataRoutes } from "./masterData.js";
 import { factoryRoutes } from "./factory.js";
 import { saleRoutes } from "./sale.js";
+import { createLedger, stockRoutes } from "./stock.js";
 
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
 // The data below is demo-only; replace these handlers with the real API later.
@@ -60,6 +61,14 @@ const mockUsers = [
     status: "active",
     memberships: [{ department: "Factory", role: "Manager" }],
   },
+  {
+    id: 7,
+    name: "Hana Ito",
+    email: "hana@kanou.test",
+    password: "hana1234",
+    status: "active",
+    memberships: [{ department: "Purchase", role: "Manager" }],
+  },
 ];
 
 function toPublicUser(user) {
@@ -92,6 +101,9 @@ function requireAdmin(authorization) {
 let masterStore = null;
 let saleStore = null;
 let factoryStore = null;
+// the stock ledger: Factory and Sale book into it, the Stock pages read it (docs/specs/f8-stock.md)
+const ledger = createLedger(() => masterStore);
+let stockModule = null;
 
 export const mockRoutes = {
   "POST /auth/login": ({ body }) => {
@@ -113,7 +125,7 @@ export const mockRoutes = {
 
   "POST /auth/logout": () => null,
 
-  "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization)),
+  "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? []),
 
   // Master data is maintained by Admin only (F3 spec, Q6/Q7).
   ...masterDataRoutes(requireAdmin, requireUser, (store) => {
@@ -128,6 +140,7 @@ export const mockRoutes = {
       saleStore = store;
     },
     getWorkOrders: () => factoryStore?.workOrders ?? [],
+    ledger,
   }),
 
   // Factory documents: Factory department members and Admin. They read the sale orders that were sent to the factory.
@@ -138,5 +151,14 @@ export const mockRoutes = {
     onFactory: (store) => {
       factoryStore = store;
     },
+    ledger,
   }),
+
+  // Stock: Factory and Purchase users and Admin. Built last: its opening balances make the sum of the movements that
+  // the seeded Work Orders, transfers and deliveries booked end on the numbers of the demo.
+  ...(() => {
+    stockModule = stockRoutes({ userFromAuthorization, getStore: () => masterStore, ledger });
+    stockModule.seedOpening();
+    return stockModule.routes;
+  })(),
 };

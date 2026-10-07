@@ -38,7 +38,7 @@ function seedNumber(prefix, date, serial) {
 
 export const WORK_ORDER_STATUSES = ["draft", "scheduled", "in_process", "finished", "cancelled"];
 
-export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFactory }) {
+export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFactory, ledger }) {
   const store = () => getStore();
   const orders = () => getSale()?.orders ?? [];
   const workOrders = [];
@@ -64,6 +64,35 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
     if (!found) throw new MockHttpError(404, "NOT_FOUND", "Record not found");
     return found;
   };
+
+  // a scheduled work order reserves the materials it will issue when it starts (they are not available to others)
+  ledger?.addReserver(() => {
+    const warehouse = ledger.firstWarehouse("RAW_MATERIAL");
+    return workOrders
+      .filter((wo) => wo.status === "scheduled")
+      .flatMap((wo) =>
+        store()
+          .bom.filter((item) => item.productId === wo.productId)
+          .map((item) => ({ itemType: "material", itemId: item.materialId, warehouseId: warehouse.id, qty: item.qty * wo.qty, doc: { type: "WO", id: wo.id } })),
+      );
+  });
+
+  // ---- stock (docs/specs/f8-stock.md): the materials leave the raw material warehouse when a Work Order starts ----
+  const consumed = (status) => ["in_process", "finished"].includes(status);
+  /** Books or reverses the materials of a Work Order when its status changes; refused when the stock is not enough. */
+  function moveMaterials(wo, from, to, user, opts = {}) {
+    if (!ledger || consumed(from) === consumed(to)) return;
+    const doc = { type: "WO", id: wo.id, number: wo.number };
+    if (consumed(to)) {
+      const warehouse = ledger.firstWarehouse("RAW_MATERIAL");
+      const lines = store()
+        .bom.filter((item) => item.productId === wo.productId)
+        .map((item) => ({ itemType: "material", itemId: item.materialId, warehouseId: warehouse.id, qty: -Math.round(item.qty * wo.qty * 1000) / 1000, type: "consume" }));
+      ledger.book(lines, { doc, by: user, ...opts });
+    } else {
+      ledger.reverseDoc("WO", wo.id, { by: user, note: "Reverted", ...opts });
+    }
+  }
 
   function logEntry(doc, action, status, actor, note, at = new Date().toISOString()) {
     doc.log.push({ id: logId++, action, status, actor, at, note });
@@ -204,7 +233,7 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
   }
 
   // ---- availability of materials for a quantity of a product (same answer as the Sale check) ----
-  function availability(lines) {
+  function availability(lines, exceptWorkOrderId = null) {
     const needs = new Map();
     const noBom = [];
     for (const line of lines) {
@@ -216,7 +245,8 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
     const materials = [];
     for (const [materialId, required] of needs) {
       const material = store().materials.find((row) => row.id === materialId);
-      const available = material?.onHand ?? 0;
+      // available = on hand - reserved by other open work orders (the one being looked at does not count against itself)
+      const available = ledger ? ledger.availableTotal("material", materialId, exceptWorkOrderId ? { except: { type: "WO", id: Number(exceptWorkOrderId) } } : undefined) : (material?.onHand ?? 0);
       const row = {
         materialId,
         materialCode: material?.code,
@@ -335,7 +365,7 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
     "POST /factory/availability": ({ authorization, body }) => {
       guard(authorization);
       const lines = (Array.isArray(body.lines) ? body.lines : []).filter((line) => Number.isInteger(line.qty) && line.qty > 0);
-      return availability(lines);
+      return availability(lines, body.workOrderId);
     },
     "GET /factory/work-orders/:id": ({ authorization, params }) => {
       guard(authorization);
@@ -408,6 +438,7 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
         if (!operator || operator.status !== "active") throw invalid("operatorId", "REQUIRED");
         const machineId = body.machineId ? Number(body.machineId) : (step.machineId ?? null);
         if (machineId && !machineOf(machineId)) throw invalid("machineId");
+        if (wo.status === "scheduled") moveMaterials(wo, "scheduled", "in_process", user.name);
         Object.assign(step, { status: "in_progress", operatorId: operator.id, machineId, startAt: new Date().toISOString(), endAt: null, qtyDone: null, qtyDefect: null });
         if (wo.status === "scheduled") {
           wo.status = "in_process";
@@ -446,6 +477,7 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
         const previous = statusBefore(wo);
         if (!previous) throw wrongStatus();
         if (wo.status === "finished" && transfersOf(wo).some((transfer) => transfer.status === "transferred")) throw new MockHttpError(409, "INVALID_STATUS", "Revert the transfers first");
+        moveMaterials(wo, wo.status, previous, user.name);
         wo.status = previous;
         logEntry(wo, "revert", previous, user.name, note);
         return shapeWo(wo);
@@ -476,6 +508,7 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
           needNote(note);
         }
       }
+      moveMaterials(wo, wo.status, action.to, user.name);
       wo.status = action.to;
       logEntry(wo, params.action, action.to, user.name, note || null);
       return shapeWo(wo);
@@ -564,11 +597,14 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
       if (!isManager(role)) throw forbid();
       if (params.action === "transfer") {
         if (transfer.status !== "draft") throw wrongStatus();
+        const made = workOrders.find((row) => row.id === transfer.workOrderId);
+        ledger?.book([{ itemType: "product", itemId: made.productId, warehouseId: transfer.warehouseId, qty: transfer.qty, type: "produce" }], { doc: { type: "FT", id: transfer.id, number: transfer.number }, by: user.name });
         transfer.status = "transferred";
         logEntry(transfer, "transfer", "transferred", user.name, note || null);
       } else if (params.action === "revert") {
         needNote(note);
         if (transfer.status !== "transferred") throw wrongStatus();
+        ledger?.reverseDoc("FT", transfer.id, { by: user.name, note: "Reverted" });
         transfer.status = "draft";
         logEntry(transfer, "revert", "draft", user.name, note);
       } else {
@@ -614,6 +650,8 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
     if (status === "finished") logEntry(wo, "finish", "finished", "Yuki Tanaka", null, at(planFinish ?? date, "17:00"));
     if (status === "cancelled") logEntry(wo, "cancel", "cancelled", "Yuki Tanaka", "Sale order cancelled", at(date, "15:00"));
     workOrders.push(wo);
+    // the seeded running and finished Work Orders issued their materials when they started
+    if (consumed(status)) moveMaterials(wo, "scheduled", status, by, { at: at(planStart ?? date, "08:30"), seed: true });
     return wo;
   }
   const done = (operatorId, start, end, qtyDone, qtyDefect = 0) => ({ status: "done", operatorId, startAt: start, endAt: end, qtyDone, qtyDefect });
@@ -643,7 +681,10 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
     const wo = workOrders.find((row) => row.id === workOrderId);
     const transfer = { id: seq.ft++, number: seedNumber("FT", date, seq.ft - 1), date, workOrderId, qty, warehouseId, remarks: "", status, log: [] };
     logEntry(transfer, "created", "draft", "Ken Suzuki", `From ${wo.number}`, at(date, "13:00"));
-    if (status === "transferred") logEntry(transfer, "transfer", "transferred", "Yuki Tanaka", null, at(date, "14:00"));
+    if (status === "transferred") {
+      logEntry(transfer, "transfer", "transferred", "Yuki Tanaka", null, at(date, "14:00"));
+      ledger?.book([{ itemType: "product", itemId: wo.productId, warehouseId, qty, type: "produce" }], { doc: { type: "FT", id: transfer.id, number: transfer.number }, by: "Yuki Tanaka", at: at(date, "14:00"), seed: true });
+    }
     transfers.push(transfer);
   }
   seedTransfer({ workOrderId: 3, qty: 29, status: "transferred", date: "2026-10-01" });

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { STATUS_COLORS as COLORS } from "@/config/sale";
+import { useStepperVisible } from "@/hooks/useStepperVisible";
 import { cn } from "@/lib/utils";
 
 const ICONS = {
@@ -36,6 +37,8 @@ const EMPTY = { ring: "border-slate-200 text-slate-400", hover: "group-hover:bg-
  */
 export function StatusStepper({ statuses, counts, value, onSelect, unit = "orders" }) {
   const { t } = useTranslation("sale");
+  const [visible] = useStepperVisible();
+  if (!visible) return null;
 
   return (
     <nav aria-label={t("stepper.label")} className={cn(PANEL_CLASS, "mb-4 overflow-x-auto px-3 py-5")}>

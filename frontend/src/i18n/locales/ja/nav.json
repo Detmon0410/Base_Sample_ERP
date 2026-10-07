@@ -67,5 +67,7 @@
     "description": ""
   },
   "resizeSidebar": "",
-  "refresh": ""
+  "refresh": "",
+  "hideSteppers": "",
+  "showSteppers": ""
 }

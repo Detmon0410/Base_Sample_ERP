@@ -13,7 +13,7 @@ import { productService } from "@/services/product.service";
 import { workOrderService } from "@/services/factory.service";
 import { formatDate, formatNumber } from "@/utils/format";
 
-import { WorkOrderDialog } from "./WorkOrderDialog";
+import { WorkOrderSheet } from "./WorkOrderSheet";
 
 const PATH = "/factory/work-orders";
 const EXTRA_KEYS = ["product"];
@@ -77,8 +77,8 @@ export function WorkOrdersPage() {
     <>
       <WorkOrdersListPage />
       <Routes>
-        <Route path="new" element={<RemountOnId><WorkOrderDialog /></RemountOnId>} />
-        <Route path=":id" element={<RemountOnId><WorkOrderDialog /></RemountOnId>} />
+        <Route path="new" element={<RemountOnId><WorkOrderSheet /></RemountOnId>} />
+        <Route path=":id" element={<RemountOnId><WorkOrderSheet /></RemountOnId>} />
       </Routes>
     </>
   );

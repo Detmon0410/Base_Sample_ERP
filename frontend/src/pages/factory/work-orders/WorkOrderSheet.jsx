@@ -10,11 +10,13 @@ import { DetailFields } from "@/components/common/DetailLayout";
 import { EntitySelect } from "@/components/common/EntitySelect";
 import { FormField } from "@/components/common/FormField";
 import { FormSection } from "@/components/common/FormSection";
+import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
 import { AvailabilityCard } from "@/components/documents/AvailabilityCard";
 import { DocumentActions } from "@/components/documents/DocumentActions";
+import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
-import { DocumentDialog } from "@/components/documents/DocumentDialog";
+import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { StepTimeline } from "@/components/factory/StepTimeline";
 import { useStepDialogs } from "@/components/factory/useStepDialogs";
 import { Button } from "@/components/ui/button";
@@ -29,8 +31,8 @@ import { formatDate, formatNumber } from "@/utils/format";
 import { emptyWorkOrder, toFormValues, toPayload, workOrderSchema } from "./workOrderSchema";
 
 
-/** F2 + F3 — /factory/work-orders/new and /:id as a dialog (a draft is editable, every other status is read-only). */
-export function WorkOrderDialog() {
+/** F2 + F3 — /factory/work-orders/new and /:id as a sheet (a draft is editable, every other status is read-only). */
+export function WorkOrderSheet() {
   const { t, i18n } = useTranslation(["factory", "nav", "sale"]);
   const language = i18n.language;
   const { user } = useAuth();
@@ -97,6 +99,13 @@ export function WorkOrderDialog() {
   };
 
 
+  const numberAside = !isNew && record ? (
+    <span className="flex shrink-0 items-center gap-3">
+      <span>{record.number}</span>
+      <DocumentStatusBadge status={record.status} />
+    </span>
+  ) : null;
+
   const lines = isNew ? (picked && qtyValue > 0 ? [{ productId: picked.productId, qty: qtyValue }] : []) : record && ["draft", "scheduled"].includes(record.status) ? [{ productId: record.productId, qty: record.qty }] : []; // only before production starts: afterwards it no longer helps
   const canTransfer = !isNew && record?.status === "finished" && record.progress.remainingToTransfer > 0 && canWork(user);
 
@@ -124,22 +133,22 @@ export function WorkOrderDialog() {
   ) : null;
 
   return (
-    <>
-      <DocumentDialog
-        page={page}
-        entityTitle={t("nav:items.workOrders")}
-        heading={t("factory:workOrders.view")}
-        title={isNew ? t("factory:workOrders.new") : (record?.number ?? "")}
-        status={record?.status}
-        singular={t("factory:workOrders.singular")}
-        formId="wo-form"
-        canEdit={editable}
-        actions={headerActions}
-        left={
-          <>
+    <DocumentSheet
+      page={page}
+      entityTitle={t("nav:items.workOrders")}
+      newTitle={t("factory:workOrders.new")}
+      titleOf={(wo) => wo.number}
+      heading={isNew ? t("factory:workOrders.new") : t(editable ? "factory:workOrders.edit" : "factory:workOrders.view")}
+      status={record?.status}
+      singular={t("factory:workOrders.singular")}
+      formId="wo-form"
+      canEdit={editable}
+      actions={headerActions}
+    >
+      <SheetFormBody>
         <form id="wo-form" noValidate onSubmit={page.onSubmit} className="flex flex-col gap-4">
           {editable ? (
-            <FormSection title={t("factory:cards.order")} icon={ClipboardListIcon}>
+            <FormSection title={t("factory:cards.order")} icon={ClipboardListIcon} aside={numberAside}>
               {isNew ? (
                 <FormField id="wo-line" label={t("factory:fields.saleOrderLine")} required error={message(errors.line)} className="@lg:col-span-2">
                   <Controller
@@ -192,7 +201,7 @@ export function WorkOrderDialog() {
               </FormField>
             </FormSection>
           ) : record ? (
-            <SheetSection title={t("factory:cards.order")} icon={ClipboardListIcon}>
+            <SheetSection title={t("factory:cards.order")} icon={ClipboardListIcon} aside={numberAside}>
               {readOnlyHeader}
             </SheetSection>
           ) : null}
@@ -207,18 +216,14 @@ export function WorkOrderDialog() {
         {/* outside the form: checking the materials never submits it */}
         {lines.length > 0 ? <AvailabilityCard lines={lines} check={checkFactoryAvailability} /> : null}
 
+        {!isNew && record ? (
+          <>
+            <HistoryCard history={record.history} />
+            <LinksCard links={record.links} />
           </>
-        }
-        right={
-          !isNew && record ? (
-            <>
-              <HistoryCard history={record.history} />
-              <LinksCard links={record.links} />
-            </>
-          ) : null
-        }
-      />
+        ) : null}
+      </SheetFormBody>
       {stepDialogs.element}
-    </>
+    </DocumentSheet>
   );
 }

@@ -121,8 +121,7 @@
     "loadError": "Could not load the document.",
     "backToList": "Back to the list",
     "print": "Print / Save as PDF",
-    "duplicate": "Copy as a new quotation",
-    "close": "Close"
+    "duplicate": "Copy as a new quotation"
   },
   "dialog": {
     "cancel": "Cancel",

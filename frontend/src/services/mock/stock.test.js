@@ -404,3 +404,83 @@ describe("opening quantities", () => {
     expect(error.details).toEqual([{ path: ["reason"], message: "HAS_MOVEMENTS" }]);
   });
 });
+
+describe("master data that Stock uses", () => {
+  it("does not delete a material, a product or a warehouse that has stock movements, but deletes an unused one", async () => {
+    const s = await start();
+    const { simpleMasterServices } = await import("../simpleMaster.service.js");
+    const { productService } = await import("../product.service.js");
+    await switchTo("admin");
+    const made = await s.master.materialService.create({ code: "RELAY", name: "Relay", uom: "pcs", reorderPoint: null, reorderQty: null });
+    await s.master.materialService.remove(made.id); // no movement yet: it can go
+    const again = await s.master.materialService.create({ code: "RELAY", name: "Relay", uom: "pcs", reorderPoint: 5, reorderQty: null });
+    await switchTo("worker");
+    const adj = await s.adjustmentService.create({ itemType: "material", itemId: again.id, warehouseId: 1, countedQty: 10, reason: "opening", remarks: "", date: "2026-10-07" });
+    await s.adjustmentService.run(adj.id, "request");
+    await switchTo("purchase");
+    await s.adjustmentService.run(adj.id, "approve");
+    await switchTo("admin");
+    expect((await failure(s.master.materialService.remove(again.id))).code).toBe("IN_USE");
+    const products = (await productService.list(all)).items;
+    expect((await failure(productService.remove(products.find((row) => row.code === "RF-2D").id))).code).toBe("IN_USE");
+    const warehouse = await simpleMasterServices.warehouses.create({ code: "WH-F2", name: "Second finished goods", type: "FINISHED_GOODS" });
+    await simpleMasterServices.warehouses.remove(warehouse.id); // unused: deletable
+    const second = await simpleMasterServices.warehouses.create({ code: "WH-F3", name: "Third finished goods", type: "FINISHED_GOODS" });
+    await switchTo("worker");
+    const rf2d = (await s.balanceService.list({ kind: "product", q: "RF-2D", ...all })).items.find((row) => row.warehouseId === second.id);
+    const opening = await s.adjustmentService.create({ itemType: "product", itemId: rf2d.itemId, warehouseId: second.id, countedQty: 3, reason: "opening", remarks: "", date: "2026-10-07" });
+    await s.adjustmentService.run(opening.id, "request");
+    await switchTo("purchase");
+    await s.adjustmentService.run(opening.id, "approve");
+    await switchTo("admin");
+    expect((await failure(simpleMasterServices.warehouses.remove(second.id))).code).toBe("IN_USE");
+  });
+
+  it("keeps the stock numbers when a material is edited", async () => {
+    const s = await start();
+    await switchTo("admin");
+    const comp = (await s.master.materialService.list({ q: "COMP", ...all })).items[0];
+    await s.master.materialService.update(comp.id, { code: "COMP", name: "Compressor 2", uom: "pcs", reorderPoint: null, reorderQty: null, onHand: 9999 });
+    expect(await onHandOf(s, "material", "COMP")).toBe(35);
+    const row = (await s.balanceService.list({ kind: "material", q: "COMP", ...all })).items[0];
+    expect(row).toMatchObject({ name: "Compressor 2", status: "not_set", reorderPoint: null });
+    expect((await s.master.materialService.get(comp.id)).onHand).toBe(35);
+  });
+});
+
+describe("more ways a work order moves stock", () => {
+  it("issues the materials when the first step starts, and refuses it (the step stays pending) when a material is short", async () => {
+    const s = await start();
+    const scheduled = (await s.factory.workOrderService.list({ status: "scheduled", ...all })).items[0];
+    const first = scheduled.steps[0];
+    await s.factory.workOrderService.stepAction(scheduled.id, first.id, "start", { operatorId: 1 });
+    expect((await s.factory.workOrderService.get(scheduled.id)).status).toBe("in_process");
+    expect(await onHandOf(s, "material", "DOOR")).toBe(12);
+
+    // a second work order (the draft) cannot start its first step when the doors are not enough
+    const draft = (await s.factory.workOrderService.list({ status: "draft", ...all })).items[0]; // RF-2D x 4: 8 doors
+    await s.factory.workOrderService.update(draft.id, { saleOrderId: draft.saleOrderId, productId: draft.productId, qty: draft.qty, planStart: "2026-10-20", planFinish: "2026-10-25", remarks: "" });
+    await s.factory.workOrderService.run(draft.id, "schedule");
+    const door = (await s.balanceService.list({ kind: "material", q: "DOOR", ...all })).items[0];
+    const adj = await s.adjustmentService.create({ itemType: "material", itemId: door.itemId, warehouseId: door.warehouseId, countedQty: 5, reason: "lost", remarks: "", date: "2026-10-07" });
+    await s.adjustmentService.run(adj.id, "request");
+    await switchTo("purchase");
+    await s.adjustmentService.run(adj.id, "approve");
+    await switchTo("manager");
+    const error = await failure(s.factory.workOrderService.stepAction(draft.id, (await s.factory.workOrderService.get(draft.id)).steps[0].id, "start", { operatorId: 1 }));
+    expect(error.code).toBe("NOT_ENOUGH_STOCK");
+    const after = await s.factory.workOrderService.get(draft.id);
+    expect(after.status).toBe("scheduled");
+    expect(after.steps[0].status).toBe("pending");
+  });
+
+  it("takes the materials again when a cancelled running work order is reverted", async () => {
+    const s = await start();
+    const running = (await s.factory.workOrderService.list({ status: "in_process", ...all })).items[0];
+    await s.factory.workOrderService.run(running.id, "cancel", { note: "Stopped" });
+    expect(await onHandOf(s, "material", "COMP")).toBe(47);
+    await s.factory.workOrderService.run(running.id, "revert", { note: "Not stopped after all" });
+    expect(await onHandOf(s, "material", "COMP")).toBe(35);
+    expect((await s.factory.workOrderService.get(running.id)).status).toBe("in_process");
+  });
+});

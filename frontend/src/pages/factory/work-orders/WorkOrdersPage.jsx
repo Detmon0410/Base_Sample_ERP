@@ -2,12 +2,10 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Routes, useLocation } from "react-router";
 
-import { CardBoard } from "@/components/common/CardBoard";
 import { RemountOnId } from "@/components/common/RemountOnId";
 import { DocumentListPage } from "@/components/documents/DocumentListPage";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { WaitingOrdersPanel } from "@/components/factory/WaitingOrdersPanel";
-import { WorkOrderCard } from "@/components/factory/WorkOrderCard";
 import { canWork, WORK_ORDER_STATUSES } from "@/config/factory";
 import { useAuth } from "@/hooks/useAuth";
 import { useOptions } from "@/hooks/useOptions";
@@ -15,7 +13,7 @@ import { productService } from "@/services/product.service";
 import { workOrderService } from "@/services/factory.service";
 import { formatDate, formatNumber } from "@/utils/format";
 
-import { WorkOrderSheet } from "./WorkOrderSheet";
+import { WorkOrderDialog } from "./WorkOrderDialog";
 
 const PATH = "/factory/work-orders";
 const EXTRA_KEYS = ["product"];
@@ -49,24 +47,6 @@ function WorkOrdersListPage() {
     [products, t],
   );
 
-  const board = useMemo(
-    () => ({
-      viewKey: "kanou.workOrders.view",
-      render: (list, { emptyContent }) => (
-        <CardBoard
-          items={list.items}
-          status={list.status}
-          fetching={list.fetching}
-          onRetry={list.retry}
-          emptyContent={emptyContent}
-          label={t("factory:workOrders.boardLabel")}
-          renderCard={(wo) => <WorkOrderCard wo={wo} to={`${PATH}/${wo.id}${search}`} />}
-        />
-      ),
-    }),
-    [t, search],
-  );
-
   return (
     <DocumentListPage
       title={t("nav:items.workOrders")}
@@ -80,7 +60,6 @@ function WorkOrdersListPage() {
       extraKeys={EXTRA_KEYS}
       dateLabel={t("factory:workOrders.filters.planFinish")}
       columns={columns}
-      board={board}
       beforePanel={<WaitingOrdersPanel canCreate={canWork(user)} />}
       rowTo={(row) => `${PATH}/${row.id}${search}`}
       newTo={canWork(user) ? `${PATH}/new${search}` : null}
@@ -98,8 +77,8 @@ export function WorkOrdersPage() {
     <>
       <WorkOrdersListPage />
       <Routes>
-        <Route path="new" element={<RemountOnId><WorkOrderSheet /></RemountOnId>} />
-        <Route path=":id" element={<RemountOnId><WorkOrderSheet /></RemountOnId>} />
+        <Route path="new" element={<RemountOnId><WorkOrderDialog /></RemountOnId>} />
+        <Route path=":id" element={<RemountOnId><WorkOrderDialog /></RemountOnId>} />
       </Routes>
     </>
   );

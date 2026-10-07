@@ -44,7 +44,13 @@
     "none": "",
     "delivery": "",
     "left": "",
-    "create": ""
+    "create": "",
+    "columns": {
+      "order": "",
+      "product": "",
+      "delivery": "",
+      "left": ""
+    }
   },
   "cards": {
     "order": "",
@@ -90,7 +96,11 @@
     "reopen": "",
     "noMachine": "",
     "defectCount_one": "",
-    "defectCount_other": ""
+    "defectCount_other": "",
+    "startedAt": "",
+    "finishedAt": "",
+    "notStarted": "",
+    "goodQty": ""
   },
   "stepDialog": {
     "startTitle": "",
@@ -219,5 +229,26 @@
       "confirm": "",
       "done": ""
     }
+  },
+  "kanban": {
+    "hint": "",
+    "emptyColumn": "",
+    "notAllowed": "",
+    "notAllowedRole": "",
+    "needDates": "",
+    "showAll": "",
+    "showFewer": "",
+    "dropWaiting": ""
+  },
+  "timeline": {
+    "scale": "",
+    "week": "",
+    "month": "",
+    "today": "",
+    "previous": "",
+    "next": "",
+    "showClosed": "",
+    "workOrder": "",
+    "noPlan": ""
   }
 }

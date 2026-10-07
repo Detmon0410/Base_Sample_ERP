@@ -121,7 +121,8 @@
     "loadError": "",
     "backToList": "",
     "print": "",
-    "duplicate": ""
+    "duplicate": "",
+    "close": ""
   },
   "dialog": {
     "cancel": "",

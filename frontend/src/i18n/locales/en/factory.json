@@ -43,8 +43,14 @@
     "hint": "Sales orders that Sale sent to the factory and that still have quantity without a work order.",
     "none": "Nothing is waiting. Every quantity sent by Sale has a work order.",
     "delivery": "delivery {{date}}",
-    "left": "{{remaining}} of {{qty}} {{uom}} left",
-    "create": "Create work order"
+    "left": "{{remaining}} of {{qty}} {{uom}}",
+    "create": "Create work order",
+    "columns": {
+      "order": "Sales order",
+      "product": "Product",
+      "delivery": "Delivery date",
+      "left": "Still without a work order"
+    }
   },
   "cards": {
     "order": "Work order",
@@ -90,7 +96,11 @@
     "reopen": "Reopen",
     "noMachine": "No machine selected",
     "defectCount_one": "{{count}} defect",
-    "defectCount_other": "{{count}} defects"
+    "defectCount_other": "{{count}} defects",
+    "startedAt": "Started {{time}}",
+    "finishedAt": "Finished {{time}}",
+    "notStarted": "Not started yet",
+    "goodQty": "{{qty}} {{uom}} completed"
   },
   "stepDialog": {
     "startTitle": "Start step {{step}}?",
@@ -219,5 +229,26 @@
       "confirm": "Transfer",
       "done": "Finished goods transferred"
     }
+  },
+  "kanban": {
+    "hint": "Drag a card to another column to schedule, start or finish it. You can also open a card and use the buttons.",
+    "emptyColumn": "No work orders",
+    "notAllowed": "A work order cannot go from {{from}} to {{to}} by dragging.",
+    "notAllowedRole": "You may not move a work order from {{from}} to {{to}}.",
+    "needDates": "Open the work order and set both plan dates before scheduling it.",
+    "showAll": "Show all {{count}}",
+    "showFewer": "Show fewer",
+    "dropWaiting": "Drop a waiting order on Draft to make a work order for it."
+  },
+  "timeline": {
+    "scale": "Time scale",
+    "week": "Week",
+    "month": "Month",
+    "today": "Today",
+    "previous": "Earlier",
+    "next": "Later",
+    "showClosed": "Show finished and cancelled",
+    "workOrder": "Work order",
+    "noPlan": "No plan dates"
   }
 }

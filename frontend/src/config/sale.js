@@ -20,6 +20,10 @@ export const STATUS_TONES = {
   delivered: "success",
   closed: "success",
   cancelled: "danger",
+  scheduled: "neutral",
+  in_process: "warning",
+  finished: "success",
+  transferred: "success",
 };
 
 /**
@@ -37,6 +41,10 @@ export const STATUS_COLORS = {
   ready_to_deliver: { badge: "border-violet-300 bg-violet-50 text-violet-800", ring: "border-violet-500 text-violet-700", hover: "group-hover:bg-violet-50", solid: "border-violet-600 bg-violet-600", soft: "bg-violet-50 text-violet-700", title: "text-violet-700" },
   delivered: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
   closed: { badge: "border-slate-400 bg-slate-200 text-slate-800", ring: "border-slate-600 text-slate-800", hover: "group-hover:bg-slate-200", solid: "border-slate-700 bg-slate-700", soft: "bg-slate-200 text-slate-800", title: "text-slate-800" },
+  scheduled: { badge: "border-sky-300 bg-sky-50 text-sky-800", ring: "border-sky-500 text-sky-700", hover: "group-hover:bg-sky-50", solid: "border-sky-600 bg-sky-600", soft: "bg-sky-50 text-sky-700", title: "text-sky-700" },
+  in_process: { badge: "border-amber-300 bg-amber-50 text-amber-800", ring: "border-amber-500 text-amber-700", hover: "group-hover:bg-amber-50", solid: "border-amber-600 bg-amber-600", soft: "bg-amber-50 text-amber-700", title: "text-amber-700" },
+  finished: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
+  transferred: { badge: "border-teal-300 bg-teal-50 text-teal-800", ring: "border-teal-500 text-teal-700", hover: "group-hover:bg-teal-50", solid: "border-teal-600 bg-teal-600", soft: "bg-teal-50 text-teal-700", title: "text-teal-700" },
   cancelled: { badge: "border-red-300 bg-red-50 text-red-800", ring: "border-red-500 text-red-700", hover: "group-hover:bg-red-50", solid: "border-red-600 bg-red-600", soft: "bg-red-50 text-red-700", title: "text-red-700" },
 };
 
@@ -47,6 +55,8 @@ export const HISTORY_TONES = {
   confirm: "success",
   delivered: "success",
   close: "success",
+  finish: "success",
+  transfer: "success",
   reject: "danger",
   "reject-confirm": "danger",
   cancel: "danger",

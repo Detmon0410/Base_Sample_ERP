@@ -59,8 +59,9 @@ function MaterialRow({ row, number }) {
  * marked as out of date. Shows a summary first (can we produce it?), then the materials that are short, then
  * the ones that are fine.
  *   lines   [{ productId, qty }] as currently entered (invalid ones are ignored)
+ *   check   the call that answers (default: the Sale check; Factory brings its own)
  */
-export function AvailabilityCard({ lines }) {
+export function AvailabilityCard({ lines, check: checkLines = checkAvailability }) {
   const { t, i18n } = useTranslation("sale");
   const [result, setResult] = useState(null);
   const [checkedFor, setCheckedFor] = useState("");
@@ -73,7 +74,7 @@ export function AvailabilityCard({ lines }) {
   const check = async () => {
     setState("loading");
     try {
-      setResult(await checkAvailability(valid));
+      setResult(await checkLines(valid));
       setCheckedFor(signature);
       setState("idle");
     } catch {

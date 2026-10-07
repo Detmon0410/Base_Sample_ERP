@@ -106,7 +106,7 @@ function FilterChoices({ filter, values, onChange, close }) {
   );
 }
 
-export function ListToolbar({ searchValue, onSearchChange, searchLabel, filters = [], values, onChange, newTo, newLabel }) {
+export function ListToolbar({ searchValue, onSearchChange, searchLabel, filters = [], values, onChange, newTo, newLabel, extra }) {
   const { t } = useTranslation("common");
   const [open, setOpen] = useState(false);
   const [openKey, setOpenKey] = useState(null); // which filter's choices are showing (null = the menu)
@@ -191,6 +191,8 @@ export function ListToolbar({ searchValue, onSearchChange, searchLabel, filters 
             className="h-9 min-w-0 flex-1 border-0 bg-transparent px-2 shadow-none focus-visible:ring-0"
           />
         </div>
+
+        {extra}
 
         {newTo ? (
           <Button asChild className="h-10 shrink-0">

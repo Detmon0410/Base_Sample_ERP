@@ -11,7 +11,11 @@
     "delivered": "",
     "closed": "",
     "cancelled": "",
-    "waiting": ""
+    "waiting": "",
+    "scheduled": "",
+    "in_process": "",
+    "finished": "",
+    "transferred": ""
   },
   "columns": {
     "number": "",
@@ -149,7 +153,15 @@
     "close": "",
     "cancel": "",
     "revert": "",
-    "none": ""
+    "none": "",
+    "schedule": "",
+    "back-to-draft": "",
+    "start": "",
+    "finish": "",
+    "step-start": "",
+    "step-done": "",
+    "step-reopen": "",
+    "transfer": ""
   },
   "links": {
     "quotation": "",
@@ -158,7 +170,8 @@
     "delivery": "",
     "workOrder": "",
     "invoice": "",
-    "notRecorded": ""
+    "notRecorded": "",
+    "transfer": ""
   },
   "validation": {
     "required": "",
@@ -353,7 +366,11 @@
       "orders_one": "",
       "orders_other": "",
       "quotations_one": "",
-      "quotations_other": ""
+      "quotations_other": "",
+      "workOrders_one": "",
+      "workOrders_other": "",
+      "transfers_one": "",
+      "transfers_other": ""
     }
   },
   "print": {

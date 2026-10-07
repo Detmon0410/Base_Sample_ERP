@@ -1,6 +1,10 @@
 import {
   ArrowRightIcon,
   BanIcon,
+  CalendarCheckIcon,
+  FlagIcon,
+  PlayIcon,
+  WarehouseIcon,
   CheckIcon,
   ClockIcon,
   FactoryIcon,
@@ -35,6 +39,11 @@ const ICONS = {
   cancel: BanIcon,
   confirm: CheckIcon,
   revert: Undo2Icon,
+  schedule: CalendarCheckIcon,
+  "back-to-draft": Undo2Icon,
+  start: PlayIcon,
+  finish: FlagIcon,
+  transfer: WarehouseIcon,
 };
 
 // Status buttons have no border, only a light fill. The main button of a document (action.primary) is the light-blue
@@ -50,10 +59,11 @@ const NEUTRAL = "bg-slate-100 text-slate-700 hover:bg-slate-200";
 /**
  * The status buttons of a document (see config/sale.js for who sees which). Pressing one opens a confirmation
  * (ActionDialog) with the texts of sale:actions.<key>; confirming calls `onRun(action, note)`.
+ * `namespace`: the text namespace with `actions.<key>.*` (another module can bring its own buttons, e.g. "factory").
  * `disabled`: the form has unsaved edits, which a status change would throw away, so save first.
  */
-export function DocumentActions({ actions, onRun, disabled = false }) {
-  const { t } = useTranslation("sale");
+export function DocumentActions({ actions, onRun, disabled = false, namespace = "sale" }) {
+  const { t } = useTranslation(namespace);
   const [pending, setPending] = useState(null);
   if (actions.length === 0) return null;
 

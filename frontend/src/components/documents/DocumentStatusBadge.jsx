@@ -1,6 +1,9 @@
 import {
   BanIcon,
+  CalendarCheckIcon,
+  CircleCheckIcon,
   ClockIcon,
+  CogIcon,
   FactoryIcon,
   LockIcon,
   PackageCheckIcon,
@@ -8,6 +11,7 @@ import {
   SendIcon,
   ThumbsUpIcon,
   TruckIcon,
+  WarehouseIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -25,6 +29,10 @@ const ICONS = {
   delivered: TruckIcon,
   closed: LockIcon,
   cancelled: BanIcon,
+  scheduled: CalendarCheckIcon,
+  in_process: CogIcon,
+  finished: CircleCheckIcon,
+  transferred: WarehouseIcon,
 };
 
 /** Status of a Sale document as text + icon. `waiting` adds the "waiting for approval" state of a draft order. */

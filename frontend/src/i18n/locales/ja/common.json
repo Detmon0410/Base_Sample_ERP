@@ -75,5 +75,10 @@
     "choose": "",
     "clear": "",
     "today": ""
+  },
+  "views": {
+    "cards": "",
+    "table": "",
+    "label": ""
   }
 }

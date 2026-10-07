@@ -75,5 +75,10 @@
     "choose": "Choose a date",
     "clear": "Clear",
     "today": "Today"
+  },
+  "views": {
+    "cards": "Cards",
+    "table": "Table",
+    "label": "Show as"
   }
 }

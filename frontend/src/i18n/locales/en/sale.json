@@ -11,7 +11,11 @@
     "delivered": "Delivered",
     "closed": "Closed",
     "cancelled": "Cancelled",
-    "waiting": "Waiting for approval"
+    "waiting": "Waiting for approval",
+    "scheduled": "Scheduled",
+    "in_process": "In process",
+    "finished": "Finished",
+    "transferred": "Transferred"
   },
   "columns": {
     "number": "No.",
@@ -149,7 +153,15 @@
     "close": "Order closed",
     "cancel": "Cancelled",
     "revert": "Reverted to the previous status",
-    "none": "No history yet."
+    "none": "No history yet.",
+    "schedule": "Scheduled",
+    "back-to-draft": "Back to draft",
+    "start": "Started",
+    "finish": "Finished",
+    "step-start": "Step started",
+    "step-done": "Step done",
+    "step-reopen": "Step reopened",
+    "transfer": "Transferred to the warehouse"
   },
   "links": {
     "quotation": "Quotation",
@@ -158,7 +170,8 @@
     "delivery": "Delivery note",
     "workOrder": "Work order",
     "invoice": "Invoice",
-    "notRecorded": "Not recorded here"
+    "notRecorded": "Not recorded here",
+    "transfer": "Finished goods transfer"
   },
   "validation": {
     "required": "This field is required.",
@@ -353,7 +366,11 @@
       "orders_one": "{{count}} order",
       "orders_other": "{{count}} orders",
       "quotations_one": "{{count}} quotation",
-      "quotations_other": "{{count}} quotations"
+      "quotations_other": "{{count}} quotations",
+      "workOrders_one": "{{count}} work order",
+      "workOrders_other": "{{count}} work orders",
+      "transfers_one": "{{count}} transfer",
+      "transfers_other": "{{count}} transfers"
     }
   },
   "print": {

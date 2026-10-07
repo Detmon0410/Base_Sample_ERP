@@ -1,4 +1,4 @@
-import { BanIcon, CheckIcon, ClockIcon, FactoryIcon, LockIcon, PackageCheckIcon, PencilIcon, SendIcon, ThumbsUpIcon, TruckIcon, XIcon } from "lucide-react";
+import { BanIcon, CalendarCheckIcon, CheckIcon, CircleCheckIcon, ClockIcon, CogIcon, FactoryIcon, LockIcon, PackageCheckIcon, PencilIcon, SendIcon, ThumbsUpIcon, TruckIcon, WarehouseIcon, XIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { PANEL_CLASS } from "@/components/common/SheetSection";
@@ -17,6 +17,10 @@ const ICONS = {
   delivered: TruckIcon,
   closed: LockIcon,
   cancelled: BanIcon,
+  scheduled: CalendarCheckIcon,
+  in_process: CogIcon,
+  finished: CircleCheckIcon,
+  transferred: WarehouseIcon,
 };
 
 const EMPTY = { ring: "border-slate-200 text-slate-400", hover: "group-hover:bg-muted", soft: "bg-slate-100 text-slate-500", title: "text-slate-500" };
@@ -28,7 +32,7 @@ const EMPTY = { ring: "border-slate-200 text-slate-400", hover: "group-hover:bg-
  *
  *   statuses  status keys in order          counts   { [status]: n } or undefined while loading
  *   value     the status the list is filtered by, "all" when none
- *   onSelect  (status | "all") => void       unit  what is counted: "orders" | "quotations" (text keys stepper.count.*)
+ *   onSelect  (status | "all") => void       unit  what is counted: "orders" | "quotations" | "workOrders" | "transfers" (text keys stepper.count.*)
  */
 export function StatusStepper({ statuses, counts, value, onSelect, unit = "orders" }) {
   const { t } = useTranslation("sale");

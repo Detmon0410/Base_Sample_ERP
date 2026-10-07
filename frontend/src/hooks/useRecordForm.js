@@ -22,6 +22,7 @@ const FIELD_ERROR_KEYS = {
   DATE_ORDER: "master:validation.dateOrder",
   DUPLICATE: "sale:validation.duplicate",
   PO_NUMBER_EXISTS: "sale:validation.poNumberExists",
+  TOO_MANY: "factory:validation.tooMany",
 };
 
 /**

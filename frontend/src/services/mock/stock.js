@@ -39,6 +39,8 @@ export function createLedger(getStore) {
   };
   // what is promised to open documents (a scheduled work order, a draft delivery note) and so not available
   const reservers = [];
+  // what is on order at suppliers (open quantity of Sent / Partially received purchase orders): [{ materialId, qty, po }]
+  const onOrderProviders = [];
 
   const materialOf = (id) => store().materials.find((row) => row.id === Number(id));
   const productOf = (id) => store().products.find((row) => row.id === Number(id));
@@ -53,6 +55,9 @@ export function createLedger(getStore) {
 
   /** A reserver is a function that returns [{ itemType, itemId, warehouseId, qty, doc: { type, id } }] of the open documents. */
   const addReserver = (fn) => reservers.push(fn);
+  const addOnOrder = (fn) => onOrderProviders.push(fn);
+  const onOrderRows = () => onOrderProviders.flatMap((fn) => fn());
+  const onOrderOf = (materialId) => round3(onOrderRows().filter((row) => row.materialId === Number(materialId)).reduce((sum, row) => sum + row.qty, 0));
   /** Reserved quantity of an item; except = { type, id } leaves out the reservation of one document (its own check). */
   const reserved = (type, itemId, warehouseId, { except } = {}) =>
     round3(
@@ -152,7 +157,7 @@ export function createLedger(getStore) {
     return [...candidates].sort((a, b) => balance(type, itemId, b.id) - balance(type, itemId, a.id))[0] ?? null;
   }
 
-  return { movements, targetOnHand, hasMovements, addReserver, reserved, available, availableTotal, finishSeed, balance, onHandTotal, firstWarehouse, bestWarehouse, book, reverseDoc, syncMaterials, itemOf, warehouseOf, materialOf, productOf };
+  return { movements, targetOnHand, hasMovements, addOnOrder, onOrderRows, onOrderOf, addReserver, reserved, available, availableTotal, finishSeed, balance, onHandTotal, firstWarehouse, bestWarehouse, book, reverseDoc, syncMaterials, itemOf, warehouseOf, materialOf, productOf };
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -221,6 +226,7 @@ export function stockRoutes({ userFromAuthorization, getStore, ledger }) {
           warehouseCode: warehouse.code,
           warehouseName: warehouse.name,
           onHand,
+          onOrder: kind === "material" ? ledger.onOrderOf(item.id) : 0,
           reserved: ledger.reserved(kind, item.id, warehouse.id),
           available: ledger.available(kind, item.id, warehouse.id),
           reorderPoint: kind === "material" ? (item.reorderPoint ?? null) : null,
@@ -364,7 +370,7 @@ export function stockRoutes({ userFromAuthorization, getStore, ledger }) {
         statusCounts[row.status] = (statusCounts[row.status] ?? 0) + 1;
       });
       const rows = query.status && query.status !== "all" ? base.filter((row) => row.status === query.status) : base;
-      return page(rows, query, { sorts: ["code", "name", "warehouseName", "onHand", "reserved", "available", "reorderPoint", "status"], defaultSort: "code", extra: { statusCounts } });
+      return page(rows, query, { sorts: ["code", "name", "warehouseName", "onHand", "onOrder", "reserved", "available", "reorderPoint", "status"], defaultSort: "code", extra: { statusCounts } });
     },
     "GET /stock/items/:type/:id": ({ authorization, params }) => {
       guard(authorization);
@@ -385,6 +391,8 @@ export function stockRoutes({ userFromAuthorization, getStore, ledger }) {
         onHand: total,
         reserved: ledger.reserved(kind, item.id, null),
         available: ledger.availableTotal(kind, item.id),
+        onOrder: kind === "material" ? ledger.onOrderOf(item.id) : 0,
+        openOrders: kind === "material" ? ledger.onOrderRows().filter((row) => row.materialId === item.id).map((row) => ({ ...row.po, qty: row.qty })) : [],
         hasMovements: ledger.movements.some((m) => m.itemType === kind && m.itemId === item.id),
         status: kind === "material" ? stockStatusOf(total, item.reorderPoint ?? null) : productStatusOf(total),
         byWarehouse,
@@ -555,21 +563,6 @@ export function stockRoutes({ userFromAuthorization, getStore, ledger }) {
   const productByCode = (code) => store().products.find((row) => row.code === code);
   const raw = () => ledger.firstWarehouse("RAW_MATERIAL");
   const finished = () => ledger.firstWarehouse("FINISHED_GOODS");
-
-  const receipts = [
-    { code: "COMP", qty: 100, date: "2026-09-10", number: "GR-2026-0001" },
-    { code: "STEEL", qty: 600, date: "2026-09-12", number: "GR-2026-0002" },
-    { code: "FOAM", qty: 300, date: "2026-10-01", number: "GR-2026-0003" },
-  ];
-  for (const receipt of receipts) {
-    const material = materialByCode(receipt.code);
-    ledger.book([{ itemType: "material", itemId: material.id, warehouseId: raw().id, qty: receipt.qty, type: "receipt" }], {
-      doc: { type: "GR", id: null, number: receipt.number },
-      by: "Alice Sato",
-      at: at(receipt.date, "10:00"),
-      seed: true,
-    });
-  }
 
   function seedAdjustment({ itemType, code, counted, reason, remarks = "", status, date, by, byId, approver, note, onHandThen }) {
     const item = itemType === "material" ? materialByCode(code) : productByCode(code);

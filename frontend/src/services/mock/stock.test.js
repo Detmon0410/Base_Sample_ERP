@@ -115,7 +115,7 @@ describe("movements: the ledger", () => {
 
   it("filters by type, kind, warehouse, item, document number and date", async () => {
     const s = await start();
-    expect((await s.movementService.list({ type: "receipt", ...all })).items).toHaveLength(3);
+    expect((await s.movementService.list({ type: "receipt", ...all })).items).toHaveLength(4);
     expect((await s.movementService.list({ kind: "product", ...all })).items.every((row) => row.itemType === "product")).toBe(true);
     expect((await s.movementService.list({ q: "GR-2026-0002", ...all })).items).toHaveLength(1);
     const comp = (await s.balanceService.list({ kind: "material", q: "COMP", ...all })).items[0];

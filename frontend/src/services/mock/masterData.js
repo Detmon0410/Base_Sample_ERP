@@ -742,7 +742,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
       searchFields: ["code", "name"],
       sortable: ["code", "name", "paymentTerms", "status"],
       validate: validateSupplier,
-      isInUse: (row) => row.code === "S001" || row.code === "S002",
+      isInUse: (row) => row.code === "S001" || row.code === "S002" || usedByStock("supplier", row.id),
       onRemove: (row) => {
         for (let index = links.length - 1; index >= 0; index -= 1) if (links[index].supplierId === row.id) links.splice(index, 1);
       },
@@ -794,6 +794,8 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
     warehouses: warehouseRows,
     routing,
     machines: machineRows,
+    suppliers: supplierRows,
+    supplierLinks: links,
   });
   return routes;
 }

@@ -2,6 +2,7 @@ import { buildDashboard } from "./dashboard.js";
 import { MockHttpError } from "./errors.js";
 import { masterDataRoutes } from "./masterData.js";
 import { factoryRoutes } from "./factory.js";
+import { purchaseRoutes } from "./purchase.js";
 import { saleRoutes } from "./sale.js";
 import { createLedger, stockRoutes } from "./stock.js";
 
@@ -104,6 +105,7 @@ let factoryStore = null;
 // the stock ledger: Factory and Sale book into it, the Stock pages read it (docs/specs/f8-stock.md)
 const ledger = createLedger(() => masterStore);
 let stockModule = null;
+let purchaseStore = null;
 
 export const mockRoutes = {
   "POST /auth/login": ({ body }) => {
@@ -125,7 +127,7 @@ export const mockRoutes = {
 
   "POST /auth/logout": () => null,
 
-  "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? []),
+  "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? [], () => purchaseStore),
 
   // Master data is maintained by Admin only (F3 spec, Q6/Q7).
   ...masterDataRoutes(
@@ -134,7 +136,9 @@ export const mockRoutes = {
     (store) => {
       masterStore = store;
     },
-    (kind, id) => ledger.movements.some((move) => (kind === "warehouse" ? move.warehouseId === id : move.itemType === kind && move.itemId === id)),
+    (kind, id) =>
+      ledger.movements.some((move) => (kind === "warehouse" ? move.warehouseId === id : move.itemType === kind && move.itemId === id)) ||
+      Boolean(purchaseStore?.orders.some((po) => (kind === "supplier" ? po.supplierId === id : kind === "material" ? po.lines.some((line) => line.materialId === id) : kind === "warehouse" ? po.warehouseId === id : false))),
   ),
 
   // Sale documents: Sale department members and Admin (the role decides what they may press).
@@ -157,6 +161,16 @@ export const mockRoutes = {
       factoryStore = store;
     },
     ledger,
+  }),
+
+  // Purchase: Purchase department members and Admin. Its receipts book into the stock ledger.
+  ...purchaseRoutes({
+    userFromAuthorization,
+    getStore: () => masterStore,
+    ledger,
+    onPurchase: (store) => {
+      purchaseStore = store;
+    },
   }),
 
   // Stock: Factory and Purchase users and Admin. Built last: its opening balances make the sum of the movements that

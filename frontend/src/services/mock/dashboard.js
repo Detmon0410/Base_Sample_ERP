@@ -55,12 +55,12 @@ function failedBlocks() {
 }
 
 /** Approvals follow the rules in user_account_req.md: Admin all, Manager own departments, Worker none. */
-function approvalsFor(user) {
+function approvalsFor(user, source = APPROVALS) {
   const isAdmin = user.memberships.some((m) => m.role === "Admin");
-  if (isAdmin) return APPROVALS;
+  if (isAdmin) return source;
   const managerDepartments = user.memberships.filter((m) => m.role === "Manager").map((m) => m.department);
   if (managerDepartments.length === 0) return null; // not applicable for Workers
-  return APPROVALS.filter((a) => managerDepartments.includes(a.department));
+  return source.filter((a) => managerDepartments.includes(a.department));
 }
 
 // Demo only: a few numbers move every 15 s so the live updates of the page can be seen.
@@ -98,11 +98,14 @@ function stockAlertsFrom(ledger, materials) {
   return rows.sort((a, b) => (a.status === b.status ? a.qtyOnHand / (a.reorderPoint || 1) - b.qtyOnHand / (b.reorderPoint || 1) : a.status === "SHORTAGE" ? -1 : 1)).slice(0, 5);
 }
 
-export function buildDashboard(user, ledger, getMaterials = () => []) {
+export function buildDashboard(user, ledger, getMaterials = () => [], getPurchase = () => null) {
   const fail = failedBlocks();
   if (fail.includes("all")) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
 
-  const approvals = approvalsFor(user);
+  // Purchase: the Draft POs wait for a Manager to send them; the POs waiting for goods are Sent / Partially received
+  const purchase = getPurchase()?.summaries?.() ?? null;
+  const draftPos = (purchase ?? []).filter((po) => po.status === "draft").map((po) => ({ type: "PO", id: po.id, number: po.number, party: po.supplierName, amountJpy: po.total, createdAt: po.createdAt, department: "Purchase" }));
+  const approvals = approvalsFor(user, purchase ? [...APPROVALS.filter((a) => a.type !== "PO"), ...draftPos] : APPROVALS);
   const blocks = {
     kpis: {
       openSaleOrders: { count: 12, readyToDeliver: 3 },
@@ -121,6 +124,10 @@ export function buildDashboard(user, ledger, getMaterials = () => []) {
     activity: ACTIVITY,
   };
 
+  if (purchase) {
+    const waiting = purchase.filter((po) => ["sent", "partially_received"].includes(po.status));
+    blocks.kpis.poWaitingForGoods = { count: waiting.length, nextDueDate: waiting.map((po) => po.expectedDate).filter(Boolean).sort()[0] ?? null };
+  }
   if (ledger) {
     const shortage = blocks.stockAlerts.filter((alert) => alert.status === "SHORTAGE").length;
     blocks.kpis.materialsInShortage = { count: shortage, nearShortage: blocks.stockAlerts.length - shortage };

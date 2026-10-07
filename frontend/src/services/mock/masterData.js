@@ -261,7 +261,8 @@ function materialValidator(uomRows) {
     const text = (field) => String(body[field] ?? "").trim();
     for (const field of ["code", "name", "uom"]) if (!text(field)) errors.push({ path: [field], message: "REQUIRED" });
     if (text("uom") && !uomRows.some((row) => row.code === body.uom)) errors.push({ path: ["uom"], message: "INVALID" });
-    if (!isQty(body.reorderPoint)) errors.push({ path: ["reorderPoint"], message: body.reorderPoint == null ? "REQUIRED" : "INVALID" });
+    // the reorder level is optional: a reference quantity that helps users spot low stock
+    if (body.reorderPoint != null && !isQty(body.reorderPoint)) errors.push({ path: ["reorderPoint"], message: "INVALID" });
     if (body.reorderQty != null && !isQty(body.reorderQty, { allowZero: false })) errors.push({ path: ["reorderQty"], message: "INVALID" });
     return errors;
   };

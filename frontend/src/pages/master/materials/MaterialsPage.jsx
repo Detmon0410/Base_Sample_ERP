@@ -29,7 +29,7 @@ function MaterialsListPage() {
         header: t("master:materials.columns.reorderPoint"),
         sortable: true,
         align: "right",
-        render: (row) => formatNumber(row.reorderPoint, i18n.language),
+        render: (row) => (row.reorderPoint == null ? "—" : formatNumber(row.reorderPoint, i18n.language)),
       },
       { key: "status", header: t("master:common.status"), sortable: true, render: (row) => <ActiveBadge status={row.status} /> },
     ],

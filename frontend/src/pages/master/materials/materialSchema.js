@@ -10,7 +10,7 @@ export const materialSchema = z.object({
   code: z.string().trim().min(1, REQUIRED).max(20, TOO_LONG),
   name: z.string().trim().min(1, REQUIRED).max(100, TOO_LONG),
   uom: z.string().min(1, REQUIRED),
-  reorderPoint: z.number({ message: REQUIRED }).min(0, QTY),
+  reorderPoint: z.number({ message: QTY }).min(0, QTY).nullable(),
   reorderQty: z.number({ message: POSITIVE }).gt(0, POSITIVE).nullable(),
 });
 

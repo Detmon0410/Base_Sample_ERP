@@ -38,7 +38,7 @@ export function MaterialFormPage() {
   const { isNew, record, form, errors, message, fieldProps } = page;
   const { options: uoms } = useOptions(simpleMasterServices.uom);
   const uomOptions = uoms.map((unit) => ({ ...unit, id: unit.code }));
-  const shortage = !isNew && record?.onHand != null && record.onHand <= record.reorderPoint;
+  const shortage = !isNew && record?.onHand != null && record.reorderPoint != null && record.onHand <= record.reorderPoint;
 
   return (
     <RecordSheet
@@ -108,7 +108,6 @@ export function MaterialFormPage() {
                 <FormField
                   id="material-reorderPoint"
                   label={t("master:materials.form.fields.reorderPoint")}
-                  required
                   error={message(errors.reorderPoint)}
                   hint={t("master:materials.form.hints.reorderPoint")}
                 >

@@ -257,7 +257,7 @@
         "uom": "Select a unit"
       },
       "hints": {
-        "reorderPoint": "At or below this quantity the material counts as in shortage.",
+        "reorderPoint": "Optional. At or below this quantity the material counts as in shortage. Without it the stock overview shows \"Not set\".",
         "reorderQty": "Suggested quantity when creating a purchase order.",
         "onHand": "Taken from Stock. It cannot be edited here."
       }

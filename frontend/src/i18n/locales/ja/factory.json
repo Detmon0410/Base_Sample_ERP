@@ -1,0 +1,223 @@
+{
+  "workOrders": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "empty": "",
+    "noResult": "",
+    "search": "",
+    "boardLabel": "",
+    "createTransfer": "",
+    "filters": {
+      "product": "",
+      "planFinish": ""
+    },
+    "columns": {
+      "number": "",
+      "product": "",
+      "qty": "",
+      "saleOrder": "",
+      "planStart": "",
+      "planFinish": "",
+      "progress": "",
+      "status": ""
+    }
+  },
+  "card": {
+    "for": "",
+    "now": "",
+    "next": "",
+    "notScheduled": "",
+    "stepsDone": "",
+    "plan": "",
+    "noPlan": "",
+    "produced": "",
+    "transferred": "",
+    "allTransferred": "",
+    "lateDays_one": "",
+    "lateDays_other": ""
+  },
+  "waiting": {
+    "title": "",
+    "hint": "",
+    "none": "",
+    "delivery": "",
+    "left": "",
+    "create": ""
+  },
+  "cards": {
+    "order": "",
+    "progress": "",
+    "tracking": "",
+    "transfer": ""
+  },
+  "fields": {
+    "saleOrderLine": "",
+    "chooseLine": "",
+    "saleOrder": "",
+    "product": "",
+    "qty": "",
+    "qtyHint": "",
+    "planned": "",
+    "planStart": "",
+    "planFinish": "",
+    "remarks": "",
+    "workOrder": "",
+    "chooseWorkOrder": "",
+    "transferHint": "",
+    "date": "",
+    "warehouse": "",
+    "chooseWarehouse": ""
+  },
+  "steps": {
+    "listLabel": "",
+    "itemLabel": "",
+    "status": {
+      "pending": "",
+      "in_progress": "",
+      "done": ""
+    },
+    "no": "",
+    "process": "",
+    "machineOperator": "",
+    "time": "",
+    "qty": "",
+    "statusHead": "",
+    "actions": "",
+    "start": "",
+    "done": "",
+    "reopen": "",
+    "noMachine": "",
+    "defectCount_one": "",
+    "defectCount_other": ""
+  },
+  "stepDialog": {
+    "startTitle": "",
+    "startDescription": "",
+    "operator": "",
+    "chooseOperator": "",
+    "machine": "",
+    "early": "",
+    "reason": "",
+    "start": "",
+    "doneTitle": "",
+    "doneDescription": "",
+    "qtyDone": "",
+    "qtyDefect": "",
+    "done": "",
+    "reopenTitle": "",
+    "reopenDescription": "",
+    "reopen": "",
+    "cancel": "",
+    "working": "",
+    "done_start": "",
+    "done_done": "",
+    "done_reopen": ""
+  },
+  "tracking": {
+    "hint": "",
+    "machineFilter": "",
+    "allMachines": "",
+    "stepOf": "",
+    "startedAt": "",
+    "completed": "",
+    "late": "",
+    "columns": {
+      "waiting": "",
+      "running": "",
+      "done": ""
+    },
+    "empty": {
+      "waiting": "",
+      "running": "",
+      "done": ""
+    }
+  },
+  "transfers": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "empty": "",
+    "noResult": "",
+    "search": "",
+    "columns": {
+      "number": "",
+      "date": "",
+      "workOrder": "",
+      "product": "",
+      "qty": "",
+      "warehouse": "",
+      "status": ""
+    }
+  },
+  "validation": {
+    "required": "",
+    "qty": "",
+    "qtyInvalid": "",
+    "tooMany": ""
+  },
+  "errors": {
+    "UNKNOWN": "",
+    "FORBIDDEN": "",
+    "NOT_FOUND": "",
+    "INVALID_STATUS": "",
+    "VALIDATION_ERROR": "",
+    "NO_ROUTING": "",
+    "STEP_ORDER": "",
+    "STEPS_NOT_DONE": ""
+  },
+  "actions": {
+    "saveFirst": "",
+    "schedule": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "back-to-draft": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "start": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "finish": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "cancel": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "revert": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "transfer": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    }
+  }
+}

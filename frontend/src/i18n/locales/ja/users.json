@@ -1,0 +1,183 @@
+{
+  "status": {
+    "active": "",
+    "inactive": ""
+  },
+  "departments": {
+    "Sale": "",
+    "Factory": "",
+    "Purchase": "",
+    "Accounting": "",
+    "Stock": "",
+    "Administration": ""
+  },
+  "roles": {
+    "Admin": "",
+    "Manager": "",
+    "Worker": ""
+  },
+  "list": {
+    "new": "",
+    "search": "",
+    "empty": "",
+    "noResult": "",
+    "you": "",
+    "neverSignedIn": "",
+    "noAssignment": "",
+    "filters": {
+      "department": "",
+      "role": ""
+    },
+    "columns": {
+      "name": "",
+      "email": "",
+      "assignments": "",
+      "lastLoginAt": "",
+      "status": ""
+    }
+  },
+  "form": {
+    "title": {
+      "new": ""
+    },
+    "singular": "",
+    "sections": {
+      "account": "",
+      "assignments": "",
+      "password": "",
+      "info": ""
+    },
+    "fields": {
+      "name": "",
+      "email": "",
+      "password": ""
+    },
+    "placeholders": {
+      "name": "",
+      "email": ""
+    },
+    "password": {
+      "hint": "",
+      "show": "",
+      "hide": "",
+      "generate": "",
+      "copy": "",
+      "copied": "",
+      "generatedNote": ""
+    },
+    "assignments": {
+      "hint": "",
+      "department": "",
+      "role": "",
+      "add": "",
+      "remove": "",
+      "adminRow": "",
+      "pickDepartment": "",
+      "pickRole": "",
+      "none": ""
+    },
+    "resetPassword": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": "",
+      "newPassword": ""
+    },
+    "info": {
+      "lastLoginAt": "",
+      "never": ""
+    },
+    "self": "",
+    "inUse": ""
+  },
+  "validation": {
+    "required": "",
+    "weakPassword": "",
+    "adminAlone": "",
+    "duplicate": "",
+    "assignmentsRequired": "",
+    "pick": ""
+  },
+  "errors": {
+    "EMAIL_ALREADY_EXISTS": "",
+    "LAST_ADMIN": "",
+    "CANNOT_CHANGE_SELF": "",
+    "IN_USE": "",
+    "WEAK_PASSWORD": ""
+  },
+  "matrixPage": {
+    "intro": "",
+    "tableLabel": "",
+    "menuLabel": "",
+    "action": "",
+    "yes": "",
+    "no": "",
+    "menuTitle": "",
+    "menuIntro": "",
+    "menu": "",
+    "menuUsers": "",
+    "audiences": {
+      "Sale": "",
+      "Factory": "",
+      "Purchase": "",
+      "Accounting": "",
+      "Admin": ""
+    },
+    "note": ""
+  },
+  "matrix": {
+    "Sale": {
+      "work": "",
+      "sendQuotation": "",
+      "acceptQuotation": "",
+      "requestConfirm": "",
+      "approveOrder": "",
+      "sendToFactory": "",
+      "cancelRunningOrder": "",
+      "confirmDelivery": "",
+      "closeOrder": "",
+      "revertOrder": ""
+    },
+    "Factory": {
+      "work": "",
+      "schedule": "",
+      "start": "",
+      "startStep": "",
+      "doneStep": "",
+      "reopenStep": "",
+      "finish": "",
+      "cancelRunning": "",
+      "transfer": "",
+      "revertWorkOrder": ""
+    },
+    "Stock": {
+      "view": "",
+      "createAdjustment": "",
+      "approveAdjustment": ""
+    },
+    "Purchase": {
+      "work": "",
+      "editOrder": "",
+      "sendOrder": "",
+      "receiveGoods": "",
+      "postReceipt": "",
+      "closeOrder": "",
+      "cancelPostedReceipt": ""
+    },
+    "Accounting": {
+      "work": "",
+      "issueInvoice": "",
+      "approveBill": "",
+      "confirmReceipt": "",
+      "confirmPayment": "",
+      "cancelConfirmedMoney": "",
+      "postEntry": "",
+      "changeMaster": ""
+    },
+    "Administration": {
+      "users": "",
+      "masterData": ""
+    }
+  }
+}

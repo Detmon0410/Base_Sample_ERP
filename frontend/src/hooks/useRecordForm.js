@@ -27,6 +27,8 @@ const FIELD_ERROR_KEYS = {
   NOT_SUPPLIED: "purchase:validation.notSupplied",
   INACTIVE: "purchase:validation.inactive",
   TOO_LONG: "sale:validation.maxLength",
+  ADMIN_ALONE: "users:validation.adminAlone",
+  WEAK_PASSWORD: "users:validation.weakPassword",
 };
 
 /**

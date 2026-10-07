@@ -18,8 +18,9 @@ import { CARD_CLASS } from "@/components/common/SheetSection";
  *   titleOf      (record) => title of a saved record; default "CODE · Name"
  *   singular     "material", used in the confirmation texts
  *   formId       id of the <form> that Save in the header submits
+ *   locks        { status, delete }: switch off the status toggle / the delete button of a record (e.g. your own user)
  */
-export function RecordSheet({ page, entityTitle, newTitle, editTitle, titleOf = (record) => `${record.code} · ${record.name}`, singular, formId, children }) {
+export function RecordSheet({ page, entityTitle, newTitle, editTitle, titleOf = (record) => `${record.code} · ${record.name}`, singular, formId, locks, children }) {
   const { t } = useTranslation("master");
   const { isNew, record, loadState, leaving, goToList, listPath } = page;
 
@@ -63,6 +64,8 @@ export function RecordSheet({ page, entityTitle, newTitle, editTitle, titleOf = 
             busy={page.busy}
             onToggleStatus={page.toggleStatus}
             onDelete={() => page.setDialog("delete")}
+            statusLocked={locks?.status}
+            deleteLocked={locks?.delete}
           />
         }
       >

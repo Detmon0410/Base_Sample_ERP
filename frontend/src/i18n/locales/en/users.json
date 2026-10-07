@@ -1,0 +1,183 @@
+{
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "departments": {
+    "Sale": "Sale",
+    "Factory": "Factory",
+    "Purchase": "Purchase",
+    "Accounting": "Accounting",
+    "Stock": "Stock",
+    "Administration": "Administration"
+  },
+  "roles": {
+    "Admin": "Admin",
+    "Manager": "Manager",
+    "Worker": "Worker"
+  },
+  "list": {
+    "new": "New user",
+    "search": "Search by name or e-mail",
+    "empty": "No users yet.",
+    "noResult": "No user matches. Clear the search or the filters.",
+    "you": "You",
+    "neverSignedIn": "Never signed in",
+    "noAssignment": "No department",
+    "filters": {
+      "department": "Department",
+      "role": "Role"
+    },
+    "columns": {
+      "name": "Name",
+      "email": "E-mail",
+      "assignments": "Departments and roles",
+      "lastLoginAt": "Last sign-in",
+      "status": "Status"
+    }
+  },
+  "form": {
+    "title": {
+      "new": "New user"
+    },
+    "singular": "user",
+    "sections": {
+      "account": "Account",
+      "assignments": "Departments and roles",
+      "password": "Password",
+      "info": "Sign-in and record"
+    },
+    "fields": {
+      "name": "Name",
+      "email": "E-mail (used to sign in)",
+      "password": "Password"
+    },
+    "placeholders": {
+      "name": "e.g. Taro Yamada",
+      "email": "name@company.com"
+    },
+    "password": {
+      "hint": "At least 8 characters with a letter and a digit. The user can sign in with it at once.",
+      "show": "Show password",
+      "hide": "Hide password",
+      "generate": "Generate",
+      "copy": "Copy",
+      "copied": "Copied",
+      "generatedNote": "Write it down or copy it now. It is not shown again."
+    },
+    "assignments": {
+      "hint": "A user can work in several departments, with a role in each. The Admin role stands alone: it covers every department and Users.",
+      "department": "Department",
+      "role": "Role",
+      "add": "Add department",
+      "remove": "Remove this row",
+      "adminRow": "All departments",
+      "pickDepartment": "Choose a department",
+      "pickRole": "Choose a role",
+      "none": "Add at least one department and role."
+    },
+    "resetPassword": {
+      "button": "Reset password",
+      "title": "Reset password",
+      "description": "Set a new password for {{name}}. Any sign-in of this user ends at once and they must sign in again with the new password.",
+      "confirm": "Reset password",
+      "done": "Password reset. {{name}} has been signed out.",
+      "newPassword": "New password"
+    },
+    "info": {
+      "lastLoginAt": "Last sign-in",
+      "never": "Never signed in"
+    },
+    "self": "This is your own account. You cannot deactivate, delete, reset the password of or change the roles of your own account.",
+    "inUse": "This user has signed in or worked on documents, so the account cannot be deleted. Deactivate it instead."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "weakPassword": "Use at least 8 characters with a letter and a digit.",
+    "adminAlone": "The Admin role cannot be combined with a department.",
+    "duplicate": "This department is already in the list.",
+    "assignmentsRequired": "Add at least one department and role.",
+    "pick": "Choose one."
+  },
+  "errors": {
+    "EMAIL_ALREADY_EXISTS": "This e-mail is already used by another user.",
+    "LAST_ADMIN": "This is the last active Admin. Make another user Admin first.",
+    "CANNOT_CHANGE_SELF": "You cannot do this to your own account.",
+    "IN_USE": "This user has signed in or worked on documents, so the account cannot be deleted. Deactivate it instead.",
+    "WEAK_PASSWORD": "Use at least 8 characters with a letter and a digit."
+  },
+  "matrixPage": {
+    "intro": "What each role can do, and which menus each kind of user sees. This page only shows the rules; roles are given to a user in Users.",
+    "tableLabel": "What each role can do",
+    "menuLabel": "Menus each kind of user sees",
+    "action": "Action",
+    "yes": "Yes",
+    "no": "No",
+    "menuTitle": "Menus",
+    "menuIntro": "A user sees a menu group when their department or role allows it.",
+    "menu": "Menu group",
+    "menuUsers": "Users of",
+    "audiences": {
+      "Sale": "Sale",
+      "Factory": "Factory",
+      "Purchase": "Purchase",
+      "Accounting": "Accounting",
+      "Admin": "Admin"
+    },
+    "note": "Manager and Worker apply inside the department of the section. An Admin has no department and can do everything except ask for approval of their own work."
+  },
+  "matrix": {
+    "Sale": {
+      "work": "Create and edit Sale documents",
+      "sendQuotation": "Send a quotation",
+      "acceptQuotation": "Record that a quotation is accepted",
+      "requestConfirm": "Ask for approval of a sale order",
+      "approveOrder": "Approve (confirm) a sale order",
+      "sendToFactory": "Send a confirmed order to the Factory",
+      "cancelRunningOrder": "Cancel an order that is in production",
+      "confirmDelivery": "Confirm a delivery",
+      "closeOrder": "Close a delivered order",
+      "revertOrder": "Undo the last step of an order"
+    },
+    "Factory": {
+      "work": "Create and edit Factory documents",
+      "schedule": "Schedule a work order",
+      "start": "Start a work order",
+      "startStep": "Start a production step",
+      "doneStep": "Finish a production step",
+      "reopenStep": "Reopen a finished step",
+      "finish": "Finish a work order",
+      "cancelRunning": "Cancel a running work order",
+      "transfer": "Transfer finished goods to Stock",
+      "revertWorkOrder": "Undo the last step of a work order"
+    },
+    "Stock": {
+      "view": "See stock and record movements",
+      "createAdjustment": "Request a stock adjustment",
+      "approveAdjustment": "Approve a stock adjustment of somebody else"
+    },
+    "Purchase": {
+      "work": "Create and edit Purchase documents",
+      "editOrder": "Edit a draft purchase order",
+      "sendOrder": "Send a purchase order to the supplier",
+      "receiveGoods": "Receive goods",
+      "postReceipt": "Post a goods receipt to stock",
+      "closeOrder": "Close a received purchase order",
+      "cancelPostedReceipt": "Cancel a posted goods receipt"
+    },
+    "Accounting": {
+      "work": "Create and edit Accounting documents",
+      "issueInvoice": "Issue an invoice",
+      "approveBill": "Approve a bill",
+      "confirmReceipt": "Confirm a receipt of money",
+      "confirmPayment": "Confirm a payment",
+      "cancelConfirmedMoney": "Cancel a confirmed receipt or payment",
+      "postEntry": "Post a journal entry",
+      "changeMaster": "Change the accounting master lists"
+    },
+    "Administration": {
+      "users": "Manage users",
+      "masterData": "Change master data of every department"
+    }
+  }
+}

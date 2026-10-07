@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-function IconAction({ label, onClick, destructive, children }) {
+function IconAction({ label, onClick, destructive, disabled, children }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -15,6 +15,7 @@ function IconAction({ label, onClick, destructive, children }) {
           size="icon"
           className={destructive ? "size-9 text-destructive hover:bg-destructive/10 hover:text-destructive" : "size-9 text-slate-600"}
           aria-label={label}
+          disabled={disabled}
           onClick={onClick}
         >
           {children}
@@ -31,7 +32,7 @@ function IconAction({ label, onClick, destructive, children }) {
  * says what it does. Then Delete (a quiet red icon, asks first) and Save (the only filled button, like the header of a Sale document). Save submits the form `formId`, which can
  * be on another tab.
  */
-export function RecordActions({ formId, isSubmitting, isNew, isActive, busy, onToggleStatus, onDelete }) {
+export function RecordActions({ formId, isSubmitting, isNew, isActive, busy, onToggleStatus, onDelete, statusLocked = false, deleteLocked = false }) {
   const { t } = useTranslation("master");
   const statusLabel = isActive ? t("common.activeToggle") : t("common.inactiveToggle");
   return (
@@ -41,12 +42,12 @@ export function RecordActions({ formId, isSubmitting, isNew, isActive, busy, onT
           <Tooltip>
             <TooltipTrigger asChild>
               <span className="inline-flex">
-                <Switch checked={isActive} onCheckedChange={() => onToggleStatus()} disabled={busy} aria-label={statusLabel} />
+                <Switch checked={isActive} onCheckedChange={() => onToggleStatus()} disabled={busy || statusLocked} aria-label={statusLabel} />
               </span>
             </TooltipTrigger>
             <TooltipContent>{statusLabel}</TooltipContent>
           </Tooltip>
-          <IconAction label={t("common.delete")} onClick={onDelete} destructive>
+          <IconAction label={t("common.delete")} onClick={onDelete} destructive disabled={deleteLocked}>
             <Trash2Icon />
           </IconAction>
         </>

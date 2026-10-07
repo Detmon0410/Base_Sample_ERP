@@ -62,7 +62,10 @@
     "FORBIDDEN": "",
     "UNKNOWN": "",
     "ALREADY_LINKED": "",
-    "PERIOD_OVERLAP": ""
+    "PERIOD_OVERLAP": "",
+    "EMAIL_ALREADY_EXISTS": "",
+    "LAST_ADMIN": "",
+    "CANNOT_CHANGE_SELF": ""
   },
   "paymentTerms": {
     "NET_15": "",

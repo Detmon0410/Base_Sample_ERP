@@ -12,6 +12,7 @@ import enAccounting from "./locales/en/accounting.json";
 import enMaster from "./locales/en/master.json";
 import enNav from "./locales/en/nav.json";
 import enSale from "./locales/en/sale.json";
+import enUsers from "./locales/en/users.json";
 import jaAuth from "./locales/ja/auth.json";
 import jaCommon from "./locales/ja/common.json";
 import jaDashboard from "./locales/ja/dashboard.json";
@@ -22,6 +23,7 @@ import jaAccounting from "./locales/ja/accounting.json";
 import jaMaster from "./locales/ja/master.json";
 import jaNav from "./locales/ja/nav.json";
 import jaSale from "./locales/ja/sale.json";
+import jaUsers from "./locales/ja/users.json";
 
 export const SUPPORTED_LANGUAGES = [
   { code: "en", label: "English" },
@@ -35,8 +37,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { common: enCommon, auth: enAuth, nav: enNav, dashboard: enDashboard, master: enMaster, sale: enSale, factory: enFactory, stock: enStock, purchase: enPurchase, accounting: enAccounting },
-      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, dashboard: jaDashboard, master: jaMaster, sale: jaSale, factory: jaFactory, stock: jaStock, purchase: jaPurchase, accounting: jaAccounting },
+      en: { common: enCommon, auth: enAuth, nav: enNav, dashboard: enDashboard, master: enMaster, sale: enSale, factory: enFactory, stock: enStock, purchase: enPurchase, accounting: enAccounting, users: enUsers },
+      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, dashboard: jaDashboard, master: jaMaster, sale: jaSale, factory: jaFactory, stock: jaStock, purchase: jaPurchase, accounting: jaAccounting, users: jaUsers },
     },
     supportedLngs: SUPPORTED_LANGUAGES.map((language) => language.code),
     // English is the primary language. JA files hold the same keys with empty
@@ -44,7 +46,7 @@ i18n
     fallbackLng: "en",
     returnEmptyString: false,
     defaultNS: "common",
-    ns: ["common", "auth", "nav", "dashboard", "master", "sale", "factory", "stock", "purchase", "accounting"],
+    ns: ["common", "auth", "nav", "dashboard", "master", "sale", "factory", "stock", "purchase", "accounting", "users"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
     detection: {

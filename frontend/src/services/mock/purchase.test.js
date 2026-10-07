@@ -229,7 +229,7 @@ describe("goods receipts", () => {
     expect(meta.statusCounts).toEqual({ posted: 4, draft: 1, cancelled: 1 });
     const withRejection = items.find((gr) => gr.number === "GR-2026-0003");
     expect(withRejection.lines[0]).toMatchObject({ materialCode: "DOOR", delivered: 25, accepted: 20, rejected: 5, rejectReason: "damaged", ordered: 60 });
-    expect(withRejection.links.map((link) => link.type)).toEqual(["purchaseOrder", "movement"]);
+    expect(withRejection.links.map((link) => link.type)).toEqual(["purchaseOrder", "movement", "supplierBill"]);
     expect((await p.goodsReceiptService.list({ po: items[0].poId, ...all })).items).toHaveLength(1);
   });
 

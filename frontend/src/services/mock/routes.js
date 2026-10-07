@@ -4,6 +4,7 @@ import { masterDataRoutes } from "./masterData.js";
 import { factoryRoutes } from "./factory.js";
 import { purchaseRoutes } from "./purchase.js";
 import { saleRoutes } from "./sale.js";
+import { accountingRoutes } from "./accounting.js";
 import { createLedger, stockRoutes } from "./stock.js";
 
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
@@ -70,6 +71,22 @@ const mockUsers = [
     status: "active",
     memberships: [{ department: "Purchase", role: "Manager" }],
   },
+  {
+    id: 8,
+    name: "Mika Ono",
+    email: "mika@kanou.test",
+    password: "mika1234",
+    status: "active",
+    memberships: [{ department: "Accounting", role: "Manager" }],
+  },
+  {
+    id: 9,
+    name: "Sora Kato",
+    email: "sora@kanou.test",
+    password: "sora1234",
+    status: "active",
+    memberships: [{ department: "Accounting", role: "Worker" }],
+  },
 ];
 
 function toPublicUser(user) {
@@ -106,6 +123,7 @@ let factoryStore = null;
 const ledger = createLedger(() => masterStore);
 let stockModule = null;
 let purchaseStore = null;
+let accountingStore = null;
 
 export const mockRoutes = {
   "POST /auth/login": ({ body }) => {
@@ -127,7 +145,7 @@ export const mockRoutes = {
 
   "POST /auth/logout": () => null,
 
-  "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? [], () => purchaseStore),
+  "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? [], () => purchaseStore, () => accountingStore),
 
   // Master data is maintained by Admin only (F3 spec, Q6/Q7).
   ...masterDataRoutes(
@@ -138,6 +156,7 @@ export const mockRoutes = {
     },
     (kind, id) =>
       ledger.movements.some((move) => (kind === "warehouse" ? move.warehouseId === id : move.itemType === kind && move.itemId === id)) ||
+      Boolean(accountingStore?.inUse(kind, id)) ||
       Boolean(purchaseStore?.orders.some((po) => (kind === "supplier" ? po.supplierId === id : kind === "material" ? po.lines.some((line) => line.materialId === id) : kind === "warehouse" ? po.warehouseId === id : false))),
   ),
 
@@ -149,6 +168,7 @@ export const mockRoutes = {
       saleStore = store;
     },
     getWorkOrders: () => factoryStore?.workOrders ?? [],
+    getAccounting: () => accountingStore,
     ledger,
   }),
 
@@ -170,6 +190,18 @@ export const mockRoutes = {
     ledger,
     onPurchase: (store) => {
       purchaseStore = store;
+    },
+    getAccounting: () => accountingStore,
+  }),
+
+  // Accounting: Accounting department members and Admin. It reads the delivered delivery notes and the posted goods receipts.
+  ...accountingRoutes({
+    userFromAuthorization,
+    getStore: () => masterStore,
+    getSale: () => saleStore,
+    getPurchase: () => purchaseStore,
+    onAccounting: (store) => {
+      accountingStore = store;
     },
   }),
 

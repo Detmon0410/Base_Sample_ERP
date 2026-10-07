@@ -64,11 +64,11 @@ function approvalsFor(user, source = APPROVALS) {
 }
 
 // Demo only: a few numbers move every 15 s so the live updates of the page can be seen.
-function withLiveDrift(blocks, { stockIsReal = false } = {}) {
+function withLiveDrift(blocks, { stockIsReal = false, accountingIsReal = false } = {}) {
   const tick = Math.floor(Date.now() / 15000);
   const { kpis } = blocks;
   kpis.openSaleOrders = { count: 12 + (tick % 4), readyToDeliver: 3 + (tick % 2) };
-  kpis.overdueInvoices = { count: 2, amountJpy: 1850000 + (tick % 5) * 50000 };
+  if (!accountingIsReal) kpis.overdueInvoices = { count: 2, amountJpy: 1850000 + (tick % 5) * 50000 };
   if (!stockIsReal) {
     blocks.stockAlerts = blocks.stockAlerts.map((alert) =>
       alert.code === "COMP" ? { ...alert, qtyOnHand: 40 - (tick % 4) } : alert,
@@ -98,14 +98,19 @@ function stockAlertsFrom(ledger, materials) {
   return rows.sort((a, b) => (a.status === b.status ? a.qtyOnHand / (a.reorderPoint || 1) - b.qtyOnHand / (b.reorderPoint || 1) : a.status === "SHORTAGE" ? -1 : 1)).slice(0, 5);
 }
 
-export function buildDashboard(user, ledger, getMaterials = () => [], getPurchase = () => null) {
+export function buildDashboard(user, ledger, getMaterials = () => [], getPurchase = () => null, getAccounting = () => null) {
   const fail = failedBlocks();
   if (fail.includes("all")) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
 
   // Purchase: the Draft POs wait for a Manager to send them; the POs waiting for goods are Sent / Partially received
   const purchase = getPurchase()?.summaries?.() ?? null;
   const draftPos = (purchase ?? []).filter((po) => po.status === "draft").map((po) => ({ type: "PO", id: po.id, number: po.number, party: po.supplierName, amountJpy: po.total, createdAt: po.createdAt, department: "Purchase" }));
-  const approvals = approvalsFor(user, purchase ? [...APPROVALS.filter((a) => a.type !== "PO"), ...draftPos] : APPROVALS);
+  // Accounting: Draft invoices and bills wait for a Manager; the overdue invoices and the unpaid bills are real numbers
+  const accounting = getAccounting();
+  const draftMoney = (accounting?.drafts?.() ?? []).map((item) => ({ ...item, department: "Accounting" }));
+  let source = purchase ? [...APPROVALS.filter((a) => a.type !== "PO"), ...draftPos] : APPROVALS;
+  if (accounting) source = [...source.filter((a) => !["INVOICE", "BILL"].includes(a.type)), ...draftMoney];
+  const approvals = approvalsFor(user, source);
   const blocks = {
     kpis: {
       openSaleOrders: { count: 12, readyToDeliver: 3 },
@@ -124,6 +129,13 @@ export function buildDashboard(user, ledger, getMaterials = () => [], getPurchas
     activity: ACTIVITY,
   };
 
+  if (accounting) {
+    const overdue = accounting.overdueInvoices();
+    const unpaid = accounting.unpaidBills();
+    const soon = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+    blocks.kpis.overdueInvoices = { count: overdue.length, amountJpy: overdue.reduce((sum, row) => sum + row.balance, 0) };
+    blocks.kpis.unpaidSupplierBills = { count: unpaid.length, amountJpy: unpaid.reduce((sum, row) => sum + row.balance, 0), dueWithin7Days: unpaid.filter((row) => row.dueDate <= soon).length };
+  }
   if (purchase) {
     const waiting = purchase.filter((po) => ["sent", "partially_received"].includes(po.status));
     blocks.kpis.poWaitingForGoods = { count: waiting.length, nextDueDate: waiting.map((po) => po.expectedDate).filter(Boolean).sort()[0] ?? null };
@@ -132,7 +144,7 @@ export function buildDashboard(user, ledger, getMaterials = () => [], getPurchas
     const shortage = blocks.stockAlerts.filter((alert) => alert.status === "SHORTAGE").length;
     blocks.kpis.materialsInShortage = { count: shortage, nearShortage: blocks.stockAlerts.length - shortage };
   }
-  withLiveDrift(blocks, { stockIsReal: Boolean(ledger) });
+  withLiveDrift(blocks, { stockIsReal: Boolean(ledger), accountingIsReal: Boolean(accounting) });
 
   const errors = {};
   for (const name of fail) {

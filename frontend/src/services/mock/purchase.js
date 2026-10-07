@@ -43,7 +43,7 @@ function seedNumber(prefix, date, serial) {
   return `${key}-${String(serial).padStart(4, "0")}`;
 }
 
-export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurchase }) {
+export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurchase, getAccounting = () => null }) {
   const store = () => getStore();
   const orders = [];
   const receipts = [];
@@ -123,6 +123,9 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
     };
   }
 
+  // the supplier bills of the Accounting module; until the first one is made there is a placeholder
+  const billLinks = (bills, poId) => (bills.length ? bills.map((bill) => ({ id: `bill-${bill.id}`, type: "supplierBill", number: bill.number, status: bill.status, to: `/accounting/bills/${bill.id}` })) : [{ id: `bill-${poId}`, type: "supplierBill", number: null }]);
+
   function shapePo(po) {
     const supplier = supplierOf(po.supplierId);
     const warehouse = warehouseOf(po.warehouseId);
@@ -155,7 +158,7 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
       history: historyOf(po),
       links: [
         ...grs.map((gr) => ({ id: `gr-${gr.id}`, type: "goodsReceipt", number: gr.number, status: gr.status, to: `/purchase/receipts/${gr.id}` })),
-        { id: `bill-${po.id}`, type: "supplierBill", number: null },
+        ...billLinks(getAccounting()?.billsOfOrder(po.id) ?? [], po.id),
       ],
     };
   }
@@ -207,6 +210,7 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
       links: [
         ...(po ? [{ id: `po-${po.id}`, type: "purchaseOrder", number: po.number, status: po.status, to: `/purchase/orders/${po.id}` }] : []),
         ...(gr.status === "posted" ? [{ id: `mv-${gr.id}`, type: "movement", number: gr.number, status: null, to: `/stock/movements?q=${gr.number}` }] : []),
+        ...(getAccounting()?.billsOfReceipt(gr.id) ?? []).map((bill) => ({ id: `bill-${bill.id}`, type: "supplierBill", number: bill.number, status: bill.status, to: `/accounting/bills/${bill.id}` })),
       ],
     };
   }

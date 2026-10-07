@@ -701,7 +701,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
       sortable: ["code", "name", "paymentTerms", "creditLimit", "status"],
       validate: validateCustomer,
       // C001 and C002 stand for customers that already have Sale Orders.
-      isInUse: (row) => row.code === "C001" || row.code === "C002",
+      isInUse: (row) => row.code === "C001" || row.code === "C002" || usedByStock("customer", row.id),
       guard,
     }),
     // The first four units, both warehouses and the production lines stand for records that documents already use.

@@ -57,7 +57,7 @@ function totalsOf(lines) {
   return { subtotal, tax, total: subtotal + tax, taxRate: TAX_RATE };
 }
 
-export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrders = () => [], ledger }) {
+export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrders = () => [], getAccounting = () => null, ledger }) {
   const store = () => getStore();
   const guard = (authorization) => requireSale(userFromAuthorization, authorization);
 
@@ -163,11 +163,15 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
       const made = getWorkOrders().filter((wo) => wo.saleOrderId === doc.id);
       for (const wo of made) links.push({ id: `wo-${wo.id}`, type: "workOrder", number: wo.number, status: wo.status, to: `/factory/work-orders/${wo.id}` });
       if (made.length === 0 && ["in_production", "ready_to_deliver", "delivered", "closed"].includes(doc.status)) links.push({ id: `wo-${doc.id}`, type: "workOrder", number: null });
-      if (["delivered", "closed"].includes(doc.status)) links.push({ id: `inv-${doc.id}`, type: "invoice", number: null });
+      // the invoices of the Accounting module; until the first one is made a delivered order shows a placeholder
+      const invoices = getAccounting()?.invoicesOfOrder(doc.id) ?? [];
+      for (const inv of invoices) links.push({ id: `inv-${inv.id}`, type: "invoice", number: inv.number, status: inv.status, to: `/accounting/invoices/${inv.id}` });
+      if (invoices.length === 0 && ["delivered", "closed"].includes(doc.status)) links.push({ id: `inv-${doc.id}`, type: "invoice", number: null });
     }
     if (kind === "delivery") {
       const so = orders.find((item) => item.id === doc.saleOrderId);
       if (so) links.push({ id: `so-${so.id}`, type: "order", number: so.number, status: so.status, to: `/sale/orders/${so.id}` });
+      for (const inv of getAccounting()?.invoicesOfDelivery(doc.id) ?? []) links.push({ id: `inv-${inv.id}`, type: "invoice", number: inv.number, status: inv.status, to: `/accounting/invoices/${inv.id}` });
     }
     if (kind === "customerPo") {
       const qt = quotations.find((item) => item.id === doc.quotationId);
@@ -942,6 +946,6 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
     deliveries.push(doc);
   });
 
-  onSale?.({ orders });
+  onSale?.({ orders, deliveries });
   return routes;
 }

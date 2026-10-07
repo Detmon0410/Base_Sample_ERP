@@ -46,4 +46,63 @@ export const SIMPLE_MASTERS = {
     columns: [{ key: "position", kind: "text" }],
     sortable: ["code", "name", "position", "status"],
   },
+  accounts: {
+    key: "accounts",
+    path: "/accounting/master/accounts",
+    managerDepartment: "Accounting",
+    nav: "items.accountingMaster",
+    fields: [
+      { name: "type", type: "select", required: true, options: ["asset", "liability", "equity", "income", "expense"] },
+      { name: "role", type: "select", options: ["cash", "receivable", "raw_stock", "input_tax", "payable", "output_tax", "sales"] },
+    ],
+    columns: [
+      { key: "type", kind: "option" },
+      { key: "role", kind: "option" },
+    ],
+    sortable: ["code", "name", "type", "role", "status"],
+  },
+  taxRates: {
+    key: "taxRates",
+    path: "/accounting/master/taxRates",
+    managerDepartment: "Accounting",
+    nav: "items.accountingMaster",
+    fields: [
+      { name: "kind", type: "select", required: true, options: ["vat", "wht"] },
+      { name: "rate", type: "number", required: true },
+      { name: "isDefault", type: "select", required: true, options: ["yes", "no"] },
+    ],
+    columns: [
+      { key: "kind", kind: "option" },
+      { key: "rate", kind: "percent" },
+      { key: "isDefault", kind: "option" },
+    ],
+    sortable: ["code", "name", "kind", "rate", "status"],
+  },
+  paymentMethods: {
+    key: "paymentMethods",
+    path: "/accounting/master/paymentMethods",
+    managerDepartment: "Accounting",
+    nav: "items.accountingMaster",
+    fields: [{ name: "type", type: "select", required: true, options: ["cash", "bank", "cheque"] }],
+    columns: [{ key: "type", kind: "option" }],
+    sortable: ["code", "name", "type", "status"],
+  },
+  bankAccounts: {
+    key: "bankAccounts",
+    path: "/accounting/master/bankAccounts",
+    managerDepartment: "Accounting",
+    nav: "items.accountingMaster",
+    fields: [
+      { name: "bankName", type: "text", required: true, max: 50 },
+      { name: "branch", type: "text", max: 50 },
+      { name: "accountNo", type: "text", required: true, max: 20 },
+      { name: "glAccountCode", type: "text", required: true, max: 20 },
+    ],
+    columns: [
+      { key: "bankName", kind: "text" },
+      { key: "accountNo", kind: "text" },
+      { key: "glAccountCode", kind: "text" },
+    ],
+    sortable: ["code", "name", "bankName", "accountNo", "status"],
+  },
 };

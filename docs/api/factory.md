@@ -57,6 +57,10 @@ Only scheduled, in process and finished work orders appear.
 | DELETE | `/factory/transfers/:id` | delete a **draft** |
 | POST | `/factory/transfers/:id/:action` | `transfer` (draft → transferred, Manager), `revert` (Manager, **note required**) |
 
+## Stock (since the Stock module)
+
+`start` of a work order (and the first step's `start`) books the materials out of the raw material warehouse, the transfer `transfer` books the finished goods into the warehouse, and the reverts / `cancel` of a running work order book the opposite movements. Any of them can answer `409 NOT_ENOUGH_STOCK` and then nothing changes. Details: [stock.md](stock.md).
+
 ## Errors used (besides the common ones)
 
 | Code | Where | Meaning |

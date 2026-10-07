@@ -182,7 +182,7 @@ model Employee {
 ```
 
 ## M4 Materials — `/master/materials`
-Fields: `code`, `name`, `uom` (required, the **code** of an active unit from `/master/uom`), `reorderPoint` (required, number ≥ 0, up to 3 decimals), `reorderQty` (optional, number > 0), `status`. **`onHand` is read-only**: it comes from Stock (sum of the stock balances) and is ignored if sent in POST / PUT. A material is in **shortage** when `onHand <= reorderPoint`. Sort fields: `code`, `name`, `uom`, `reorderPoint`, `status`. Delete is blocked (`IN_USE`) while a BOM, stock record or purchase order uses it; deleting an unused material also removes its supplier links. Validation codes: `REQUIRED`, `INVALID`.
+Fields: `code`, `name`, `uom` (required, the **code** of an active unit from `/master/uom`), `reorderPoint` (**optional**, number ≥ 0, up to 3 decimals, null when not set: the stock overview then shows "No reorder point"), `reorderQty` (optional, number > 0), `status`. **`onHand` is read-only**: it comes from Stock (sum of the stock balances) and is ignored if sent in POST / PUT. A material is in **shortage** when `onHand <= reorderPoint`. Sort fields: `code`, `name`, `uom`, `reorderPoint`, `status`. Delete is blocked (`IN_USE`) while a BOM, stock record or purchase order uses it; deleting an unused material also removes its supplier links. Validation codes: `REQUIRED`, `INVALID`.
 
 ## M2 Suppliers — `/master/suppliers`
 Fields: `code`, `name`, `taxId`, `address`, `contactPerson`, `contactPhone`, `contactEmail`, `paymentTerms` (same list as Customers), `status`. Same rules as Customers without `creditLimit`. Sort fields: `code`, `name`, `paymentTerms`, `status`. Delete is blocked while purchase orders use it; deleting an unused supplier also removes its links.

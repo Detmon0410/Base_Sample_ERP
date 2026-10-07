@@ -37,3 +37,4 @@ What the frontend expects from the backend, written **per page**. The frontend a
 | M1–M10 Master data (all built) | [master-data.md](master-data.md) | Frontend done for all 10 (mock), **backend not implemented** |
 | S1–S8 Sale (quotations, customer POs, sale orders, delivery notes) | [sale.md](sale.md) | Frontend done for all 8 (mock), **backend not implemented** |
 | F1–F5 Factory (work orders, production tracking, finished goods transfers) | [factory.md](factory.md) | Frontend done for all 5 (mock), **backend not implemented** |
+| T1–T3 Stock (balances, movements, adjustments) and its links with Factory, Sale and the Dashboard | [stock.md](stock.md) | Frontend done for all 3 (mock), **backend not implemented** |

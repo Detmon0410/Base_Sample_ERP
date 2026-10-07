@@ -15,7 +15,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Dashboard | 1 | 1 |
 | Sale | 8 | 8 |
 | Factory | 5 | 5 |
-| Stock | 0 | 3 |
+| Stock | 3 | 3 |
 | Purchase | 0 | 5 |
 | Accounting | 0 | 6 |
 | Traceability | 0 | 1 |
@@ -57,9 +57,9 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | F3 | Work Order detail | `/factory/work-orders/:id` | P1 | ⬜ | | ⬜ | ⬜ | |
 | F4 | Production tracking | `/factory/tracking` | P1 | ⬜ | | ⬜ | ⬜ | |
 | F5 | FG transfer | `/factory/transfers` | P1 | ⬜ | | ⬜ | ⬜ | |
-| T1 | Stock overview | `/stock` | P1 | ⬜ | | ⬜ | ⬜ | |
-| T2 | Stock movements | `/stock/movements` | P2 | ⬜ | | ⬜ | ⬜ | |
-| T3 | Stock adjustment | `/stock/adjustments/new` | P2 | ⬜ | | ⬜ | ⬜ | |
+| T1 | Stock overview | `/stock` | P1 | ✅ | mock | ✅ | ⬜ | Materials / Products switch, one row per item per warehouse, status Shortage / Near shortage / Normal (In stock / Out of stock for products), warehouse and status filters; read-only item sheet with warehouses, last movements and the products that use a material, New adjustment button. API: api/stock.md |
+| T2 | Stock movements | `/stock/movements` | P2 | ✅ | mock | ✅ | ⬜ | Read-only ledger, newest first: type, item, warehouse, +/− quantity, balance after, document link (only to documents the user may open); filters for type, kind, warehouse, item, date. API: api/stock.md |
+| T3 | Stock adjustment | `/stock/adjustments/new` | P2 | ✅ | mock | ✅ | ⬜ | ADJ numbers, status stepper (Draft, Pending approval, Approved, Rejected, Cancelled), form with the live on-hand and difference, required reason; a Manager who is not the author approves, which books the movement. API: api/stock.md |
 | P1 | Stock status board | `/purchase/stock-status` | P1 | ⬜ | | ⬜ | ⬜ | |
 | P2 | PO list | `/purchase/orders` | P1 | ⬜ | | ⬜ | ⬜ | |
 | P3 | PO form | `/purchase/orders/new` | P1 | ⬜ | | ⬜ | ⬜ | |
@@ -90,6 +90,8 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-07 | **Stock changes after `Sotck_req.md`**: Reserved and Available columns (scheduled work orders reserve materials, draft delivery notes reserve products; the availability checks use Available), opening quantities through an adjustment with the reason Opening balance, Movement No. (MV-2026-0001) and From → To in the movements list, movement types named as in the requirement, and the reorder point of a material is now optional (status "No reorder point"). 7 new tests. |
+| 2026-10-07 | **Stock module built with mock data (T1–T3 + links)** (spec f8-stock): the stock is a ledger of movements (balance = their sum). Work Order **Start** takes the BOM materials out of the raw material warehouse (refused with a list of what is short), revert / cancel give them back; a transferred **FG transfer** brings products into the warehouse; a confirmed **delivery note** takes them out; the material master data, the Sale / Factory availability checks and the Dashboard stock alerts read the same balances. New: Stock overview with an item sheet, Stock movements, Stock adjustments with approval, a Purchase Manager demo user (hana@kanou.test), a Materials issued card on the Work Order sheet. API: api/stock.md; 32 new tests. |
 | 2026-10-07 | **Work Orders back to the plain sheet**: the detail opens as the side sheet again (not the dialog); the Kanban, Timeline and Dialog files and the spec f8 were removed. Kept: the status stepper + table list, Waiting for a work order as a table, the eye button for the steppers, and in the sheet one vertical step timeline (Progress + Production tracking together). |
 | 2026-10-07 | **Work Orders as a kanban board**: one column per status (Draft, Scheduled, In process, Finished, Cancelled), compact cards with a coloured edge, steps-done bar and a late label; a card can be **dragged** to another column to Schedule, Start, Finish or go back to draft (a confirmation dialog like the sheet buttons; a move that is not allowed says why). The view switch is Kanban | Cards | Table (remembered); the kanban loads up to 100 work orders. The status stepper above the list was removed for Work Orders (the status filter stays in Filters). In the Kanban view "Waiting for a work order" is the **first column** (a card per sales order line with what is left and a Create button; dropping it on Draft makes the work order); in the Cards and Table views it is still a panel above the list. The cards are lighter (product, number, date or days late, a thin bar) and the columns wider; Finished and Cancelled show the newest 5 / 3 and a Show all button. |
 | 2026-10-07 | **Work Order opens as a dialog** (Trello-card style, `DocumentDialog` + `ui/dialog`): header with status, number, product line, Delete, Close, the status buttons and Save; body split 60 / 40: left = Work order, Progress, Production tracking (and Material check on a draft); right = Status history, Linked documents. Each column scrolls on its own; narrow windows stack them. `WorkOrderSheet.jsx` was renamed `WorkOrderDialog.jsx`. |

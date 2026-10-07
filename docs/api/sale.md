@@ -34,6 +34,8 @@ Master data **reads** (`GET /master/customers`, `/products`, `/employees`, `/war
 | GET | `/sale/price-lookup?customerId=&productIds=1,2&date=YYYY-MM-DD` | `{ "1": 66000, "2": 41000 }` default unit prices |
 | POST | `/sale/availability` | body `{ lines: [{ productId, qty }] }` → `{ canProduce, checkedAt, materials[], shortages[], noBom[] }` |
 
+> **Stock:** `POST /sale/deliveries/:id/confirm` books the delivered products out of the delivery note's warehouse and can answer `409 NOT_ENOUGH_STOCK`; `revert` books them back. The `onHand` used below is the stock balance ([stock.md](stock.md)).
+
 **Availability** (aditional_req §1): for every line explode the BOM (`qty per unit × line qty`), **sum per material over all lines**, compare with the material's `onHand` (raw material warehouse). `materials[]`: `{ materialId, materialCode, materialName, uom, required, available, missing }` (`missing` = 0 when enough); `shortages` = the rows with `missing > 0`; `noBom` = products without a BOM (cannot be checked). `canProduce = shortages empty and noBom empty`. Stock already needed by other orders is **not** subtracted (Q7) and the result **never blocks** anything (Q8).
 
 ## List responses (all four lists)

@@ -46,12 +46,15 @@ export const STATUS_COLORS = {
   finished: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
   transferred: { badge: "border-teal-300 bg-teal-50 text-teal-800", ring: "border-teal-500 text-teal-700", hover: "group-hover:bg-teal-50", solid: "border-teal-600 bg-teal-600", soft: "bg-teal-50 text-teal-700", title: "text-teal-700" },
   cancelled: { badge: "border-red-300 bg-red-50 text-red-800", ring: "border-red-500 text-red-700", hover: "group-hover:bg-red-50", solid: "border-red-600 bg-red-600", soft: "bg-red-50 text-red-700", title: "text-red-700" },
+  pending: { badge: "border-amber-300 bg-amber-50 text-amber-800", ring: "border-amber-500 text-amber-700", hover: "group-hover:bg-amber-50", solid: "border-amber-600 bg-amber-600", soft: "bg-amber-50 text-amber-700", title: "text-amber-700" },
+  approved: { badge: "border-emerald-300 bg-emerald-50 text-emerald-800", ring: "border-emerald-500 text-emerald-700", hover: "group-hover:bg-emerald-50", solid: "border-emerald-600 bg-emerald-600", soft: "bg-emerald-50 text-emerald-700", title: "text-emerald-700" },
 };
 
 /** Tone of a history entry marker. */
 export const HISTORY_TONES = {
   accept: "success",
   approve: "success",
+  "adjustment-approve": "success",
   confirm: "success",
   delivered: "success",
   close: "success",

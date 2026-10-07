@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ActionDialog } from "@/components/documents/ActionDialog";
 import { DoneDialog, StartDialog } from "@/components/factory/StepDialogs";
 import { workOrderService } from "@/services/factory.service";
+import { notEnoughStockText } from "@/utils/stockErrors";
 
 /**
  * The dialogs of Start / Done / Reopen a step, used by the sheet of a Work Order and by the shop-floor board.
@@ -22,7 +23,7 @@ export function useStepDialogs({ onChanged }) {
       onChanged?.(saved);
       return saved;
     } catch (error) {
-      toast.error(t(`errors.${error?.code}`, { defaultValue: t("errors.UNKNOWN") }));
+      toast.error(notEnoughStockText(error) ?? t(`errors.${error?.code}`, { defaultValue: t("errors.UNKNOWN") }));
       throw error;
     }
   };

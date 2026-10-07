@@ -15,7 +15,9 @@
     "scheduled": "Scheduled",
     "in_process": "In process",
     "finished": "Finished",
-    "transferred": "Transferred"
+    "transferred": "Transferred",
+    "pending": "Pending approval",
+    "approved": "Approved"
   },
   "columns": {
     "number": "No.",
@@ -161,7 +163,9 @@
     "step-start": "Step started",
     "step-done": "Step done",
     "step-reopen": "Step reopened",
-    "transfer": "Transferred to the warehouse"
+    "transfer": "Transferred to the warehouse",
+    "request": "Approval requested",
+    "adjustment-approve": "Approved"
   },
   "links": {
     "quotation": "Quotation",
@@ -171,7 +175,8 @@
     "workOrder": "Work order",
     "invoice": "Invoice",
     "notRecorded": "Not recorded here",
-    "transfer": "Finished goods transfer"
+    "transfer": "Finished goods transfer",
+    "movement": "Stock movement"
   },
   "validation": {
     "required": "This field is required.",
@@ -370,7 +375,9 @@
       "workOrders_one": "{{count}} work order",
       "workOrders_other": "{{count}} work orders",
       "transfers_one": "{{count}} transfer",
-      "transfers_other": "{{count}} transfers"
+      "transfers_other": "{{count}} transfers",
+      "adjustments_one": "{{count}} adjustment",
+      "adjustments_other": "{{count}} adjustments"
     }
   },
   "print": {

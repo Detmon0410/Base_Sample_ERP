@@ -23,6 +23,7 @@ const FIELD_ERROR_KEYS = {
   DUPLICATE: "sale:validation.duplicate",
   PO_NUMBER_EXISTS: "sale:validation.poNumberExists",
   TOO_MANY: "factory:validation.tooMany",
+  HAS_MOVEMENTS: "stock:validation.openingNotAllowed",
 };
 
 /**

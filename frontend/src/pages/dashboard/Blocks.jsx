@@ -83,6 +83,8 @@ export function StockAlertsBlock({ items, hasError, loading, onRetry }) {
   const { user } = useAuth();
   const status = blockStatus({ loading, hasError, items });
   const canOpenBoard = canUse(user, { type: "departments", departments: ["Purchase"] });
+  const canOpenStock = canUse(user, { type: "departments", departments: ["Factory", "Purchase"] });
+  const viewAllPath = canOpenBoard ? "/purchase/stock-status" : canOpenStock ? "/stock" : null;
 
   return (
     <BlockCard
@@ -91,9 +93,9 @@ export function StockAlertsBlock({ items, hasError, loading, onRetry }) {
       emptyText={t("stockAlerts.empty")}
       onRetry={onRetry}
       action={
-        canOpenBoard ? (
+        viewAllPath ? (
           <Button asChild variant="link" size="sm" className="px-0">
-            <Link to="/purchase/stock-status">
+            <Link to={viewAllPath}>
               {t("stockAlerts.viewAll")} <ArrowRightIcon />
             </Link>
           </Button>
@@ -112,7 +114,13 @@ export function StockAlertsBlock({ items, hasError, loading, onRetry }) {
           {items?.map((item) => (
             <TableRow key={item.materialId}>
               <TableCell className="font-semibold">
-                {item.name}
+                {canOpenStock ? (
+                  <Link to={`/stock/materials/${item.materialId}`} className="text-primary underline-offset-2 hover:underline">
+                    {item.name}
+                  </Link>
+                ) : (
+                  item.name
+                )}
                 <span className="block text-sm font-normal text-muted-foreground">{item.code}</span>
               </TableCell>
               <TableCell className="text-right">

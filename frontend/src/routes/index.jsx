@@ -29,6 +29,9 @@ const SuppliersPage = page(() => import("@/pages/master/suppliers/SuppliersPage"
 const WorkOrdersPage = page(() => import("@/pages/factory/work-orders/WorkOrdersPage"), "WorkOrdersPage");
 const TrackingPage = page(() => import("@/pages/factory/tracking/TrackingPage"), "TrackingPage");
 const TransfersPage = page(() => import("@/pages/factory/transfers/TransfersPage"), "TransfersPage");
+const StockOverviewPage = page(() => import("@/pages/stock/overview/StockOverviewPage"), "StockOverviewPage");
+const StockMovementsPage = page(() => import("@/pages/stock/movements/StockMovementsPage"), "StockMovementsPage");
+const AdjustmentsPage = page(() => import("@/pages/stock/adjustments/AdjustmentsPage"), "AdjustmentsPage");
 const SimpleMaster = () => import("@/pages/master/simple/SimpleMasterPage");
 const EmployeesPage = page(SimpleMaster, "EmployeesPage");
 const MachinesPage = page(SimpleMaster, "MachinesPage");
@@ -55,6 +58,9 @@ const IMPLEMENTED_PAGES = {
   workOrders: WorkOrdersPage,
   productionTracking: TrackingPage,
   fgTransfer: TransfersPage,
+  stockOverview: StockOverviewPage,
+  stockMovements: StockMovementsPage,
+  stockAdjustment: AdjustmentsPage,
 };
 
 /**

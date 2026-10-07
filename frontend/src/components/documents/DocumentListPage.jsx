@@ -38,6 +38,7 @@ function readView(key) {
  *   extraFilters   more filters of the Filters menu: [{ key, label, kind, options }] (their keys go in extraKeys)
  *   extraKeys      query keys of those filters, kept in the URL and sent to the service
  *   dateLabel      name of the date range filter (default "Date")
+ *   dateFilter     false when the list has no date to filter by (the stock balances)
  *   board          { viewKey, render(list) }: the list can also be shown as cards (a Cards | Table switch appears,
  *                  the choice is remembered); render returns the cards of the page
  *   beforePanel    something shown between the stepper and the list (e.g. "Waiting for a work order")
@@ -60,6 +61,7 @@ export function DocumentListPage({
   extraFilters = NO_FILTERS,
   extraKeys = NO_FILTERS,
   dateLabel,
+  dateFilter = true,
   board,
   beforePanel,
   statusNamespace = "sale",
@@ -97,9 +99,9 @@ export function DocumentListPage({
       ...(statuses ? [{ key: "status", label: t("sale:filters.status"), kind: "options", emptyValue: "all", options: statuses.map((status) => ({ value: status, label: t(`${statusNamespace}:status.${status}`) })) }] : []),
       ...(customerFilter ? [{ key: "customer", label: t("sale:filters.customer"), kind: "search", options: customers.map((customer) => ({ value: String(customer.id), label: `${customer.code} · ${customer.name}` })) }] : []),
       ...extraFilters,
-      { key: "date", label: dateLabel ?? t("sale:filters.date"), kind: "dateRange", fromKey: "from", toKey: "to" },
+      ...(dateFilter ? [{ key: "date", label: dateLabel ?? t("sale:filters.date"), kind: "dateRange", fromKey: "from", toKey: "to" }] : []),
     ],
-    [statuses, customers, customerFilter, extraFilters, dateLabel, statusNamespace, t],
+    [statuses, customers, customerFilter, extraFilters, dateLabel, dateFilter, statusNamespace, t],
   );
   const filtered = query.q !== "" || query.status !== "all" || queryKeys.some((key) => query[key] !== "");
   const clear = () => {

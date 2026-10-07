@@ -15,7 +15,9 @@
     "scheduled": "",
     "in_process": "",
     "finished": "",
-    "transferred": ""
+    "transferred": "",
+    "pending": "",
+    "approved": ""
   },
   "columns": {
     "number": "",
@@ -161,7 +163,9 @@
     "step-start": "",
     "step-done": "",
     "step-reopen": "",
-    "transfer": ""
+    "transfer": "",
+    "request": "",
+    "adjustment-approve": ""
   },
   "links": {
     "quotation": "",
@@ -171,7 +175,8 @@
     "workOrder": "",
     "invoice": "",
     "notRecorded": "",
-    "transfer": ""
+    "transfer": "",
+    "movement": ""
   },
   "validation": {
     "required": "",
@@ -370,7 +375,9 @@
       "workOrders_one": "",
       "workOrders_other": "",
       "transfers_one": "",
-      "transfers_other": ""
+      "transfers_other": "",
+      "adjustments_one": "",
+      "adjustments_other": ""
     }
   },
   "print": {

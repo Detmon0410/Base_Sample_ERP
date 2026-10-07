@@ -1,0 +1,225 @@
+{
+  "status": {
+    "shortage": "",
+    "near_shortage": "",
+    "normal": "",
+    "in_stock": "",
+    "out_of_stock": "",
+    "not_set": ""
+  },
+  "overview": {
+    "tabs": {
+      "label": "",
+      "material": "",
+      "product": ""
+    },
+    "search": "",
+    "emptyMaterial": "",
+    "emptyProduct": "",
+    "noResult": "",
+    "filters": {
+      "warehouse": ""
+    },
+    "columns": {
+      "code": "",
+      "name": "",
+      "warehouse": "",
+      "onHand": "",
+      "reorderPoint": "",
+      "status": "",
+      "reserved": "",
+      "available": ""
+    },
+    "reservedHint": ""
+  },
+  "item": {
+    "materialTitle": "",
+    "productTitle": "",
+    "notFound": "",
+    "loadError": "",
+    "backToList": "",
+    "cards": {
+      "summary": "",
+      "warehouses": "",
+      "movements": "",
+      "usedIn": ""
+    },
+    "fields": {
+      "onHand": "",
+      "reorderPoint": "",
+      "reorderQty": "",
+      "status": "",
+      "category": "",
+      "reserved": "",
+      "available": ""
+    },
+    "noMovements": "",
+    "usedInHint": "",
+    "perUnit": "",
+    "allMovements": "",
+    "newAdjustment": "",
+    "editMaster": "",
+    "setOpening": "",
+    "noStockYet": ""
+  },
+  "movements": {
+    "search": "",
+    "empty": "",
+    "noResult": "",
+    "dateLabel": "",
+    "columns": {
+      "at": "",
+      "type": "",
+      "item": "",
+      "warehouse": "",
+      "qty": "",
+      "balance": "",
+      "document": "",
+      "by": "",
+      "number": "",
+      "fromTo": ""
+    },
+    "filters": {
+      "type": "",
+      "kind": "",
+      "warehouse": ""
+    },
+    "kinds": {
+      "material": "",
+      "product": ""
+    },
+    "types": {
+      "opening": "",
+      "receipt": "",
+      "consume": "",
+      "produce": "",
+      "deliver": "",
+      "adjust": ""
+    },
+    "noDocument": ""
+  },
+  "adjustments": {
+    "singular": "",
+    "new": "",
+    "edit": "",
+    "view": "",
+    "search": "",
+    "empty": "",
+    "noResult": "",
+    "dateLabel": "",
+    "columns": {
+      "number": "",
+      "date": "",
+      "item": "",
+      "warehouse": "",
+      "counted": "",
+      "difference": "",
+      "status": ""
+    },
+    "filters": {
+      "kind": "",
+      "warehouse": ""
+    }
+  },
+  "cards": {
+    "adjustment": ""
+  },
+  "fields": {
+    "itemType": "",
+    "item": "",
+    "chooseItem": "",
+    "warehouse": "",
+    "chooseWarehouse": "",
+    "onHandNow": "",
+    "onHandAtApproval": "",
+    "counted": "",
+    "difference": "",
+    "reason": "",
+    "chooseReason": "",
+    "date": "",
+    "remarks": "",
+    "remarksOther": "",
+    "createdBy": "",
+    "changedWarning": "",
+    "differenceHint": "",
+    "openingHint": ""
+  },
+  "kinds": {
+    "material": "",
+    "product": ""
+  },
+  "reasons": {
+    "recount": "",
+    "damaged": "",
+    "lost": "",
+    "found": "",
+    "other": "",
+    "opening": ""
+  },
+  "validation": {
+    "required": "",
+    "qty": "",
+    "wholeQty": "",
+    "noteRequired": "",
+    "maxLength": "",
+    "openingNotAllowed": ""
+  },
+  "actions": {
+    "saveFirst": "",
+    "request": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "approve": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "reject": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "back-to-draft": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "cancel": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    }
+  },
+  "errors": {
+    "UNKNOWN": "",
+    "FORBIDDEN": "",
+    "NOT_FOUND": "",
+    "INVALID_STATUS": "",
+    "VALIDATION_ERROR": "",
+    "NOT_ENOUGH_STOCK": "",
+    "HAS_MOVEMENTS": ""
+  },
+  "short": {
+    "title": "",
+    "item": ""
+  },
+  "issued": {
+    "title": "",
+    "hint": "",
+    "material": "",
+    "qty": "",
+    "warehouse": ""
+  }
+}

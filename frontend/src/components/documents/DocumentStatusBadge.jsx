@@ -1,6 +1,8 @@
 import {
   BanIcon,
   CalendarCheckIcon,
+  CircleCheckBigIcon,
+  HourglassIcon,
   CircleCheckIcon,
   ClockIcon,
   CogIcon,
@@ -33,6 +35,8 @@ const ICONS = {
   in_process: CogIcon,
   finished: CircleCheckIcon,
   transferred: WarehouseIcon,
+  pending: HourglassIcon,
+  approved: CircleCheckBigIcon,
 };
 
 /** Status of a Sale document as text + icon. `waiting` adds the "waiting for approval" state of a draft order. */

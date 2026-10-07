@@ -18,6 +18,7 @@ import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge"
 import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { StepTimeline } from "@/components/factory/StepTimeline";
+import { IssuedMaterialsCard } from "@/components/stock/IssuedMaterialsCard";
 import { useStepDialogs } from "@/components/factory/useStepDialogs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRecordForm } from "@/hooks/useRecordForm";
 import { checkFactoryAvailability, listWaitingOrders, workOrderService } from "@/services/factory.service";
 import { formatDate, formatNumber } from "@/utils/format";
+import { notEnoughStockText } from "@/utils/stockErrors";
 
 import { emptyWorkOrder, toFormValues, toPayload, workOrderSchema } from "./workOrderSchema";
 
@@ -85,7 +87,7 @@ export function WorkOrderSheet() {
   const picked = lineOptions.find((option) => option.id === lineValue);
 
   const stepDialogs = useStepDialogs({ onChanged: (saved) => page.applyRecord(saved) });
-  const errorText = (error) => t(`factory:errors.${error?.code}`, { defaultValue: t("factory:errors.UNKNOWN") });
+  const errorText = (error) => notEnoughStockText(error) ?? t(`factory:errors.${error?.code}`, { defaultValue: t("factory:errors.UNKNOWN") });
 
   const run = async (action, note) => {
     try {
@@ -213,8 +215,10 @@ export function WorkOrderSheet() {
           </SheetSection>
         ) : null}
 
+        {!isNew && record ? <IssuedMaterialsCard workOrder={record} /> : null}
+
         {/* outside the form: checking the materials never submits it */}
-        {lines.length > 0 ? <AvailabilityCard lines={lines} check={checkFactoryAvailability} /> : null}
+        {lines.length > 0 ? <AvailabilityCard lines={lines} check={(checked) => checkFactoryAvailability(checked, record?.id)} /> : null}
 
         {!isNew && record ? (
           <>

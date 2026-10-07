@@ -25,6 +25,7 @@ import { useRecordForm } from "@/hooks/useRecordForm";
 import { transferService, workOrderService } from "@/services/factory.service";
 import { simpleMasterServices } from "@/services/simpleMaster.service";
 import { formatDate, formatNumber } from "@/utils/format";
+import { notEnoughStockText } from "@/utils/stockErrors";
 
 import { emptyTransfer, toFormValues, transferSchema } from "./transferSchema";
 
@@ -82,7 +83,7 @@ export function TransferSheet() {
       page.applyRecord(saved);
       toast.success(t(`factory:actions.${action.key}.done`));
     } catch (error) {
-      toast.error(t(`factory:errors.${error?.code}`, { defaultValue: t("factory:errors.UNKNOWN") }));
+      toast.error(notEnoughStockText(error) ?? t(`factory:errors.${error?.code}`, { defaultValue: t("factory:errors.UNKNOWN") }));
       throw error;
     }
   };

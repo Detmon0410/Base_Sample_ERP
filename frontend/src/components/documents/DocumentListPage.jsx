@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { DataTable } from "@/components/common/DataTable";
@@ -18,15 +18,11 @@ import { customerService } from "@/services/customer.service";
 const SEARCH_DELAY_MS = 300;
 const NO_FILTERS = [];
 
-/** The views of a board: its own and, unless `noTable`, the table. */
-const viewsOf = (board) => (board.noTable ? board.views : [...board.views, "table"]);
-
-function readView(board) {
+function readView(key) {
   try {
-    const saved = window.localStorage.getItem(board.viewKey);
-    return viewsOf(board).includes(saved) ? saved : board.views[0];
+    return window.localStorage.getItem(key) === "table" ? "table" : "cards";
   } catch {
-    return board.views[0];
+    return "cards";
   }
 }
 
@@ -42,10 +38,9 @@ function readView(board) {
  *   extraFilters   more filters of the Filters menu: [{ key, label, kind, options }] (their keys go in extraKeys)
  *   extraKeys      query keys of those filters, kept in the URL and sent to the service
  *   dateLabel      name of the date range filter (default "Date")
- *   board          { viewKey, views, render(list, context, view) }: the list can also be shown as a board (a switch
- *                  appears, the choice is remembered). `views` are the board views, e.g. ["kanban", "cards"]; the
- *                  table is always offered. A "kanban" view loads up to 100 rows and has no paging.
- *   beforePanel    something shown between the stepper and the list; a function gets the view ("kanban", "cards", "table")
+ *   board          { viewKey, render(list) }: the list can also be shown as cards (a Cards | Table switch appears,
+ *                  the choice is remembered); render returns the cards of the page
+ *   beforePanel    something shown between the stepper and the list (e.g. "Waiting for a work order")
  */
 export function DocumentListPage({
   title,
@@ -72,23 +67,9 @@ export function DocumentListPage({
   const { t } = useTranslation(["sale", "master", "common"]);
   const queryKeys = useMemo(() => [...(customerFilter ? ["customer"] : []), ...extraKeys, "from", "to"], [customerFilter, extraKeys]);
   const { query, setQuery } = useListQuery({ defaultSort, extra: queryKeys });
-  const [view, setView] = useState(() => (board ? readView(board) : "table"));
-  const kanban = board && (board.fullViews ?? ["kanban"]).includes(view);
-  const fill = useRef(null);
-  // the kanban uses the whole window: from its top edge to the bottom of the screen, and the columns scroll inside
-  useLayoutEffect(() => {
-    const node = fill.current;
-    if (!kanban || !node) return undefined;
-    const size = () => {
-      node.style.height = `${Math.max(window.innerHeight - node.getBoundingClientRect().top, 320)}px`;
-    };
-    size();
-    window.addEventListener("resize", size);
-    return () => {
-      window.removeEventListener("resize", size);
-      node.style.height = "";
-    };
-  }, [kanban]);
+  const list = useResourceList(service, query);
+  const { options: customers } = useOptions(customerService, { enabled: customerFilter });
+  const [view, setView] = useState(() => (board ? readView(board.viewKey) : "table"));
   const changeView = (next) => {
     setView(next);
     try {
@@ -98,8 +79,6 @@ export function DocumentListPage({
     }
   };
 
-  const list = useResourceList(service, kanban ? { ...query, size: 100, page: 1 } : query);
-  const { options: customers } = useOptions(customerService, { enabled: customerFilter });
   // Local text so typing is instant; the URL (and the request) follows 300 ms after the last key.
   const [text, setText] = useState(query.q);
   const [lastUrlText, setLastUrlText] = useState(query.q);
@@ -145,10 +124,9 @@ export function DocumentListPage({
 
       {stepper ? <StatusStepper unit={stepperUnit} statuses={statuses} counts={list.meta?.statusCounts} value={query.status} onSelect={(status) => setQuery({ status })} /> : null}
 
-      {typeof beforePanel === "function" ? beforePanel(view) : beforePanel}
+      {beforePanel}
 
-      <div ref={fill} className={kanban ? "-mx-5 -mb-5 flex flex-col" : `${PANEL_CLASS} p-5`}>
-        <div className={kanban ? "px-3" : undefined}>
+      <div className={`${PANEL_CLASS} p-5`}>
         <ListToolbar
           searchValue={text}
           onSearchChange={setText}
@@ -158,12 +136,11 @@ export function DocumentListPage({
           onChange={setQuery}
           newTo={newTo}
           newLabel={newLabel}
-          extra={board ? <ViewSwitch views={viewsOf(board)} value={view} onChange={changeView} labels={{ kanban: t("common:views.kanban"), timeline: t("common:views.timeline"), cards: t("common:views.cards"), table: t("common:views.table"), group: t("common:views.label") }} /> : null}
+          extra={board ? <ViewSwitch value={view} onChange={changeView} labels={{ cards: t("common:views.cards"), table: t("common:views.table"), group: t("common:views.label") }} /> : null}
         />
-        </div>
 
-        {board && view !== "table" ? (
-          board.render(list, { emptyContent }, view)
+        {board && view === "cards" ? (
+          board.render(list, { emptyContent })
         ) : (
           <DataTable
             ariaLabel={title}
@@ -181,7 +158,7 @@ export function DocumentListPage({
           />
         )}
 
-        {list.meta && !kanban ? <Pagination page={list.meta.page} pageSize={list.meta.pageSize ?? PAGE_SIZE} total={list.meta.total} onChange={(page) => setQuery({ page })} onPageSizeChange={(size) => setQuery({ size })} /> : null}
+        {list.meta ? <Pagination page={list.meta.page} pageSize={list.meta.pageSize ?? PAGE_SIZE} total={list.meta.total} onChange={(page) => setQuery({ page })} onPageSizeChange={(size) => setQuery({ size })} /> : null}
       </div>
     </>
   );

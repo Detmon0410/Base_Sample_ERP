@@ -229,26 +229,5 @@
       "confirm": "",
       "done": ""
     }
-  },
-  "kanban": {
-    "hint": "",
-    "emptyColumn": "",
-    "notAllowed": "",
-    "notAllowedRole": "",
-    "needDates": "",
-    "showAll": "",
-    "showFewer": "",
-    "dropWaiting": ""
-  },
-  "timeline": {
-    "scale": "",
-    "week": "",
-    "month": "",
-    "today": "",
-    "previous": "",
-    "next": "",
-    "showClosed": "",
-    "workOrder": "",
-    "noPlan": ""
   }
 }

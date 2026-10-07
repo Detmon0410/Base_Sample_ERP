@@ -79,8 +79,6 @@
   "views": {
     "cards": "",
     "table": "",
-    "label": "",
-    "kanban": "",
-    "timeline": ""
+    "label": ""
   }
 }

@@ -229,26 +229,5 @@
       "confirm": "Transfer",
       "done": "Finished goods transferred"
     }
-  },
-  "kanban": {
-    "hint": "Drag a card to another column to schedule, start or finish it. You can also open a card and use the buttons.",
-    "emptyColumn": "No work orders",
-    "notAllowed": "A work order cannot go from {{from}} to {{to}} by dragging.",
-    "notAllowedRole": "You may not move a work order from {{from}} to {{to}}.",
-    "needDates": "Open the work order and set both plan dates before scheduling it.",
-    "showAll": "Show all {{count}}",
-    "showFewer": "Show fewer",
-    "dropWaiting": "Drop a waiting order on Draft to make a work order for it."
-  },
-  "timeline": {
-    "scale": "Time scale",
-    "week": "Week",
-    "month": "Month",
-    "today": "Today",
-    "previous": "Earlier",
-    "next": "Later",
-    "showClosed": "Show finished and cancelled",
-    "workOrder": "Work order",
-    "noPlan": "No plan dates"
   }
 }

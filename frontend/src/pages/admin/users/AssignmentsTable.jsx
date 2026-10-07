@@ -29,7 +29,6 @@ export function AssignmentsTable({ form, disabled = false }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="m-0 text-sm text-muted-foreground">{t("form.assignments.hint")}</p>
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className="text-sm font-semibold text-muted-foreground">

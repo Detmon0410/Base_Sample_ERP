@@ -8,6 +8,7 @@ import { PasswordField } from "@/components/admin/PasswordField";
 import { FormField } from "@/components/common/FormField";
 import { FormSection } from "@/components/common/FormSection";
 import { RecordSheet, SheetFormBody } from "@/components/common/RecordSheet";
+import { InfoTip } from "@/components/common/InfoTip";
 import { SheetSection } from "@/components/common/SheetSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,13 +53,7 @@ export function UserFormPage() {
     >
       <form id="user-form" noValidate onSubmit={page.onSubmit} className="flex min-h-0 flex-1 flex-col">
         <SheetFormBody>
-          {isSelf ? (
-            <p role="note" className="m-0 rounded-xl bg-muted px-5 py-3 text-sm">
-              {t("users:form.self")}
-            </p>
-          ) : null}
-
-          <FormSection title={t("users:form.sections.account")} icon={IdCardIcon}>
+          <FormSection title={t("users:form.sections.account")} icon={IdCardIcon} aside={isSelf ? <InfoTip label={t("users:form.selfLabel")}>{t("users:form.self")}</InfoTip> : undefined}>
             <FormField id="user-name" label={t("users:form.fields.name")} required error={message(errors.name)}>
               <Input id="user-name" autoFocus={isNew} placeholder={t("users:form.placeholders.name")} {...fieldProps("name")} {...form.register("name")} />
             </FormField>
@@ -68,8 +63,8 @@ export function UserFormPage() {
           </FormSection>
 
           {isNew ? (
-            <FormSection title={t("users:form.sections.password")} icon={KeyRoundIcon} columns={1}>
-              <FormField id="user-password" label={t("users:form.fields.password")} required error={message(errors.password)} hint={t("users:form.password.hint")}>
+            <FormSection title={t("users:form.sections.password")} icon={KeyRoundIcon} columns={1} aside={<InfoTip label={t("users:form.password.hintLabel")}>{t("users:form.password.hint")}</InfoTip>}>
+              <FormField id="user-password" label={t("users:form.fields.password")} required error={message(errors.password)}>
                 <Controller
                   control={form.control}
                   name="password"
@@ -79,12 +74,25 @@ export function UserFormPage() {
             </FormSection>
           ) : null}
 
-          <SheetSection title={t("users:form.sections.assignments")} icon={UsersRoundIcon}>
+          <SheetSection title={t("users:form.sections.assignments")} icon={UsersRoundIcon} aside={<InfoTip label={t("users:form.assignments.hintLabel")}>{t("users:form.assignments.hint")}</InfoTip>}>
             <AssignmentsTable form={form} disabled={isSelf} />
           </SheetSection>
 
           {!isNew ? (
-            <SheetSection title={t("users:form.sections.info")} icon={ClockIcon}>
+            <SheetSection
+              title={t("users:form.sections.info")}
+              icon={ClockIcon}
+              aside={
+                <span className="flex items-center gap-2">
+                  {locked && !isSelf ? <InfoTip label={t("users:form.inUseLabel")}>{t("users:form.inUse")}</InfoTip> : null}
+                  {!isSelf ? (
+                    <Button type="button" variant="outline" size="sm" className="h-9" onClick={() => setResetOpen(true)}>
+                      <KeyRoundIcon aria-hidden="true" /> {t("users:form.resetPassword.button")}
+                    </Button>
+                  ) : null}
+                </span>
+              }
+            >
               <dl className="grid gap-4 @lg:grid-cols-3">
                 <div>
                   <dt className="text-sm font-semibold text-muted-foreground">{t("users:form.info.lastLoginAt")}</dt>
@@ -99,14 +107,6 @@ export function UserFormPage() {
                   <dd>{formatDateTime(record.updatedAt, i18n.language)}</dd>
                 </div>
               </dl>
-              {locked && !isSelf ? <p className="m-0 mt-4 text-sm text-muted-foreground">{t("users:form.inUse")}</p> : null}
-              {!isSelf ? (
-                <div className="mt-4">
-                  <Button type="button" variant="outline" onClick={() => setResetOpen(true)}>
-                    <KeyRoundIcon aria-hidden="true" /> {t("users:form.resetPassword.button")}
-                  </Button>
-                </div>
-              ) : null}
             </SheetSection>
           ) : null}
         </SheetFormBody>

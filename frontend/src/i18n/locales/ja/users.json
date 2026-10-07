@@ -63,7 +63,8 @@
       "generate": "",
       "copy": "",
       "copied": "",
-      "generatedNote": ""
+      "generatedNote": "",
+      "hintLabel": ""
     },
     "assignments": {
       "hint": "",
@@ -74,7 +75,8 @@
       "adminRow": "",
       "pickDepartment": "",
       "pickRole": "",
-      "none": ""
+      "none": "",
+      "hintLabel": ""
     },
     "resetPassword": {
       "button": "",
@@ -89,7 +91,9 @@
       "never": ""
     },
     "self": "",
-    "inUse": ""
+    "inUse": "",
+    "selfLabel": "",
+    "inUseLabel": ""
   },
   "validation": {
     "required": "",

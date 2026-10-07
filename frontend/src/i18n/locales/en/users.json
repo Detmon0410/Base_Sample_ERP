@@ -63,7 +63,8 @@
       "generate": "Generate",
       "copy": "Copy",
       "copied": "Copied",
-      "generatedNote": "Write it down or copy it now. It is not shown again."
+      "generatedNote": "Write it down or copy it now. It is not shown again.",
+      "hintLabel": "Password rules"
     },
     "assignments": {
       "hint": "A user can work in several departments, with a role in each. The Admin role stands alone: it covers every department and Users.",
@@ -74,7 +75,8 @@
       "adminRow": "All departments",
       "pickDepartment": "Choose a department",
       "pickRole": "Choose a role",
-      "none": "Add at least one department and role."
+      "none": "Add at least one department and role.",
+      "hintLabel": "About departments and roles"
     },
     "resetPassword": {
       "button": "Reset password",
@@ -89,7 +91,9 @@
       "never": "Never signed in"
     },
     "self": "This is your own account. You cannot deactivate, delete, reset the password of or change the roles of your own account.",
-    "inUse": "This user has signed in or worked on documents, so the account cannot be deleted. Deactivate it instead."
+    "inUse": "This user has signed in or worked on documents, so the account cannot be deleted. Deactivate it instead.",
+    "selfLabel": "About your own account",
+    "inUseLabel": "Why this user cannot be deleted"
   },
   "validation": {
     "required": "This field is required.",

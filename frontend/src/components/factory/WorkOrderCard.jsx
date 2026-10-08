@@ -28,7 +28,7 @@ export function WorkOrderCard({ wo, to }) {
       to={to}
       className={cn(
         CARD_CLASS,
-        "flex h-full flex-col gap-3 p-4 outline-none transition-shadow hover:shadow-[0_2px_4px_rgba(15,23,42,0.08),0_10px_20px_-4px_rgba(15,23,42,0.2)] focus-visible:ring-2 focus-visible:ring-ring",
+        "flex h-full flex-col gap-3 p-4 outline-none focus-visible:ring-2 focus-visible:ring-ring",
         wo.status === "cancelled" && "opacity-70",
       )}
     >

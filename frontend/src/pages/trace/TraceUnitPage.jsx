@@ -18,9 +18,9 @@ const MARKERS = {
   materials: { icon: PackageIcon, className: "bg-sky-600" },
   step: { icon: CogIcon, className: "bg-amber-600" },
   finished: { icon: FlagIcon, className: "bg-emerald-600" },
-  transferred: { icon: WarehouseIcon, className: "bg-teal-600" },
+  transferred: { icon: WarehouseIcon, className: "bg-emerald-600" },
   delivered: { icon: TruckIcon, className: "bg-emerald-700" },
-  invoiced: { icon: FileTextIcon, className: "bg-violet-600" },
+  invoiced: { icon: FileTextIcon, className: "bg-slate-600" },
   void: { icon: BanIcon, className: "bg-red-600" },
 };
 

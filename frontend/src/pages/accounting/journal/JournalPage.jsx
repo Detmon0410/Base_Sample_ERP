@@ -39,7 +39,7 @@ function LedgerPanel({ account }) {
   if (!account || !summary) return null;
   const money = (value) => formatCurrency(value, i18n.language);
   return (
-    <section aria-label={t("journal.ledger")} className="mb-4 rounded-xl bg-card p-4 shadow-[0_0_8px_rgba(15,23,42,0.12)]">
+    <section aria-label={t("journal.ledger")} className="mb-4 rounded-md border border-slate-300 bg-card p-4">
       <h2 className="text-lg font-bold">
         {summary.code} · {summary.name}
       </h2>

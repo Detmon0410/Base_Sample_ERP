@@ -21,8 +21,8 @@ export function KpiCard({ department, label, value, context, problem = false, to
   const body = (
     <Card
       className={cn(
-        "h-full transition-shadow",
-        canLink && "hover:shadow-md",
+        "h-full",
+        canLink && "hover:bg-muted/50",
         problem && "ring-1 ring-destructive/40",
       )}
     >

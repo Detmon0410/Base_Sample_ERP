@@ -68,7 +68,7 @@ export function LoginPage() {
   const passwordInvalid = Boolean(errors.password) || isCredentialError;
 
   return (
-    <Card className="rounded-2xl border-0 shadow-xl shadow-primary/10 ring-1 ring-border [--card-spacing:--spacing(7)]">
+    <Card className="rounded-md border border-slate-300 shadow-none ring-0 [--card-spacing:--spacing(7)]">
       <CardContent className="flex flex-col gap-5">
         {/* Factory icon is a placeholder for the company logo. */}
         <div className="flex flex-col items-center gap-3 text-center">

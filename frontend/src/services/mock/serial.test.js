@@ -179,3 +179,33 @@ describe("delivery notes with serial numbers", () => {
     expect((await s.serialService.list({ product: 2, status: "in_stock", ...all })).meta.total).toBe(0);
   });
 });
+
+describe("traceability search (R1)", () => {
+  it("finds units by work order, sale order, delivery note and customer", async () => {
+    const s = await start("sale");
+    expect((await s.serialService.list({ q: "SO-2026-0004", ...all })).meta.total).toBe(6);
+    expect((await s.serialService.list({ q: "DN-2026-0002", ...all })).meta.total).toBe(18);
+    expect((await s.serialService.list({ q: "WO-2026-0003", ...all })).meta.total).toBe(30);
+    const customer = (await s.workOrderSerials.list(5)).items[0].customerName;
+    expect((await s.serialService.list({ q: customer.toLowerCase(), ...all })).meta.total).toBeGreaterThanOrEqual(6);
+  });
+
+  it("finds the units that were built with a material lot (forward trace), and tells the lot in the timeline", async () => {
+    const s = await start("sale");
+    const unit = await s.serialService.get((await s.workOrderSerials.list(3)).items[0].sn);
+    const lots = unit.timeline.find((event) => event.type === "materials").materials.flatMap((material) => material.lots.map((lot) => lot.lot));
+    expect(lots.length).toBeGreaterThan(0);
+    const found = await s.serialService.list({ q: lots[0], ...all });
+    expect(found.items.some((row) => row.workOrderNumber === "WO-2026-0003")).toBe(true);
+    expect((await s.serialService.list({ q: "NO-SUCH-LOT", ...all })).meta.total).toBe(0);
+  });
+
+  it("finds a delivered unit by the number of its invoice, and shows the invoice in its timeline", async () => {
+    const s = await start("accounting");
+    const delivered = (await s.workOrderSerials.list(5)).items[0];
+    const unit = await s.serialService.get(delivered.sn);
+    const invoice = unit.timeline.find((event) => event.type === "invoiced");
+    expect(invoice).toBeTruthy();
+    expect((await s.serialService.list({ q: invoice.ref.number, ...all })).items.map((row) => row.sn)).toContain(delivered.sn);
+  });
+});

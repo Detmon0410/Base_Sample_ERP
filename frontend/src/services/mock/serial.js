@@ -81,6 +81,20 @@ export function serialRoutes({ userFromAuthorization, getStore, getFactory, getS
     return { status: "made", wo, note };
   }
 
+  /** The materials issued for a Work Order that has started, each with the lots of the posted goods receipts. */
+  function materialsOf(wo) {
+    if (!wo.log.some((entry) => entry.action === "start")) return [];
+    return store()
+      .bom.filter((item) => item.productId === wo.productId)
+      .map((item) => {
+        const material = store().materials.find((m) => m.id === item.materialId);
+        const lots = (getPurchase()?.receipts ?? [])
+          .filter((gr) => gr.status === "posted")
+          .flatMap((gr) => gr.lines.filter((line) => line.materialId === item.materialId && line.accepted > 0 && line.lot).map((line) => ({ lot: line.lot, receiptNumber: gr.number, receiptId: gr.id, supplier: store().suppliers.find((s) => s.id === getPurchase().orders.find((po) => po.id === gr.poId)?.supplierId)?.name ?? null })));
+        return { code: material?.code, name: material?.name, uom: material?.uom, qtyPerUnit: item.qty, lots };
+      });
+  }
+
   function shape(row) {
     const state = stateOf(row);
     const product = productOf(row.productId);
@@ -102,8 +116,12 @@ export function serialRoutes({ userFromAuthorization, getStore, getFactory, getS
       transferNumber: state.range?.transfer.number ?? null,
       deliveryNote: note ? { id: note.id, number: note.number, status: note.status } : null,
       customerName: customer?.name ?? null,
+      // what the search also reads: the invoices of the delivery note and the lot numbers of the materials of the Work Order
+      invoiceNumbers: note?.status === "delivered" ? (getAccounting()?.invoicesOfDelivery(note.id) ?? []).filter((invoice) => invoice.status !== "cancelled").map((invoice) => invoice.number) : [],
+      lots: state.wo ? [...new Set(materialsOf(state.wo).flatMap((material) => material.lots.map((item) => item.lot)))] : [],
       // in stock and not written on a draft delivery note yet: it can be picked for a delivery
       free: state.status === "in_stock" && !note,
+      deliveryNumberText: note?.number ?? "",
     };
   }
 
@@ -115,18 +133,7 @@ export function serialRoutes({ userFromAuthorization, getStore, getFactory, getS
     if (!wo) return events;
     const log = (action) => wo.log.find((entry) => entry.action === action);
     const started = log("start");
-    if (started) {
-      const materials = store()
-        .bom.filter((item) => item.productId === wo.productId)
-        .map((item) => {
-          const material = store().materials.find((m) => m.id === item.materialId);
-          const lots = (getPurchase()?.receipts ?? [])
-            .filter((gr) => gr.status === "posted")
-            .flatMap((gr) => gr.lines.filter((line) => line.materialId === item.materialId && line.accepted > 0 && line.lot).map((line) => ({ lot: line.lot, receiptNumber: gr.number, receiptId: gr.id, supplier: store().suppliers.find((s) => s.id === getPurchase().orders.find((po) => po.id === gr.poId)?.supplierId)?.name ?? null })));
-          return { code: material?.code, name: material?.name, uom: material?.uom, qtyPerUnit: item.qty, lots };
-        });
-      events.push({ type: "materials", at: started.at, by: started.actor, materials });
-    }
+    if (started) events.push({ type: "materials", at: started.at, by: started.actor, materials: materialsOf(wo) });
     for (const step of wo.steps.filter((item) => item.status === "done")) {
       const machine = store().machines.find((m) => m.id === step.machineId);
       const operator = store().employees.find((e) => e.id === step.operatorId);
@@ -200,7 +207,7 @@ export function serialRoutes({ userFromAuthorization, getStore, getFactory, getS
     "GET /serials": ({ authorization, query }) => {
       reader(authorization);
       const rows = serials.map(shape);
-      return listOf(rows, { query, searchFields: ["sn", "productCode", "productName", "workOrderNumber", "saleOrderNumber", "customerName"], sorts: ["sn", "createdAt", "status", "productCode", "workOrderNumber"], defaultSort: "-sn" });
+      return listOf(rows, { query, searchFields: ["sn", "productCode", "productName", "workOrderNumber", "saleOrderNumber", "customerName", "deliveryNumberText", "invoiceNumbers", "lots"], sorts: ["sn", "createdAt", "status", "productCode", "workOrderNumber"], defaultSort: "-sn" });
     },
     "GET /serials/:sn": ({ authorization, params }) => {
       reader(authorization);

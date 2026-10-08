@@ -5,6 +5,7 @@ import { factoryRoutes } from "./factory.js";
 import { purchaseRoutes } from "./purchase.js";
 import { saleRoutes } from "./sale.js";
 import { accountingRoutes } from "./accounting.js";
+import { serialRoutes } from "./serial.js";
 import { createLedger, stockRoutes } from "./stock.js";
 
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
@@ -22,6 +23,7 @@ const ledger = createLedger(() => masterStore);
 let stockModule = null;
 let purchaseStore = null;
 let accountingStore = null;
+let serialModule = null;
 
 export const mockRoutes = {
   "POST /auth/login": ({ body }) => login(body),
@@ -57,8 +59,17 @@ export const mockRoutes = {
     },
     getWorkOrders: () => factoryStore?.workOrders ?? [],
     getAccounting: () => accountingStore,
+    getSerials: () => serialModule,
     ledger,
   }),
+
+  // Serial numbers of the finished products (docs/specs/f12-requirements-2.md). They read the Work Orders, transfers, delivery
+  // notes and invoices when they are asked (the seed runs after all of them are built). Their routes come before the Factory
+  // ones because /factory/work-orders/:id/serials must not be taken for a status action.
+  ...(() => {
+    serialModule = serialRoutes({ userFromAuthorization, getStore: () => masterStore, getFactory: () => factoryStore, getSale: () => saleStore, getPurchase: () => purchaseStore, getAccounting: () => accountingStore });
+    return serialModule.routes;
+  })(),
 
   // Factory documents: Factory department members and Admin. They read the sale orders that were sent to the factory.
   ...factoryRoutes({
@@ -92,6 +103,12 @@ export const mockRoutes = {
       accountingStore = store;
     },
   }),
+
+  // The seed of the serial numbers needs every module above, so it runs here.
+  ...(() => {
+    serialModule.seed();
+    return {};
+  })(),
 
   // Stock: Factory and Purchase users and Admin. Built last: its opening balances make the sum of the movements that
   // the seeded Work Orders, transfers and deliveries booked end on the numbers of the demo.

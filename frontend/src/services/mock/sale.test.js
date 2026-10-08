@@ -258,7 +258,10 @@ describe("sale order and delivery", () => {
 
     // too many pieces is refused, 4 is fine
     expect((await failure(sale.deliveryNoteService.update(note.id, { date: "2026-10-07", warehouseId: note.warehouseId, lines: [{ productId: 1, deliverNow: 11 }] }))).code).toBe("VALIDATION_ERROR");
-    await sale.deliveryNoteService.update(note.id, { date: "2026-10-07", warehouseId: note.warehouseId, lines: [{ productId: 1, deliverNow: 4 }] });
+    // RF-2D units have serial numbers in stock, so every delivered unit is named
+    const { serialService } = await import("../serial.service.js");
+    const units = (await serialService.list({ product: 1, free: 1, status: "in_stock", pageSize: 100 })).items.map((row) => row.sn);
+    await sale.deliveryNoteService.update(note.id, { date: "2026-10-07", warehouseId: note.warehouseId, lines: [{ productId: 1, deliverNow: 4, serials: units.slice(0, 4) }] });
     await sale.deliveryNoteService.run(note.id, "confirm", {});
     let current = await sale.saleOrderService.get(order.id);
     expect(current.status).toBe("ready_to_deliver");
@@ -267,6 +270,7 @@ describe("sale order and delivery", () => {
     // the second note offers the 6 that are left
     const second = await sale.saleOrderService.createDeliveryNote(order.id);
     expect(second.lines[0].deliverNow).toBe(6);
+    await sale.deliveryNoteService.update(second.id, { date: "2026-10-07", warehouseId: second.warehouseId, lines: [{ productId: 1, deliverNow: 6, serials: units.slice(4, 10) }] });
     await sale.deliveryNoteService.run(second.id, "confirm", {});
     current = await sale.saleOrderService.get(order.id);
     expect(current.status).toBe("delivered");

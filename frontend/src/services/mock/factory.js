@@ -691,6 +691,6 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
   seedTransfer({ workOrderId: 5, qty: 6, status: "transferred", date: "2026-09-21" });
   seedTransfer({ workOrderId: 4, qty: 20, status: "draft", date: "2026-10-03" });
 
-  onFactory?.({ workOrders });
+  onFactory?.({ workOrders, transfers });
   return routes;
 }

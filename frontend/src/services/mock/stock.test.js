@@ -199,9 +199,14 @@ describe("links with Factory and Sale", () => {
     const s = await start();
     await switchTo("saleManager");
     const draft = (await s.sale.deliveryNoteService.list({ status: "draft", ...all })).items[0]; // RF-2D x 12
+    // the 11 units in stock have serial numbers: the note names them (the twelfth does not exist)
+    const { serialService } = await import("../serial.service.js");
+    const units = (await serialService.list({ product: 1, free: 1, status: "in_stock", pageSize: 100 })).items.map((row) => row.sn);
+    expect(units).toHaveLength(11);
+    await s.sale.deliveryNoteService.update(draft.id, { date: draft.date, warehouseId: draft.warehouseId, lines: [{ productId: 1, deliverNow: 11, serials: units }] });
     await s.sale.deliveryNoteService.run(draft.id, "confirm");
-    expect(await onHandOf(s, "product", "RF-2D")).toBe(28);
-    expect((await s.movementService.list({ q: draft.number, ...all })).items[0]).toMatchObject({ type: "deliver", qty: -12 });
+    expect(await onHandOf(s, "product", "RF-2D")).toBe(29);
+    expect((await s.movementService.list({ q: draft.number, ...all })).items[0]).toMatchObject({ type: "deliver", qty: -11 });
     await s.sale.deliveryNoteService.run(draft.id, "revert", { note: "Wrong customer" });
     expect(await onHandOf(s, "product", "RF-2D")).toBe(40);
   });

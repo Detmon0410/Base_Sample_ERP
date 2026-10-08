@@ -57,7 +57,7 @@ function totalsOf(lines) {
   return { subtotal, tax, total: subtotal + tax, taxRate: TAX_RATE };
 }
 
-export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrders = () => [], getAccounting = () => null, ledger }) {
+export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrders = () => [], getAccounting = () => null, getSerials = () => null, ledger }) {
   const store = () => getStore();
   const guard = (authorization) => requireSale(userFromAuthorization, authorization);
 
@@ -216,7 +216,10 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
         const product = productOf(line.productId);
         const ordered = order?.lines.find((item) => item.productId === line.productId)?.qty ?? 0;
         const before = deliveredQty(doc.saleOrderId, line.productId, doc.id);
-        return { productId: line.productId, productCode: product?.code, productName: product?.name, ordered, deliveredBefore: before, remaining: ordered - before, deliverNow: line.deliverNow };
+        // a product that has units in stock with serial numbers is delivered by serial number (docs/specs/f12-requirements-2.md)
+        const serials = line.serials ?? [];
+        const serialTracked = serials.length > 0 || Boolean(getSerials()?.isTracked(line.productId, doc.id));
+        return { productId: line.productId, productCode: product?.code, productName: product?.name, ordered, deliveredBefore: before, remaining: ordered - before, deliverNow: line.deliverNow, serialTracked, serials };
       }),
     };
   };
@@ -650,13 +653,20 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
         const remaining = (ordered?.qty ?? 0) - deliveredQty(order.id, Number(line.productId), doc.id) - pendingQty(order.id, Number(line.productId), doc.id);
         if (!ordered) errors.push({ path: ["lines", index, "productId"], message: "INVALID" });
         else if (!Number.isInteger(line.deliverNow) || line.deliverNow < 0 || line.deliverNow > remaining) errors.push({ path: ["lines", index, "deliverNow"], message: "INVALID" });
+        // the serial numbers written on the line: units of this product that are in stock and not on another note
+        const picked = Array.isArray(line.serials) ? line.serials : [];
+        if (picked.length > 0) {
+          const problem = getSerials()?.checkPick(Number(line.productId), picked, doc.id);
+          if (problem) errors.push({ path: ["lines", index, "serials"], message: problem });
+          else if (Number.isInteger(line.deliverNow) && picked.length > line.deliverNow) errors.push({ path: ["lines", index, "serials"], message: "TOO_MANY" });
+        }
       });
       if (!DATE_RE.test(String(body.date ?? ""))) errors.push({ path: ["date"], message: "REQUIRED" });
       if (!store().warehouses.some((row) => row.id === Number(body.warehouseId))) errors.push({ path: ["warehouseId"], message: "REQUIRED" });
       fail(errors);
       doc.date = body.date;
       doc.warehouseId = Number(body.warehouseId);
-      doc.lines = lines.map((line) => ({ productId: Number(line.productId), deliverNow: line.deliverNow }));
+      doc.lines = lines.map((line) => ({ productId: Number(line.productId), deliverNow: line.deliverNow, serials: (Array.isArray(line.serials) ? line.serials : []).map((sn) => getSerials()?.canonical(sn) ?? sn) }));
       return shapeDelivery(doc);
     },
     "DELETE /sale/deliveries/:id": ({ authorization, params }) => {
@@ -675,6 +685,18 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
       if (doc.lines.every((line) => line.deliverNow === 0)) {
         throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["lines"], message: "REQUIRED" }]);
       }
+      // a product with serial numbers in stock is delivered unit by unit: every unit of the line is named
+      const unnamed = [];
+      doc.lines.forEach((line, index) => {
+        if (line.deliverNow <= 0 || !getSerials()?.isTracked(line.productId, doc.id)) return;
+        const picked = line.serials ?? [];
+        if (picked.length !== line.deliverNow) unnamed.push({ path: ["lines", index, "serials"], message: "SERIALS_REQUIRED" });
+        else {
+          const problem = getSerials().checkPick(line.productId, picked, doc.id);
+          if (problem) unnamed.push({ path: ["lines", index, "serials"], message: problem });
+        }
+      });
+      if (unnamed.length) throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", unnamed);
       // the products leave the finished goods warehouse (docs/specs/f8-stock.md); refused when it holds less
       ledger?.book(
         doc.lines.filter((line) => line.deliverNow > 0).map((line) => ({ itemType: "product", itemId: line.productId, warehouseId: doc.warehouseId, qty: -line.deliverNow, type: "deliver" })),

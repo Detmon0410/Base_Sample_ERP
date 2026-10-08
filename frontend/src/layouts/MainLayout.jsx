@@ -10,6 +10,7 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useNarrow } from "@/hooks/useNarrow";
+import { useStackTables } from "@/hooks/useStackTables";
 import { useSidebarState } from "@/hooks/useSidebarState";
 import { useSidebarWidth } from "@/hooks/useSidebarWidth";
 
@@ -25,6 +26,7 @@ export function MainLayout() {
   const [open, setOpen] = useSidebarState();
   const sidebarWidth = useSidebarWidth();
   const narrow = useNarrow();
+  useStackTables(); // tables are blocks on a phone
   const [peek, setPeek] = useState(false); // the menu opened over the page (narrow screens only)
   const { pathname } = useLocation();
   const [seenPath, setSeenPath] = useState(pathname);

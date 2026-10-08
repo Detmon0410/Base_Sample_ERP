@@ -1,7 +1,10 @@
 import { AxiosError } from "axios";
 
 import { MockHttpError, MockResponse } from "./errors.js";
+import { PERSIST, onForeignChange, record, replayNew, userIdOf } from "./persist.js";
 import { mockRoutes } from "./routes.js";
+import { mockUsers, tokenOf } from "./users.js";
+import { requestRefresh } from "@/utils/masterEvents";
 
 // no waiting in tests (vitest sets MODE to "test")
 const LATENCY_MS = import.meta.env.MODE === "test" ? 0 : 150;
@@ -43,6 +46,20 @@ function findRoute(method, path) {
   return null;
 }
 
+// The workflow test: play the log of what the tester made before (and what another tab makes later)
+function playEntry(entry) {
+  const found = findRoute(entry.method, entry.path);
+  if (!found) return;
+  const user = mockUsers.find((item) => item.id === entry.userId);
+  found.handler({ body: entry.body ?? {}, authorization: user ? `Bearer ${tokenOf(user)}` : undefined, params: found.params, query: entry.query ?? {} });
+}
+if (PERSIST) {
+  replayNew(playEntry);
+  onForeignChange(() => {
+    if (replayNew(playEntry) > 0) requestRefresh(); // lists, the dashboard and the badges load again
+  });
+}
+
 /**
  * Axios adapter that answers requests from `mockRoutes` using the same
  * `{ success, data, meta?, message? }` / `{ success: false, message, error, errors? }` envelopes
@@ -72,7 +89,12 @@ export async function mockAdapter(config) {
   try {
     const body = typeof config.data === "string" ? JSON.parse(config.data) : (config.data ?? {});
     const authorization = config.headers?.Authorization ?? config.headers?.get?.("Authorization");
+    const startedAt = new Date().toISOString();
     const result = route.handler({ body, authorization, params: route.params, query: config.params ?? {} });
+    // a change that worked is kept in the log (the workflow test)
+    if (PERSIST && method !== "GET" && path !== "/auth/logout") {
+      record({ method, path, body, query: config.params ?? undefined, userId: userIdOf(authorization), at: startedAt });
+    }
 
     if (result instanceof MockResponse) {
       return respond(config, result.status, {

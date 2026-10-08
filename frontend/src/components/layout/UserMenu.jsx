@@ -1,6 +1,8 @@
-import { ChevronDownIcon, LogOutIcon } from "lucide-react";
+import { ChevronDownIcon, LogOutIcon, RotateCcwIcon } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { RoleHat } from "@/components/common/RoleHat";
 import {
   DropdownMenu,
@@ -12,11 +14,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { topRole } from "@/config/roleStyle";
+import { PERSIST, resetTestData } from "@/services/mock/persist";
 
 /** Profile button of the top bar: the safety helmet of the role (white Manager, yellow Worker, red Admin), name and role, arrow. The language has its own button (LanguageMenu). */
 export function UserMenu() {
   const { t } = useTranslation(["nav", "auth"]);
   const { user, logout } = useAuth();
+  const [resetOpen, setResetOpen] = useState(false); // the workflow test: forget everything that was made
   if (!user) return null;
   const role = topRole(user);
 
@@ -43,10 +47,25 @@ export function UserMenu() {
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {PERSIST ? (
+          <DropdownMenuItem className="h-10 text-base" onSelect={() => setResetOpen(true)}>
+            <RotateCcwIcon /> {t("nav:userMenu.resetData")}
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuItem variant="destructive" className="h-10 text-base" onSelect={logout}>
           <LogOutIcon /> {t("auth:logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>
+      <ConfirmDialog
+        open={resetOpen}
+        onOpenChange={setResetOpen}
+        title={t("nav:userMenu.resetTitle")}
+        description={t("nav:userMenu.resetDescription")}
+        confirmLabel={t("nav:userMenu.resetConfirm")}
+        cancelLabel={t("nav:userMenu.resetCancel")}
+        onConfirm={resetTestData}
+        destructive
+      />
     </DropdownMenu>
   );
 }

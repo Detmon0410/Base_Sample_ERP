@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { PageHeader } from "@/components/common/PageHeader";
+import { RoleHat } from "@/components/common/RoleHat";
 import { CARD_CLASS, PANEL_CLASS } from "@/components/common/SheetSection";
 import { MENU_AUDIENCES, ROLES, menuTable, permissionTable } from "@/config/permissions";
 
@@ -46,7 +47,7 @@ export function RolesPage() {
                   <tr>
                     <th scope="col" className={HEAD}>{t("users:matrixPage.action")}</th>
                     {ROLES.map((role) => (
-                      <th key={role} scope="col" className={`${HEAD} w-36`}>{t(`users:roles.${role}`)}</th>
+                      <th key={role} scope="col" className={`${HEAD} w-40`}><span className="inline-flex items-center gap-2"><RoleHat role={role} className="size-5" />{t(`users:roles.${role}`)}</span></th>
                     ))}
                   </tr>
                 </thead>

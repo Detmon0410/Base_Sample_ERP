@@ -3,6 +3,8 @@
 // writes. A status only changes when a person calls an action; the paid / partially paid status follows the confirmed
 // receipts (payments). The data lives until a full reload.
 
+import { EMPTY_SEED } from "./seedMode.js";
+import { thai } from "./thai.js";
 import { MockHttpError, MockResponse } from "./errors.js";
 import { createMockCrud } from "./masterData.js";
 import { INTERNAL_TOKEN } from "./users.js";
@@ -81,10 +83,10 @@ const sampleBanks = () =>
 
 export function accountingRoutes({ userFromAuthorization, getStore, getSale, getPurchase, onAccounting }) {
   const store = () => getStore();
-  const accounts = sampleAccounts();
-  const taxRates = sampleTaxRates();
-  const methods = sampleMethods();
-  const banks = sampleBanks();
+  const accounts = thai("accounts", sampleAccounts());
+  const taxRates = thai("taxRates", sampleTaxRates());
+  const methods = thai("paymentMethods", sampleMethods());
+  const banks = thai("bankAccounts", sampleBanks());
   const invoices = [];
   const receipts = [];
   const bills = [];
@@ -923,6 +925,8 @@ export function accountingRoutes({ userFromAuthorization, getStore, getSale, get
   // =========================================================================================================
   // Seed: invoices from the delivered delivery notes, bills from the posted goods receipts, their money and the journal
   // =========================================================================================================
+  // The demo records exist only in the demo; the workflow test branch starts with none (docs/specs/f13-workflow-test.md)
+  if (!EMPTY_SEED) {
   const SEED = "Mika Ono";
   function seedDoc(kind, { sourceId, date, status, by, byId, supplierInvoiceNo, remarks = "" }) {
     const k = KINDS[kind];
@@ -996,6 +1000,8 @@ export function accountingRoutes({ userFromAuthorization, getStore, getSale, get
   const bill4 = seedDoc("ap", { sourceId: gr("GR-2026-0004"), date: "2026-10-01", status: "approved", by: "Sora Kato", byId: 9, supplierInvoiceNo: "BC-9102" });
   seedMoney("ap", bill1, { date: "2026-09-30", amount: totalsOf(bill1).total, by: "Sora Kato", byId: 9, reference: "OUT-0930" });
   seedMoney("ap", bill4, { date: "2026-10-05", amount: 100000, by: "Sora Kato", byId: 9, reference: "OUT-1005" });
+
+  }
 
   onAccounting?.({
     invoices,

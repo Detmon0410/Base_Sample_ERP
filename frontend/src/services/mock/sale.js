@@ -1,6 +1,7 @@
 // In-memory Sale documents for VITE_USE_MOCK=true (docs/specs/f6-sale.md). Everything is manual: a status only
 // changes when a person calls an action (POST /sale/<kind>/:id/<action>). The data lives until a full reload.
 
+import { EMPTY_SEED } from "./seedMode.js";
 import { MockHttpError, MockResponse } from "./errors.js";
 
 const TAX_RATE = 0.1; // consumption tax (spec Q3)
@@ -615,6 +616,8 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
         throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["note"], message: "REQUIRED" }]);
       }
 
+      if (params.action === "mark-ready") ensureGoodsReady(doc);
+
       if (params.action === "request-confirm") {
         if (doc.approval === "requested") throw wrongStatus();
         doc.approval = "requested";
@@ -714,6 +717,20 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
     },
   };
 
+  /**
+   * An order is "ready to deliver" only when the goods are in the finished goods warehouse: for every line, what is still to be
+   * delivered must be in stock and not promised to a draft delivery note (a finished work order that was transferred, or stock that
+   * was already there). Otherwise 409 NOT_READY with what is missing (docs/specs/f13-workflow-test.md).
+   */
+  function ensureGoodsReady(doc) {
+    if (!ledger) return;
+    const missing = doc.lines
+      .map((line) => ({ line, needed: line.qty - deliveredQty(doc.id, line.productId), has: ledger.availableTotal("product", line.productId) }))
+      .filter((row) => row.needed > row.has)
+      .map((row) => ({ code: productOf(row.line.productId)?.code, needed: row.needed, uom: productOf(row.line.productId)?.uom, has: Math.max(0, row.has) }));
+    if (missing.length) throw new MockHttpError(409, "NOT_READY", "The goods are not in the warehouse yet", [{ path: ["stock"], message: "NOT_READY", items: missing }]);
+  }
+
   // quantities already placed on DRAFT delivery notes of the order (so a second note cannot double them)
   function pendingQty(saleOrderId, productId, exceptDnId) {
     return deliveries
@@ -808,6 +825,8 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
   // =========================================================================================================
   // Seed data (customers C001-C003 = 1-3, products RF-2D = 1 and RF-1D = 2, employees E001-E003 = 1-3)
   // =========================================================================================================
+  // The demo records exist only in the demo; the workflow test branch starts with none (docs/specs/f13-workflow-test.md)
+  if (!EMPTY_SEED) {
   const seedQuotations = [
     { customerId: 1, date: "2026-09-02", status: "accepted", lines: [[1, 20, 64000], [2, 10, 38500]], by: "Alice Sato", sp: 1, note: "Customer accepted by phone" },
     { customerId: 2, date: "2026-09-04", status: "sent", lines: [[1, 10, 66000]], by: "Nina Sato", sp: 2 },
@@ -968,6 +987,8 @@ export function saleRoutes({ userFromAuthorization, getStore, onSale, getWorkOrd
     deliveries.push(doc);
   });
 
-  onSale?.({ orders, deliveries });
+  }
+
+  onSale?.({ orders, deliveries, quotations, customerPos });
   return routes;
 }

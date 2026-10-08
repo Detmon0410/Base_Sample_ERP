@@ -1,5 +1,7 @@
+import { EMPTY_SEED } from "./seedMode.js";
 import { buildDashboard } from "./dashboard.js";
-import { login, requireAdmin, toPublicUser, userFromAuthorization, usersRoutes } from "./users.js";
+import { INTERNAL_TOKEN, login, requireAdmin, toPublicUser, userFromAuthorization, usersRoutes } from "./users.js";
+import { buildNotifications } from "./notifications.js";
 import { masterDataRoutes } from "./masterData.js";
 import { factoryRoutes } from "./factory.js";
 import { purchaseRoutes } from "./purchase.js";
@@ -25,6 +27,23 @@ let purchaseStore = null;
 let accountingStore = null;
 let serialModule = null;
 
+// Real documents use master records: a customer of a quotation, a product of a work order, an operator of a step ...
+// (the delete of a used record is refused, 409 IN_USE)
+function usedBySale(kind, id) {
+  if (!saleStore) return false;
+  if (kind === "customer") return [saleStore.quotations, saleStore.orders, saleStore.customerPos, saleStore.deliveries].some((rows) => rows?.some((row) => row.customerId === id));
+  if (kind === "product") return [saleStore.quotations, saleStore.orders].some((rows) => rows?.some((row) => row.lines.some((line) => line.productId === id)));
+  if (kind === "employee") return [saleStore.quotations, saleStore.orders].some((rows) => rows?.some((row) => row.salesPersonId === id));
+  return false;
+}
+function usedByFactory(kind, id) {
+  if (!factoryStore) return false;
+  if (kind === "product") return factoryStore.workOrders.some((wo) => wo.productId === id);
+  if (kind === "machine") return factoryStore.workOrders.some((wo) => wo.steps.some((step) => step.machineId === id));
+  if (kind === "employee") return factoryStore.workOrders.some((wo) => wo.steps.some((step) => step.operatorId === id));
+  return false;
+}
+
 export const mockRoutes = {
   "POST /auth/login": ({ body }) => login(body),
 
@@ -35,7 +54,12 @@ export const mockRoutes = {
 
   "POST /auth/logout": () => null,
 
-  "GET /dashboard": ({ authorization }) => buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? [], () => purchaseStore, () => accountingStore),
+  // The request counters of the menu: documents that wait for somebody of the department (docs/specs/f13-workflow-test.md)
+  "GET /notifications": ({ authorization }) =>
+    buildNotifications(userFromAuthorization(authorization), (key, query) => mockRoutes[key]({ authorization: INTERNAL_TOKEN, body: {}, params: {}, query })),
+
+  "GET /dashboard": ({ authorization }) =>
+    buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? [], () => purchaseStore, () => accountingStore, (key, query) => mockRoutes[key]({ authorization: INTERNAL_TOKEN, body: {}, params: {}, query })),
 
   // Master data is maintained by Admin only (F3 spec, Q6/Q7).
   ...masterDataRoutes(
@@ -45,6 +69,8 @@ export const mockRoutes = {
       masterStore = store;
     },
     (kind, id) =>
+      usedBySale(kind, id) ||
+      usedByFactory(kind, id) ||
       ledger.movements.some((move) => (kind === "warehouse" ? move.warehouseId === id : move.itemType === kind && move.itemId === id)) ||
       Boolean(accountingStore?.inUse(kind, id)) ||
       Boolean(purchaseStore?.orders.some((po) => (kind === "supplier" ? po.supplierId === id : kind === "material" ? po.lines.some((line) => line.materialId === id) : kind === "warehouse" ? po.warehouseId === id : false))),
@@ -106,7 +132,7 @@ export const mockRoutes = {
 
   // The seed of the serial numbers needs every module above, so it runs here.
   ...(() => {
-    serialModule.seed();
+    if (!EMPTY_SEED) serialModule.seed();
     return {};
   })(),
 
@@ -114,7 +140,8 @@ export const mockRoutes = {
   // the seeded Work Orders, transfers and deliveries booked end on the numbers of the demo.
   ...(() => {
     stockModule = stockRoutes({ userFromAuthorization, getStore: () => masterStore, ledger });
-    stockModule.seedOpening();
+    if (EMPTY_SEED) ledger.finishSeed();
+    else stockModule.seedOpening();
     return stockModule.routes;
   })(),
 };

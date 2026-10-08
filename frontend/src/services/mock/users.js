@@ -2,6 +2,8 @@
 // (docs/specs/f11-users.md). Passwords are kept in plain text here because this is only a stand-in for the backend.
 
 import { MockHttpError, MockResponse } from "./errors.js";
+import { EMPTY_SEED } from "./seedMode.js";
+import { THAI_PEOPLE } from "./thai.js";
 
 const SEED = [
   {
@@ -83,7 +85,24 @@ const SEED = [
 // the nine demo users have all worked with documents, so they cannot be deleted (R5); a token carries the version of the
 // session: a password reset or a deactivation ends every older token
 const STAMP = "2026-09-01T09:00:00.000Z";
-export const mockUsers = SEED.map((user) => ({ createdAt: STAMP, updatedAt: STAMP, lastLoginAt: user.id === 1 ? null : "2026-10-06T08:30:00.000Z", hasActivity: true, sessionVersion: 0, ...user }));
+// The workflow test (docs/specs/f13-workflow-test.md): an Admin and a Manager and a Worker for every department, all with the
+// password "test1234" (the Admin keeps "admin"), who have never signed in.
+const TEST_USERS = [
+  { id: 1, name: THAI_PEOPLE["admin@gmail.com"], email: "admin@gmail.com", password: "admin", status: "active", memberships: [{ department: null, role: "Admin" }] },
+  ...["Sale", "Factory", "Purchase", "Accounting"].flatMap((department, index) =>
+    ["Manager", "Worker"].map((role, roleIndex) => ({
+      id: 2 + index * 2 + roleIndex,
+      name: THAI_PEOPLE[`${department.toLowerCase()}.${role.toLowerCase()}@kanou.test`] ?? `${department} ${role}`,
+      email: `${department.toLowerCase()}.${role.toLowerCase()}@kanou.test`,
+      password: "test1234",
+      status: "active",
+      memberships: [{ department, role }],
+    })),
+  ),
+];
+export const mockUsers = EMPTY_SEED
+  ? TEST_USERS.map((user) => ({ createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), lastLoginAt: null, hasActivity: false, sessionVersion: 0, ...user }))
+  : SEED.map((user) => ({ createdAt: STAMP, updatedAt: STAMP, lastLoginAt: user.id === 1 ? null : "2026-10-06T08:30:00.000Z", hasActivity: true, sessionVersion: 0, ...user }));
 
 export const DEPARTMENTS = ["Sale", "Factory", "Purchase", "Accounting"];
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

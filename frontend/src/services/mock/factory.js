@@ -2,6 +2,7 @@
 // steps, the shop-floor tracking board and Finished Goods Transfers. Everything is manual: a status only changes
 // when a person calls an action. The data lives until a full reload.
 
+import { EMPTY_SEED } from "./seedMode.js";
 import { MockHttpError, MockResponse } from "./errors.js";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -627,6 +628,8 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
   // =========================================================================================================
   // Seed data: 7 Work Orders on the seeded sale orders, covering every status, and 3 transfers.
   // =========================================================================================================
+  // The demo records exist only in the demo; the workflow test branch starts with none (docs/specs/f13-workflow-test.md)
+  if (!EMPTY_SEED) {
   const at = (date, time) => `${date}T${time}:00.000Z`;
   function seedWo({ saleOrderId, productId, qty, planStart, planFinish, status, by, steps = [], date = "2026-10-01", note }) {
     const route = store().routing.filter((step) => step.productId === productId).sort((a, b) => a.stepNo - b.stepNo);
@@ -690,6 +693,8 @@ export function factoryRoutes({ userFromAuthorization, getStore, getSale, onFact
   seedTransfer({ workOrderId: 3, qty: 29, status: "transferred", date: "2026-10-01" });
   seedTransfer({ workOrderId: 5, qty: 6, status: "transferred", date: "2026-09-21" });
   seedTransfer({ workOrderId: 4, qty: 20, status: "draft", date: "2026-10-03" });
+
+  }
 
   onFactory?.({ workOrders, transfers });
   return routes;

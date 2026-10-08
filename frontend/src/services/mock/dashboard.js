@@ -3,6 +3,7 @@
 // (e.g. "stockAlerts,production") to see a block-level error, or "all" for a failed request.
 
 import { MockHttpError } from "./errors.js";
+import { EMPTY_SEED } from "./seedMode.js";
 import { stockStatusOf } from "./stock.js";
 
 const minutesAgo = (minutes) => new Date(Date.now() - minutes * 60 * 1000).toISOString();
@@ -81,6 +82,44 @@ function withLiveDrift(blocks, { stockIsReal = false, accountingIsReal = false }
   return blocks;
 }
 
+/**
+ * The workflow test has no demo numbers: every figure of the Sale and Factory blocks is counted from the real documents
+ * (`call(key, query)` runs a list route as the system), and the lists are empty until somebody makes something.
+ */
+function realBlocks(blocks, user, call) {
+  const rows = (key, query = { pageSize: 100 }) => {
+    try {
+      const result = call(key, query);
+      return { items: Array.isArray(result?.data) ? result.data : [], counts: result?.meta?.statusCounts ?? {} };
+    } catch {
+      return { items: [], counts: {} };
+    }
+  };
+  const today = new Date().toISOString().slice(0, 10);
+  const days = (from) => Math.max(0, Math.round((new Date(today) - new Date(from)) / 86400000));
+  const orders = rows("GET /sale/orders");
+  const quotations = rows("GET /sale/quotations");
+  const workOrders = rows("GET /factory/work-orders");
+  const open = ["confirmed", "in_production", "ready_to_deliver"];
+  const sent = quotations.items.filter((row) => row.status === "sent");
+  const { kpis } = blocks;
+  kpis.openSaleOrders = { count: open.reduce((sum, status) => sum + (orders.counts[status] ?? 0), 0), readyToDeliver: orders.counts.ready_to_deliver ?? 0 };
+  kpis.quotationsWaiting = { count: sent.length, oldestDays: sent.length ? Math.max(...sent.map((row) => days(row.date))) : 0 };
+  kpis.workOrdersInProcess = { count: workOrders.counts.in_process ?? 0, scheduled: workOrders.counts.scheduled ?? 0 };
+  kpis.lateWorkOrders = { count: workOrders.items.filter((wo) => wo.progress?.late).length };
+  blocks.production = workOrders.items
+    .filter((wo) => ["scheduled", "in_process"].includes(wo.status))
+    .slice(0, 5)
+    .map((wo) => ({ woId: wo.id, number: wo.number, product: wo.productCode, qty: wo.qty, stepsDone: wo.progress.stepsDone, stepsTotal: wo.progress.stepsTotal, planFinish: wo.planFinish, late: Boolean(wo.progress.late) }));
+  blocks.activity = [];
+  // what waits for a Manager's decision, from the real documents
+  const waitingOrders = orders.items.filter((order) => order.status === "draft" && order.approval === "requested").map((order) => ({ type: "SO", id: order.id, number: order.number, party: order.customerName, amountJpy: order.totals?.total ?? null, createdAt: order.history?.[order.history.length - 1]?.at ?? new Date().toISOString(), department: "Sale" }));
+  const draftWorkOrders = workOrders.items.filter((wo) => wo.status === "draft").map((wo) => ({ type: "WO", id: wo.id, number: wo.number, party: `${wo.productCode} x ${wo.qty}`, amountJpy: null, createdAt: wo.history?.[wo.history.length - 1]?.at ?? new Date().toISOString(), department: "Factory" }));
+  const approvals = approvalsFor(user, [...waitingOrders, ...draftWorkOrders, ...(blocks.approvals ?? [])]);
+  blocks.approvals = approvals;
+  blocks.myRecentDocuments = approvals === null ? [] : null;
+}
+
 /** The materials that are short or near short, from the real stock balances (docs/specs/f8-stock.md). */
 function stockAlertsFrom(ledger, materials) {
   const rows = materials
@@ -98,7 +137,7 @@ function stockAlertsFrom(ledger, materials) {
   return rows.sort((a, b) => (a.status === b.status ? a.qtyOnHand / (a.reorderPoint || 1) - b.qtyOnHand / (b.reorderPoint || 1) : a.status === "SHORTAGE" ? -1 : 1)).slice(0, 5);
 }
 
-export function buildDashboard(user, ledger, getMaterials = () => [], getPurchase = () => null, getAccounting = () => null) {
+export function buildDashboard(user, ledger, getMaterials = () => [], getPurchase = () => null, getAccounting = () => null, call = null) {
   const fail = failedBlocks();
   if (fail.includes("all")) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
 
@@ -110,6 +149,8 @@ export function buildDashboard(user, ledger, getMaterials = () => [], getPurchas
   const draftMoney = (accounting?.drafts?.() ?? []).map((item) => ({ ...item, department: "Accounting" }));
   let source = purchase ? [...APPROVALS.filter((a) => a.type !== "PO"), ...draftPos] : APPROVALS;
   if (accounting) source = [...source.filter((a) => !["INVOICE", "BILL"].includes(a.type)), ...draftMoney];
+  // the workflow test keeps only what is real: the pending POs and the draft invoices / bills (the rest is added by realBlocks)
+  if (EMPTY_SEED) source = [...draftPos, ...draftMoney];
   const approvals = approvalsFor(user, source);
   const blocks = {
     kpis: {
@@ -144,7 +185,8 @@ export function buildDashboard(user, ledger, getMaterials = () => [], getPurchas
     const shortage = blocks.stockAlerts.filter((alert) => alert.status === "SHORTAGE").length;
     blocks.kpis.materialsInShortage = { count: shortage, nearShortage: blocks.stockAlerts.length - shortage };
   }
-  withLiveDrift(blocks, { stockIsReal: Boolean(ledger), accountingIsReal: Boolean(accounting) });
+  if (EMPTY_SEED && call) realBlocks(blocks, user, call);
+  else withLiveDrift(blocks, { stockIsReal: Boolean(ledger), accountingIsReal: Boolean(accounting) });
 
   const errors = {};
   for (const name of fail) {

@@ -1,6 +1,8 @@
 // In-memory master data for VITE_USE_MOCK=true. It lives as long as the page is not reloaded.
 // The shapes and error codes are the contract in docs/api/master-data.md.
 
+import { EMPTY_SEED } from "./seedMode.js";
+import { thai } from "./thai.js";
 import { MockHttpError, MockResponse } from "./errors.js";
 import { INTERNAL_TOKEN } from "./users.js";
 
@@ -684,25 +686,30 @@ function priceListRoutes({ guard, rows, customers, products }) {
  * such a record cannot be deleted (it can be deactivated), like one that a BOM or a document uses.
  */
 export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, usedByStock = () => false) {
-  const customers = sampleCustomers();
-  const uomRows = sampleUom();
-  const materialRows = sampleMaterials();
-  const supplierRows = sampleSuppliers();
+  // The workflow test starts with the master data (customers, suppliers, materials, products with BOM and routing, machines,
+  // employees, price lists) as ordinary records the tester can add to, change and delete, but with no documents and no stock.
+  // In the test the names are Thai (services/mock/thai.js).
+  const customers = thai("customers", sampleCustomers());
+  const uomRows = thai("uom", sampleUom());
+  const materialRows = thai("materials", sampleMaterials()).map((row) => (EMPTY_SEED ? { ...row, onHand: 0 } : row)); // the stock starts empty
+  const supplierRows = thai("suppliers", sampleSuppliers());
   const links = sampleLinks();
-  const productRows = sampleProducts();
+  const productRows = thai("products", sampleProducts());
   const bom = sampleBom();
-  const routing = sampleRouting();
-  const machineRows = sampleMachines();
-  const employeeRows = sampleEmployees();
+  const routing = thai("routing", sampleRouting());
+  const machineRows = thai("machines", sampleMachines());
+  const employeeRows = thai("employees", sampleEmployees());
   const priceRows = samplePrices();
-  const warehouseRows = sampleWarehouses();
+  const warehouseRows = thai("warehouses", sampleWarehouses());
+  // The demo marks some records as "used by documents" because its documents are made up; real data is checked by usedByStock.
+  const demoUsed = (check) => (row) => !EMPTY_SEED && check(row);
   const routes = {
     ...createMockCrud("/master/customers", customers, {
       searchFields: ["code", "name"],
       sortable: ["code", "name", "paymentTerms", "creditLimit", "status"],
       validate: validateCustomer,
       // C001 and C002 stand for customers that already have Sale Orders.
-      isInUse: (row) => row.code === "C001" || row.code === "C002" || usedByStock("customer", row.id),
+      isInUse: (row) => demoUsed((r) => r.code === "C001" || r.code === "C002")(row) || usedByStock("customer", row.id),
       guard,
     }),
     // The first four units, both warehouses and the production lines stand for records that documents already use.
@@ -710,7 +717,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
       searchFields: ["code", "name"],
       sortable: ["code", "name", "status"],
       validate: simpleValidator({}),
-      isInUse: (row) => row.code !== "box",
+      isInUse: (row) => (EMPTY_SEED ? [...materialRows, ...productRows].some((item) => item.uom === row.code) : row.code !== "box"),
       guard,
     }),
     ...createMockCrud("/master/warehouses", warehouseRows, {
@@ -724,7 +731,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
       searchFields: ["code", "name"],
       sortable: ["code", "name", "capacityPerDay", "status"],
       validate: simpleValidator({ number: ["capacityPerDay"], max: { capacityUnit: 20 } }),
-      isInUse: (row) => ["LN-01", "LN-02", "LN-03"].includes(row.code),
+      isInUse: (row) => demoUsed((r) => ["LN-01", "LN-02", "LN-03"].includes(r.code))(row) || routing.some((step) => step.machineId === row.id) || usedByStock("machine", row.id),
       guard,
     }),
     ...createMockCrud("/master/materials", materialRows, {
@@ -733,7 +740,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
       validate: materialValidator(uomRows),
       readOnly: ["onHand"],
       // The first four materials stand for materials that BOMs and purchase orders already use.
-      isInUse: (row) => ["COMP", "DOOR", "FOAM", "STEEL"].includes(row.code) || usedByStock("material", row.id),
+      isInUse: (row) => demoUsed((r) => ["COMP", "DOOR", "FOAM", "STEEL"].includes(r.code))(row) || bom.some((item) => item.materialId === row.id) || usedByStock("material", row.id),
       onRemove: (row) => {
         for (let index = links.length - 1; index >= 0; index -= 1) if (links[index].materialId === row.id) links.splice(index, 1);
       },
@@ -743,7 +750,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
       searchFields: ["code", "name"],
       sortable: ["code", "name", "paymentTerms", "status"],
       validate: validateSupplier,
-      isInUse: (row) => row.code === "S001" || row.code === "S002" || usedByStock("supplier", row.id),
+      isInUse: (row) => demoUsed((r) => r.code === "S001" || r.code === "S002")(row) || usedByStock("supplier", row.id),
       onRemove: (row) => {
         for (let index = links.length - 1; index >= 0; index -= 1) if (links[index].supplierId === row.id) links.splice(index, 1);
       },
@@ -755,7 +762,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
       sortable: ["code", "name", "uom", "sellingPrice", "status"],
       validate: productValidator(uomRows),
       // Both products stand for products that Sale Orders and Work Orders already use.
-      isInUse: (row) => row.code === "RF-2D" || row.code === "RF-1D" || usedByStock("product", row.id),
+      isInUse: (row) => demoUsed((r) => r.code === "RF-2D" || r.code === "RF-1D")(row) || usedByStock("product", row.id),
       onRemove: (row) => {
         for (const list of [bom, routing]) for (let index = list.length - 1; index >= 0; index -= 1) if (list[index].productId === row.id) list.splice(index, 1);
       },
@@ -768,6 +775,7 @@ export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, u
       searchFields: ["code", "name", "position"],
       sortable: ["code", "name", "position", "status"],
       validate: simpleValidator({ max: { position: 50 } }),
+      isInUse: (row) => usedByStock("employee", row.id),
       guard,
     }),
   };

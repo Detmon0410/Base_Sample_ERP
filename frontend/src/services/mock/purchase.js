@@ -3,6 +3,7 @@
 // receipt that completes a PO. Posting a receipt books the accepted quantity into the Stock ledger. The data lives
 // until a full reload.
 
+import { EMPTY_SEED } from "./seedMode.js";
 import { MockHttpError, MockResponse } from "./errors.js";
 import { stockStatusOf } from "./stock.js";
 
@@ -664,6 +665,8 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
   // =========================================================================================================
   // Seed: 10 POs and 6 receipts. Three receipts are the ones that fill the raw material warehouse in the Stock demo.
   // =========================================================================================================
+  // The demo records exist only in the demo; the workflow test branch starts with none (docs/specs/f13-workflow-test.md)
+  if (!EMPTY_SEED) {
   function seedPo({ date, supplier, expected, status, lines, by, byId, sent = "Hana Ito", remarks = "", rejectNote = null }) {
     const po = {
       id: seq.po++,
@@ -739,6 +742,8 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
   logEntry(po4, "receive", "partially_received", "Alice Sato", "GR-2026-0003", at("2026-09-14", "10:00"));
   logEntry(po3, "receive", "partially_received", "Alice Sato", "GR-2026-0004", at("2026-10-01", "10:00"));
   logEntry(po3, "close-remaining", "closed", "Hana Ito", "The supplier cannot deliver the last 100 kg", at("2026-10-02", "09:00"));
+
+  }
 
   onPurchase?.({
     orders,

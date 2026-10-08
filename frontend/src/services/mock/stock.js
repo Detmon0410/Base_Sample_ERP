@@ -2,6 +2,7 @@
 // sum, and the stock adjustments that a Manager approves. Nothing edits a balance: the other mock modules (Factory,
 // Sale) and the adjustments book movements, and a revert books the opposite movement. The data lives until a reload.
 
+import { EMPTY_SEED } from "./seedMode.js";
 import { MockHttpError, MockResponse } from "./errors.js";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -590,11 +591,14 @@ export function stockRoutes({ userFromAuthorization, getStore, ledger }) {
     adjustments.push(adj);
   }
   // 6 = Yuki Tanaka (Factory Manager), 4 = Ken Suzuki (Factory Worker), 2 = Alice Sato (Purchase Worker), 7 = Hana Ito (Purchase Manager)
+  // (the workflow test starts with no adjustments at all)
+  if (!EMPTY_SEED) {
   seedAdjustment({ itemType: "material", code: "THERMO", counted: 25, reason: "recount", remarks: "Yearly count", status: "approved", date: "2026-10-05", by: "Ken Suzuki", byId: 4, approver: "Yuki Tanaka", onHandThen: 28 });
   seedAdjustment({ itemType: "material", code: "SHELF", counted: 290, reason: "damaged", remarks: "Water leak in the corner of the shelf area", status: "pending", date: "2026-10-06", by: "Alice Sato", byId: 2 });
   seedAdjustment({ itemType: "product", code: "RF-2D", counted: 38, reason: "damaged", remarks: "Two units scratched while moving", status: "rejected", date: "2026-10-04", by: "Ken Suzuki", byId: 4, approver: "Yuki Tanaka", note: "Report the damage first, then adjust" });
   seedAdjustment({ itemType: "material", code: "DOOR", counted: 20, reason: "found", remarks: "Two boxes found behind the rack", status: "draft", date: "2026-10-07", by: "Ken Suzuki", byId: 4 });
   seedAdjustment({ itemType: "material", code: "FOAM", counted: 440, reason: "recount", status: "cancelled", date: "2026-10-03", by: "Alice Sato", byId: 2, note: "Counted again, it was right" });
+  }
 
   /** Opening balances (2026-09-01): the plug that makes every item end on the number the demo wants. */
   function seedOpening() {

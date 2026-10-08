@@ -34,6 +34,7 @@ const StockMovementsPage = page(() => import("@/pages/stock/movements/StockMovem
 const AdjustmentsPage = page(() => import("@/pages/stock/adjustments/AdjustmentsPage"), "AdjustmentsPage");
 const StockStatusPage = page(() => import("@/pages/purchase/stock-status/StockStatusPage"), "StockStatusPage");
 const PurchaseOrdersPage = page(() => import("@/pages/purchase/orders/PurchaseOrdersPage"), "PurchaseOrdersPage");
+const PurchaseApprovalsPage = page(() => import("@/pages/purchase/approvals/ApprovalLogPage"), "ApprovalLogPage");
 const GoodsReceiptsPage = page(() => import("@/pages/purchase/receipts/GoodsReceiptsPage"), "GoodsReceiptsPage");
 const InvoicesPage = page(() => import("@/pages/accounting/documents/MoneyDocumentsPage"), "InvoicesPage");
 const BillsPage = page(() => import("@/pages/accounting/documents/MoneyDocumentsPage"), "BillsPage");
@@ -74,6 +75,7 @@ const IMPLEMENTED_PAGES = {
   stockAdjustment: AdjustmentsPage,
   stockStatus: StockStatusPage,
   purchaseOrders: PurchaseOrdersPage,
+  purchaseApprovals: PurchaseApprovalsPage,
   goodsReceipt: GoodsReceiptsPage,
   invoices: InvoicesPage,
   receipts: ReceiptsPage,

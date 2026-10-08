@@ -217,6 +217,34 @@
       "description": "",
       "confirm": "",
       "done": ""
+    },
+    "request-approval": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "withdraw": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "approve": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
+    },
+    "reject": {
+      "button": "",
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "done": ""
     }
   },
   "errors": {
@@ -226,6 +254,43 @@
     "INVALID_STATUS": "",
     "VALIDATION_ERROR": "",
     "POST_INVALID": "",
-    "NOT_ENOUGH_STOCK": ""
+    "NOT_ENOUGH_STOCK": "",
+    "CANNOT_APPROVE_OWN": ""
+  },
+  "approval": {
+    "title": "",
+    "reference": "",
+    "waiting": "",
+    "waitingOwn": "",
+    "none": "",
+    "by": "",
+    "log": {
+      "request-approval": "",
+      "approve-order": "",
+      "reject-order": "",
+      "withdraw": ""
+    }
+  },
+  "approvals": {
+    "title": "",
+    "intro": "",
+    "search": "",
+    "empty": "",
+    "noResult": "",
+    "forbidden": "",
+    "columns": {
+      "at": "",
+      "poNumber": "",
+      "supplier": "",
+      "total": "",
+      "action": "",
+      "actor": "",
+      "status": "",
+      "note": ""
+    },
+    "filters": {
+      "action": "",
+      "date": ""
+    }
   }
 }

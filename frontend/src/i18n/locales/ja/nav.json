@@ -44,7 +44,8 @@
     "uom": "",
     "priceLists": "",
     "users": "",
-    "roles": ""
+    "roles": "",
+    "purchaseApprovals": ""
   },
   "breadcrumb": {
     "label": "",

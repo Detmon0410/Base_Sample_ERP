@@ -182,7 +182,11 @@
     "money-confirm": "",
     "entry-post": "",
     "pay": "",
-    "reverse": ""
+    "reverse": "",
+    "request-approval": "",
+    "withdraw": "",
+    "approve-order": "",
+    "reject-order": ""
   },
   "links": {
     "quotation": "",

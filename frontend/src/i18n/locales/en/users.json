@@ -163,7 +163,9 @@
     "Purchase": {
       "work": "Create and edit Purchase documents",
       "editOrder": "Edit a draft purchase order",
-      "sendOrder": "Send a purchase order to the supplier",
+      "requestApproval": "Ask a Manager to approve a purchase order",
+      "approveOrder": "Approve or reject a purchase order of somebody else",
+      "sendOrder": "Send an approved purchase order to the supplier",
       "receiveGoods": "Receive goods",
       "postReceipt": "Post a goods receipt to stock",
       "closeOrder": "Close a received purchase order",

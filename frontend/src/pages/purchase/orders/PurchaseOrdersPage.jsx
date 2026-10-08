@@ -48,7 +48,7 @@ function PurchaseOrdersListPage() {
         key: "progress",
         header: t("purchase:orders.columns.received"),
         render: (row) =>
-          row.status === "draft" || row.status === "cancelled" ? (
+          ["draft", "pending", "rejected", "approved", "cancelled"].includes(row.status) ? (
             "—"
           ) : (
             <span className="flex min-w-32 flex-col gap-1">

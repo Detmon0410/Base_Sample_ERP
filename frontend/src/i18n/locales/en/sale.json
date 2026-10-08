@@ -182,7 +182,11 @@
     "money-confirm": "Confirmed",
     "entry-post": "Posted",
     "pay": "Payment recorded",
-    "reverse": "Reversed"
+    "reverse": "Reversed",
+    "request-approval": "Approval requested",
+    "withdraw": "Approval request withdrawn",
+    "approve-order": "Approved by a Manager",
+    "reject-order": "Rejected by a Manager"
   },
   "links": {
     "quotation": "Quotation",

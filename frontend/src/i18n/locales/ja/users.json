@@ -163,6 +163,8 @@
     "Purchase": {
       "work": "",
       "editOrder": "",
+      "requestApproval": "",
+      "approveOrder": "",
       "sendOrder": "",
       "receiveGoods": "",
       "postReceipt": "",

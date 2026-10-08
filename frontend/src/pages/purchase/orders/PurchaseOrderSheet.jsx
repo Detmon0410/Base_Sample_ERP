@@ -1,4 +1,4 @@
-import { ClipboardListIcon, PackageCheckIcon, TriangleAlertIcon } from "lucide-react";
+import { ClipboardListIcon, PackageCheckIcon, ShieldCheckIcon, TriangleAlertIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -20,7 +20,7 @@ import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge"
 import { PurchaseLinesCard } from "@/components/purchase/PurchaseLinesCard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { canEditOrder, canReceive, canWork, purchaseOrderActions } from "@/config/purchase";
+import { canDecide, canEditOrder, canReceive, canWork, purchaseOrderActions } from "@/config/purchase";
 import { useAuth } from "@/hooks/useAuth";
 import { useOptions } from "@/hooks/useOptions";
 import { useRecordForm } from "@/hooks/useRecordForm";
@@ -30,7 +30,7 @@ import { simpleMasterServices } from "@/services/simpleMaster.service";
 import { supplierMaterialService } from "@/services/supplierMaterial.service";
 import { supplierService } from "@/services/supplier.service";
 import { addDaysIso } from "@/utils/dates";
-import { formatDate, formatNumber } from "@/utils/format";
+import { formatDate, formatDateTime, formatNumber } from "@/utils/format";
 import { notEnoughStockText } from "@/utils/stockErrors";
 
 import { emptyPurchaseOrder, purchaseOrderSchema, toFormValues, toPayload } from "./purchaseOrderSchema";
@@ -229,7 +229,7 @@ export function PurchaseOrderSheet() {
                   { label: t("purchase:fields.remarks"), value: record.remarks, wide: true },
                 ]}
               />
-              {record.status !== "draft" ? (
+              {!["draft", "pending", "rejected", "approved"].includes(record.status) ? (
                 <div className="mt-5">
                   <ProgressBar
                     value={record.progress.received}
@@ -248,6 +248,29 @@ export function PurchaseOrderSheet() {
 
         {!isNew && record ? (
           <>
+            <SheetSection title={t("purchase:approval.title")} icon={ShieldCheckIcon}>
+              <p className="m-0 text-sm text-muted-foreground">{t("purchase:approval.reference")}</p>
+              {record.status === "pending" ? (
+                <p role="status" className="m-0 mt-3 rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 font-semibold text-warning">
+                  {t(canDecide(record, user) || record.createdById !== user?.id ? "purchase:approval.waiting" : "purchase:approval.waitingOwn")}
+                </p>
+              ) : null}
+              {record.approvals.length === 0 ? (
+                <p className="m-0 mt-3 text-muted-foreground">{t("purchase:approval.none")}</p>
+              ) : (
+                <ul className="m-0 mt-3 list-none divide-y divide-slate-200/70 p-0">
+                  {record.approvals.map((entry) => (
+                    <li key={entry.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-2.5 first:pt-0 last:pb-0">
+                      <span className="min-w-36 font-semibold">{t(`purchase:approval.log.${entry.action}`)}</span>
+                      <span>{entry.actor}</span>
+                      <span className="text-muted-foreground">{formatDateTime(entry.at, language)}</span>
+                      <DocumentStatusBadge status={entry.status} />
+                      {entry.note ? <span className="basis-full rounded-lg bg-muted px-3 py-2 text-sm">{entry.note}</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </SheetSection>
             {record.receipts.length > 0 ? (
               <SheetSection title={t("purchase:cards.receipts")} icon={PackageCheckIcon}>
                 <ul className="divide-y divide-slate-200/70">

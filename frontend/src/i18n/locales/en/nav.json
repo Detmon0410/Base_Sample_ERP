@@ -44,7 +44,8 @@
     "uom": "Units of measure",
     "priceLists": "Price lists",
     "users": "Users",
-    "roles": "Departments and roles"
+    "roles": "Departments and roles",
+    "purchaseApprovals": "Approval log"
   },
   "breadcrumb": {
     "label": "Breadcrumb",

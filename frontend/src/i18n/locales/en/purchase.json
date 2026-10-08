@@ -165,7 +165,7 @@
     "send": {
       "button": "Send to supplier",
       "title": "Send this purchase order to the supplier?",
-      "description": "This approves the order. It cannot be edited after it is sent, and the quantity is counted as on order.",
+      "description": "The order is approved. It is sent to the supplier and cannot be edited after it is sent; the quantity is counted as on order.",
       "confirm": "Send to supplier",
       "done": "Purchase order sent"
     },
@@ -217,6 +217,34 @@
       "description": "A posted receipt takes its quantity out of the stock again and gives it back to the purchase order.",
       "confirm": "Cancel receipt",
       "done": "Receipt cancelled"
+    },
+    "request-approval": {
+      "button": "Request approval",
+      "title": "Ask a Manager to approve this purchase order?",
+      "description": "The order is locked while it waits. A Purchase Manager checks it and approves or rejects it by hand. Nothing is approved automatically.",
+      "confirm": "Request approval",
+      "done": "Approval requested"
+    },
+    "withdraw": {
+      "button": "Withdraw request",
+      "title": "Withdraw the approval request?",
+      "description": "The order goes back to draft so you can edit it. Ask again when it is ready.",
+      "confirm": "Withdraw",
+      "done": "Request withdrawn"
+    },
+    "approve": {
+      "button": "Approve",
+      "title": "Approve this purchase order?",
+      "description": "You confirm the supplier, the lines and the prices. The order can then be sent to the supplier. Your name and the time are kept in the approval log.",
+      "confirm": "Approve",
+      "done": "Purchase order approved"
+    },
+    "reject": {
+      "button": "Reject",
+      "title": "Reject this purchase order?",
+      "description": "It goes back to the person who made it, who can correct it and ask again. Say what needs to change.",
+      "confirm": "Reject",
+      "done": "Purchase order rejected"
     }
   },
   "errors": {
@@ -226,6 +254,43 @@
     "INVALID_STATUS": "This is not possible in the current status.",
     "VALIDATION_ERROR": "Please check the highlighted fields.",
     "POST_INVALID": "The receipt cannot be posted as it is: the purchase order changed. Check the quantities.",
-    "NOT_ENOUGH_STOCK": "Not enough stock."
+    "NOT_ENOUGH_STOCK": "Not enough stock.",
+    "CANNOT_APPROVE_OWN": "You made this purchase order. Another Purchase Manager must approve it."
+  },
+  "approval": {
+    "title": "Approval",
+    "reference": "The totals are for reference only. A purchase order is approved only when a Manager presses Approve.",
+    "waiting": "Waiting for approval by a Purchase Manager.",
+    "waitingOwn": "You made this order, so another Purchase Manager must approve it.",
+    "none": "No approval has been asked for yet.",
+    "by": "{{name}}",
+    "log": {
+      "request-approval": "Approval requested",
+      "approve-order": "Approved",
+      "reject-order": "Rejected",
+      "withdraw": "Request withdrawn"
+    }
+  },
+  "approvals": {
+    "title": "Approval log",
+    "intro": "Every request, approval and rejection of a purchase order, with who did it and when. Entries are never changed or deleted.",
+    "search": "Search by PO number, supplier, person or reason",
+    "empty": "No approvals yet.",
+    "noResult": "No entry matches. Clear the search or the filters.",
+    "forbidden": "Only a Purchase Manager or an Admin can read the approval log.",
+    "columns": {
+      "at": "Date and time",
+      "poNumber": "PO No.",
+      "supplier": "Supplier",
+      "total": "Total",
+      "action": "Action",
+      "actor": "By",
+      "status": "Status after",
+      "note": "Reason or note"
+    },
+    "filters": {
+      "action": "Action",
+      "date": "Date"
+    }
   }
 }

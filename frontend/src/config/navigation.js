@@ -10,7 +10,7 @@ import {
   WarehouseIcon,
 } from "lucide-react";
 
-import { canUse } from "@/utils/permissions";
+import { canUse, roleInDepartment } from "@/utils/permissions";
 
 /**
  * Single source of truth for the sidebar, the breadcrumb and the route table.
@@ -70,6 +70,8 @@ export const NAV_GROUPS = [
       { key: "stockStatus", to: "/purchase/stock-status", labelKey: "items.stockStatus" },
       { key: "purchaseOrders", to: "/purchase/orders", labelKey: "items.purchaseOrders" },
       { key: "goodsReceipt", to: "/purchase/receipts", labelKey: "items.goodsReceipt" },
+      // only a Manager of the department (or an Admin) sees this entry
+      { key: "purchaseApprovals", to: "/purchase/approvals", labelKey: "items.purchaseApprovals", managerOf: "Purchase" },
     ],
   },
   {
@@ -124,7 +126,10 @@ export const NAV_GROUPS = [
 
 /** Groups the signed-in user may see. Groups without access are not listed at all. */
 export function getVisibleGroups(user) {
-  return NAV_GROUPS.filter((group) => canUse(user, group.access));
+  return NAV_GROUPS.filter((group) => canUse(user, group.access)).map((group) => ({
+    ...group,
+    items: group.items.filter((item) => !item.managerOf || ["Manager", "Admin"].includes(roleInDepartment(user, item.managerOf))),
+  }));
 }
 
 function isUnder(pathname, base) {

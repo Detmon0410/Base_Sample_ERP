@@ -155,3 +155,11 @@ When you answer (or say "take the suggestions"), the build starts with A0.
 - The approval log page is `/purchase/approvals` ("Approval log" in the Purchase menu, only for a Purchase Manager and Admin); each row opens its PO.
 - Seeded POs: the old ones now carry a request and an approval before "Sent" (Alice asked, Hana approved), and three POs were added: PO-2026-0008 pending, PO-2026-0009 rejected (with a reason), PO-2026-0010 approved and not yet sent.
 - The U3 matrix has two new rows for Purchase: "Ask a Manager to approve" (everybody) and "Approve or reject a PO of somebody else" (Manager and Admin).
+
+## 10. Differences between this draft and what was built (part D)
+
+- **The role hat replaces the profile avatar** in the header user menu (decided after the draft): a round safety helmet in the colour of the role, with the name and the role in words next to it. The disabled "Profile" menu entry (it had no page) was removed.
+- Colours follow the safety helmet chart: **Manager = white** (with a grey edge so it shows), **Worker = yellow**, **Admin = red**. A user with several roles shows the highest one in the header; the menu lists every department and role as a chip.
+- **Departments have their own colour** on the chips: Sale = light blue, Factory = orange, Purchase = green, Accounting = red (the Admin chip is red). The same chips (helmet + department colour + words) are used in the Users list and the Users form; the helmets also head the Admin / Manager / Worker columns of the U3 matrix.
+- The header clock shows date and time to the minute from the computer clock (e.g. `Thu, 8 Oct 2026 · 10:11`) and a dot with the word **Online** / **Offline** that follows the browser connection.
+- One file holds the colours: `frontend/src/config/roleStyle.js` (change a colour there only).

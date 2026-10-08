@@ -91,7 +91,7 @@ The old KPI cards (8) are folded into the tiles (live number), the overview (sal
 | Q2 | What is "Sales"? | Value of Sale Orders **confirmed** in the period (not invoiced, not delivered) |
 | Q3 | Keyboard shortcuts for the tiles (the reference uses F1–F8) | `Alt+1…8`; F-keys clash with the browser (F1 help, F5 reload) |
 | Q4 | Top 5 products by value (¥) or by quantity? | Value (¥), with the quantity in the tooltip |
-| Q5 | Company name and logo for the header band | Use the real name and logo when supplied; until then "Kanou ERP" + factory icon |
+| Q5 | Company name and logo for the header band | Use the real name and logo when supplied; until then "Klong" + factory icon |
 | Q6 | Add Recharts (via shadcn `chart`) | Yes |
 | Q7 | Who sees money figures (sales, average order, overdue)? | Everyone, as an overview (same open point as F2 Q4 — confirm with the business) |
 | Q8 | Banner decoration (the reference has a pattern and a demo stamp) | Plain brand blue, no pattern |

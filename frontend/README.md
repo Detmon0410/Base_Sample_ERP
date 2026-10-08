@@ -1,6 +1,6 @@
-# Kanou ERP Frontend
+# Klong ERP Frontend
 
-React + Vite frontend for Kanou ERP. The UI layer will use shadcn/ui instead of
+React + Vite frontend for Klong ERP. The UI layer will use shadcn/ui instead of
 Ant Design and will remain JavaScript-based for the current project.
 
 ## Recommended structure

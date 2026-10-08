@@ -1,6 +1,6 @@
-# Kanou ERP — Frontend Plan
+# Klong ERP — Frontend Plan
 
-Status: **PLAN (not yet implemented)** · Progress tracker: [pages-progress.md](pages-progress.md)
+Status: **BUILT with mock data (the plan below is the original; what was built is in the tracker)** · Progress tracker: [pages-progress.md](pages-progress.md)
 
 Page flow (Figma, page "Page Flow", top to bottom): https://www.figma.com/design/hVCWGKZgvqcWqBt4f6Xlr3/Kanou-Base-Demo?node-id=57-3 — detailed swimlane version on the page "User Flow": https://www.figma.com/design/hVCWGKZgvqcWqBt4f6Xlr3/Kanou-Base-Demo?node-id=52-2
 

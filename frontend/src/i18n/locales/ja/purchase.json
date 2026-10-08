@@ -14,8 +14,6 @@
     "search": "",
     "empty": "",
     "noResult": "",
-    "pick": "",
-    "pickRow": "",
     "columns": {
       "code": "",
       "name": "",
@@ -29,10 +27,7 @@
     "priceLead": "",
     "noSupplier": "",
     "noSupplierHint": "",
-    "create": "",
-    "createMany_one": "",
-    "createMany_other": "",
-    "noCommonSupplier": ""
+    "create": ""
   },
   "orders": {
     "singular": "",

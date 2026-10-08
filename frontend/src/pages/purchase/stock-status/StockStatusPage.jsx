@@ -1,5 +1,5 @@
 import { PlusIcon } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 
@@ -15,23 +15,13 @@ import { formatCurrency, formatNumber } from "@/utils/format";
 
 const SCOPES = ["attention", "all"];
 
-/** The suppliers that sell every selected material, cheapest first: the ones one PO can be made for. */
-function commonSuppliers(rows) {
-  if (rows.length === 0) return [];
-  const ids = rows.map((row) => new Set(row.suppliers.map((supplier) => supplier.supplierId)));
-  const common = rows[0].suppliers.filter((supplier) => ids.every((set) => set.has(supplier.supplierId)));
-  const total = (supplierId) => rows.reduce((sum, row) => sum + (row.suppliers.find((supplier) => supplier.supplierId === supplierId)?.price ?? 0) * (row.suggestedQty || 1), 0);
-  return common.map((supplier) => supplier.supplierId).sort((a, b) => total(a) - total(b));
-}
-
-/** P1 Stock status board: what is low, what is on order, who to buy from, and a button that starts the purchase order. */
+/** P1 Stock status board: what is low, what is on order, who to buy from, and a button that starts the purchase order of one material. */
 export function StockStatusPage() {
   const { t, i18n } = useTranslation(["purchase", "nav", "stock"]);
   const { user } = useAuth();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const scope = params.get("scope") === "all" ? "all" : "attention";
-  const [picked, setPicked] = useState(() => new Set());
 
   const changeScope = (next) =>
     setParams(
@@ -46,19 +36,7 @@ export function StockStatusPage() {
     );
 
   // the board always asks for the chosen scope; "all" also shows the materials that are fine
-  // the rows that were shown are remembered, so the ticked ones can start one PO together
-  const [seen, setSeen] = useState(() => new Map());
-  const service = useMemo(
-    () => ({
-      key: `/purchase/stock-status/${scope}`,
-      list: async (query) => {
-        const result = await stockStatusService.list({ ...query, scope });
-        setSeen((current) => new Map([...current, ...result.items.map((row) => [row.id, row])]));
-        return result;
-      },
-    }),
-    [scope],
-  );
+  const service = useMemo(() => ({ key: `/purchase/stock-status/${scope}`, list: (query) => stockStatusService.list({ ...query, scope }) }), [scope]);
 
   const startPo = useCallback(
     (rows, supplierId) => {
@@ -75,25 +53,7 @@ export function StockStatusPage() {
   const columns = useMemo(() => {
     const language = i18n.language;
     const mayBuy = canWork(user);
-    const toggle = (row) =>
-      setPicked((current) => {
-        const next = new Set(current);
-        if (next.has(row.id)) next.delete(row.id);
-        else next.add(row.id);
-        return next;
-      });
     return [
-      ...(mayBuy
-        ? [
-            {
-              key: "pick",
-              header: <span className="sr-only">{t("purchase:board.pick")}</span>,
-              width: "3rem",
-              align: "center",
-              render: (row) => <input type="checkbox" className="size-5 accent-primary" aria-label={t("purchase:board.pickRow", { code: row.code })} checked={picked.has(row.id)} disabled={row.suppliers.length === 0} onChange={() => toggle(row)} />,
-            },
-          ]
-        : []),
       { key: "code", header: t("purchase:board.columns.code"), sortable: true },
       { key: "name", header: t("purchase:board.columns.name"), sortable: true },
       { key: "onHand", header: t("purchase:board.columns.onHand"), sortable: true, align: "right", render: (row) => `${formatNumber(row.onHand, language)} ${row.uom}` },
@@ -134,10 +94,8 @@ export function StockStatusPage() {
           ]
         : []),
     ];
-  }, [t, i18n.language, user, picked, startPo]);
+  }, [t, i18n.language, user, startPo]);
 
-  const selectedRows = [...picked].map((id) => seen.get(id)).filter(Boolean);
-  const common = commonSuppliers(selectedRows);
   const tabs = (
     <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-3">
       <div role="group" aria-label={t("purchase:board.scope")} className="flex w-fit overflow-hidden rounded-lg border border-input bg-card">
@@ -153,11 +111,6 @@ export function StockStatusPage() {
           </button>
         ))}
       </div>
-      {selectedRows.length > 1 ? (
-        <Button type="button" className="h-11" disabled={common.length === 0} title={common.length === 0 ? t("purchase:board.noCommonSupplier") : undefined} onClick={() => startPo(selectedRows, common[0])}>
-          <PlusIcon aria-hidden="true" /> {t("purchase:board.createMany", { count: selectedRows.length })}
-        </Button>
-      ) : null}
     </div>
   );
 

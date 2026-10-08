@@ -14,8 +14,6 @@
     "search": "Search by code or name",
     "empty": "Every material is in good supply. Switch to All materials to see them.",
     "noResult": "No material matches. Clear the search or the filters.",
-    "pick": "Select",
-    "pickRow": "Select {{code}} for a purchase order",
     "columns": {
       "code": "Code",
       "name": "Name",
@@ -29,10 +27,7 @@
     "priceLead": "{{price}} · {{days}} days",
     "noSupplier": "No supplier",
     "noSupplierHint": "No supplier sells this material. Add one in Master data.",
-    "create": "Create PO",
-    "createMany_one": "Create one PO for {{count}} material",
-    "createMany_other": "Create one PO for {{count}} materials",
-    "noCommonSupplier": "No supplier sells all the selected materials."
+    "create": "Create PO"
   },
   "orders": {
     "singular": "purchase order",

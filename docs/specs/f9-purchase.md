@@ -39,7 +39,7 @@ Stock status board (P1)  ──"Create PO"──▶  Purchase Order (P2–P4)  �
 - Default view: only **Shortage and Near shortage** (a switch "Show all materials"). Sorted: shortage first, then by on hand / reorder point. Status filter, search (code, name), and a stepper-like count strip is not used (the status is the filter).
 - A material that is already covered by open POs shows "On order 100 pcs" in blue next to the status (so the user can see it is on its way); the board does **not** hide it.
 - **Create PO** opens a new PO sheet with the supplier, the material and the **reorder quantity** (master data `reorderQty`, else the quantity that brings the stock up to 2 × the reorder point) and the supplier's price filled in; nothing is saved until the user presses Save. If the material has no supplier link the button is disabled with the reason "No supplier sells this material. Add one in Master data."
-- Several materials of the same supplier: the user can tick rows and press **Create PO for N materials** (one PO, one line per material) — a plain checkbox column, optional (Q3).
+- One PO is made for **one material** at a time (the Create PO button of the row). There is no tick box and no "one PO for several materials" button (removed on request).
 
 ### P2 PO list
 
@@ -165,7 +165,7 @@ Supplier bills and payments (Accounting) · printing or e-mailing the PO to the 
 |---|---|---|
 | Q1 | Approval of a PO | ★ a Worker drafts, **only a Manager sends** (Send = approval; no extra status, as in `Purchase_req.md`) · add an "Approved" status between Draft and Sent · no approval at all |
 | Q2 | Stock status board contents | ★ the materials in **shortage / near shortage** by default, a switch for all, with On order and a suggested supplier · all materials always |
-| Q3 | Creating a PO from the board | ★ one material per Create PO button **and** tick several rows of one supplier for one PO · only one material at a time |
+| Q3 | Creating a PO from the board | ★ one material per Create PO button (the tick-several-rows option was removed on request) |
 | Q4 | Who posts a goods receipt | ★ Purchase Worker, Manager, Admin · only a Manager · also Factory users (they run the warehouse) |
 | Q5 | Reorder quantity on Create PO | ★ the material's reorder quantity, else up to 2 × reorder point · always empty, the user types it |
 | Q6 | Lot number | ★ an optional text per receipt line, stored and shown on the movement note · not at all now · required |

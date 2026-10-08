@@ -16,9 +16,9 @@ Status: **BUILT** (all answers ★ accepted) · Purpose: test the whole system f
 | **Work that has no row yet** | A number can count work that is not a row of the page yet. So the pages show it: **Customer invoices** has a panel *Waiting for an invoice* (delivered delivery notes with no invoice) and **Supplier bills** a panel *Waiting for a bill* (posted goods receipts with no bill), **Goods receipt** a panel *Waiting for goods* (purchase orders sent and not fully received), each row with a button that opens the new document already made from it. Factory has *Waiting for a work order* the same way. The panels are not drawn when nothing waits. |
 | **New rows in the tables** | In every list, a small red **dot** before the first column marks a row that is **new for this user**: a document that arrived or changed (its newest history entry, else its updated time) after the user first appeared in this browser or after the user last opened that row. **Opening the row (clicking it) makes its dot go away.** What the user does to a row while its sheet is open (save, approve, post ...) does not make it new for that user. If it changes again later, the dot comes back. What each user has seen is kept per user in the browser (Reset all test data forgets it). A user's first appearance is the first time they sign in on this browser, so sign in as each user once before the test starts and the requests that come later show up as new. |
 
-## Thai names
+## English names
 
-The people, the master data (customers, suppliers, materials, products and their production steps, machines, employees, units, warehouses) and the accounting settings (chart of accounts, tax rates, payment methods, bank accounts) have **Thai names** (`frontend/src/services/mock/thai.js`). Codes stay the same (C001, RF-2D, WH-R ...). Screen texts stay English; Thai screen texts are a translation task. What the tester types in Thai is kept as typed.
+The people, the master data (customers, suppliers, materials, products and their production steps, machines, employees, units, warehouses) and the accounting settings (chart of accounts, tax rates, payment methods, bank accounts) all have **English names** (the same data as the demo; the people are in `frontend/src/services/mock/users.js`). Codes are C001, RF-2D, WH-R ... What the tester types is kept as typed (any language).
 
 ## Test users
 
@@ -26,11 +26,11 @@ Password `test1234` for all, except the Admin (`admin`).
 
 | User | E-mail | Role |
 |---|---|---|
-| อภิชาติ รักษ์ระบบ (Admin) | `admin@gmail.com` (password `admin`) | all departments, Users, Master data |
-| สมชาย ใจดี / สมหญิง สุขสันต์ (Sale Manager / Worker) | `sale.manager@kanou.test` / `sale.worker@kanou.test` | Sale |
-| วิชัย มั่นคง / ประสิทธิ์ ขยันงาน (Factory Manager / Worker) | `factory.manager@kanou.test` / `factory.worker@kanou.test` | Factory and Stock |
-| สุดา พิทักษ์ / มานี มีสุข (Purchase Manager / Worker) | `purchase.manager@kanou.test` / `purchase.worker@kanou.test` | Purchase and Stock |
-| วรรณา ศรีสุข / นภา ใจเย็น (Accounting Manager / Worker) | `accounting.manager@kanou.test` / `accounting.worker@kanou.test` | Accounting |
+| System Admin (Admin) | `admin@gmail.com` (password `admin`) | all departments, Users, Master data |
+| Hiroshi Tanaka / Yuki Sato (Sale Manager / Worker) | `sale.manager@kanou.test` / `sale.worker@kanou.test` | Sale |
+| Kenji Suzuki / Aiko Watanabe (Factory Manager / Worker) | `factory.manager@kanou.test` / `factory.worker@kanou.test` | Factory and Stock |
+| Takeshi Ito / Mei Yamamoto (Purchase Manager / Worker) | `purchase.manager@kanou.test` / `purchase.worker@kanou.test` | Purchase and Stock |
+| Naoko Kobayashi / Ryo Nakamura (Accounting Manager / Worker) | `accounting.manager@kanou.test` / `accounting.worker@kanou.test` | Accounting |
 
 ## What the counters count
 

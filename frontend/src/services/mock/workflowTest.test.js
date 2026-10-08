@@ -43,15 +43,15 @@ describe("an empty start", () => {
     expect((await t.api.get("/master/accounts")).data.meta.total).toBeGreaterThan(5);
   });
 
-  it("has Thai names for the people and the master data", async () => {
+  it("has English names for the people and the master data", async () => {
     const t = await start();
     await t.as("admin@gmail.com");
     const users = (await t.api.get("/admin/users", { params: { pageSize: 100 } })).data.data;
-    expect(users.find((user) => user.email === "sale.manager@kanou.test").name).toBe("สมชาย ใจดี");
-    expect(users.every((user) => /[ก-๙]/.test(user.name))).toBe(true);
+    expect(users.find((user) => user.email === "sale.manager@kanou.test").name).toBe("Hiroshi Tanaka");
+    expect(users.every((user) => /^[\x20-\x7E]+$/.test(user.name))).toBe(true);
     for (const path of ["/master/customers", "/master/suppliers", "/master/materials", "/master/products", "/master/machines", "/master/employees", "/master/accounts"]) {
       const { data } = (await t.api.get(path, { params: { pageSize: 100 } })).data;
-      expect(data.every((row) => /[ก-๙]/.test(row.name)), path).toBe(true);
+      expect(data.every((row) => /^[\x20-\x7E]+$/.test(row.name)), path).toBe(true);
     }
   });
 

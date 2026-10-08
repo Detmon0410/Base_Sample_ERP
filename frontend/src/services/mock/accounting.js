@@ -4,7 +4,6 @@
 // receipts (payments). The data lives until a full reload.
 
 import { EMPTY_SEED } from "./seedMode.js";
-import { thai } from "./thai.js";
 import { MockHttpError, MockResponse } from "./errors.js";
 import { createMockCrud } from "./masterData.js";
 import { INTERNAL_TOKEN } from "./users.js";
@@ -83,10 +82,10 @@ const sampleBanks = () =>
 
 export function accountingRoutes({ userFromAuthorization, getStore, getSale, getPurchase, onAccounting }) {
   const store = () => getStore();
-  const accounts = thai("accounts", sampleAccounts());
-  const taxRates = thai("taxRates", sampleTaxRates());
-  const methods = thai("paymentMethods", sampleMethods());
-  const banks = thai("bankAccounts", sampleBanks());
+  const accounts = sampleAccounts();
+  const taxRates = sampleTaxRates();
+  const methods = sampleMethods();
+  const banks = sampleBanks();
   const invoices = [];
   const receipts = [];
   const bills = [];

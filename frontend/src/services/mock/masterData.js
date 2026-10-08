@@ -2,7 +2,6 @@
 // The shapes and error codes are the contract in docs/api/master-data.md.
 
 import { EMPTY_SEED } from "./seedMode.js";
-import { thai } from "./thai.js";
 import { MockHttpError, MockResponse } from "./errors.js";
 import { INTERNAL_TOKEN } from "./users.js";
 
@@ -688,19 +687,18 @@ function priceListRoutes({ guard, rows, customers, products }) {
 export function masterDataRoutes(guard, readGuard = guard, onStore = () => {}, usedByStock = () => false) {
   // The workflow test starts with the master data (customers, suppliers, materials, products with BOM and routing, machines,
   // employees, price lists) as ordinary records the tester can add to, change and delete, but with no documents and no stock.
-  // In the test the names are Thai (services/mock/thai.js).
-  const customers = thai("customers", sampleCustomers());
-  const uomRows = thai("uom", sampleUom());
-  const materialRows = thai("materials", sampleMaterials()).map((row) => (EMPTY_SEED ? { ...row, onHand: 0 } : row)); // the stock starts empty
-  const supplierRows = thai("suppliers", sampleSuppliers());
+  const customers = sampleCustomers();
+  const uomRows = sampleUom();
+  const materialRows = sampleMaterials().map((row) => (EMPTY_SEED ? { ...row, onHand: 0 } : row)); // the stock starts empty
+  const supplierRows = sampleSuppliers();
   const links = sampleLinks();
-  const productRows = thai("products", sampleProducts());
+  const productRows = sampleProducts();
   const bom = sampleBom();
-  const routing = thai("routing", sampleRouting());
-  const machineRows = thai("machines", sampleMachines());
-  const employeeRows = thai("employees", sampleEmployees());
+  const routing = sampleRouting();
+  const machineRows = sampleMachines();
+  const employeeRows = sampleEmployees();
   const priceRows = samplePrices();
-  const warehouseRows = thai("warehouses", sampleWarehouses());
+  const warehouseRows = sampleWarehouses();
   // The demo marks some records as "used by documents" because its documents are made up; real data is checked by usedByStock.
   const demoUsed = (check) => (row) => !EMPTY_SEED && check(row);
   const routes = {

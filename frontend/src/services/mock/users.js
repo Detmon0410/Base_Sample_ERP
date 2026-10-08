@@ -3,7 +3,6 @@
 
 import { MockHttpError, MockResponse } from "./errors.js";
 import { EMPTY_SEED } from "./seedMode.js";
-import { THAI_PEOPLE } from "./thai.js";
 
 const SEED = [
   {
@@ -85,14 +84,26 @@ const SEED = [
 // the nine demo users have all worked with documents, so they cannot be deleted (R5); a token carries the version of the
 // session: a password reset or a deactivation ends every older token
 const STAMP = "2026-09-01T09:00:00.000Z";
+const PEOPLE = {
+  "admin@gmail.com": "System Admin",
+  "sale.manager@kanou.test": "Hiroshi Tanaka",
+  "sale.worker@kanou.test": "Yuki Sato",
+  "factory.manager@kanou.test": "Kenji Suzuki",
+  "factory.worker@kanou.test": "Aiko Watanabe",
+  "purchase.manager@kanou.test": "Takeshi Ito",
+  "purchase.worker@kanou.test": "Mei Yamamoto",
+  "accounting.manager@kanou.test": "Naoko Kobayashi",
+  "accounting.worker@kanou.test": "Ryo Nakamura",
+};
+
 // The workflow test (docs/specs/f13-workflow-test.md): an Admin and a Manager and a Worker for every department, all with the
 // password "test1234" (the Admin keeps "admin"), who have never signed in.
 const TEST_USERS = [
-  { id: 1, name: THAI_PEOPLE["admin@gmail.com"], email: "admin@gmail.com", password: "admin", status: "active", memberships: [{ department: null, role: "Admin" }] },
+  { id: 1, name: PEOPLE["admin@gmail.com"], email: "admin@gmail.com", password: "admin", status: "active", memberships: [{ department: null, role: "Admin" }] },
   ...["Sale", "Factory", "Purchase", "Accounting"].flatMap((department, index) =>
     ["Manager", "Worker"].map((role, roleIndex) => ({
       id: 2 + index * 2 + roleIndex,
-      name: THAI_PEOPLE[`${department.toLowerCase()}.${role.toLowerCase()}@kanou.test`] ?? `${department} ${role}`,
+      name: PEOPLE[`${department.toLowerCase()}.${role.toLowerCase()}@kanou.test`] ?? `${department} ${role}`,
       email: `${department.toLowerCase()}.${role.toLowerCase()}@kanou.test`,
       password: "test1234",
       status: "active",

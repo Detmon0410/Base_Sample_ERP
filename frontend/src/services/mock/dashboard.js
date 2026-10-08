@@ -3,6 +3,7 @@
 // (e.g. "stockAlerts,production") to see a block-level error, or "all" for a failed request.
 
 import { MockHttpError } from "./errors.js";
+import { buildDepartments } from "./dashboardDepartments.js";
 import { EMPTY_SEED } from "./seedMode.js";
 import { stockStatusOf } from "./stock.js";
 
@@ -187,6 +188,9 @@ export function buildDashboard(user, ledger, getMaterials = () => [], getPurchas
   }
   if (EMPTY_SEED && call) realBlocks(blocks, user, call);
   else withLiveDrift(blocks, { stockIsReal: Boolean(ledger), accountingIsReal: Boolean(accounting) });
+
+  // the panel of each department of the user (docs/specs/d2-dashboard-by-department.md)
+  blocks.departments = call ? buildDepartments(user, call, { stockAlerts: blocks.stockAlerts ?? [], kpis: blocks.kpis }) : {};
 
   const errors = {};
   for (const name of fail) {

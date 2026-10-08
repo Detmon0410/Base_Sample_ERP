@@ -38,6 +38,7 @@ Whole request errors: `401 UNAUTHORIZED` (frontend goes to Login), `500 INTERNAL
     "stockAlerts": [ { "materialId": 1, "code": "COMP", "name": "Compressor", "qtyOnHand": 40, "reorderPoint": 50, "uom": "pcs", "status": "SHORTAGE" } ],
     "production": [ { "woId": 5, "number": "WO-0005", "product": "RF-2D", "qty": 10, "stepsDone": 2, "stepsTotal": 4, "planFinish": "2026-10-05", "late": false } ],
     "activity": [ { "at": "2026-10-02T09:18:00Z", "type": "INVOICE", "number": "INV-0041", "action": "Issued", "user": "Alice Sato" } ],
+    "departments": { "sale": { "...": "see Department panels" } },
     "errors": {}
   }
 }
@@ -74,9 +75,51 @@ Whole request errors: `401 UNAUTHORIZED` (frontend goes to Login), `500 INTERNAL
 
 > Open questions in the spec (Q2, Q3) may change these definitions; update this file when they are confirmed.
 
+## Department panels — `data.departments`
+
+Added by [d2](../specs/d2-dashboard-by-department.md). An object with **one key per department the user may see** (Admin: all four; others: the departments of their memberships; none → `{}`). It is a block like the others: `null` plus `errors.departments` when it fails. Months are `YYYY-MM`, weeks are the date of their Monday (`YYYY-MM-DD`); the last 6 are always returned, oldest first, with `0` for an empty one. Money is whole yen.
+
+```jsonc
+"sale": {
+  "openOrders": 3, "readyToDeliver": 1, "quotationsWaiting": 4, "oldestQuotationDays": 99, "salesThisMonth": 748000,
+  "monthlySales": [ { "month": "2026-10", "value": 748000 } ],
+  "orderStatus":  [ { "status": "confirmed", "count": 1 } ]            // only statuses with count > 0
+},
+"factory": {
+  "inProcess": 3, "scheduled": 2, "late": 1, "toTransfer": 1, "producedThisWeek": 40,
+  "weeklyProduced": [ { "week": "2026-10-05", "value": 40 } ],
+  "running": [ { "woId": 5, "number": "WO-0005", "product": "RF-2D", "qty": 10, "stepsDone": 2, "stepsTotal": 4, "planFinish": "2026-10-09", "late": false } ]   // In Process, at most 6
+},
+"purchase": {
+  "shortage": 2, "nearShortage": 1, "poWaitingForGoods": 2, "nextDueDate": "2026-10-20" /* or null */, "poToApprove": 1,
+  "stockLevels": [ { "materialId": 1, "code": "COMP", "name": "Compressor", "uom": "pcs", "onHand": 18, "reorderPoint": 30, "status": "SHORTAGE" } ]   // the same rows as stockAlerts, at most 5
+},
+"accounting": {
+  "overdueCount": 2, "overdueAmount": 600000, "billsDueIn7Days": 0, "receivedThisMonth": 435600,
+  "cashFlow": [ { "month": "2026-10", "in": 435600, "out": 100000 } ],      // confirmed receipts / payments by date
+  "receivableAging": [ { "bucket": "notDue", "amount": 0 }, { "bucket": "late30", "amount": 0 }, { "bucket": "late60", "amount": 0 }, { "bucket": "over60", "amount": 0 } ]
+}
+```
+
+| Field | Rule |
+|---|---|
+| `monthlySales` | sum of `totals.total` of sale orders **not draft and not cancelled**, by order date |
+| `orderStatus` | count of sale orders per status (same as `meta.statusCounts` of the list) |
+| `weeklyProduced` | `qtyDone` of the **last** step of a Work Order whose last step is done, by the week of its end time |
+| `producedThisWeek` | the last item of `weeklyProduced` |
+| `toTransfer` | finished Work Orders with `remainingToTransfer > 0` |
+| `receivableAging` | **open** invoices (issued, partially paid, overdue) with a balance: `notDue` = overdue days ≤ 0, `late30` 1–30, `late60` 31–60, `over60` > 60; `amount` = the balance |
+| `overdueCount` / `overdueAmount` | open invoices past the due date: count and sum of balances |
+| `billsDueIn7Days` | sum of balances of unpaid bills whose due date is within 7 days (or already past) |
+| `cashFlow` | confirmed customer receipts (`in`) and supplier payments (`out`) summed by the month of their date |
+
+The mock calls the list routes (`frontend/src/services/mock/dashboardDepartments.js`) and is capped at 100 rows per list; **the backend must use SQL aggregates** (GROUP BY month / week / status) and an index on the document date columns.
+
+The "To do now" row of each tab uses `GET /notifications` ([notifications.md](notifications.md)), not this block.
+
 ## Visibility
 
-The dashboard is an **overview of all departments for every signed-in user** (decision in the F2 spec). The only role-dependent data is `approvals` / `myRecentDocuments`. The frontend hides links and quick actions the user cannot use, but the backend must still enforce permissions on every page and API behind those links.
+The overview (`kpis`, `approvals`, `stockAlerts`, `production`, `activity`) is for **every signed-in user** (decision in the F2 spec). The role-dependent data is `approvals` / `myRecentDocuments` and `departments` (only the departments of the user, Admin all). The frontend hides links and quick actions the user cannot use, but the backend must still enforce permissions on every page and API behind those links.
 
 ## Backend checklist
 - [ ] `GET /dashboard` route + controller + service that assembles the blocks (each block in its own `try/catch` so one failure does not fail the request)

@@ -23,6 +23,7 @@ Master data reads (products, routing steps, machines, employees, warehouses, BOM
 |---|---|---|
 | GET | `/factory/work-orders` | list; params `q` (number, product code / name, sales order number, customer), `status`, `product` (id), `saleOrder` (id), `from`, `to` (**plan finish** range), `sort` (`number, planStart, planFinish, qty, status, productCode`, or `board` = running first, then scheduled, draft, finished, cancelled, soonest plan finish first; **default `board`**), `page`, `pageSize`. `meta = { page, pageSize, total, statusCounts }`; `statusCounts` is counted with every filter except `status` (it feeds the status stepper) |
 | GET | `/factory/work-orders/:id` | one |
+| GET, POST | `/factory/work-orders/:id/serials` | the serial numbers of the units of the Work Order and the button that makes them (**only a person presses it**): see [serial.md](serial.md) |
 | POST | `/factory/work-orders` | create a **draft**: `{ saleOrderId, productId, qty, planStart?, planFinish?, remarks }`. The order must be **in production** (sent to the factory), the product must be on it and `qty` ≤ the order line quantity − the quantity of its other work orders that are not cancelled (`400` `TOO_MANY` on `qty`). The steps are copied from the **routing of the product**; a product without steps gives `409 NO_ROUTING` |
 | PUT | `/factory/work-orders/:id` | change a **draft**: `{ qty, planStart, planFinish, remarks }` (`409 INVALID_STATUS` otherwise); order and product cannot change |
 | DELETE | `/factory/work-orders/:id` | delete a **draft** |

@@ -1,6 +1,6 @@
 # F12 Spec — Second requirement round (Purchase approval, Serial Number and Traceability, header clock, role look)
 
-Status: **APPROVED (all ★). Part A (Purchase approval) BUILT; B, C, D not yet** — see section 9 for what differs · Rule as before: spec → review → build with mock data → API doc → tests → ticks in `docs/test.txt` section 9 (N1–N8).
+Status: **APPROVED (all ★). Parts A (Purchase approval), D (header, role hat) and B (Serial Number) BUILT; C (Traceability page) not yet** — see section 9 for what differs · Rule as before: spec → review → build with mock data → API doc → tests → ticks in `docs/test.txt` section 9 (N1–N8).
 Sources: the customer's new requirements (`docs/test.txt` section 9) · `docs/specs/f9-purchase.md` (the PO workflow that exists) · `docs/specs/f7-factory.md` (work order, steps, transfers) · `docs/specs/f8-stock.md` (movements) · `docs/test.txt` R1 Traceability.
 
 Carried-over decisions: JPY only · desktop · EN first, JA keys empty with EN fallback · details open as the side sheet · manual-first workflow (every status change is a button pressed by a person) · tooltips for explanations · mock first, API doc per module.
@@ -61,11 +61,11 @@ In the Work Order, the **Product is a box of its own**; the system **generates a
 - `<product code>-<yy>-<6 digits>` e.g. `RF-1D-26-000001` (readable on a label, the product is visible in it; the running number is per product and year, **never reused**, never changed). *(Q3)*
 - One S/N = one unit of the finished product. A work order of 10 units can have **up to 10 S/N**; the user may generate them in one go ("Generate for N units") or one by one; **never more than the quantity of the work order**; there is no automatic generation (not when the work order is created, started or finished).
 - Generating is allowed from status **Scheduled** and later (a draft is still being planned), by the Factory Worker or Manager; not on Cancelled work orders. A Finished work order may still receive its missing S/N *(Q4)*.
-- S/N cannot be deleted. If a work order is cancelled with S/N already made, they stay and show **Void** (they stay searchable so a printed label is still understood).
+- S/N cannot be deleted. If a work order is cancelled with S/N already made, they stay and show **Void** (they stay searchable so the number is still understood).
 
 **Work Order sheet — "Product and serial numbers" box**
 - A card of its own, between the order data and the production steps: Product (code · name), quantity, S/N made `n / N`, a **Generate S/N** button (with a number field for how many, default = what is left), and a table of the units: S/N · status of the unit · where it is now · Tag print.
-- **Tag / label**: a print layout per S/N (S/N in large text, product, work order, date) with a **QR code** of the S/N and a "Print all tags" button. *(Q5: QR or only text.)*
+- **No tag, no printing, no QR code** (cut by the customer): the S/N is only a number shown on screen. It can still be written on a label by hand or pasted anywhere; the system has no print feature for it.
 
 **What an S/N follows (the unit's life, recorded as events)**
 
@@ -114,7 +114,7 @@ In the Work Order, the **Product is a box of its own**; the system **generates a
 | A2 | Tests (who may approve, not your own, no automatic change, log is append-only), `api/purchase.md`, tick N4–N6 |
 | D1 | Header clock + `RoleBadge` in the header, Users and U3; tick N7–N8 |
 | B0 | Serial mock + service: ledger of S/N and events, numbering, rules |
-| B1 | Work Order sheet: Product and serial numbers box, Generate, Tag print |
+| B1 | Work Order sheet: Product and serial numbers box, Generate |
 | B2 | Delivery note: S/N picker; Dashboard / lists untouched |
 | B3 | Tests, `api/serial.md`, tick N1–N2 |
 | C1 | Traceability page: search, unit timeline, material lots; tests; tick N3 and R1 |
@@ -135,7 +135,7 @@ Batch / lot as a thing of its own in Stock (only the goods receipt lot number is
 | Q2 | Approve and Send | ★ Two buttons: Approve, then Send to supplier · Approve also sends |
 | Q3 | S/N format | ★ `RF-1D-26-000001` (product code, year, 6 digits) · only a running number · your own format |
 | Q4 | When can S/N be generated | ★ From Scheduled, also on a Finished work order for the missing ones · only while In process · from Draft |
-| Q5 | Tag | ★ Print layout with a QR code of the S/N + text · text only |
+| Q5 | Tag | ~~QR code + text~~ → decided: **no tag and no printing**; the S/N is shown as text only |
 | Q6 | Materials of a unit | ★ Work-order level (all units of one work order share the materials and lots) · per unit (the Worker picks the lots for each unit) |
 | Q7 | Delivery | ★ Picking S/N is required for products that have S/N · optional · not at all (link by work order only) |
 | Q8 | Forward trace (lot → customers) | ★ In this round, a search by lot number · later |
@@ -163,3 +163,12 @@ When you answer (or say "take the suggestions"), the build starts with A0.
 - **Departments have their own colour** on the chips: Sale = light blue, Factory = orange, Purchase = green, Accounting = red (the Admin chip is red). The same chips (helmet + department colour + words) are used in the Users list and the Users form; the helmets also head the Admin / Manager / Worker columns of the U3 matrix.
 - The header clock shows date and time to the minute from the computer clock (e.g. `Thu, 8 Oct 2026 · 10:11`) and a dot with the word **Online** / **Offline** that follows the browser connection.
 - One file holds the colours: `frontend/src/config/roleStyle.js` (change a colour there only).
+
+## 11. Differences between this draft and what was built (part B)
+
+- **Status of a unit is computed**, not stored (`made, in_stock, delivered, void`): the units of a Work Order are moved in the order of their numbers, so the first N numbers are the N units of the posted transfers. This way a revert of a transfer or of a delivery note moves the units back by itself.
+- The **Product and serial numbers** box is a card of its own on the Work Order sheet (above Progress): product, quantity, the **Generate S/N** button as a table with one row per unit: **the button sits in the first empty row and, once pressed, becomes that row's S/N** (one press, one unit, one number; no "how many" field), a table of the units (number, status, where it is) and **Print tag** (one) or **Print all tags**. A draft Work Order shows "Serial numbers can be made once the work order is scheduled" (Q4 ★: from Scheduled; a finished Work Order can still make its missing ones).
+- **Delivery note**: a line of a product that has units in the warehouse shows **Serial numbers of the units** with a picker (checkboxes of the free units, "Choose the first N", Clear). Saving checks the numbers; **confirming needs exactly as many as pieces** (Q7 ★). Products with no unit in the warehouse are delivered as before.
+- Seeds: WO-2026-0001 has 4 numbers (made), WO-2026-0003 all 30 (18 delivered on DN-2026-0002, 11 in stock, 1 not transferred), WO-2026-0005 all 6 (delivered on DN-2026-0001), so the demo draft note DN-2026-0003 (12 pieces of RF-2D) has only 11 units to choose: lower its quantity to 11.
+- The history of the unit (timeline API) is built; the **page that shows it** is part C.
+- A crash of the delivery note sheet when it was opened directly by its address (the record was not loaded yet) was fixed on the way.

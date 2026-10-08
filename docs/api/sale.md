@@ -99,14 +99,14 @@ The order becomes **delivered** when the **last** delivery note that completes e
 
 ## Delivery notes — `/sale/deliveries`
 
-Created only from a sale order (no `POST /sale/deliveries`). Statuses `draft → delivered`. List params like the others (search: number, order number, customer). Response: `number, date, saleOrderId, saleOrderNumber, customerId, customerCode, customerName, warehouseId, warehouseName, status, lines[], history[], links[]`, each line `{ productId, productCode, productName, ordered, deliveredBefore, remaining, deliverNow }` (`remaining` = ordered − confirmed before − on other draft notes).
+Created only from a sale order (no `POST /sale/deliveries`). Statuses `draft → delivered`. List params like the others (search: number, order number, customer). Response: `number, date, saleOrderId, saleOrderNumber, customerId, customerCode, customerName, warehouseId, warehouseName, status, lines[], history[], links[]`, each line `{ productId, productCode, productName, ordered, deliveredBefore, remaining, deliverNow, serialTracked, serials }` (`remaining` = ordered − confirmed before − on other draft notes; `serialTracked` and `serials` are the **serial numbers of the delivered units**, see [serial.md](serial.md)).
 
 | Method | Path | Notes |
 |---|---|---|
 | GET | `/sale/deliveries`, `/sale/deliveries/:id` | |
-| PUT | `/sale/deliveries/:id` | draft only: `{ date, warehouseId (a finished goods warehouse), lines: [{ productId, deliverNow }] }`; `0 ≤ deliverNow ≤ remaining` else `400` with `path ["lines", i, "deliverNow"]` |
+| PUT | `/sale/deliveries/:id` | draft only: `{ date, warehouseId (a finished goods warehouse), lines: [{ productId, deliverNow, serials? }] }`; `0 ≤ deliverNow ≤ remaining` else `400` with `path ["lines", i, "deliverNow"]`; the `serials` of a line are checked as in [serial.md](serial.md) (`INVALID`, `NOT_AVAILABLE`, `TOO_MANY`) |
 | DELETE | `/sale/deliveries/:id` | draft only |
-| POST | `/sale/deliveries/:id/confirm` | draft → delivered; at least one `deliverNow > 0`; moves stock out later (Stock module); sets the order to **delivered** when every order line is fully delivered |
+| POST | `/sale/deliveries/:id/confirm` | draft → delivered; at least one `deliverNow > 0`; **every line of a product that has units with serial numbers in the warehouse names exactly `deliverNow` of them** (`400` `lines.<i>.serials` `SERIALS_REQUIRED`); moves stock out later (Stock module); sets the order to **delivered** when every order line is fully delivered |
 | POST | `/sale/deliveries/:id/revert` | Manager / Admin, note required; delivered → draft, and the order goes back from `delivered` to `ready_to_deliver` (`409` if the order is already `closed`) |
 
 ## Errors used (besides the common ones)

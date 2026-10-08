@@ -41,7 +41,8 @@
     "inactiveToggle": "",
     "totalItems": "",
     "none": "",
-    "newRow": ""
+    "newRow": "",
+    "sortBy": ""
   },
   "validation": {
     "required": "",

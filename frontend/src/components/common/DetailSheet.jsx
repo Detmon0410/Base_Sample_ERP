@@ -107,23 +107,24 @@ export function DetailSheet({
           event.preventDefault();
           event.currentTarget.focus();
         }}
-        className="gap-0 p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-none"
+        className="gap-0 p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-none max-[991px]:data-[side=right]:w-screen!"
         style={{ width: `min(${width}px, 100vw)` }}
       >
-        <SheetHeader className="flex-row flex-nowrap items-center gap-3 border-b bg-card px-5 py-2">
+        <SheetHeader className="flex-row flex-nowrap items-center gap-3 border-b bg-card px-5 py-2 max-md:flex-wrap max-md:px-3">
           <div className="flex min-w-0 flex-1 items-center gap-x-3">
             <SheetTitle className="truncate text-lg font-bold">{title}</SheetTitle>
             {badge}
           </div>
           <SheetDescription className="sr-only">{description ?? title}</SheetDescription>
-          <div className="ml-auto flex shrink-0 items-center justify-end gap-2">
+          {/* on a phone the title and the close button are one row and the action buttons wrap on the row under it */}
+          <div className="ml-auto flex shrink-0 items-center justify-end gap-2 max-md:order-3 max-md:w-full max-md:flex-wrap max-md:justify-start max-md:[&>button]:h-11">
             {actions}
-            <SheetClose asChild>
-              <Button type="button" variant="ghost" size="icon" className="size-9" aria-label={t("actions.cancel")}>
-                <XIcon />
-              </Button>
-            </SheetClose>
           </div>
+          <SheetClose asChild>
+            <Button type="button" variant="ghost" size="icon" className="size-9 shrink-0 max-md:order-2 max-md:size-11" aria-label={t("actions.cancel")}>
+              <XIcon />
+            </Button>
+          </SheetClose>
         </SheetHeader>
         <div className="@container flex min-h-0 flex-1 flex-col bg-[#F1F5F9]">{bodyReady ? children : null}</div>
 
@@ -138,6 +139,7 @@ export function DetailSheet({
           valueFromPointer={(clientX) => window.innerWidth - clientX}
           onChange={setWidth}
           onCommit={(value) => saveWidth(widthKey, value)}
+          className="max-[991px]:hidden" // a tablet held upright: the sheet always fills the screen, so there is nothing to drag
         />
       </SheetContent>
     </Sheet>

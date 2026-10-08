@@ -41,7 +41,8 @@
     "inactiveToggle": "Inactive. Click to activate",
     "totalItems": "Total {{count}} items",
     "none": "None",
-    "newRow": "New or changed since you last opened it"
+    "newRow": "New or changed since you last opened it",
+    "sortBy": "Sort by"
   },
   "validation": {
     "required": "This field is required.",

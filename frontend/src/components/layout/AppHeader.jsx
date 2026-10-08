@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { HeaderClock } from "@/components/layout/HeaderClock";
 import { LanguageMenu } from "@/components/layout/LanguageMenu";
+import { MobileHeaderMenu } from "@/components/layout/MobileHeaderMenu";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -34,8 +35,8 @@ export function AppHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center gap-3 bg-primary px-4 text-primary-foreground">
-      <div className="flex min-w-0 flex-1 items-center gap-3">
+    <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center gap-3 bg-primary px-4 text-primary-foreground max-md:gap-1 max-md:px-2">
+      <div className="flex min-w-0 flex-1 items-center gap-3 max-md:gap-1">
         <Button
           type="button"
           variant="ghost"
@@ -55,7 +56,10 @@ export function AppHeader() {
 
       <HeaderClock />
 
-      <div className="flex flex-1 items-center justify-end gap-1">
+      {/* on a phone (below 768 px) the buttons are one "more" menu (docs/specs/f16-mobile.md) */}
+      <MobileHeaderMenu className="md:hidden" />
+
+      <div className="flex flex-1 items-center justify-end gap-1 max-md:hidden">
         <Button
           type="button"
           variant="ghost"

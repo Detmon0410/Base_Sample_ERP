@@ -29,7 +29,7 @@ const ACTIVE_STYLE = "data-active:shadow-[inset_3px_0_0_var(--primary)]";
 
 function NavGroup({ group, activeGroupKey }) {
   const { t } = useTranslation("nav");
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const { pathname } = useLocation();
   const isActiveGroup = activeGroupKey === group.key;
   const [open, setOpen] = useState(isActiveGroup);
@@ -45,7 +45,7 @@ function NavGroup({ group, activeGroupKey }) {
   }
 
   // Collapsed sidebar: one icon per group that opens the group's first page.
-  if (state === "collapsed") {
+  if (state === "collapsed" && !isMobile) { // (on a phone the menu is a panel, always with its groups open-able)
     return (
       <SidebarMenuItem>
         <SidebarMenuButton
@@ -82,7 +82,7 @@ function NavGroup({ group, activeGroupKey }) {
               return (
                 <SidebarMenuSubItem key={item.key}>
                   <SidebarMenuSubButton asChild isActive={active}>
-                    <Link to={item.to} aria-current={active ? "page" : undefined} className="justify-between">
+                    <Link to={item.to} aria-current={active ? "page" : undefined} className="justify-between" onClick={() => setOpenMobile(false)}>
                       <span>{t(item.labelKey)}</span>
                       <CountBadge count={counts?.items?.[item.key]} hint={t(`requests.items.${item.key}`, { defaultValue: "" })} />
                     </Link>
@@ -136,7 +136,7 @@ export function AppSidebar({ width }) {
                 tooltip={t("nav:dashboard")}
                 className={ACTIVE_STYLE}
               >
-                <Link to="/" aria-current={dashboardActive ? "page" : undefined}>
+                <Link to="/" aria-current={dashboardActive ? "page" : undefined} onClick={() => setOpenMobile(false)}>
                   <DashboardIcon />
                   <span>{t("nav:dashboard")}</span>
                 </Link>

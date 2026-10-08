@@ -415,7 +415,9 @@
       "bills_other": "{{count}} bills",
       "payments_one": "{{count}} payment",
       "payments_other": "{{count}} payments"
-    }
+    },
+    "statusLabel": "Status",
+    "all": "All statuses"
   },
   "print": {
     "title": {

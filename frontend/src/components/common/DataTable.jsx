@@ -2,7 +2,9 @@ import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 
+import { CardList } from "@/components/common/CardList";
 import { Button } from "@/components/ui/button";
+import { usePhone } from "@/hooks/useNarrow";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRowSeen } from "@/utils/rowSeen";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,6 +14,7 @@ import { cn } from "@/lib/utils";
  * Server-side table: the parent owns sort, page and data.
  * columns: [{ key, header, sortable?, align?: "right" | "center", width?: "w-40" (class of the header cell), render?(row), className? }]
  * sort: "code" (ascending) or "-code" (descending). status: "loading" | "ready" | "error".
+ * A column with `secondary: true` is hidden below 1280 px (a tablet, held upright or sideways, docs/specs/f15-tablet.md).
  * Last row (summary): "Total N items" under the first column(s), and under every column that has `sum` the sum
  * the server sent for it. `total` = number of records of the whole list (all pages), `sums` = { [column key]: value }
  * for the whole list; a column says how to show its sum with `sum: (value) => node`.
@@ -37,6 +40,7 @@ export function DataTable({
   const { t } = useTranslation("master");
   const navigate = useNavigate();
   const rowSeen = useRowSeen(); // a red dot on the rows that are new for this user
+  const phone = usePhone(); // on a phone the rows are cards (docs/specs/f16-mobile.md)
   const sortField = sort?.startsWith("-") ? sort.slice(1) : sort;
   const descending = sort?.startsWith("-");
 
@@ -53,6 +57,28 @@ export function DataTable({
     navigate(rowTo(row));
   };
 
+  if (phone) {
+    return (
+      <CardList
+        columns={columns}
+        rows={rows}
+        rowKey={rowKey}
+        sort={sort}
+        onSortChange={onSortChange}
+        rowTo={rowTo}
+        status={status}
+        fetching={fetching}
+        onRetry={onRetry}
+        emptyContent={emptyContent}
+        total={total}
+        ariaLabel={ariaLabel}
+        isNew={rowSeen.isNew}
+        mark={rowSeen.mark}
+        skeletonRows={skeletonRows}
+      />
+    );
+  }
+
   return (
     <div
       className={cn("overflow-hidden rounded-lg border border-slate-200 bg-card transition-opacity", fetching && "opacity-60")}
@@ -65,7 +91,7 @@ export function DataTable({
               <TableHead
                 key={column.key}
                 aria-sort={ariaSort(column)}
-                className={cn("h-11 px-3 text-sm font-semibold text-[#4C4C4C]", column.align === "right" && "text-right", column.align === "center" && "text-center", column.width)}
+                className={cn("h-11 px-3 text-sm font-semibold text-[#4C4C4C]", column.align === "right" && "text-right", column.align === "center" && "text-center", column.secondary && "max-[1279px]:hidden", column.width)}
               >
                 {column.sortable ? (
                   <button
@@ -141,7 +167,7 @@ export function DataTable({
                     return (
                       <TableCell
                         key={column.key}
-                        className={cn("px-3 py-2", column.align === "right" && "text-right", column.align === "center" && "text-center", column.className)}
+                        className={cn("px-3 py-2", column.align === "right" && "text-right", column.align === "center" && "text-center", column.secondary && "max-[1279px]:hidden", column.className)}
                       >
                         <span className="inline-flex items-center gap-2">
                           {index === 0 && rowTo && rowSeen.isNew(row, rowTo(row)) ? (
@@ -170,7 +196,7 @@ export function DataTable({
                 {t("common.totalItems", { count: total })}
               </TableCell>
               {columns.slice(labelSpan).map((column) => (
-                <TableCell key={column.key} className={cn("px-3 py-3 font-bold text-slate-900", column.align === "right" && "text-right")}>
+                <TableCell key={column.key} className={cn("px-3 py-3 font-bold text-slate-900", column.align === "right" && "text-right", column.secondary && "max-[1279px]:hidden")}>
                   {column.sum && sums?.[column.key] != null ? column.sum(sums[column.key]) : null}
                 </TableCell>
               ))}

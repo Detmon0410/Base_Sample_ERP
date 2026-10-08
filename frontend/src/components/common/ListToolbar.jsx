@@ -118,8 +118,8 @@ export function ListToolbar({ searchValue, onSearchChange, searchLabel, filters 
 
   return (
     <div className="mb-4" role="search">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 min-w-0 flex-1 items-center gap-1 rounded-full border border-input bg-card pr-3 pl-1 focus-within:ring-2 focus-within:ring-ring">
+      <div className="flex items-center gap-3 max-md:flex-wrap">
+        <div className="flex h-10 min-w-0 flex-1 items-center gap-1 max-md:h-12 max-md:basis-full rounded-full border border-input bg-card pr-3 pl-1 focus-within:ring-2 focus-within:ring-ring">
           {filters.length > 0 ? (
             <Popover
               open={open}
@@ -195,7 +195,7 @@ export function ListToolbar({ searchValue, onSearchChange, searchLabel, filters 
         {extra}
 
         {newTo ? (
-          <Button asChild className="h-10 shrink-0">
+          <Button asChild className="h-10 shrink-0 max-md:h-12 max-md:w-full">
             <Link to={newTo}>
               <PlusIcon /> {newLabel}
             </Link>

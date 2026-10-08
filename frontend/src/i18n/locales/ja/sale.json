@@ -415,7 +415,9 @@
       "bills_other": "",
       "payments_one": "",
       "payments_other": ""
-    }
+    },
+    "statusLabel": "",
+    "all": ""
   },
   "print": {
     "title": {

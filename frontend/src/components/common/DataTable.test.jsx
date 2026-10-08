@@ -62,3 +62,14 @@ describe("DataTable", () => {
     expect(onSortChange).toHaveBeenCalledWith("total");
   });
 });
+
+describe("DataTable on a tablet held upright", () => {
+  it("hides the secondary columns below 1280 px (header, cells and the sums) and keeps the others", () => {
+    const withSecondary = columns.map((column) => (column.key === "customer" ? { ...column, secondary: true } : column));
+    show({ columns: withSecondary, total: 2, sums: { total: 350 } });
+    expect(screen.getByRole("columnheader", { name: "Customer" }).className).toContain("max-[1279px]:hidden");
+    expect(screen.getByText("ABC").closest("td").className).toContain("max-[1279px]:hidden");
+    expect(screen.getByRole("columnheader", { name: /Total/ }).className).not.toContain("max-[1279px]:hidden");
+    expect(screen.getByText("QT-1").closest("td").className).not.toContain("max-[1279px]:hidden");
+  });
+});

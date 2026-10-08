@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { PANEL_CLASS } from "@/components/common/SheetSection";
 import { STATUS_COLORS as COLORS } from "@/config/sale";
+import { usePhone } from "@/hooks/useNarrow";
 import { useStepperVisible } from "@/hooks/useStepperVisible";
 import { cn } from "@/lib/utils";
 
@@ -48,7 +49,25 @@ const EMPTY = { ring: "border-slate-200 text-slate-400", hover: "group-hover:bg-
 export function StatusStepper({ statuses, counts, value, onSelect, unit = "orders" }) {
   const { t } = useTranslation("sale");
   const [visible] = useStepperVisible();
+  const phone = usePhone();
   if (!visible) return null;
+
+  // On a phone the steps are a list to choose from, with the count of each (docs/specs/f16-mobile.md)
+  if (phone) {
+    return (
+      <label className="mb-3 flex items-center gap-3 text-sm font-semibold text-muted-foreground">
+        {t("stepper.statusLabel")}
+        <select value={value} onChange={(event) => onSelect(event.target.value)} className="h-12 min-w-0 flex-1 rounded-lg border border-input bg-background px-3 text-base font-normal text-foreground">
+          <option value="all">{t("stepper.all")}</option>
+          {statuses.map((status) => (
+            <option key={status} value={status}>
+              {t(`status.${status}`)} ({counts?.[status] ?? "…"})
+            </option>
+          ))}
+        </select>
+      </label>
+    );
+  }
 
   return (
     <nav aria-label={t("stepper.label")} className={cn(PANEL_CLASS, "mb-4 overflow-x-auto px-3 py-5")}>
@@ -60,8 +79,8 @@ export function StatusStepper({ statuses, counts, value, onSelect, unit = "order
           const has = count > 0;
           const color = has ? COLORS[status] : EMPTY;
           return (
-            <li key={status} className="relative flex min-w-32 flex-1 flex-col items-center">
-              {index < statuses.length - 1 ? <span aria-hidden="true" className="absolute top-8 left-1/2 h-0.5 w-full rounded-full bg-slate-200" /> : null}
+            <li key={status} className="relative flex min-w-32 flex-1 flex-col items-center max-[991px]:min-w-24">
+              {index < statuses.length - 1 ? <span aria-hidden="true" className="absolute top-8 left-1/2 h-0.5 w-full rounded-full bg-slate-200 max-[991px]:top-[26px]" /> : null}
               <button
                 type="button"
                 aria-pressed={selected}
@@ -70,13 +89,13 @@ export function StatusStepper({ statuses, counts, value, onSelect, unit = "order
               >
                 <span
                   className={cn(
-                    "grid size-14 place-items-center rounded-full border-2 transition-colors",
+                    "grid size-14 place-items-center rounded-full border-2 transition-colors max-[991px]:size-11",
                     selected ? `${COLORS[status].solid} text-white` : `bg-card ${color.ring} ${color.hover}`,
                   )}
                 >
-                  <Icon className="size-7" aria-hidden="true" />
+                  <Icon className="size-7 max-[991px]:size-5" aria-hidden="true" />
                 </span>
-                <span className="mt-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">{t("stepper.step", { number: index + 1 })}</span>
+                <span className="mt-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase max-[991px]:hidden">{t("stepper.step", { number: index + 1 })}</span>
                 <span className={cn("text-sm font-semibold", selected ? COLORS[status].title : has ? "text-slate-900" : "text-slate-500")}>{t(`status.${status}`)}</span>
                 <span
                   className={cn(

@@ -70,5 +70,9 @@
   "resizeSidebar": "Drag to change the menu width",
   "refresh": "Refresh the data on this page",
   "hideSteppers": "Hide the status steps on every page",
-  "showSteppers": "Show the status steps on every page"
+  "showSteppers": "Show the status steps on every page",
+  "clock": {
+    "online": "Online",
+    "offline": "Offline"
+  }
 }

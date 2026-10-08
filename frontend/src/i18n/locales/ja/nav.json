@@ -70,5 +70,9 @@
   "resizeSidebar": "",
   "refresh": "",
   "hideSteppers": "",
-  "showSteppers": ""
+  "showSteppers": "",
+  "clock": {
+    "online": "",
+    "offline": ""
+  }
 }

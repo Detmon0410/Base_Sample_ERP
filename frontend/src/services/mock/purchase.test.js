@@ -7,7 +7,10 @@ const USERS = {
   admin: { email: "admin@gmail.com", password: "admin" },
 };
 
+let current = "manager"; // who is signed in, so a helper can come back to them
+
 async function start(who = "manager") {
+  current = who;
   vi.resetModules();
   const { login } = await import("../auth.service.js");
   const { setToken } = await import("@/utils/session");
@@ -24,6 +27,7 @@ async function switchTo(who) {
   const { login } = await import("../auth.service.js");
   const { setToken } = await import("@/utils/session");
   setToken((await login(USERS[who])).token);
+  current = who;
 }
 
 const failure = async (promise) => {
@@ -43,10 +47,19 @@ const byNumber = async (p, number) => (await p.purchaseOrderService.list({ q: nu
 const draft = (p, overrides = {}) =>
   p.purchaseOrderService.create({ supplierId: 1, date: "2026-10-08", expectedDate: "2026-10-22", warehouseId: 1, remarks: "", lines: [{ materialId: 1, qty: 20, unitPrice: 3800 }], ...overrides });
 
-/** Send the draft as the Manager and open a receipt of everything for it. */
+/** What the workflow needs now: the author asks, another Manager (here the Admin) approves, then it is sent. Signs back in as the author. */
+const send = async (p, po) => {
+  const me = current;
+  await p.purchaseOrderService.run(po.id, "request-approval");
+  await switchTo("admin");
+  await p.purchaseOrderService.run(po.id, "approve");
+  await p.purchaseOrderService.run(po.id, "send");
+  await switchTo(me);
+};
+/** A new PO that is approved and sent. */
 const sent = async (p, overrides) => {
   const po = await draft(p, overrides);
-  await p.purchaseOrderService.run(po.id, "send");
+  await send(p, po);
   return po;
 };
 const receiptBody = (po, lines, extra = {}) => ({ poId: po.id, date: "2026-10-09", warehouseId: 1, deliveryNoteNo: "X-1", remarks: "", lines, ...extra });
@@ -55,8 +68,8 @@ describe("seeded purchase orders", () => {
   it("has a PO in every status and counts them for the stepper", async () => {
     const p = await start();
     const { items, meta } = await p.purchaseOrderService.list(all);
-    expect(items).toHaveLength(7);
-    expect(meta.statusCounts).toEqual({ received: 2, partially_received: 1, closed: 1, cancelled: 1, sent: 1, draft: 1 });
+    expect(items).toHaveLength(10);
+    expect(meta.statusCounts).toEqual({ received: 2, partially_received: 1, closed: 1, cancelled: 1, sent: 1, draft: 1, pending: 1, rejected: 1, approved: 1 });
     expect(meta.sums.total).toBe(items.reduce((sum, row) => sum + row.total, 0));
     const sale = (await p.purchaseOrderService.list({ status: "sent", ...all })).items[0];
     expect(sale).toMatchObject({ number: "PO-2026-0006", supplierCode: "S001", lineCount: 2, subtotal: 150 * 650 + 50 * 3800 });
@@ -78,19 +91,19 @@ describe("seeded purchase orders", () => {
   it("filters and searches", async () => {
     const p = await start();
     expect((await p.purchaseOrderService.list({ supplier: 2, ...all })).items.map((row) => row.number)).toEqual(expect.arrayContaining(["PO-2026-0002", "PO-2026-0003"]));
-    expect((await p.purchaseOrderService.list({ material: 6, ...all })).items.map((row) => row.number)).toEqual(["PO-2026-0006"]);
-    expect((await p.purchaseOrderService.list({ q: "thermostat", ...all })).items).toHaveLength(1);
+    expect((await p.purchaseOrderService.list({ material: 6, ...all })).items.map((row) => row.number).sort()).toEqual(["PO-2026-0006", "PO-2026-0008"]);
+    expect((await p.purchaseOrderService.list({ q: "thermostat", ...all })).items).toHaveLength(2);
     expect((await p.purchaseOrderService.list({ receivable: 1, ...all })).items.map((row) => row.status).sort()).toEqual(["partially_received", "sent"]);
-    expect((await p.purchaseOrderService.list({ from: "2026-10-01", ...all })).items).toHaveLength(2);
+    expect((await p.purchaseOrderService.list({ from: "2026-10-01", ...all })).items).toHaveLength(5);
   });
 });
 
 describe("who can open Purchase", () => {
   it("is for Purchase users and Admin; a Factory or Sale user gets 403", async () => {
     const p = await start("worker");
-    expect((await p.purchaseOrderService.list(all)).meta.total).toBe(7);
+    expect((await p.purchaseOrderService.list(all)).meta.total).toBe(10);
     await switchTo("admin");
-    expect((await p.purchaseOrderService.list(all)).meta.total).toBe(7);
+    expect((await p.purchaseOrderService.list(all)).meta.total).toBe(10);
     for (const who of ["factory", "sale"]) {
       await switchTo(who);
       expect((await failure(p.purchaseOrderService.list(all))).status).toBe(403);
@@ -129,7 +142,7 @@ describe("the stock status board", () => {
     const po = await draft(p, { lines: [{ materialId: 4, qty: 500, unitPrice: 180 }], supplierId: 2 }); // steel
     const steel = async () => (await p.stockStatusService.list({ scope: "all", q: "STEEL", ...all })).items[0].onOrder;
     expect(await steel()).toBe(200);
-    await p.purchaseOrderService.run(po.id, "send");
+    await send(p, po);
     expect(await steel()).toBe(700);
   });
 });
@@ -138,7 +151,7 @@ describe("creating and editing a PO", () => {
   it("creates a numbered draft with totals and the buyer, and the Stock overview shows it as on order only after it is sent", async () => {
     const p = await start("worker");
     const po = await draft(p);
-    expect(po).toMatchObject({ number: "PO-2026-0008", status: "draft", buyer: "Alice Sato", subtotal: 76000, tax: 7600, total: 83600, supplierCode: "S001", warehouseName: "Raw Material Warehouse" });
+    expect(po).toMatchObject({ number: "PO-2026-0011", status: "draft", buyer: "Alice Sato", subtotal: 76000, tax: 7600, total: 83600, supplierCode: "S001", warehouseName: "Raw Material Warehouse" });
     expect(po.lines[0]).toMatchObject({ materialCode: "COMP", amount: 76000, listPrice: 3800, received: 0, open: 20 });
     expect(po.links).toEqual([expect.objectContaining({ type: "supplierBill", number: null })]);
     expect((await p.balanceService.list({ kind: "material", q: "COMP", ...all })).items[0].onOrder).toBe(50);
@@ -170,7 +183,7 @@ describe("creating and editing a PO", () => {
     expect(other).toBeUndefined(); // the only seeded draft is Alice's too
     await switchTo("manager");
     expect(await p.purchaseOrderService.update(po.id, { ...body, remarks: "By the manager" })).toMatchObject({ remarks: "By the manager" });
-    await p.purchaseOrderService.run(po.id, "send");
+    await send(p, po);
     expect((await failure(p.purchaseOrderService.update(po.id, body))).code).toBe("INVALID_STATUS");
     expect((await failure(p.purchaseOrderService.remove(po.id))).code).toBe("INVALID_STATUS");
     const second = await draft(p);
@@ -180,14 +193,16 @@ describe("creating and editing a PO", () => {
 });
 
 describe("purchase order actions", () => {
-  it("is sent by a Manager only (a Worker may not), and can go back to draft before anything is received", async () => {
+  it("is sent by a Manager only after it is approved, and can go back to draft (to be approved again) before anything is received", async () => {
     const p = await start("worker");
     const po = await draft(p);
     expect((await failure(p.purchaseOrderService.run(po.id, "send"))).status).toBe(403);
     await switchTo("manager");
-    expect(await p.purchaseOrderService.run(po.id, "send", { note: "Approved" })).toMatchObject({ status: "sent" });
+    expect((await failure(p.purchaseOrderService.run(po.id, "send"))).code).toBe("INVALID_STATUS"); // a draft is not approved
+    await switchTo("worker");
+    await send(p, po);
+    await switchTo("manager");
     expect(await p.purchaseOrderService.run(po.id, "back-to-draft")).toMatchObject({ status: "draft" });
-    await p.purchaseOrderService.run(po.id, "send");
     expect((await failure(p.purchaseOrderService.run(po.id, "send"))).code).toBe("INVALID_STATUS");
   });
 
@@ -354,11 +369,103 @@ describe("links with Stock, master data and the Dashboard", () => {
     expect((await failure(p.master.materialService.remove(5))).code).toBe("IN_USE"); // shelf: stock movements and a draft PO
   });
 
-  it("makes the dashboard count the POs waiting for goods and lists the draft POs for the Purchase Manager", async () => {
+  it("makes the dashboard count the POs waiting for goods and lists the POs waiting for approval for the Purchase Manager", async () => {
     const p = await start("manager");
     const dashboard = await p.getDashboard();
     expect(dashboard.kpis.poWaitingForGoods).toEqual({ count: 2, nextDueDate: "2026-09-20" });
     const pos = dashboard.approvals.filter((item) => item.type === "PO");
-    expect(pos).toEqual([expect.objectContaining({ number: "PO-2026-0007", party: "BackupCo", amountJpy: 74800, department: "Purchase" })]);
+    expect(pos).toEqual([expect.objectContaining({ number: "PO-2026-0008", amountJpy: 71500, department: "Purchase" })]); // only a PO that waits for approval
+  });
+});
+
+describe("manual approval of a purchase order (N4–N6)", () => {
+  it("starts as a draft, goes to Pending only when a person asks, and nothing approves it by itself", async () => {
+    const p = await start("worker");
+    const po = await draft(p, { lines: [{ materialId: 1, qty: 500, unitPrice: 3800 }] }); // a big amount changes nothing
+    expect(po.status).toBe("draft");
+    expect(po.approvals).toEqual([]);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect((await p.purchaseOrderService.get(po.id)).status).toBe("draft");
+    expect(await p.purchaseOrderService.run(po.id, "request-approval", { note: "Please check the price" })).toMatchObject({
+      status: "pending",
+      approvals: [expect.objectContaining({ action: "request-approval", actor: "Alice Sato", status: "pending", note: "Please check the price" })],
+    });
+    await switchTo("manager");
+    expect((await p.purchaseOrderService.get(po.id)).status).toBe("pending"); // still waiting: the totals are only reference data
+  });
+
+  it("is locked while it waits, and the author can withdraw it or cancel it", async () => {
+    const p = await start("worker");
+    const po = await draft(p);
+    await p.purchaseOrderService.run(po.id, "request-approval");
+    const body = { supplierId: 1, date: "2026-10-08", expectedDate: "2026-10-23", warehouseId: 1, remarks: "x", lines: [{ materialId: 1, qty: 1, unitPrice: 1 }] };
+    expect((await failure(p.purchaseOrderService.update(po.id, body))).code).toBe("INVALID_STATUS");
+    expect(await p.purchaseOrderService.run(po.id, "withdraw")).toMatchObject({ status: "draft" });
+    await p.purchaseOrderService.run(po.id, "request-approval");
+    expect(await p.purchaseOrderService.run(po.id, "cancel")).toMatchObject({ status: "cancelled" });
+  });
+
+  it("is approved or rejected only by a Manager, never by a Worker, and never by the Manager who made it (an Admin may)", async () => {
+    const p = await start("worker");
+    const po = await draft(p);
+    await p.purchaseOrderService.run(po.id, "request-approval");
+    for (const action of ["approve", "reject"]) expect((await failure(p.purchaseOrderService.run(po.id, action, { note: "x" }))).status).toBe(403);
+    await switchTo("manager");
+    const own = await draft(p);
+    await p.purchaseOrderService.run(own.id, "request-approval");
+    expect((await failure(p.purchaseOrderService.run(own.id, "approve"))).code).toBe("CANNOT_APPROVE_OWN");
+    await switchTo("admin");
+    expect(await p.purchaseOrderService.run(own.id, "approve")).toMatchObject({ status: "approved" });
+    await switchTo("manager");
+    expect(await p.purchaseOrderService.run(po.id, "approve", { note: "Price checked" })).toMatchObject({ status: "approved" });
+    expect((await failure(p.purchaseOrderService.run(po.id, "approve"))).code).toBe("INVALID_STATUS"); // not twice
+  });
+
+  it("needs a reason to reject; the author corrects a rejected PO and asks again", async () => {
+    const p = await start("worker");
+    const po = await draft(p);
+    await p.purchaseOrderService.run(po.id, "request-approval");
+    await switchTo("manager");
+    expect((await failure(p.purchaseOrderService.run(po.id, "reject"))).details).toEqual([{ path: ["note"], message: "REQUIRED" }]);
+    expect(await p.purchaseOrderService.run(po.id, "reject", { note: "Too expensive" })).toMatchObject({ status: "rejected" });
+    await switchTo("worker");
+    const body = { supplierId: 1, date: "2026-10-08", expectedDate: "2026-10-23", warehouseId: 1, remarks: "Corrected", lines: [{ materialId: 1, qty: 20, unitPrice: 3500 }] };
+    expect(await p.purchaseOrderService.update(po.id, body)).toMatchObject({ status: "rejected", remarks: "Corrected" });
+    expect(await p.purchaseOrderService.run(po.id, "request-approval")).toMatchObject({ status: "pending" });
+  });
+
+  it("cannot be sent before it is approved, and an approved one is sent by a Manager (cancelling it needs a reason)", async () => {
+    const p = await start("worker");
+    const po = await draft(p);
+    await p.purchaseOrderService.run(po.id, "request-approval");
+    await switchTo("manager");
+    expect((await failure(p.purchaseOrderService.run(po.id, "send"))).code).toBe("INVALID_STATUS");
+    await p.purchaseOrderService.run(po.id, "approve");
+    expect((await failure(p.purchaseOrderService.run(po.id, "cancel"))).details).toEqual([{ path: ["note"], message: "REQUIRED" }]);
+    expect(await p.purchaseOrderService.run(po.id, "send")).toMatchObject({ status: "sent" });
+  });
+
+  it("keeps every request, approval and rejection in a log with who, when and the status after; only a Manager reads it", async () => {
+    const p = await start("worker");
+    expect((await failure(p.purchaseApprovalService.list(all))).status).toBe(403);
+    const po = await draft(p);
+    await p.purchaseOrderService.run(po.id, "request-approval");
+    await switchTo("manager");
+    await p.purchaseOrderService.run(po.id, "reject", { note: "Too expensive" });
+    const { items, meta } = await p.purchaseApprovalService.list({ sort: "at", ...all });
+    expect(meta.total).toBe(items.length);
+    const mine = items.filter((row) => row.poNumber === po.number);
+    expect(mine.map((row) => [row.action, row.actor, row.status, row.note])).toEqual([
+      ["request-approval", "Alice Sato", "pending", null],
+      ["reject-order", "Hana Ito", "rejected", "Too expensive"],
+    ]);
+    expect(mine[0].at <= mine[1].at).toBe(true);
+    expect(mine[0]).toMatchObject({ total: 83600, supplierName: expect.any(String) });
+    // the seeded history: every PO that was sent was asked for and approved first
+    const seeded = items.filter((row) => row.poNumber === "PO-2026-0006").map((row) => row.action);
+    expect(seeded).toEqual(["request-approval", "approve-order"]);
+    expect((await p.purchaseApprovalService.list({ action: "reject-order", ...all })).items.map((row) => row.poNumber)).toEqual(expect.arrayContaining(["PO-2026-0009", po.number]));
+    expect((await p.purchaseApprovalService.list({ q: "Hana", ...all })).items.every((row) => row.actor === "Hana Ito")).toBe(true);
+    expect(await p.purchaseOrderService.get(po.id)).toMatchObject({ approvals: [expect.objectContaining({ action: "request-approval" }), expect.objectContaining({ action: "reject-order" })] });
   });
 });

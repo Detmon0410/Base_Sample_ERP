@@ -10,7 +10,7 @@ describe("the permission table of the application (U3)", () => {
       ["Sale", "work:YYY sendQuotation:YYY acceptQuotation:YYY requestConfirm:--Y approveOrder:YY- sendToFactory:YYY cancelRunningOrder:YY- confirmDelivery:YYY closeOrder:YY- revertOrder:YY-"],
       ["Factory", "work:YYY schedule:YY- start:YYY startStep:YYY doneStep:YYY reopenStep:YY- finish:YY- cancelRunning:YY- transfer:YY- revertWorkOrder:YY-"],
       ["Stock", "view:YYY createAdjustment:YYY approveAdjustment:YY-"],
-      ["Purchase", "work:YYY editOrder:YYY sendOrder:YY- receiveGoods:YYY postReceipt:YYY closeOrder:YY- cancelPostedReceipt:YY-"],
+      ["Purchase", "work:YYY editOrder:YYY requestApproval:YYY approveOrder:YY- sendOrder:YY- receiveGoods:YYY postReceipt:YYY closeOrder:YY- cancelPostedReceipt:YY-"],
       ["Accounting", "work:YYY issueInvoice:YY- approveBill:YY- confirmReceipt:YYY confirmPayment:YY- cancelConfirmedMoney:YY- postEntry:YY- changeMaster:YY-"],
       ["Administration", "users:Y-- masterData:Y--"],
     ]);

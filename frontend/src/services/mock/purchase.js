@@ -16,15 +16,18 @@ const WHOLE_UNITS = ["pcs", "set", "box"];
 const REJECT_REASONS = ["damaged", "wrong_item", "wrong_quantity", "quality", "other"];
 const at = (date, time) => `${date}T${time}:00.000Z`;
 
-export const PO_STATUSES = ["draft", "sent", "partially_received", "received", "closed", "cancelled"];
+export const PO_STATUSES = ["draft", "pending", "rejected", "approved", "sent", "partially_received", "received", "closed", "cancelled"];
+// The approval is a person's decision (docs/specs/f12-requirements-2.md): nothing in this file changes a PO to approved
+// or sent because of an amount, a date or a stock level. Every request / approval / rejection is kept in the log.
+const APPROVAL_ACTIONS = ["request-approval", "withdraw", "approve-order", "reject-order"];
 export const RECEIPT_STATUSES = ["draft", "posted", "cancelled"];
 
 const forbid = () => new MockHttpError(403, "FORBIDDEN", "You may not do this");
 const wrongStatus = () => new MockHttpError(409, "INVALID_STATUS", "This is not possible in the current status");
 const invalid = (path, message = "INVALID") => new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", [{ path: [path], message }]);
 
-// Who may do what (spec 4): Purchase Worker drafts and receives goods, Purchase Manager and Admin also send, cancel,
-// close and revert. Anybody else gets 403.
+// Who may do what (spec 4): Purchase Worker drafts, asks for approval and receives goods; Purchase Manager and Admin also
+// approve / reject (never their own PO, except an Admin), send, cancel, close and revert. Anybody else gets 403.
 function purchaseRole(user) {
   if (user.memberships.some((membership) => membership.role === "Admin")) return "Admin";
   return user.memberships.find((membership) => membership.department === "Purchase")?.role ?? null;
@@ -156,6 +159,7 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
       progress: { ordered: round3(ordered), received: round3(received), percent: ordered > 0 ? Math.round((received / ordered) * 100) : 0, lateDays: late, late: late > 0 },
       receipts: grs.map((gr) => ({ id: gr.id, number: gr.number, date: gr.date, status: gr.status, accepted: round3(gr.lines.reduce((sum, line) => sum + line.accepted, 0)) })),
       history: historyOf(po),
+      approvals: po.log.filter((entry) => APPROVAL_ACTIONS.includes(entry.action)).map((entry) => ({ id: entry.id, action: entry.action, status: entry.status, actor: entry.actor, at: entry.at, note: entry.note ?? null })),
       links: [
         ...grs.map((gr) => ({ id: `gr-${gr.id}`, type: "goodsReceipt", number: gr.number, status: gr.status, to: `/purchase/receipts/${gr.id}` })),
         ...billLinks(getAccounting()?.billsOfOrder(po.id) ?? [], po.id),
@@ -431,7 +435,7 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
     "PUT /purchase/orders/:id": ({ authorization, params, body }) => {
       const { user, role } = guard(authorization);
       const po = findIn(orders, params.id);
-      if (po.status !== "draft") throw wrongStatus();
+      if (!["draft", "rejected"].includes(po.status)) throw wrongStatus();
       if (!mayEdit(po, user, role)) throw forbid();
       const errors = [];
       checkOrder(body, errors);
@@ -453,9 +457,30 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
       const note = noteOf(body);
       const posted = postedOf(po).length > 0;
       switch (params.action) {
+        case "request-approval":
+          if (!["draft", "rejected"].includes(po.status)) throw wrongStatus();
+          if (!mayEdit(po, user, role)) throw forbid();
+          po.status = "pending";
+          logEntry(po, "request-approval", "pending", user.name, note || null);
+          break;
+        case "withdraw":
+          if (po.status !== "pending") throw wrongStatus();
+          if (!mayEdit(po, user, role)) throw forbid();
+          po.status = "draft";
+          logEntry(po, "withdraw", "draft", user.name, note || null);
+          break;
+        case "approve":
+        case "reject":
+          if (!isManager(role)) throw forbid();
+          if (po.status !== "pending") throw wrongStatus();
+          if (role !== "Admin" && po.createdById === user.id) throw new MockHttpError(403, "CANNOT_APPROVE_OWN", "Another Manager must approve a purchase order you made");
+          if (params.action === "reject") needNote(note);
+          po.status = params.action === "approve" ? "approved" : "rejected";
+          logEntry(po, params.action === "approve" ? "approve-order" : "reject-order", po.status, user.name, note || null);
+          break;
         case "send":
           if (!isManager(role)) throw forbid();
-          if (po.status !== "draft") throw wrongStatus();
+          if (po.status !== "approved") throw wrongStatus();
           po.status = "sent";
           logEntry(po, "send", "sent", user.name, note || null);
           break;
@@ -467,8 +492,11 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
           logEntry(po, "back-to-draft", "draft", user.name, note || null);
           break;
         case "cancel":
-          if (po.status === "draft") {
+          if (["draft", "rejected", "pending"].includes(po.status)) {
             if (!mayEdit(po, user, role)) throw forbid();
+          } else if (po.status === "approved") {
+            if (!isManager(role)) throw forbid();
+            needNote(note);
           } else if (po.status === "sent") {
             if (!isManager(role)) throw forbid();
             needNote(note);
@@ -505,6 +533,25 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
           throw new MockHttpError(404, "ROUTE_NOT_FOUND", "Unknown action");
       }
       return shapePo(po);
+    },
+
+    // ------------------------------------------------------------------ approval log (docs/specs/f12-requirements-2.md, N6)
+    "GET /purchase/approvals": ({ authorization, query }) => {
+      const { role } = guard(authorization);
+      if (!isManager(role)) throw forbid();
+      const rows = orders.flatMap((po) =>
+        po.log
+          .filter((entry) => APPROVAL_ACTIONS.includes(entry.action))
+          .map((entry) => ({ id: entry.id, poId: po.id, poNumber: po.number, supplierId: po.supplierId, supplierName: supplierOf(po.supplierId)?.name, total: totalsOf(po.lines).total, action: entry.action, status: entry.status, actor: entry.actor, at: entry.at, date: entry.at.slice(0, 10), note: entry.note ?? null })),
+      );
+      return listOf(rows, {
+        query,
+        searchFields: ["poNumber", "supplierName", "actor", "note"],
+        sorts: ["at", "poNumber", "action", "actor", "total", "status"],
+        defaultSort: "-at",
+        dateField: "date",
+        extra: (row, q) => (!q.action || row.action === q.action) && (!q.po || row.poId === Number(q.po)),
+      });
     },
 
     // ------------------------------------------------------------------ P5 goods receipts
@@ -615,9 +662,9 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
   }
 
   // =========================================================================================================
-  // Seed: 7 POs and 6 receipts. Three receipts are the ones that fill the raw material warehouse in the Stock demo.
+  // Seed: 10 POs and 6 receipts. Three receipts are the ones that fill the raw material warehouse in the Stock demo.
   // =========================================================================================================
-  function seedPo({ date, supplier, expected, status, lines, by, byId, sent = "Hana Ito", remarks = "" }) {
+  function seedPo({ date, supplier, expected, status, lines, by, byId, sent = "Hana Ito", remarks = "", rejectNote = null }) {
     const po = {
       id: seq.po++,
       number: seedNumber("PO", date, seq.po - 1),
@@ -633,7 +680,11 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
       log: [],
     };
     logEntry(po, "created", "draft", by, null, at(date, "09:00"));
-    if (status !== "draft") logEntry(po, "send", "sent", sent, null, at(date, "10:00"));
+    // every PO that left the draft was asked for approval by its author and decided by the Purchase Manager (never automatically)
+    if (status !== "draft") logEntry(po, "request-approval", "pending", by, null, at(date, "09:30"));
+    if (status === "rejected") logEntry(po, "reject-order", "rejected", sent, rejectNote, at(date, "09:45"));
+    else if (!["draft", "pending"].includes(status)) logEntry(po, "approve-order", "approved", sent, null, at(date, "09:45"));
+    if (!["draft", "pending", "rejected", "approved"].includes(status)) logEntry(po, "send", "sent", sent, null, at(date, "10:00"));
     orders.push(po);
     return po;
   }
@@ -672,6 +723,9 @@ export function purchaseRoutes({ userFromAuthorization, getStore, ledger, onPurc
   seedPo({ date: "2026-09-21", supplier: "S002", expected: "2026-10-05", status: "cancelled", lines: [["DOOR", 100, 2200]], by: "Alice Sato", byId: 2 });
   seedPo({ date: "2026-10-05", supplier: "S001", expected: "2026-10-20", status: "sent", lines: [["THERMO", 150, 650], ["COMP", 50, 3800]], by: "Alice Sato", byId: 2 });
   seedPo({ date: "2026-10-07", supplier: "S003", expected: "2026-10-21", status: "draft", lines: [["SHELF", 200, 340]], by: "Alice Sato", byId: 2 });
+  seedPo({ date: "2026-10-07", supplier: "S001", expected: "2026-10-21", status: "pending", lines: [["THERMO", 100, 650]], by: "Alice Sato", byId: 2 });
+  seedPo({ date: "2026-10-06", supplier: "S003", expected: "2026-10-20", status: "rejected", lines: [["FOAM", 300, 520]], by: "Alice Sato", byId: 2, rejectNote: "The last price was 480. Ask the supplier again." });
+  seedPo({ date: "2026-10-06", supplier: "S002", expected: "2026-10-18", status: "approved", lines: [["DOOR", 40, 2200]], by: "Alice Sato", byId: 2 });
   logEntry(orders.find((row) => row.number === "PO-2026-0005"), "cancel", "cancelled", "Hana Ito", "Ordered twice by mistake", at("2026-09-22", "09:00"));
   seedReceipt({ po: po1, date: "2026-09-10", status: "posted", lines: [["COMP", 100, 100, "", "C-0910"]], by: "Alice Sato", byId: 2, deliveryNoteNo: "CC-4411" });
   seedReceipt({ po: po2, date: "2026-09-12", status: "posted", lines: [["STEEL", 600, 600, "", "S-0912"]], by: "Alice Sato", byId: 2, deliveryNoteNo: "SC-0312" });

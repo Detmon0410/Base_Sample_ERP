@@ -73,6 +73,8 @@ export const STATUS_COLORS = {
 export const HISTORY_TONES = {
   accept: "success",
   approve: "success",
+  "approve-order": "success",
+  "reject-order": "danger",
   "adjustment-approve": "success",
   receive: "success",
   issue: "success",

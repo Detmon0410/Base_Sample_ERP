@@ -102,9 +102,9 @@ export function buildDashboard(user, ledger, getMaterials = () => [], getPurchas
   const fail = failedBlocks();
   if (fail.includes("all")) throw new MockHttpError(500, "INTERNAL_SERVER_ERROR", "Mock failure");
 
-  // Purchase: the Draft POs wait for a Manager to send them; the POs waiting for goods are Sent / Partially received
+  // Purchase: the POs that wait for approval (status pending) are decided by a Manager; the POs waiting for goods are Sent / Partially received
   const purchase = getPurchase()?.summaries?.() ?? null;
-  const draftPos = (purchase ?? []).filter((po) => po.status === "draft").map((po) => ({ type: "PO", id: po.id, number: po.number, party: po.supplierName, amountJpy: po.total, createdAt: po.createdAt, department: "Purchase" }));
+  const draftPos = (purchase ?? []).filter((po) => po.status === "pending").map((po) => ({ type: "PO", id: po.id, number: po.number, party: po.supplierName, amountJpy: po.total, createdAt: po.createdAt, department: "Purchase" }));
   // Accounting: Draft invoices and bills wait for a Manager; the overdue invoices and the unpaid bills are real numbers
   const accounting = getAccounting();
   const draftMoney = (accounting?.drafts?.() ?? []).map((item) => ({ ...item, department: "Accounting" }));

@@ -1,7 +1,11 @@
 import { roleInDepartment } from "@/utils/permissions";
 
 /** Statuses in the order a document goes through them (docs/specs/f9-purchase.md). */
-export const PO_STATUSES = ["draft", "sent", "partially_received", "received", "closed", "cancelled"];
+// A PO is not sent before a Manager has approved it by hand (docs/specs/f12-requirements-2.md): draft -> pending (waiting for
+// approval) -> approved or rejected -> sent. Nothing changes these statuses except a person pressing a button.
+export const PO_STATUSES = ["draft", "pending", "rejected", "approved", "sent", "partially_received", "received", "closed", "cancelled"];
+/** The actions that are kept in the approval log (who, when, the status after). */
+export const APPROVAL_ACTIONS = ["request-approval", "withdraw", "approve-order", "reject-order"];
 export const RECEIPT_STATUSES = ["draft", "posted", "cancelled"];
 export const REJECT_REASONS = ["damaged", "wrong_item", "wrong_quantity", "quality", "other"];
 /** Units that are counted whole; kg, m ... may have up to 3 decimals (same rule as the stock). */
@@ -11,8 +15,10 @@ export const purchaseRole = (user) => roleInDepartment(user, "Purchase");
 export const canWork = (user) => Boolean(purchaseRole(user));
 export const isPurchaseManager = (user) => ["Manager", "Admin"].includes(purchaseRole(user));
 
-/** What a user may do with a draft: its author and a Manager. */
-export const canEditOrder = (po, user) => po.status === "draft" && canWork(user) && (isPurchaseManager(user) || po.createdById === user?.id);
+/** What a user may do with a draft (or a rejected PO, to correct it): its author and a Manager. */
+export const canEditOrder = (po, user) => ["draft", "rejected"].includes(po.status) && canWork(user) && (isPurchaseManager(user) || po.createdById === user?.id);
+/** Approve / reject: a Purchase Manager or Admin, and not the person who made the PO (an Admin always may). */
+export const canDecide = (po, user) => po.status === "pending" && isPurchaseManager(user) && (purchaseRole(user) === "Admin" || po.createdById !== user?.id);
 export const canEditReceipt = (gr, user) => gr.status === "draft" && canWork(user) && (isPurchaseManager(user) || gr.createdById === user?.id);
 /** A PO that can still receive goods. */
 export const canReceive = (po, user) => canWork(user) && ["sent", "partially_received"].includes(po.status);
@@ -28,9 +34,20 @@ const posted = (po) => po.receipts?.some((receipt) => receipt.status === "posted
 export function purchaseOrderActions(po, user) {
   const manager = isPurchaseManager(user);
   const list = [];
-  if (po.status === "draft") {
-    if (manager) list.push({ key: "send", primary: true, noteLabel: "optional" });
-    if (canEditOrder(po, user)) list.push({ key: "cancel", noteLabel: "optional", danger: true });
+  if (["draft", "rejected"].includes(po.status) && canEditOrder(po, user)) {
+    list.push({ key: "request-approval", primary: true, noteLabel: "optional" });
+    list.push({ key: "cancel", noteLabel: "optional", danger: true });
+  }
+  if (po.status === "pending") {
+    if (canDecide(po, user)) {
+      list.push({ key: "approve", primary: true, noteLabel: "optional" });
+      list.push({ key: "reject", noteLabel: "required", danger: true });
+    }
+    if (canEditOrder({ ...po, status: "draft" }, user)) list.push({ key: "withdraw", noteLabel: "optional" });
+  }
+  if (po.status === "approved" && manager) {
+    list.push({ key: "send", primary: true, noteLabel: "optional" });
+    list.push({ key: "cancel", noteLabel: "required", danger: true });
   }
   if (po.status === "sent" && manager && !posted(po)) {
     list.push({ key: "back-to-draft", noteLabel: "optional" });

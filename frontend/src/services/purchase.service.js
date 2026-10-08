@@ -13,4 +13,6 @@ const documentApi = (path) => ({
 /** The materials with their stock status, what is on order and the supplier to buy from (the stock status board). */
 export const stockStatusService = createCrud("/purchase/stock-status");
 export const purchaseOrderService = documentApi("/purchase/orders");
+/** The approval log of the purchase orders (Manager and Admin): who asked, approved or rejected, and when. */
+export const purchaseApprovalService = createCrud("/purchase/approvals");
 export const goodsReceiptService = documentApi("/purchase/receipts");

@@ -73,7 +73,9 @@ export const MATRIX = [
     rows: [
       { key: "work", test: canWorkPurchase },
       { key: "editOrder", test: (u) => canEditOrder({ ...own, status: "draft" }, u) },
-      { key: "sendOrder", test: (u) => has(purchaseOrderActions({ ...own, status: "draft", receipts: [] }, u), "send") },
+      { key: "requestApproval", test: (u) => has(purchaseOrderActions({ ...own, status: "draft", receipts: [] }, u), "request-approval") },
+      { key: "approveOrder", test: (u) => has(purchaseOrderActions({ ...other, status: "pending", receipts: [] }, u), "approve") },
+      { key: "sendOrder", test: (u) => has(purchaseOrderActions({ ...own, status: "approved", receipts: [] }, u), "send") },
       { key: "receiveGoods", test: (u) => canReceive({ status: "sent" }, u) },
       { key: "postReceipt", test: (u) => has(receiptActions({ ...own, status: "draft" }, u), "post") },
       { key: "closeOrder", test: (u) => has(purchaseOrderActions({ ...own, status: "received", receipts: [] }, u), "close") },

@@ -1,4 +1,4 @@
-import { canEditOrder, canEditReceipt, canReceive, canWork, isPurchaseManager, purchaseOrderActions, purchaseRole, receiptActions } from "./purchase";
+import { canDecide, canEditOrder, canEditReceipt, canReceive, canWork, isPurchaseManager, purchaseOrderActions, purchaseRole, receiptActions } from "./purchase";
 
 const admin = { id: 1, memberships: [{ department: null, role: "Admin" }] };
 const manager = { id: 7, memberships: [{ department: "Purchase", role: "Manager" }] };
@@ -20,10 +20,27 @@ describe("who works in Purchase", () => {
 });
 
 describe("purchaseOrderActions", () => {
-  it("lets only a Manager send a draft; the author of a draft can cancel it", () => {
-    expect(keys(purchaseOrderActions(po("draft"), worker))).toEqual(["cancel"]);
-    expect(keys(purchaseOrderActions(po("draft"), manager))).toEqual(["send", "cancel"]);
+  it("lets the author (or a Manager) ask for approval or cancel a draft; nobody sends a draft", () => {
+    expect(keys(purchaseOrderActions(po("draft"), worker))).toEqual(["request-approval", "cancel"]);
+    expect(keys(purchaseOrderActions(po("draft"), manager))).toEqual(["request-approval", "cancel"]);
     expect(purchaseOrderActions(po("draft", { createdById: 99 }), worker)).toEqual([]);
+  });
+
+  it("lets a Manager approve or reject a pending PO of somebody else, never the Manager's own, and never a Worker", () => {
+    expect(keys(purchaseOrderActions(po("pending"), manager))).toEqual(["approve", "reject", "withdraw"]);
+    expect(purchaseOrderActions(po("pending"), manager).find((action) => action.key === "reject")).toMatchObject({ noteLabel: "required" });
+    expect(keys(purchaseOrderActions(po("pending", { createdById: 7 }), manager))).toEqual(["withdraw"]); // own PO: only withdraw
+    expect(keys(purchaseOrderActions(po("pending", { createdById: 7 }), admin))).toEqual(["approve", "reject", "withdraw"]); // an Admin always may
+    expect(keys(purchaseOrderActions(po("pending"), worker))).toEqual(["withdraw"]);
+    expect(canDecide(po("draft"), manager)).toBe(false);
+  });
+
+  it("sends only an approved PO, and lets a rejected one be corrected and asked again", () => {
+    expect(keys(purchaseOrderActions(po("approved"), manager))).toEqual(["send", "cancel"]);
+    expect(purchaseOrderActions(po("approved"), worker)).toEqual([]);
+    expect(keys(purchaseOrderActions(po("rejected"), worker))).toEqual(["request-approval", "cancel"]);
+    expect(canEditOrder(po("rejected"), worker)).toBe(true);
+    expect(canEditOrder(po("pending"), manager)).toBe(false);
   });
 
   it("offers a Manager back to draft and cancel (with a reason) only while nothing is received", () => {

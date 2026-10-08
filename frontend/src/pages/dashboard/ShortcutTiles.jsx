@@ -32,20 +32,24 @@ export function ShortcutTiles() {
   return (
     <nav aria-label={t("shortcuts")} className="mb-5">
       <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]">
-        {visible.map((group) => (
+        {visible.map((group) => {
+          const Icon = group.icon;
+          return (
           <li key={group.key}>
             <Link
               to={group.items[0].to}
               className={cn(
-                "relative flex min-h-20 items-center justify-center rounded-md border border-b-4 border-slate-300 bg-card px-3 py-4 text-center text-xl font-bold text-slate-700 outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring max-md:min-h-16 max-md:text-lg",
+                "relative flex min-h-16 items-center justify-center gap-3 rounded-md border border-b-4 border-slate-300 bg-card px-3 py-4 text-center text-lg font-bold text-slate-700 outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring max-md:min-h-14 max-md:text-base",
                 BAR[group.key],
               )}
             >
+              <Icon className="size-6 shrink-0 max-md:size-5" aria-hidden="true" />
               {t(group.labelKey)}
               <CountBadge count={groups[group.key]?.total} className="absolute top-2 right-3 text-base" />
             </Link>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </nav>
   );

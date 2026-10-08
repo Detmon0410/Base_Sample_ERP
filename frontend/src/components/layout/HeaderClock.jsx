@@ -39,13 +39,14 @@ export function HeaderClock() {
   const time = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", hour12: false }).format(now);
 
   return (
-    <div className="flex items-center gap-3 text-sm text-primary-foreground">
+    <div className="flex items-center gap-3 text-sm text-primary-foreground max-md:gap-1.5">
       <time dateTime={now.toISOString()} className="whitespace-nowrap">
-        {date} · <span className="font-semibold">{time}</span>
+        <span className="max-[991px]:hidden">{date} · </span>
+        <span className="font-semibold">{time}</span>
       </time>
       <span className="flex items-center gap-1.5 whitespace-nowrap" role="status">
         <span aria-hidden="true" className={cn("size-2.5 rounded-full", online ? "bg-green-400" : "bg-red-400")} />
-        {t(online ? "clock.online" : "clock.offline")}
+        <span className="max-[991px]:sr-only">{t(online ? "clock.online" : "clock.offline")}</span>
       </span>
     </div>
   );

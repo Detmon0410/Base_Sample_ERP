@@ -97,18 +97,18 @@ export function StockStatusPage() {
       { key: "code", header: t("purchase:board.columns.code"), sortable: true },
       { key: "name", header: t("purchase:board.columns.name"), sortable: true },
       { key: "onHand", header: t("purchase:board.columns.onHand"), sortable: true, align: "right", render: (row) => `${formatNumber(row.onHand, language)} ${row.uom}` },
-      { key: "available", header: t("purchase:board.columns.available"), sortable: true, align: "right", render: (row) => `${formatNumber(row.available, language)} ${row.uom}` },
+      { key: "available", secondary: true, header: t("purchase:board.columns.available"), sortable: true, align: "right", render: (row) => `${formatNumber(row.available, language)} ${row.uom}` },
       {
-        key: "onOrder",
+        key: "onOrder", secondary: true,
         header: t("purchase:board.columns.onOrder"),
         sortable: true,
         align: "right",
         render: (row) => (row.onOrder > 0 ? <span className="font-semibold text-primary">{`${formatNumber(row.onOrder, language)} ${row.uom}`}</span> : "—"),
       },
-      { key: "reorderPoint", header: t("purchase:board.columns.reorderPoint"), sortable: true, align: "right", render: (row) => (row.reorderPoint == null ? "—" : `${formatNumber(row.reorderPoint, language)} ${row.uom}`) },
+      { key: "reorderPoint", secondary: true, header: t("purchase:board.columns.reorderPoint"), sortable: true, align: "right", render: (row) => (row.reorderPoint == null ? "—" : `${formatNumber(row.reorderPoint, language)} ${row.uom}`) },
       { key: "status", header: t("purchase:board.columns.status"), sortable: true, render: (row) => <StockStatusBadge status={row.status} /> },
       {
-        key: "suggested",
+        key: "suggested", secondary: true,
         header: t("purchase:board.columns.supplier"),
         render: (row) =>
           row.suggested ? (

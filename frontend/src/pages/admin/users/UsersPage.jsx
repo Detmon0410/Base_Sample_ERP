@@ -34,10 +34,10 @@ function UsersListPage() {
           </span>
         ),
       },
-      { key: "email", header: t("users:list.columns.email"), sortable: true },
+      { key: "email", secondary: true, header: t("users:list.columns.email"), sortable: true },
       { key: "memberships", header: t("users:list.columns.assignments"), render: (row) => <RoleChips memberships={row.memberships} /> },
       {
-        key: "lastLoginAt",
+        key: "lastLoginAt", secondary: true,
         header: t("users:list.columns.lastLoginAt"),
         sortable: true,
         render: (row) => (row.lastLoginAt ? formatDateTime(row.lastLoginAt, i18n.language) : <span className="text-muted-foreground">{t("users:list.neverSignedIn")}</span>),

@@ -33,9 +33,9 @@ function MoneyDocumentsListPage({ direction }) {
     const money = (value) => formatCurrency(value, language);
     return [
       { key: "number", header: t(`accounting:${ns}.columns.number`), sortable: true },
-      { key: "date", header: t("accounting:columns.date"), sortable: true, render: (row) => formatDate(row.date, language) },
+      { key: "date", secondary: true, header: t("accounting:columns.date"), sortable: true, render: (row) => formatDate(row.date, language) },
       { key: "partyCode", header: t(`accounting:${ns}.columns.party`), sortable: true, render: (row) => `${row.partyCode} · ${row.partyName}` },
-      { key: "ref", header: t(`accounting:${ns}.columns.ref`), render: (row) => (direction === "ar" ? row.deliveryNumber : row.poNumber) ?? "—" },
+      { key: "ref", secondary: true, header: t(`accounting:${ns}.columns.ref`), render: (row) => (direction === "ar" ? row.deliveryNumber : row.poNumber) ?? "—" },
       {
         key: "dueDate",
         header: t("accounting:columns.dueDate"),
@@ -47,8 +47,8 @@ function MoneyDocumentsListPage({ direction }) {
           </span>
         ),
       },
-      { key: "total", header: t("accounting:columns.total"), sortable: true, align: "right", render: (row) => money(row.total), sum: money },
-      { key: "paid", header: t("accounting:columns.paid"), sortable: true, align: "right", render: (row) => money(row.paid), sum: money },
+      { key: "total", secondary: true, header: t("accounting:columns.total"), sortable: true, align: "right", render: (row) => money(row.total), sum: money },
+      { key: "paid", secondary: true, header: t("accounting:columns.paid"), sortable: true, align: "right", render: (row) => money(row.paid), sum: money },
       { key: "balance", header: t("accounting:columns.balance"), sortable: true, align: "right", render: (row) => <span className={row.balance > 0 ? "font-semibold text-slate-900" : ""}>{money(row.balance)}</span>, sum: money },
       { key: "status", header: t("accounting:columns.status"), sortable: true, render: (row) => <DocumentStatusBadge status={row.status} /> },
     ];

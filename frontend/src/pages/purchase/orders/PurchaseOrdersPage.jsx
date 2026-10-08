@@ -30,7 +30,7 @@ function PurchaseOrdersListPage() {
     const language = i18n.language;
     return [
       { key: "number", header: t("purchase:orders.columns.number"), sortable: true },
-      { key: "date", header: t("purchase:orders.columns.date"), sortable: true, render: (row) => formatDate(row.date, language) },
+      { key: "date", secondary: true, header: t("purchase:orders.columns.date"), sortable: true, render: (row) => formatDate(row.date, language) },
       { key: "supplierCode", header: t("purchase:orders.columns.supplier"), sortable: true, render: (row) => `${row.supplierCode} · ${row.supplierName}` },
       {
         key: "expectedDate",
@@ -43,9 +43,9 @@ function PurchaseOrdersListPage() {
           </span>
         ),
       },
-      { key: "lineCount", header: t("purchase:orders.columns.lines"), align: "right" },
+      { key: "lineCount", secondary: true, header: t("purchase:orders.columns.lines"), align: "right" },
       {
-        key: "progress",
+        key: "progress", secondary: true,
         header: t("purchase:orders.columns.received"),
         render: (row) =>
           ["draft", "pending", "rejected", "approved", "cancelled"].includes(row.status) ? (

@@ -23,10 +23,10 @@ function TransfersListPage() {
     () => [
       { key: "number", header: t("factory:transfers.columns.number"), sortable: true },
       { key: "date", header: t("factory:transfers.columns.date"), sortable: true, render: (row) => formatDate(row.date, i18n.language) },
-      { key: "workOrderNumber", header: t("factory:transfers.columns.workOrder"), sortable: true },
+      { key: "workOrderNumber", secondary: true, header: t("factory:transfers.columns.workOrder"), sortable: true },
       { key: "productCode", header: t("factory:transfers.columns.product"), render: (row) => `${row.productCode} · ${row.productName}` },
       { key: "qty", header: t("factory:transfers.columns.qty"), sortable: true, align: "right", render: (row) => `${formatNumber(row.qty, i18n.language)} ${row.uom}` },
-      { key: "warehouseName", header: t("factory:transfers.columns.warehouse") },
+      { key: "warehouseName", secondary: true, header: t("factory:transfers.columns.warehouse") },
       { key: "status", header: t("factory:transfers.columns.status"), sortable: true, render: (row) => <DocumentStatusBadge status={row.status} /> },
     ],
     [t, i18n.language],

@@ -75,16 +75,16 @@ function OverviewList() {
     const base = [
       { key: "code", header: t("stock:overview.columns.code"), sortable: true },
       { key: "name", header: t("stock:overview.columns.name"), sortable: true },
-      { key: "warehouseName", header: t("stock:overview.columns.warehouse"), sortable: true },
+      { key: "warehouseName", secondary: true, header: t("stock:overview.columns.warehouse"), sortable: true },
       { key: "onHand", header: t("stock:overview.columns.onHand"), sortable: true, align: "right", render: (row) => `${formatNumber(row.onHand, language)} ${row.uom}` },
       ...(kind === "material"
-        ? [{ key: "onOrder", header: t("stock:overview.columns.onOrder"), sortable: true, align: "right", render: (row) => (row.onOrder > 0 ? <span className="font-semibold text-primary">{`${formatNumber(row.onOrder, language)} ${row.uom}`}</span> : "—") }]
+        ? [{ key: "onOrder", secondary: true, header: t("stock:overview.columns.onOrder"), sortable: true, align: "right", render: (row) => (row.onOrder > 0 ? <span className="font-semibold text-primary">{`${formatNumber(row.onOrder, language)} ${row.uom}`}</span> : "—") }]
         : []),
-      { key: "reserved", header: t("stock:overview.columns.reserved"), sortable: true, align: "right", render: (row) => (row.reserved > 0 ? `${formatNumber(row.reserved, language)} ${row.uom}` : "—") },
+      { key: "reserved", secondary: true, header: t("stock:overview.columns.reserved"), sortable: true, align: "right", render: (row) => (row.reserved > 0 ? `${formatNumber(row.reserved, language)} ${row.uom}` : "—") },
       { key: "available", header: t("stock:overview.columns.available"), sortable: true, align: "right", render: (row) => <span className="font-semibold text-slate-900">{`${formatNumber(row.available, language)} ${row.uom}`}</span> },
     ];
     return kind === "material"
-      ? [...base, { key: "reorderPoint", header: t("stock:overview.columns.reorderPoint"), sortable: true, align: "right", render: (row) => (row.reorderPoint == null ? "—" : `${formatNumber(row.reorderPoint, language)} ${row.uom}`) }, status]
+      ? [...base, { key: "reorderPoint", secondary: true, header: t("stock:overview.columns.reorderPoint"), sortable: true, align: "right", render: (row) => (row.reorderPoint == null ? "—" : `${formatNumber(row.reorderPoint, language)} ${row.uom}`) }, status]
       : [...base, status];
   }, [kind, t, i18n.language]);
 

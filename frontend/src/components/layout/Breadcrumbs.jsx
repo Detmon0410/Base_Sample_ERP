@@ -38,7 +38,7 @@ export function Breadcrumbs() {
 
   return (
     <Breadcrumb aria-label={t("breadcrumb.label")}>
-      <BreadcrumbList className="text-base text-white/80 [&_a]:text-white/85 [&_a:hover]:text-white">
+      <BreadcrumbList className="text-base text-white/80 flex-nowrap max-[1279px]:[&>li:not(:last-child)]:hidden [&_a]:text-white/85 [&_a:hover]:text-white">
         {crumbs.map((crumb, index) => {
           const isLast = index === crumbs.length - 1;
           return (

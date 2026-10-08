@@ -33,10 +33,10 @@ function CustomerPosListPage() {
       },
       { key: "date", header: t("sale:columns.poDate"), sortable: true, render: (row) => formatDate(row.poDate, i18n.language) },
       { key: "customerCode", header: t("sale:columns.customer"), sortable: true, render: (row) => `${row.customerCode} · ${row.customerName}` },
-      { key: "quotationNumber", header: t("sale:columns.linkedQuotation"), render: (row) => row.quotationNumber ?? "—" },
+      { key: "quotationNumber", secondary: true, header: t("sale:columns.linkedQuotation"), render: (row) => row.quotationNumber ?? "—" },
       { key: "orderNumber", header: t("sale:columns.linkedOrder"), render: (row) => row.orderNumber ?? "—" },
       {
-        key: "attachment",
+        key: "attachment", secondary: true,
         header: t("sale:columns.attachment"),
         render: (row) =>
           row.attachment ? (

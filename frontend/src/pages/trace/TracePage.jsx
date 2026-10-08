@@ -21,8 +21,8 @@ function TraceSearchPage() {
       { key: "productCode", header: t("trace:columns.product"), sortable: true, render: (row) => `${row.productCode} · ${row.productName}` },
       { key: "status", header: t("trace:columns.status"), sortable: true, render: (row) => <SerialStatusBadge status={row.status} /> },
       { key: "workOrderNumber", header: t("trace:columns.workOrder"), sortable: true },
-      { key: "customerName", header: t("trace:columns.customer"), render: (row) => (row.customerName ? `${row.customerName} · ${row.deliveryNote?.number}` : "—") },
-      { key: "createdAt", header: t("trace:columns.madeAt"), sortable: true, render: (row) => formatDateTime(row.createdAt, i18n.language) },
+      { key: "customerName", secondary: true, header: t("trace:columns.customer"), render: (row) => (row.customerName ? `${row.customerName} · ${row.deliveryNote?.number}` : "—") },
+      { key: "createdAt", secondary: true, header: t("trace:columns.madeAt"), sortable: true, render: (row) => formatDateTime(row.createdAt, i18n.language) },
     ],
     [t, i18n.language],
   );

@@ -32,7 +32,7 @@ function DeliveriesListPage() {
       { key: "date", header: t("sale:columns.date"), sortable: true, render: (row) => formatDate(row.date, i18n.language) },
       { key: "saleOrderNumber", header: t("sale:columns.saleOrder"), sortable: true },
       { key: "customerCode", header: t("sale:columns.customer"), sortable: true, render: (row) => `${row.customerCode} · ${row.customerName}` },
-      { key: "lineCount", header: t("sale:columns.lines"), align: "right" },
+      { key: "lineCount", secondary: true, header: t("sale:columns.lines"), align: "right" },
       { key: "status", header: t("sale:columns.status"), sortable: true, render: (row) => <DocumentStatusBadge status={row.status} /> },
     ],
     [t, i18n.language, search],

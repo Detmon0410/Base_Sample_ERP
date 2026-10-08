@@ -23,7 +23,7 @@ function ProductsListPage() {
     () => [
       { key: "code", header: t("master:common.code"), sortable: true },
       { key: "name", header: t("master:common.name"), sortable: true },
-      { key: "uom", header: t("master:materials.columns.uom"), sortable: true },
+      { key: "uom", secondary: true, header: t("master:materials.columns.uom"), sortable: true },
       {
         key: "sellingPrice",
         header: t("master:products.columns.sellingPrice"),

@@ -34,10 +34,10 @@ function MoneyListPage({ direction }) {
       { key: "number", header: t(`accounting:${ns}.columns.number`), sortable: true },
       { key: "date", header: t("accounting:columns.date"), sortable: true, render: (row) => formatDate(row.date, language) },
       { key: "partyCode", header: t(`accounting:${ns}.columns.party`), sortable: true, render: (row) => `${row.partyCode} · ${row.partyName}` },
-      { key: "docNumber", header: t(`accounting:${ns}.columns.doc`), sortable: true },
+      { key: "docNumber", secondary: true, header: t(`accounting:${ns}.columns.doc`), sortable: true },
       { key: "amount", header: t("accounting:columns.amount"), sortable: true, align: "right", render: (row) => formatCurrency(row.amount, language), sum: (value) => formatCurrency(value, language) },
-      { key: "methodName", header: t("accounting:columns.method") },
-      { key: "bankAccountName", header: t("accounting:columns.bank"), render: (row) => row.bankAccountName ?? "—" },
+      { key: "methodName", secondary: true, header: t("accounting:columns.method") },
+      { key: "bankAccountName", secondary: true, header: t("accounting:columns.bank"), render: (row) => row.bankAccountName ?? "—" },
       { key: "status", header: t("accounting:columns.status"), sortable: true, render: (row) => <DocumentStatusBadge status={row.status} /> },
     ];
   }, [t, i18n.language, ns]);

@@ -77,12 +77,12 @@ function TrackingCard({ card, onStart, onDone, canAct }) {
       ) : null}
 
       {card.column === "waiting" && canAct ? (
-        <Button type="button" size="lg" className="h-12 w-full text-lg" onClick={() => onStart(card)}>
+        <Button type="button" size="lg" className="h-12 w-full text-lg max-[991px]:h-14" onClick={() => onStart(card)}>
           <PlayIcon aria-hidden="true" /> {t("steps.start")}
         </Button>
       ) : null}
       {card.column === "running" && canAct ? (
-        <Button type="button" size="lg" className="h-12 w-full bg-success text-lg hover:bg-success/90" onClick={() => onDone(card)}>
+        <Button type="button" size="lg" className="h-12 w-full bg-success text-lg hover:bg-success/90 max-[991px]:h-14" onClick={() => onDone(card)}>
           <CheckCircle2Icon aria-hidden="true" /> {t("steps.done")}
         </Button>
       ) : null}
@@ -140,7 +140,7 @@ export function TrackingPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {COLUMNS.map(({ key, icon: Icon, tone }) => (
             <section key={key} aria-label={t(`factory:tracking.columns.${key}`)} className="flex flex-col gap-3 rounded-xl bg-slate-100 p-3">
               <h2 className="flex items-center gap-2 px-1 text-lg font-bold">

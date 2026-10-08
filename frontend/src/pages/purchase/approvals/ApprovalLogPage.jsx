@@ -24,12 +24,12 @@ export function ApprovalLogPage() {
     return [
       { key: "at", header: t("purchase:approvals.columns.at"), sortable: true, render: (row) => formatDateTime(row.at, language) },
       { key: "poNumber", header: t("purchase:approvals.columns.poNumber"), sortable: true },
-      { key: "supplierName", header: t("purchase:approvals.columns.supplier") },
-      { key: "total", header: t("purchase:approvals.columns.total"), sortable: true, align: "right", render: (row) => formatCurrency(row.total, language) },
+      { key: "supplierName", secondary: true, header: t("purchase:approvals.columns.supplier") },
+      { key: "total", secondary: true, header: t("purchase:approvals.columns.total"), sortable: true, align: "right", render: (row) => formatCurrency(row.total, language) },
       { key: "action", header: t("purchase:approvals.columns.action"), sortable: true, render: (row) => t(`purchase:approval.log.${row.action}`) },
       { key: "actor", header: t("purchase:approvals.columns.actor"), sortable: true },
       { key: "status", header: t("purchase:approvals.columns.status"), sortable: true, render: (row) => <DocumentStatusBadge status={row.status} /> },
-      { key: "note", header: t("purchase:approvals.columns.note"), render: (row) => row.note ?? "—" },
+      { key: "note", secondary: true, header: t("purchase:approvals.columns.note"), render: (row) => row.note ?? "—" },
     ];
   }, [t, i18n.language]);
 

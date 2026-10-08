@@ -74,9 +74,9 @@ function JournalListPage() {
     return [
       { key: "number", header: t("accounting:journal.columns.number"), sortable: true },
       { key: "date", header: t("accounting:columns.date"), sortable: true, render: (row) => formatDate(row.date, language) },
-      { key: "memo", header: t("accounting:fields.memo") },
+      { key: "memo", secondary: true, header: t("accounting:fields.memo") },
       {
-        key: "docNumber",
+        key: "docNumber", secondary: true,
         header: t("accounting:journal.columns.reference"),
         render: (row) =>
           row.docNumber && DOC_PATHS[row.docType] && row.docId ? (
@@ -89,7 +89,7 @@ function JournalListPage() {
       },
       { key: "debit", header: t("accounting:journal.debit"), sortable: true, align: "right", render: (row) => money(row.debit) },
       { key: "credit", header: t("accounting:journal.credit"), sortable: true, align: "right", render: (row) => money(row.credit) },
-      { key: "source", header: t("accounting:columns.source"), render: (row) => t(`accounting:source.${row.source}`) },
+      { key: "source", secondary: true, header: t("accounting:columns.source"), render: (row) => t(`accounting:source.${row.source}`) },
       { key: "status", header: t("accounting:columns.status"), sortable: true, render: (row) => <DocumentStatusBadge status={row.status} /> },
     ];
   }, [t, i18n.language]);

@@ -47,11 +47,11 @@ export function StockMovementsPage() {
           </Link>
         ),
       },
-      { key: "fromTo", header: t("stock:movements.columns.fromTo"), render: (row) => <span className="whitespace-nowrap">{`${row.from ?? "—"} → ${row.to ?? "—"}`}</span> },
+      { key: "fromTo", secondary: true, header: t("stock:movements.columns.fromTo"), render: (row) => <span className="whitespace-nowrap">{`${row.from ?? "—"} → ${row.to ?? "—"}`}</span> },
       { key: "qty", header: t("stock:movements.columns.qty"), sortable: true, align: "right", render: (row) => <SignedQty value={row.qty} uom={row.uom} language={language} /> },
-      { key: "balanceAfter", header: t("stock:movements.columns.balance"), align: "right", render: (row) => `${formatNumber(row.balanceAfter, language)} ${row.uom}` },
-      { key: "docNumber", header: t("stock:movements.columns.document"), render: (row) => <DocumentLink docType={row.docType} docId={row.docId} docNumber={row.docNumber} /> },
-      { key: "by", header: t("stock:movements.columns.by"), render: (row) => row.by ?? "—" },
+      { key: "balanceAfter", secondary: true, header: t("stock:movements.columns.balance"), align: "right", render: (row) => `${formatNumber(row.balanceAfter, language)} ${row.uom}` },
+      { key: "docNumber", secondary: true, header: t("stock:movements.columns.document"), render: (row) => <DocumentLink docType={row.docType} docId={row.docId} docNumber={row.docNumber} /> },
+      { key: "by", secondary: true, header: t("stock:movements.columns.by"), render: (row) => row.by ?? "—" },
     ];
   }, [t, i18n.language]);
 

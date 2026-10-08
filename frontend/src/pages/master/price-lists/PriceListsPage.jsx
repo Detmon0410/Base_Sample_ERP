@@ -44,7 +44,7 @@ function PriceListsListPage() {
         align: "right",
         render: (row) => formatCurrency(row.price, i18n.language),
       },
-      { key: "validFrom", header: t("master:priceLists.columns.validFrom"), sortable: true, render: (row) => formatDate(row.validFrom, i18n.language) },
+      { key: "validFrom", secondary: true, header: t("master:priceLists.columns.validFrom"), sortable: true, render: (row) => formatDate(row.validFrom, i18n.language) },
       {
         key: "validTo",
         header: t("master:priceLists.columns.validTo"),

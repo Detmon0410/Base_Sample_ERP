@@ -23,7 +23,7 @@ function SuppliersListPage() {
       { key: "code", header: t("master:common.code"), sortable: true },
       { key: "name", header: t("master:common.name"), sortable: true },
       {
-        key: "paymentTerms",
+        key: "paymentTerms", secondary: true,
         header: t("master:customers.columns.paymentTerms"),
         sortable: true,
         render: (row) => (row.paymentTerms ? t(`master:paymentTerms.${row.paymentTerms}`) : "—"),

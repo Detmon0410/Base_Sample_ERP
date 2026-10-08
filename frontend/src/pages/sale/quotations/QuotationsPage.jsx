@@ -34,10 +34,10 @@ function QuotationsListPage() {
       },
       { key: "date", header: t("sale:columns.date"), sortable: true, render: (row) => formatDate(row.date, i18n.language) },
       { key: "customerCode", header: t("sale:columns.customer"), sortable: true, render: (row) => `${row.customerCode} · ${row.customerName}` },
-      { key: "salesPersonName", header: t("sale:columns.salesPerson"), render: (row) => row.salesPersonName ?? "—" },
+      { key: "salesPersonName", secondary: true, header: t("sale:columns.salesPerson"), render: (row) => row.salesPersonName ?? "—" },
       { key: "total", header: t("sale:columns.total"), sortable: true, align: "right", render: (row) => formatCurrency(row.totals.total, i18n.language), sum: (value) => formatCurrency(value, i18n.language) },
       {
-        key: "validUntil",
+        key: "validUntil", secondary: true,
         header: t("sale:columns.validUntil"),
         sortable: true,
         render: (row) => (

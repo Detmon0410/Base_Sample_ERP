@@ -55,7 +55,7 @@ export function DashboardPage() {
         </Alert>
       ) : null}
 
-      <section aria-label={t("title")} className="mb-6 grid grid-cols-2 gap-5 xl:grid-cols-4">
+      <section aria-label={t("title")} className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
         {loading || status === "error"
           ? KPI_DEFS.map((def) => <KpiCardSkeleton key={def.key} />)
           : KPI_DEFS.map((def) => {

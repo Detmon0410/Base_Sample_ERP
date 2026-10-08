@@ -25,7 +25,7 @@ function MaterialsListPage() {
       { key: "name", header: t("master:common.name"), sortable: true },
       { key: "uom", header: t("master:materials.columns.uom"), sortable: true },
       {
-        key: "reorderPoint",
+        key: "reorderPoint", secondary: true,
         header: t("master:materials.columns.reorderPoint"),
         sortable: true,
         align: "right",

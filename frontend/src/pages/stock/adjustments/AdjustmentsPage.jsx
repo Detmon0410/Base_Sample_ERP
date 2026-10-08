@@ -30,8 +30,8 @@ function AdjustmentsListPage() {
       { key: "number", header: t("stock:adjustments.columns.number"), sortable: true },
       { key: "date", header: t("stock:adjustments.columns.date"), sortable: true, render: (row) => formatDate(row.date, language) },
       { key: "itemCode", header: t("stock:adjustments.columns.item"), sortable: true, render: (row) => `${row.itemCode} · ${row.itemName}` },
-      { key: "warehouseName", header: t("stock:adjustments.columns.warehouse"), render: (row) => row.warehouseCode },
-      { key: "countedQty", header: t("stock:adjustments.columns.counted"), sortable: true, align: "right", render: (row) => `${formatNumber(row.countedQty, language)} ${row.uom}` },
+      { key: "warehouseName", secondary: true, header: t("stock:adjustments.columns.warehouse"), render: (row) => row.warehouseCode },
+      { key: "countedQty", secondary: true, header: t("stock:adjustments.columns.counted"), sortable: true, align: "right", render: (row) => `${formatNumber(row.countedQty, language)} ${row.uom}` },
       { key: "difference", header: t("stock:adjustments.columns.difference"), sortable: true, align: "right", render: (row) => <SignedQty value={row.difference} uom={row.uom} language={language} /> },
       { key: "status", header: t("stock:adjustments.columns.status"), sortable: true, render: (row) => <DocumentStatusBadge status={row.status} /> },
     ];

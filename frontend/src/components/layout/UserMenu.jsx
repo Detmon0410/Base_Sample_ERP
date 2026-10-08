@@ -31,7 +31,7 @@ export function UserMenu() {
         className="flex h-9 items-center gap-2 rounded-lg pr-2 pl-1 text-left text-primary-foreground outline-none hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white data-[state=open]:bg-white/15"
       >
         <RoleHat role={role} className="size-7" />
-        <span className="flex max-w-44 flex-col leading-tight">
+        <span className="flex max-w-44 flex-col leading-tight max-[991px]:sr-only">
           <span className="truncate text-base font-semibold">{user.name}</span>
           <span className="truncate text-xs text-white/85">{role ? t(`nav:roles.${role}`, role) : ""}</span>
         </span>

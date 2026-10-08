@@ -31,10 +31,10 @@ function OrdersListPage() {
           </Link>
         ),
       },
-      { key: "date", header: t("sale:columns.date"), sortable: true, render: (row) => formatDate(row.date, i18n.language) },
+      { key: "date", secondary: true, header: t("sale:columns.date"), sortable: true, render: (row) => formatDate(row.date, i18n.language) },
       { key: "customerCode", header: t("sale:columns.customer"), sortable: true, render: (row) => `${row.customerCode} · ${row.customerName}` },
-      { key: "quotationNumber", header: t("sale:columns.quotation"), render: (row) => row.quotationNumber ?? "—" },
-      { key: "customerPoNumber", header: t("sale:columns.customerPo"), render: (row) => row.customerPoNumber ?? "—" },
+      { key: "quotationNumber", secondary: true, header: t("sale:columns.quotation"), render: (row) => row.quotationNumber ?? "—" },
+      { key: "customerPoNumber", secondary: true, header: t("sale:columns.customerPo"), render: (row) => row.customerPoNumber ?? "—" },
       { key: "deliveryDate", header: t("sale:columns.deliveryDate"), sortable: true, render: (row) => (row.deliveryDate ? formatDate(row.deliveryDate, i18n.language) : "—") },
       { key: "total", header: t("sale:columns.total"), sortable: true, align: "right", render: (row) => formatCurrency(row.totals.total, i18n.language), sum: (value) => formatCurrency(value, i18n.language) },
       {

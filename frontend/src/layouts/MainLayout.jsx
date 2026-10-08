@@ -5,6 +5,7 @@ import { Outlet } from "react-router";
 import { RouteLoading } from "@/components/common/RouteLoading";
 
 import { AppHeader } from "@/components/layout/AppHeader";
+import { NotificationsProvider } from "@/components/layout/NotificationsProvider";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +24,7 @@ export function MainLayout() {
 
   return (
     <TooltipProvider delayDuration={200}>
+      <NotificationsProvider>
       <SidebarProvider
         open={open}
         onOpenChange={setOpen}
@@ -46,6 +48,7 @@ export function MainLayout() {
           </main>
         </SidebarInset>
       </SidebarProvider>
+      </NotificationsProvider>
     </TooltipProvider>
   );
 }

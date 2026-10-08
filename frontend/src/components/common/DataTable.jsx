@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRowSeen } from "@/utils/rowSeen";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ export function DataTable({
 }) {
   const { t } = useTranslation("master");
   const navigate = useNavigate();
+  const rowSeen = useRowSeen(); // a red dot on the rows that are new for this user
   const sortField = sort?.startsWith("-") ? sort.slice(1) : sort;
   const descending = sort?.startsWith("-");
 
@@ -46,6 +48,7 @@ export function DataTable({
   const labelSpan = firstSum === -1 ? columns.length : Math.max(1, firstSum);
 
   const onRowClick = (event, row) => {
+    if (rowTo) rowSeen.mark(rowTo(row)); // opening a row (also with its link) makes its dot go away
     if (!rowTo || event.target.closest("a,button")) return;
     navigate(rowTo(row));
   };
@@ -140,14 +143,19 @@ export function DataTable({
                         key={column.key}
                         className={cn("px-3 py-2", column.align === "right" && "text-right", column.align === "center" && "text-center", column.className)}
                       >
-                        {/* the first column is also a real link, so a row can be opened with the keyboard */}
-                        {index === 0 && rowTo && !column.render ? (
-                          <Link to={rowTo(row)} className="rounded-sm underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring">
-                            {content}
-                          </Link>
-                        ) : (
-                          content
-                        )}
+                        <span className="inline-flex items-center gap-2">
+                          {index === 0 && rowTo && rowSeen.isNew(row, rowTo(row)) ? (
+                            <span role="img" aria-label={t("common.newRow")} title={t("common.newRow")} className="size-2.5 shrink-0 rounded-full bg-red-600" />
+                          ) : null}
+                          {/* the first column is also a real link, so a row can be opened with the keyboard */}
+                          {index === 0 && rowTo && !column.render ? (
+                            <Link to={rowTo(row)} className="rounded-sm underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring">
+                              {content}
+                            </Link>
+                          ) : (
+                            content
+                          )}
+                        </span>
                       </TableCell>
                     );
                   })}

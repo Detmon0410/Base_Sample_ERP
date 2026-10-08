@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 
+import { CountBadge } from "@/components/common/CountBadge";
 import { ResizeHandle } from "@/components/common/ResizeHandle";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { DASHBOARD_ITEM, findActive, getVisibleGroups } from "@/config/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useNotifications } from "@/hooks/useNotifications";
 import { SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH } from "@/hooks/useSidebarWidth";
 
 // Soft background, primary text and a left bar for the page the user is on.
@@ -33,6 +35,7 @@ function NavGroup({ group, activeGroupKey }) {
   const [open, setOpen] = useState(isActiveGroup);
   const Icon = group.icon;
   const label = t(group.labelKey);
+  const counts = useNotifications().groups[group.key]; // requests waiting for this department: { total, items }
 
   // Open the group that contains the page the user navigates to (adjusted while rendering).
   const [wasActiveGroup, setWasActiveGroup] = useState(isActiveGroup);
@@ -51,9 +54,10 @@ function NavGroup({ group, activeGroupKey }) {
           tooltip={label}
           className={ACTIVE_STYLE}
         >
-          <Link to={group.items[0].to} aria-label={label}>
+          <Link to={group.items[0].to} aria-label={counts?.total ? `${label}, ${t("requests.waiting", { count: counts.total })}` : label} className="relative">
             <Icon />
             <span>{label}</span>
+            <CountBadge count={counts?.total} variant="dot" className="absolute top-0.5 right-0.5 size-2" />
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -67,7 +71,8 @@ function NavGroup({ group, activeGroupKey }) {
           <SidebarMenuButton isActive={isActiveGroup && !open} className={ACTIVE_STYLE}>
             <Icon />
             <span>{label}</span>
-            <ChevronRightIcon className="ml-auto size-4 shrink-0 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+            <CountBadge count={counts?.total} variant="dot" className="ml-auto" />
+            <ChevronRightIcon className={`${counts?.total ? "" : "ml-auto "}size-4 shrink-0 transition-transform group-data-[state=open]/collapsible:rotate-90`} />
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
@@ -77,8 +82,9 @@ function NavGroup({ group, activeGroupKey }) {
               return (
                 <SidebarMenuSubItem key={item.key}>
                   <SidebarMenuSubButton asChild isActive={active}>
-                    <Link to={item.to} aria-current={active ? "page" : undefined}>
+                    <Link to={item.to} aria-current={active ? "page" : undefined} className="justify-between">
                       <span>{t(item.labelKey)}</span>
+                      <CountBadge count={counts?.items?.[item.key]} hint={t(`requests.items.${item.key}`, { defaultValue: "" })} />
                     </Link>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>

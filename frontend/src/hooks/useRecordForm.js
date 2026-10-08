@@ -5,7 +5,9 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 
+import { useAuth } from "@/hooks/useAuth";
 import { useSheetExit } from "@/hooks/useSheetExit";
+import { markRowSeen } from "@/utils/rowSeen";
 import { describedBy } from "@/utils/aria";
 import { notifyMasterChanged } from "@/utils/masterEvents";
 import { getCachedRecord, rememberRecords } from "@/utils/recordCache";
@@ -64,6 +66,7 @@ export function useRecordForm({
   const { search } = useLocation();
   const { leaving, exitTo } = useSheetExit();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const isNew = id === undefined;
   const listPath = `${basePath}${search}`;
 
@@ -105,6 +108,18 @@ export function useRecordForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isNew, reset, service, cached]);
 
+  // A row that the user opens is seen (its red dot goes away), and so is everything the user does to it while it is open: it is
+  // marked when the sheet opens, after every save or action, and when it closes.
+  const userId = user?.id ?? null;
+  const markSeen = (rowId = id) => markRowSeen(userId, basePath, rowId == null ? null : String(rowId));
+  const markSeenRef = useRef(markSeen);
+  markSeenRef.current = markSeen;
+  useEffect(() => {
+    if (isNew) return undefined;
+    markSeenRef.current();
+    return () => markSeenRef.current();
+  }, [id, isNew]);
+
   useEffect(() => {
     if (!isDirty) return undefined;
     const warn = (event) => event.preventDefault();
@@ -135,6 +150,7 @@ export function useRecordForm({
     try {
       if (isNew) {
         const created = await service.create(toPayload(values));
+        markSeen(created?.id);
         toast.success(t("common.saved"));
         notifyMasterChanged();
         if (afterCreatePath) {
@@ -147,6 +163,7 @@ export function useRecordForm({
         const saved = await service.update(id, toPayload(values));
         setRecord(saved);
         reset(toValues(saved));
+        markSeen();
         toast.success(t("common.saved"));
         notifyMasterChanged();
       }
@@ -157,6 +174,7 @@ export function useRecordForm({
 
   /** A record returned by the server (after a status action): show it and reload the lists behind the sheet. */
   const applyRecord = (saved) => {
+    markSeen();
     setRecord(saved);
     reset(toValues(saved));
     notifyMasterChanged();
@@ -169,6 +187,7 @@ export function useRecordForm({
     try {
       const next = record.status === "active" ? "inactive" : "active";
       setRecord(await service.setStatus(id, next));
+      markSeen();
       notifyMasterChanged();
       toast.success(t(next === "inactive" ? "common.deactivated" : "common.reactivated"));
       setDialog(null);

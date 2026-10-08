@@ -83,7 +83,7 @@ Statuses: `draft → confirmed → in_production → ready_to_deliver → delive
 | `approve` | draft → confirmed (clears `approval`) | **Manager / Admin** | optional. A Manager may confirm a draft that was never requested |
 | `reject-confirm` | draft, `approval` back to `null` | **Manager / Admin** | **required** (kept in the history) |
 | `send-to-factory` | confirmed → in_production | Worker+ | optional |
-| `mark-ready` | in_production → ready_to_deliver | Worker+ | optional |
+| `mark-ready` | in_production → ready_to_deliver | Worker+ | optional. **Blocked until the goods are in the finished goods warehouse**: for every line, `qty − already delivered` must be ≤ the available stock of the product (stock that is not promised to a **draft** delivery note). Otherwise `409 NOT_READY`, `errors = [{ path: ["stock"], message: "NOT_READY", items: [{ code, needed, uom, has }] }]` |
 | `close` | delivered → closed | **Manager / Admin** | optional |
 | `cancel` | draft / confirmed → cancelled | Worker+ | optional |
 | `cancel` | in_production / ready_to_deliver → cancelled | **Manager / Admin** | **required** (Q6) |

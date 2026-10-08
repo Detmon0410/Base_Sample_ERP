@@ -41,4 +41,34 @@ What the frontend expects from the backend, written **per page**. The frontend a
 | P1–P5 Purchase (stock status board, purchase orders, goods receipts) | [purchase.md](purchase.md) | Frontend done for all 5 (mock), **backend not implemented** |
 | C1–C6 Accounting (invoices, receipts, supplier bills, payments, journal, accounting master) | [accounting.md](accounting.md) | Frontend done for all 6 (mock), **backend not implemented** |
 | N1–N3 Serial numbers (S/N) of finished products: made by a button on the Work Order, one per unit, the delivery names its units, the timeline of a unit | [serial.md](serial.md) | Frontend done (mock), **backend not implemented** |
+| R1 Traceability (search an S/N and read the timeline of a unit; same calls as N1–N3) | [serial.md](serial.md) | Frontend done (mock), **backend not implemented** |
+| Request counters in the menu (`GET /notifications`) | [notifications.md](notifications.md) | Frontend done (mock), **backend not implemented** |
 | U1–U3 Users (user list and form with department + role rows, passwords, departments and roles matrix) | [users.md](users.md) | Frontend done for all 3 (mock), **backend not implemented** |
+
+## Error codes (the frontend translates by `error`)
+
+| HTTP | `error` | Meaning |
+|---|---|---|
+| 400 | `VALIDATION_ERROR` | body or params invalid; `errors[]` = `{ path, message }` (`message` is a code such as `REQUIRED`) |
+| 401 | `UNAUTHORIZED` / `INVALID_CREDENTIALS` | no / bad token; wrong e-mail or password |
+| 403 | `FORBIDDEN` | the role may not do this; `ACCOUNT_INACTIVE` for an inactive user; `CANNOT_APPROVE_OWN` (Purchase: the maker may not approve) |
+| 404 | `NOT_FOUND`, `SERIAL_NOT_FOUND` | the record does not exist; unknown route = `ROUTE_NOT_FOUND` |
+| 409 | `INVALID_STATUS` | the action is not allowed in the current status |
+| 409 | `IN_USE`, `HAS_MOVEMENTS`, `ALREADY_USED`, `ALREADY_LINKED` | a used record cannot be deleted / changed |
+| 409 | `CODE_ALREADY_EXISTS`, `EMAIL_ALREADY_EXISTS`, `PERIOD_OVERLAP`, `ROLE_TAKEN` | uniqueness / overlap rules |
+| 409 | `NOT_ENOUGH_STOCK` | a stock booking would go below zero |
+| 409 | `NOT_READY` | Sale: the order cannot be marked ready, the goods are not in the warehouse |
+| 409 | `NOTHING_TO_DELIVER`, `NO_ROUTING`, `STEP_ORDER`, `STEPS_NOT_DONE` | Sale / Factory flow rules |
+| 409 | `NOT_BALANCED` | a journal entry whose debit and credit differ |
+| 409 | `LAST_ADMIN`, `CANNOT_CHANGE_SELF`, `ACCOUNT_ROLE_MISSING` | user administration rules |
+| 500 | `INTERNAL_SERVER_ERROR` | anything else |
+
+## For the person who writes the backend
+
+1. **The mock is the executable spec.** `frontend/src/services/mock/*.js` answers every call below; its tests (`*.test.js`, `workflowTest.test.js`) are the acceptance tests: the same scenario must pass against the real API. Read a module doc here first, then its mock for the exact rules.
+2. **Order of work** (each step needs the one before): auth + users → master data → stock ledger → sale → factory (+ serial numbers) → purchase → accounting → notifications + dashboard (they only read the others).
+3. **Shared pieces that must be one implementation, not one per module:** the stock ledger (Sale delivery, Factory transfer, Purchase receipt and Stock adjustment all book into it, in the same transaction as the status change); the document numbers (`QT-2026-0001` … per type and year, no gaps, created inside the transaction); the material availability service (Sale, Factory and Purchase use it); the permission rules (the matrix is in `frontend/src/config/permissions.js`, computed from the same rules the pages use).
+4. **Every status change is an explicit action** (`POST …/:id/:action`). The server never moves a status by itself; a late or overdue label is computed on read.
+5. **A status change and its history entry are one transaction.** `history` keeps `{ id, action, status, actor, at, note }`, newest first.
+6. **The existing `backend/`** has only the user sample (Express, Prisma, MySQL, Zod validators in `validators/`); its `User` table is not the final one (memberships, status, password hash are in [users.md](users.md)).
+7. **What is frontend only** and needs no API: the red dot on new table rows, the header clock, the language, the test-data persistence (`kanou.testlog.v1`) and `VITE_MOCK_SEED`.

@@ -10,10 +10,9 @@ Scope: phone width. Tablet is in f15-tablet.md.
 | Menu | Panel over the page; closes when a page is chosen |
 | Sheets | Full width, single column, action row wrapped with 44px buttons, close button 44px |
 | List toolbar | Search full width, New button full width |
+| Tables inside sheets and panels (document lines, sums) | Blocks: one block per row, each cell with its column name in front (`useStackTables`, CSS in `index.css`); a cell that spans columns has no name |
 | Dashboard | 1 column of KPI cards |
 
 Hook: `usePhone()` (`useNarrow.js`, `PHONE_BELOW = 768`).
-
-Not done: line-item tables inside sheets still scroll sideways in their box.
 
 Check: open DevTools device mode at 375px; open Customers (cards), the ⋮ menu, a customer sheet, the menu, Dashboard.

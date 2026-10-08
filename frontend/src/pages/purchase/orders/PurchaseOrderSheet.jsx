@@ -14,7 +14,7 @@ import { ProgressBar } from "@/components/common/ProgressBar";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
 import { DocumentActions } from "@/components/documents/DocumentActions";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { PurchaseLinesCard } from "@/components/purchase/PurchaseLinesCard";
@@ -288,7 +288,6 @@ export function PurchaseOrderSheet() {
               </SheetSection>
             ) : null}
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

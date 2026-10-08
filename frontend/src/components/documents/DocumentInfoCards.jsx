@@ -1,14 +1,11 @@
-import { CheckIcon, HistoryIcon, LinkIcon, XIcon } from "lucide-react";
+import { CheckIcon, HistoryIcon, XIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { LinkedDocuments } from "@/components/common/LinkedDocuments";
 import { SheetSection } from "@/components/common/SheetSection";
 import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperNav, StepperSeparator, StepperTitle } from "@/components/reui/stepper";
 import { HISTORY_TONES } from "@/config/sale";
 import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/utils/format";
-
-import { DocumentStatusBadge } from "./DocumentStatusBadge";
 
 // Marker of a history step: a green check, or a red cross when the step rejected or cancelled the document.
 const MARKER = {
@@ -58,26 +55,6 @@ export function HistoryCard({ history }) {
           </StepperNav>
         </Stepper>
       )}
-    </SheetSection>
-  );
-}
-
-/**
- * Linked documents card. `links` from the server: { id, type, number, status?, to? }. A type without a page yet
- * (work order, invoice) is shown as plain text, never as a dead link.
- */
-export function LinksCard({ links }) {
-  const { t } = useTranslation("sale");
-  const items = links.map((link) => ({
-    id: link.id,
-    type: t(`links.${link.type}`),
-    number: link.number ?? t("links.notRecorded"),
-    to: link.number ? link.to : undefined,
-    status: link.status ? <DocumentStatusBadge status={link.status} /> : undefined,
-  }));
-  return (
-    <SheetSection title={t("cards.links")} icon={LinkIcon}>
-      <LinkedDocuments items={items} bare />
     </SheetSection>
   );
 }

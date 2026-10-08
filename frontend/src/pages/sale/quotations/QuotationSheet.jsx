@@ -13,7 +13,7 @@ import { SheetSection } from "@/components/common/SheetSection";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { AvailabilityCard } from "@/components/documents/AvailabilityCard";
 import { DocumentActions } from "@/components/documents/DocumentActions";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { LineItemsCard } from "@/components/documents/LineItemsCard";
@@ -177,7 +177,6 @@ export function QuotationSheet() {
         {!isNew && record ? (
           <>
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

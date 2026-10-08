@@ -11,7 +11,7 @@ import { FormField } from "@/components/common/FormField";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
 import { DocumentActions } from "@/components/documents/DocumentActions";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { SerialPicker } from "@/components/sale/SerialPicker";
 import { Input } from "@/components/ui/input";
@@ -205,7 +205,6 @@ export function DeliverySheet() {
         {record ? (
           <>
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

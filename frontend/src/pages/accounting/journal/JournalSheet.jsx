@@ -13,7 +13,7 @@ import { MoneyInput } from "@/components/common/MoneyInput";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
 import { DocumentActions } from "@/components/documents/DocumentActions";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { Button } from "@/components/ui/button";
@@ -204,7 +204,6 @@ export function JournalSheet() {
         {!isNew && record ? (
           <>
             <HistoryCard history={record.history} />
-            {record.links.length > 0 ? <LinksCard links={record.links} /> : null}
           </>
         ) : null}
       </SheetFormBody>

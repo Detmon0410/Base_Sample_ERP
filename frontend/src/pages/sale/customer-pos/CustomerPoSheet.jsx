@@ -10,7 +10,7 @@ import { FormField } from "@/components/common/FormField";
 import { FormSection } from "@/components/common/FormSection";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -139,7 +139,6 @@ export function CustomerPoSheet() {
         {!isNew && record ? (
           <>
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

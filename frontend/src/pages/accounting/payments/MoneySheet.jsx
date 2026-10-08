@@ -14,7 +14,7 @@ import { MoneyInput } from "@/components/common/MoneyInput";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
 import { DocumentActions } from "@/components/documents/DocumentActions";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { Input } from "@/components/ui/input";
@@ -187,7 +187,6 @@ export function MoneySheet({ direction }) {
               <p>{record.status === "confirmed" ? t("accounting:money.booked", { number: record.links.find((link) => link.type === "journalEntry")?.number ?? "—" }) : t("accounting:money.notBooked")}</p>
             </SheetSection>
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

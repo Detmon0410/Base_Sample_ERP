@@ -13,7 +13,7 @@ import { FormSection } from "@/components/common/FormSection";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
 import { DocumentActions } from "@/components/documents/DocumentActions";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { Input } from "@/components/ui/input";
@@ -316,7 +316,6 @@ export function GoodsReceiptSheet() {
         {!isNew && record ? (
           <>
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

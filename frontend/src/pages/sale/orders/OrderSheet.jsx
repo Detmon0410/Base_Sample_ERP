@@ -14,7 +14,7 @@ import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
 import { AvailabilityCard } from "@/components/documents/AvailabilityCard";
 import { DocumentActions } from "@/components/documents/DocumentActions";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { LineItemsCard } from "@/components/documents/LineItemsCard";
 import { Textarea } from "@/components/ui/textarea";
@@ -218,7 +218,6 @@ export function OrderSheet() {
         {!isNew && record ? (
           <>
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

@@ -15,7 +15,7 @@ import { SheetSection } from "@/components/common/SheetSection";
 import { AvailabilityCard } from "@/components/documents/AvailabilityCard";
 import { DocumentActions } from "@/components/documents/DocumentActions";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { SerialCard } from "@/components/factory/SerialCard";
 import { StepTimeline } from "@/components/factory/StepTimeline";
@@ -221,7 +221,6 @@ export function WorkOrderSheet() {
         {!isNew && record ? (
           <>
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

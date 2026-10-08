@@ -74,7 +74,8 @@
     "transferHint": "",
     "date": "",
     "warehouse": "",
-    "chooseWarehouse": ""
+    "chooseWarehouse": "",
+    "lineGone": ""
   },
   "steps": {
     "listLabel": "",

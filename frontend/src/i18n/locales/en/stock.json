@@ -219,7 +219,8 @@
     "INVALID_STATUS": "This is not possible in the current status.",
     "VALIDATION_ERROR": "Please check the highlighted fields.",
     "NOT_ENOUGH_STOCK": "Not enough stock.",
-    "HAS_MOVEMENTS": "This item already has movements in that warehouse."
+    "HAS_MOVEMENTS": "This item already has movements in that warehouse.",
+    "NOT_READY": "The order is not ready to deliver: the goods are not in the finished goods warehouse yet. Finish the work order and transfer the goods first."
   },
   "short": {
     "title": "Not enough stock",

@@ -65,6 +65,16 @@
       "number": "Invoice No.",
       "party": "Customer",
       "ref": "Delivery note"
+    },
+    "waiting": {
+      "title": "Waiting for an invoice",
+      "hint": "Delivered delivery notes that have no invoice yet. This is what the number of Customer invoices in the menu counts, besides the draft invoices to issue.",
+      "create": "Create invoice",
+      "columns": {
+        "source": "Delivery note",
+        "party": "Customer",
+        "ref": "Sale order"
+      }
     }
   },
   "bills": {
@@ -84,6 +94,16 @@
       "number": "Bill No.",
       "party": "Supplier",
       "ref": "Purchase order"
+    },
+    "waiting": {
+      "title": "Waiting for a bill",
+      "hint": "Posted goods receipts that have no supplier bill yet. This is what the number of Supplier bills in the menu counts, besides the draft bills to approve.",
+      "create": "Create bill",
+      "columns": {
+        "source": "Goods receipt",
+        "party": "Supplier",
+        "ref": "Purchase order"
+      }
     }
   },
   "receipts": {

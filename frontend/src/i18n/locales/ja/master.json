@@ -40,7 +40,8 @@
     "activeToggle": "",
     "inactiveToggle": "",
     "totalItems": "",
-    "none": ""
+    "none": "",
+    "newRow": ""
   },
   "validation": {
     "required": "",

@@ -56,7 +56,12 @@
     "open": "",
     "profile": "",
     "admin": "",
-    "noDepartment": ""
+    "noDepartment": "",
+    "resetData": "",
+    "resetTitle": "",
+    "resetDescription": "",
+    "resetConfirm": "",
+    "resetCancel": ""
   },
   "roles": {
     "Admin": "",
@@ -74,5 +79,25 @@
   "clock": {
     "online": "",
     "offline": ""
+  },
+  "requests": {
+    "waiting_one": "",
+    "waiting_other": "",
+    "new": "",
+    "items": {
+      "saleOrders": "",
+      "deliveryNotes": "",
+      "workOrders": "",
+      "fgTransfer": "",
+      "stockAdjustment": "",
+      "stockStatus": "",
+      "purchaseOrders": "",
+      "goodsReceipt": "",
+      "invoices": "",
+      "bills": "",
+      "receipts": "",
+      "payments": "",
+      "journal": ""
+    }
   }
 }

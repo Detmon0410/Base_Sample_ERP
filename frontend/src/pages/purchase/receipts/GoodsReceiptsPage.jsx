@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from "react-router";
 
 import { RemountOnId } from "@/components/common/RemountOnId";
 import { DocumentListPage } from "@/components/documents/DocumentListPage";
+import { WaitingGoodsPanel } from "@/components/purchase/WaitingGoodsPanel";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { canWork, RECEIPT_STATUSES } from "@/config/purchase";
 import { useAuth } from "@/hooks/useAuth";
@@ -49,6 +50,7 @@ function GoodsReceiptsListPage() {
       statuses={RECEIPT_STATUSES}
       stepper
       stepperUnit="receipts"
+      beforePanel={<WaitingGoodsPanel canCreate={canWork(user)} />}
       customerFilter={false}
       extraFilters={extraFilters}
       extraKeys={EXTRA_KEYS}

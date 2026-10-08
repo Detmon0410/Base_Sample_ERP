@@ -40,7 +40,8 @@
     "activeToggle": "Active. Click to deactivate",
     "inactiveToggle": "Inactive. Click to activate",
     "totalItems": "Total {{count}} items",
-    "none": "None"
+    "none": "None",
+    "newRow": "New or changed since you last opened it"
   },
   "validation": {
     "required": "This field is required.",

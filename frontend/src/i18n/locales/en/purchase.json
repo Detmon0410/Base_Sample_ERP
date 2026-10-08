@@ -292,5 +292,16 @@
       "action": "Action",
       "date": "Date"
     }
+  },
+  "waitingGoods": {
+    "title": "Waiting for goods",
+    "hint": "Purchase orders that were sent and have not been fully received. This is what the number of Goods receipt in the menu counts, besides the draft receipts to post.",
+    "create": "Receive goods",
+    "columns": {
+      "po": "Purchase order",
+      "supplier": "Supplier",
+      "expected": "Expected",
+      "received": "Received"
+    }
   }
 }

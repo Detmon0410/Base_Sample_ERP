@@ -219,7 +219,8 @@
     "INVALID_STATUS": "",
     "VALIDATION_ERROR": "",
     "NOT_ENOUGH_STOCK": "",
-    "HAS_MOVEMENTS": ""
+    "HAS_MOVEMENTS": "",
+    "NOT_READY": ""
   },
   "short": {
     "title": "",

@@ -292,5 +292,16 @@
       "action": "",
       "date": ""
     }
+  },
+  "waitingGoods": {
+    "title": "",
+    "hint": "",
+    "create": "",
+    "columns": {
+      "po": "",
+      "supplier": "",
+      "expected": "",
+      "received": ""
+    }
   }
 }

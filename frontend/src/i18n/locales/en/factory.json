@@ -74,7 +74,8 @@
     "transferHint": "Up to {{max}} {{uom}} can still be transferred.",
     "date": "Date",
     "warehouse": "To warehouse",
-    "chooseWarehouse": "Choose a finished goods warehouse"
+    "chooseWarehouse": "Choose a finished goods warehouse",
+    "lineGone": "Work orders already cover the whole quantity of this line, so there is nothing left to plan. Choose another line, or open the work orders of this order."
   },
   "steps": {
     "listLabel": "Production steps",

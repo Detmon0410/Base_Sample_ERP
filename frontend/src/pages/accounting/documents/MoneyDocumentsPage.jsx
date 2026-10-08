@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Routes, useLocation } from "react-router";
 
+import { WaitingSourcesPanel } from "@/components/accounting/WaitingSourcesPanel";
 import { RemountOnId } from "@/components/common/RemountOnId";
 import { DocumentListPage } from "@/components/documents/DocumentListPage";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
@@ -68,6 +69,7 @@ function MoneyDocumentsListPage({ direction }) {
       statuses={d.statuses}
       stepper
       stepperUnit={ns}
+      beforePanel={<WaitingSourcesPanel namespace={ns} service={SERVICES[direction]} newPath={d.docPath} canCreate={canWork(user)} />}
       customerFilter={false}
       extraFilters={extraFilters}
       extraKeys={EXTRA_KEYS}

@@ -65,6 +65,16 @@
       "number": "",
       "party": "",
       "ref": ""
+    },
+    "waiting": {
+      "title": "",
+      "hint": "",
+      "create": "",
+      "columns": {
+        "source": "",
+        "party": "",
+        "ref": ""
+      }
     }
   },
   "bills": {
@@ -84,6 +94,16 @@
       "number": "",
       "party": "",
       "ref": ""
+    },
+    "waiting": {
+      "title": "",
+      "hint": "",
+      "create": "",
+      "columns": {
+        "source": "",
+        "party": "",
+        "ref": ""
+      }
     }
   },
   "receipts": {

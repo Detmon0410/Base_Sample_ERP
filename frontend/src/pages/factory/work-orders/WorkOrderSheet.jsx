@@ -28,7 +28,7 @@ import { canWork, workOrderActions } from "@/config/factory";
 import { useAuth } from "@/hooks/useAuth";
 import { useRecordForm } from "@/hooks/useRecordForm";
 import { checkFactoryAvailability, listWaitingOrders, workOrderService } from "@/services/factory.service";
-import { formatDate, formatNumber } from "@/utils/format";
+import { formatDate } from "@/utils/format";
 import { notEnoughStockText } from "@/utils/stockErrors";
 
 import { emptyWorkOrder, toFormValues, toPayload, workOrderSchema } from "./workOrderSchema";
@@ -59,12 +59,13 @@ export function WorkOrderSheet() {
 
   // the lines that wait for a work order: the picker of a new one
   const [waiting, setWaiting] = useState([]);
+  const [waitingLoaded, setWaitingLoaded] = useState(false);
   useEffect(() => {
     if (!isNew) return undefined;
     let cancelled = false;
     listWaitingOrders()
-      .then((orders) => !cancelled && setWaiting(orders))
-      .catch(() => !cancelled && setWaiting([]));
+      .then((orders) => !cancelled && (setWaiting(orders), setWaitingLoaded(true)))
+      .catch(() => !cancelled && (setWaiting([]), setWaitingLoaded(true)));
     return () => {
       cancelled = true;
     };
@@ -86,6 +87,7 @@ export function WorkOrderSheet() {
   const lineValue = useWatch({ control: form.control, name: "line" });
   const qtyValue = useWatch({ control: form.control, name: "qty" });
   const picked = lineOptions.find((option) => option.id === lineValue);
+  const lineGone = isNew && waitingLoaded && Boolean(lineValue) && !picked; // this line already has work orders for its whole quantity
 
   const stepDialogs = useStepDialogs({ onChanged: (saved) => page.applyRecord(saved) });
   const errorText = (error) => notEnoughStockText(error) ?? t(`factory:errors.${error?.code}`, { defaultValue: t("factory:errors.UNKNOWN") });
@@ -150,46 +152,41 @@ export function WorkOrderSheet() {
         <form id="wo-form" noValidate onSubmit={page.onSubmit} className="flex flex-col gap-4">
           {editable ? (
             <FormSection title={t("factory:cards.order")} icon={ClipboardListIcon} aside={numberAside}>
-              {isNew ? (
-                <FormField id="wo-line" label={t("factory:fields.saleOrderLine")} required error={message(errors.line)} className="@lg:col-span-2">
-                  <Controller
-                    control={form.control}
-                    name="line"
-                    render={({ field }) => (
-                      <EntitySelect
-                        id="wo-line"
-                        options={lineOptions}
-                        value={field.value}
-                        onChange={(value) => {
-                          field.onChange(value);
-                          const option = lineOptions.find((item) => item.id === value);
-                          if (option) form.setValue("qty", option.remaining, { shouldDirty: true });
-                        }}
-                        placeholder={t("factory:fields.chooseLine")}
-                        {...fieldProps("line")}
-                      />
-                    )}
-                  />
+              {/* the sales order line and its quantity are on one row; the quantity is what is left of the line and cannot be typed */}
+              <div className="grid items-start gap-x-6 gap-y-5 @lg:col-span-2 @lg:grid-cols-[minmax(0,1fr)_11rem]">
+                {isNew ? (
+                  <FormField id="wo-line" label={t("factory:fields.saleOrderLine")} required error={message(errors.line)}>
+                    <Controller
+                      control={form.control}
+                      name="line"
+                      render={({ field }) => (
+                        <EntitySelect
+                          id="wo-line"
+                          options={lineOptions}
+                          value={field.value}
+                          onChange={(value) => {
+                            field.onChange(value);
+                            const option = lineOptions.find((item) => item.id === value);
+                            form.setValue("qty", option ? option.remaining : null, { shouldDirty: true });
+                          }}
+                          placeholder={t("factory:fields.chooseLine")}
+                          {...fieldProps("line")}
+                        />
+                      )}
+                    />
+                  </FormField>
+                ) : (
+                  <DetailFields items={[{ label: t("factory:fields.saleOrder"), value: `${record.saleOrderNumber} · ${record.customerName}` }]} />
+                )}
+                <FormField id="wo-qty" label={`${t("factory:fields.qty")}${picked?.uom ? ` (${picked.uom})` : record?.uom ? ` (${record.uom})` : ""}`} error={message(errors.qty)}>
+                  <Input id="wo-qty" type="number" readOnly tabIndex={-1} className="bg-muted text-right" {...fieldProps("qty")} {...form.register("qty", { setValueAs: (value) => (value === "" || value == null ? null : Number(value)) })} />
                 </FormField>
-              ) : (
-                <div className="@lg:col-span-2">
-                  <DetailFields
-                    items={[
-                      { label: t("factory:fields.saleOrder"), value: `${record.saleOrderNumber} · ${record.customerName}` },
-                    ]}
-                  />
-                </div>
-              )}
-              <FormField
-                id="wo-qty"
-                label={`${t("factory:fields.qty")}${picked?.uom ? ` (${picked.uom})` : record?.uom ? ` (${record.uom})` : ""}`}
-                required
-                error={message(errors.qty)}
-                hint={picked ? t("factory:fields.qtyHint", { max: formatNumber(picked.remaining, language), uom: picked.uom }) : undefined}
-              >
-                <Input id="wo-qty" type="number" min={1} step={1} inputMode="numeric" className="text-right" {...fieldProps("qty", Boolean(picked))} {...form.register("qty", { setValueAs: (value) => (value === "" || value == null ? null : Number(value)) })} />
-              </FormField>
-              <div />
+              </div>
+              {lineGone ? (
+                <p role="alert" className="m-0 rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 font-semibold text-warning @lg:col-span-2">
+                  {t("factory:fields.lineGone")}
+                </p>
+              ) : null}
               <FormField id="wo-planStart" label={t("factory:fields.planStart")} error={message(errors.planStart)}>
                 <DateField id="wo-planStart" control={form.control} name="planStart" {...fieldProps("planStart")} />
               </FormField>

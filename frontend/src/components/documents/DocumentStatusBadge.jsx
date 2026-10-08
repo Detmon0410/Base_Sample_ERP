@@ -18,7 +18,6 @@ import {
   PackageCheckIcon,
   PencilIcon,
   SendIcon,
-  ThumbsUpIcon,
   TruckIcon,
   WarehouseIcon,
 } from "lucide-react";
@@ -32,7 +31,6 @@ const ICONS = {
   draft: PencilIcon,
   sent: SendIcon,
   expired: ClockIcon,
-  confirmed: ThumbsUpIcon,
   in_production: FactoryIcon,
   ready_to_deliver: PackageCheckIcon,
   delivered: TruckIcon,

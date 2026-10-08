@@ -33,7 +33,6 @@ export const STATUS_TONES = {
   partially_paid: "warning",
   paid: "success",
   overdue: "danger",
-  confirmed: "neutral",
   reversed: "neutral",
 };
 

@@ -3,7 +3,7 @@
  *
  *   header   DetailHeader: number, status, key facts, page actions
  *   main     DetailSection blocks (fields, lines, notes)
- *   aside    StatusTimeline + LinkedDocuments
+ *   aside    StatusTimeline
  *
  * Wide screens show main and aside side by side; narrow screens (e.g. 200% zoom) stack them.
  */

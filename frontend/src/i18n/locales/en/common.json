@@ -39,7 +39,6 @@
     "perPage": "Rows per page"
   },
   "detail": {
-    "linkedDocuments": "Linked documents",
     "noLinkedDocuments": "No linked documents yet.",
     "history": "Status history",
     "noHistory": "No history yet.",

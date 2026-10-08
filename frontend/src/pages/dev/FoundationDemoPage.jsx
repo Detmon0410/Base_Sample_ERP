@@ -5,7 +5,6 @@ import { Link } from "react-router";
 
 import { ApprovalActions } from "@/components/common/ApprovalActions";
 import { DetailFields, DetailHeader, DetailLayout, DetailSection } from "@/components/common/DetailLayout";
-import { LinkedDocuments } from "@/components/common/LinkedDocuments";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { StatusTimeline } from "@/components/common/StatusTimeline";
@@ -97,12 +96,6 @@ export function FoundationDemoPage() {
         aside={
           <>
             <StatusTimeline events={events} />
-            <LinkedDocuments
-              items={[
-                { id: "so", type: "Sale Order", number: "SO-2026-0017", to: "/sale/orders", status: <StatusBadge tone="neutral">Draft</StatusBadge> },
-                { id: "po", type: "Customer PO", number: "PO-ACME-9931" },
-              ]}
-            />
           </>
         }
       >

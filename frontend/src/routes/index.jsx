@@ -43,6 +43,7 @@ const PaymentsPage = page(() => import("@/pages/accounting/payments/MoneyPage"),
 const JournalPage = page(() => import("@/pages/accounting/journal/JournalPage"), "JournalPage");
 const AccountingMasterPage = page(() => import("@/pages/accounting/master/AccountingMasterPage"), "AccountingMasterPage");
 const UsersPage = page(() => import("@/pages/admin/users/UsersPage"), "UsersPage");
+const TracePage = page(() => import("@/pages/trace/TracePage"), "TracePage");
 const RolesPage = page(() => import("@/pages/admin/roles/RolesPage"), "RolesPage");
 const SimpleMaster = () => import("@/pages/master/simple/SimpleMasterPage");
 const EmployeesPage = page(SimpleMaster, "EmployeesPage");
@@ -85,6 +86,7 @@ const IMPLEMENTED_PAGES = {
   accountingMaster: AccountingMasterPage,
   users: UsersPage,
   roles: RolesPage,
+  productTrace: TracePage,
 };
 
 /**

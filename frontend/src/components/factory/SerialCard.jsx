@@ -1,5 +1,6 @@
 import { TagsIcon, WandSparklesIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -94,7 +95,11 @@ export function SerialCard({ workOrder, user }) {
                   <TableCell className="whitespace-normal">
                     <Where unit={unit} />
                   </TableCell>
-                  <TableCell className="font-semibold tabular-nums">{unit.sn}</TableCell>
+                  <TableCell className="font-semibold tabular-nums">
+                    <Link to={`/trace/${encodeURIComponent(unit.sn)}`} className="text-primary underline-offset-2 hover:underline">
+                      {unit.sn}
+                    </Link>
+                  </TableCell>
                 </TableRow>
               ))}
               {Array.from({ length: meta.canMake ? left : 0 }, (_, slot) => (

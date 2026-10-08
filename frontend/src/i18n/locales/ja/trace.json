@@ -1,0 +1,43 @@
+{
+  "status": {
+    "made": "",
+    "in_stock": "",
+    "delivered": "",
+    "void": ""
+  },
+  "search": "",
+  "empty": "",
+  "noResult": "",
+  "back": "",
+  "saleOrder": "",
+  "timeline": "",
+  "by": "",
+  "notFound": "",
+  "notFoundHint": "",
+  "loadError": "",
+  "columns": {
+    "sn": "",
+    "product": "",
+    "status": "",
+    "workOrder": "",
+    "customer": "",
+    "madeAt": ""
+  },
+  "event": {
+    "generated": "",
+    "generatedBy": "",
+    "materials": "",
+    "material": "",
+    "perUnit": "",
+    "lots": "",
+    "step": "",
+    "noMachine": "",
+    "qtyDone": "",
+    "from": "",
+    "finished": "",
+    "transferred": "",
+    "delivered": "",
+    "invoiced": "",
+    "void": ""
+  }
+}

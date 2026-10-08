@@ -1,67 +1,49 @@
 # Klong ERP Frontend
 
-React + Vite frontend for Klong ERP. The UI layer will use shadcn/ui instead of
-Ant Design and will remain JavaScript-based for the current project.
+React + Vite + Tailwind v4 + shadcn/ui (JavaScript, no TypeScript). It runs on a mock API until the backend exists. Project overview: [../README.md](../README.md). API contract: [../docs/api](../docs/api/README.md).
 
-## Recommended structure
+## Commands
+
+```bash
+pnpm run dev      # http://localhost:5173
+pnpm run test     # vitest
+pnpm run lint     # oxlint
+pnpm run build
+```
+
+## Environment
+
+| Variable | Meaning |
+|---|---|
+| `VITE_API_URL` | base URL of the real API (default `http://localhost:3000/api`) |
+| `VITE_USE_MOCK` | `true` answers every call from `src/services/mock/`; `false` calls the real API |
+| `VITE_MOCK_SEED` | `empty` = no business records, the work is kept in the browser (`.env.development`); leave out for the demo data |
+
+## Structure
 
 ```text
 src/
-├── app/
-│   ├── App.jsx                 # Application root
-│   └── router.jsx              # Public/protected route definitions
-├── assets/                     # Project images and fonts only
-├── components/
-│   ├── ui/                     # shadcn-generated primitives
-│   └── shared/                 # Reusable ERP components
-├── features/
-│   ├── auth/                   # Login form, auth API, schema, session logic
-│   ├── dashboard/
-│   └── master-data/            # Users, roles and future master data modules
-├── hooks/                      # Cross-feature hooks only
-├── layouts/
-│   ├── AuthLayout.jsx
-│   └── AppLayout.jsx
-├── lib/
-│   └── utils.js                # shadcn cn() helper and shared utilities
-├── pages/                      # Route-level page composition
-├── services/
-│   └── api.js                  # Shared Axios client
-├── styles/
-│   └── globals.css             # Tailwind theme and global tokens
-└── main.jsx
+  components/
+    ui/ reui/        shadcn and reui primitives (no business rules)
+    common/          list, table, sheet, form and status parts shared by every module
+    documents/       parts shared by the document sheets (lines, totals, status steps, actions)
+    layout/          header, sidebar, menus
+    sale/ factory/ stock/ purchase/ accounting/ admin/ auth/   parts of one module
+  config/            navigation, permissions, status and action rules per module
+  hooks/             shared hooks (auth, notifications, narrow / phone, row seen ...)
+  i18n/locales/      en and ja, one file per namespace
+  layouts/           MainLayout (shell) and AuthLayout
+  pages/             route-level pages per module (list + sheet)
+  routes/            the route table
+  services/          one *.service.js per module; api.js is the Axios client
+    mock/            the mock API: one file per module, its tests are the rules the real API must keep
+  utils/             format, permissions, row seen, events
 ```
 
-Only create a directory when its first real module is implemented. This avoids
-empty scaffolding and keeps ownership clear.
+## Rules the code follows
 
-## Boundaries
-
-- `components/ui` contains shadcn primitives and no ERP business rules.
-- Feature-specific components, hooks, validation and API calls stay together in
-  `features/<feature>`.
-- `pages` compose features for a route; they should not own reusable logic.
-- `services/api.js` owns the API base URL and later the authentication interceptors.
-- Shared components are promoted to `components/shared` only after they are used
-  by more than one feature.
-
-## First implementation: Login
-
-1. Initialize Tailwind CSS and shadcn/ui with JavaScript mode (`tsx: false`).
-2. Add only the required shadcn components: Button, Card, Input, Label and Form.
-3. Create `/login` in `app/router.jsx` using `AuthLayout`.
-4. Build the login feature with React Hook Form and Zod validation.
-5. Add an auth service and session provider; connect the real API afterward.
-6. Protect application routes and redirect signed-in users away from `/login`.
-
-## Planned UI dependencies
-
-- shadcn/ui + Tailwind CSS v4
-- React Router
-- React Hook Form + Zod
-- Lucide React
-- TanStack Query when server-state screens begin
-- TanStack Table when data grids are implemented
-
-Install libraries when the feature that needs them is started, rather than adding
-the full stack up front.
+- Every text goes through i18n (`en` is filled, `ja` is empty and falls back to English).
+- A status is always text + icon, never colour alone. Base text 18 px, controls about 48 px, visible focus, keyboard use.
+- Layouts: desktop, tablet (768–992 px, the menu is a rail) and phone (below 768 px, lists are cards). See `docs/specs/f15-tablet.md` and `f16-mobile.md`.
+- Plain look (thin borders, no shadows, nothing moves): `docs/specs/f14-plain-ui.md`.
+- A page is documented in `docs/api` when its design is done, then built against the mock, then the backend.

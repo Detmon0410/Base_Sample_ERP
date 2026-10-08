@@ -1,5 +1,6 @@
 import { ListIcon, TruckIcon } from "lucide-react";
-import { Controller } from "react-hook-form";
+import { Fragment } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -12,6 +13,7 @@ import { SheetSection } from "@/components/common/SheetSection";
 import { DocumentActions } from "@/components/documents/DocumentActions";
 import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
+import { SerialPicker } from "@/components/sale/SerialPicker";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { canWork, deliveryActions } from "@/config/sale";
@@ -37,7 +39,9 @@ export function DeliverySheet() {
     listPath: "/sale/deliveries",
     idPrefix: "dn",
   });
-  const { record, form, errors, message, fieldProps } = page;
+  const { form, errors, message, fieldProps } = page;
+  // while a saved record is still loading the page gives an empty object: treat it as no record yet
+  const record = page.record?.id != null ? page.record : null;
   const { options: warehouses } = useOptions(simpleMasterServices.warehouses);
 
   const editable = record?.status === "draft" && canWork(user);
@@ -50,11 +54,13 @@ export function DeliverySheet() {
       page.applyRecord(saved);
       toast.success(t(`sale:actions.${action.key}.done`));
     } catch (error) {
-      toast.error(saleErrorText(t, error));
+      const unnamed = error?.details?.some((item) => item.message === "SERIALS_REQUIRED");
+      toast.error(unnamed ? t("sale:serials.required") : saleErrorText(t, error));
       throw error;
     }
   };
 
+  const watchedLines = useWatch({ control: form.control, name: "lines" });
   const lineError = (index) => errors.lines?.[index]?.deliverNow;
   const number = (value) => formatNumber(value, i18n.language);
 
@@ -126,7 +132,8 @@ export function DeliverySheet() {
                   </TableHeader>
                   <TableBody>
                     {record.lines.map((line, index) => (
-                      <TableRow key={line.productId}>
+                      <Fragment key={line.productId}>
+                      <TableRow className={line.serialTracked ? "border-b-0" : undefined}>
                         <TableCell className="font-semibold whitespace-normal">
                           {line.productCode} <span className="font-normal text-muted-foreground">· {line.productName}</span>
                         </TableCell>
@@ -154,6 +161,34 @@ export function DeliverySheet() {
                           )}
                         </TableCell>
                       </TableRow>
+                      {line.serialTracked ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="whitespace-normal pt-0 pb-4">
+                            <p className="m-0 mb-1.5 text-sm font-semibold text-muted-foreground">{t("sale:serials.title")}</p>
+                            {editable ? (
+                              <SerialPicker
+                                productId={line.productId}
+                                dnId={record.id}
+                                max={Number(watchedLines?.[index]?.deliverNow) || 0}
+                                value={watchedLines?.[index]?.serials ?? []}
+                                onChange={(next) => form.setValue(`lines.${index}.serials`, next, { shouldDirty: true })}
+                                error={errors.lines?.[index]?.serials?.message ? t(errors.lines[index].serials.message) : undefined}
+                              />
+                            ) : line.serials.length > 0 ? (
+                              <ul className="m-0 flex list-none flex-wrap gap-1.5 p-0">
+                                {line.serials.map((sn) => (
+                                  <li key={sn} className="rounded-md bg-muted px-2 py-0.5 text-sm tabular-nums">
+                                    {sn}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="m-0 text-sm text-muted-foreground">{t("sale:serials.noneNamed")}</p>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ) : null}
+                      </Fragment>
                     ))}
                   </TableBody>
                 </Table>

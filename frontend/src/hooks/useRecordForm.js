@@ -29,6 +29,8 @@ const FIELD_ERROR_KEYS = {
   TOO_LONG: "sale:validation.maxLength",
   ADMIN_ALONE: "users:validation.adminAlone",
   WEAK_PASSWORD: "users:validation.weakPassword",
+  SERIALS_REQUIRED: "sale:serials.required",
+  NOT_AVAILABLE: "sale:serials.notAvailable",
 };
 
 /**

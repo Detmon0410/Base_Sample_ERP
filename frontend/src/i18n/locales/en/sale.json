@@ -454,5 +454,17 @@
     "payTo": "Please pay into",
     "purchaseOrder": "Purchase order",
     "supplierInvoiceNo": "Supplier's invoice no."
+  },
+  "serials": {
+    "title": "Serial numbers of the units",
+    "choose": "Choose serial numbers",
+    "chosenOf": "{{chosen}} of {{max}} chosen",
+    "first": "Choose the first {{count}}",
+    "clear": "Clear",
+    "loading": "Loading…",
+    "noneInStock": "No unit with a serial number is free in the warehouse.",
+    "noneNamed": "No serial numbers were named on this note.",
+    "required": "Name every unit of this line: choose as many serial numbers as pieces delivered.",
+    "notAvailable": "One of these units is not available (it is not in the warehouse, or it is on another delivery note)."
   }
 }

@@ -8,7 +8,7 @@ export const deliverySchema = z.object({
   date: z.string().min(1, REQUIRED),
   warehouseId: z.number({ message: REQUIRED }),
   lines: z
-    .array(z.object({ productId: z.number(), deliverNow: z.number({ message: QTY }).int(QTY).min(0, QTY) }))
+    .array(z.object({ productId: z.number(), deliverNow: z.number({ message: QTY }).int(QTY).min(0, QTY), serials: z.array(z.string()) }))
     .refine((lines) => lines.some((line) => line.deliverNow > 0), "sale:validation.deliverSomething"),
 });
 
@@ -18,6 +18,6 @@ export function toFormValues(doc) {
   return {
     date: doc.date ?? "",
     warehouseId: doc.warehouseId ?? null,
-    lines: (doc.lines ?? []).map((line) => ({ productId: line.productId, deliverNow: line.deliverNow })),
+    lines: (doc.lines ?? []).map((line) => ({ productId: line.productId, deliverNow: line.deliverNow, serials: line.serials ?? [] })),
   };
 }

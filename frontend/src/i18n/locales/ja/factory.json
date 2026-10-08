@@ -229,5 +229,37 @@
       "confirm": "",
       "done": ""
     }
+  },
+  "serials": {
+    "title": "",
+    "generate": "",
+    "manualHint": "",
+    "notYet": "",
+    "none": "",
+    "allMade": "",
+    "generated_one": "",
+    "generated_other": "",
+    "tooMany": "",
+    "columns": {
+      "sn": "",
+      "status": "",
+      "where": "",
+      "no": "",
+      "product": ""
+    },
+    "status": {
+      "made": "",
+      "in_stock": "",
+      "delivered": "",
+      "void": ""
+    },
+    "where": {
+      "made": "",
+      "in_stock": "",
+      "onNote": "",
+      "delivered": "",
+      "void": ""
+    },
+    "hintLabel": ""
   }
 }

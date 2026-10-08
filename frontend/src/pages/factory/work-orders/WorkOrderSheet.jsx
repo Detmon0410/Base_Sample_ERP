@@ -17,6 +17,7 @@ import { DocumentActions } from "@/components/documents/DocumentActions";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
+import { SerialCard } from "@/components/factory/SerialCard";
 import { StepTimeline } from "@/components/factory/StepTimeline";
 import { IssuedMaterialsCard } from "@/components/stock/IssuedMaterialsCard";
 import { useStepDialogs } from "@/components/factory/useStepDialogs";
@@ -126,8 +127,6 @@ export function WorkOrderSheet() {
     <DetailFields
       items={[
         { label: t("factory:fields.saleOrder"), value: `${record.saleOrderNumber} · ${record.customerName}` },
-        { label: t("factory:fields.product"), value: `${record.productCode} · ${record.productName}` },
-        { label: t("factory:fields.qty"), value: `${formatNumber(record.qty, language)} ${record.uom}` },
         { label: t("factory:fields.planned"), value: record.planStart && record.planFinish ? `${formatDate(record.planStart, language)} → ${formatDate(record.planFinish, language)}` : "—" },
         { label: t("factory:fields.remarks"), value: record.remarks, wide: true },
       ]}
@@ -177,7 +176,6 @@ export function WorkOrderSheet() {
                   <DetailFields
                     items={[
                       { label: t("factory:fields.saleOrder"), value: `${record.saleOrderNumber} · ${record.customerName}` },
-                      { label: t("factory:fields.product"), value: `${record.productCode} · ${record.productName}` },
                     ]}
                   />
                 </div>
@@ -208,6 +206,9 @@ export function WorkOrderSheet() {
             </SheetSection>
           ) : null}
         </form>
+
+        {/* the product has a box of its own: its serial numbers are made here, by a button */}
+        {!isNew && record ? <SerialCard workOrder={record} user={user} /> : null}
 
         {!isNew && record ? (
           <SheetSection title={t("factory:cards.progress")} icon={CogIcon}>

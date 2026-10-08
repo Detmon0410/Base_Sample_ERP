@@ -229,5 +229,37 @@
       "confirm": "Transfer",
       "done": "Finished goods transferred"
     }
+  },
+  "serials": {
+    "title": "Product and serial numbers",
+    "generate": "Generate S/N",
+    "manualHint": "Each press makes one serial number for one unit. Numbers are never made automatically and a number is never used twice.",
+    "notYet": "Serial numbers can be made once the work order is scheduled.",
+    "none": "No serial numbers yet.",
+    "allMade": "Every unit has its serial number.",
+    "generated_one": "{{count}} serial number made",
+    "generated_other": "{{count}} serial numbers made",
+    "tooMany": "A work order cannot have more serial numbers than its quantity.",
+    "columns": {
+      "sn": "Serial number",
+      "status": "Status",
+      "where": "Where it is",
+      "no": "No.",
+      "product": "Product"
+    },
+    "status": {
+      "made": "Made",
+      "in_stock": "In stock",
+      "delivered": "Delivered",
+      "void": "Void"
+    },
+    "where": {
+      "made": "Not transferred yet",
+      "in_stock": "In the warehouse · {{transfer}}",
+      "onNote": "on draft {{note}}",
+      "delivered": "{{note}} · {{customer}}",
+      "void": "The work order was cancelled"
+    },
+    "hintLabel": "About serial numbers"
   }
 }

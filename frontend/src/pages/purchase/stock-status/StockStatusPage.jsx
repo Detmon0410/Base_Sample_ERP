@@ -153,7 +153,6 @@ export function StockStatusPage() {
           </button>
         ))}
       </div>
-      <p className="max-w-3xl text-sm text-muted-foreground">{t("purchase:board.hint")}</p>
       {selectedRows.length > 1 ? (
         <Button type="button" className="h-11" disabled={common.length === 0} title={common.length === 0 ? t("purchase:board.noCommonSupplier") : undefined} onClick={() => startPo(selectedRows, common[0])}>
           <PlusIcon aria-hidden="true" /> {t("purchase:board.createMany", { count: selectedRows.length })}

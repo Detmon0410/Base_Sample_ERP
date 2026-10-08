@@ -75,7 +75,8 @@
     "date": "Date",
     "warehouse": "To warehouse",
     "chooseWarehouse": "Choose a finished goods warehouse",
-    "lineGone": "Work orders already cover the whole quantity of this line, so there is nothing left to plan. Choose another line, or open the work orders of this order."
+    "lineGone": "Work orders already cover the whole quantity of this line, so there is nothing left to plan. Choose another line, or open the work orders of this order.",
+    "transferGone": "Every produced piece of this work order is already on a transfer, so nothing is left to transfer. Choose another work order."
   },
   "steps": {
     "listLabel": "Production steps",

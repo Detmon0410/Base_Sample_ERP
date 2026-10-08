@@ -13,7 +13,7 @@ import { FormSection } from "@/components/common/FormSection";
 import { SheetFormBody } from "@/components/common/RecordSheet";
 import { SheetSection } from "@/components/common/SheetSection";
 import { DocumentActions } from "@/components/documents/DocumentActions";
-import { HistoryCard, LinksCard } from "@/components/documents/DocumentInfoCards";
+import { HistoryCard } from "@/components/documents/DocumentInfoCards";
 import { DocumentSheet } from "@/components/documents/DocumentSheet";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
 import { Input } from "@/components/ui/input";
@@ -54,13 +54,14 @@ export function TransferSheet() {
 
   // the finished work orders that still have pieces to transfer
   const [finished, setFinished] = useState([]);
+  const [finishedLoaded, setFinishedLoaded] = useState(false);
   useEffect(() => {
     if (!isNew) return undefined;
     let cancelled = false;
     workOrderService
       .list({ status: "finished", pageSize: 100, sort: "number" })
-      .then(({ items }) => !cancelled && setFinished(items.filter((wo) => wo.progress.remainingToTransfer > 0)))
-      .catch(() => !cancelled && setFinished([]));
+      .then(({ items }) => !cancelled && (setFinished(items.filter((wo) => wo.progress.remainingToTransfer > 0)), setFinishedLoaded(true)))
+      .catch(() => !cancelled && (setFinished([]), setFinishedLoaded(true)));
     return () => {
       cancelled = true;
     };
@@ -71,10 +72,13 @@ export function TransferSheet() {
   );
   const workOrderId = useWatch({ control: form.control, name: "workOrderId" });
   const picked = woOptions.find((option) => option.id === workOrderId);
+  const workOrderGone = isNew && finishedLoaded && workOrderId != null && !picked; // nothing is left to transfer from this work order
 
-  // a work order chosen (or sent by the "Create transfer" button): the quantity that is left is the default
+  // The quantity is what is left of the work order (produced, not yet on a transfer); it is not typed.
   useEffect(() => {
-    if (isNew && picked && form.getValues("qty") == null) form.setValue("qty", picked.remaining, { shouldDirty: true });
+    if (!isNew) return;
+    const wanted = picked ? picked.remaining : null;
+    if (form.getValues("qty") !== wanted) form.setValue("qty", wanted, { shouldDirty: wanted != null });
   }, [isNew, picked, form]);
 
   const run = async (action, note) => {
@@ -138,7 +142,7 @@ export function TransferSheet() {
                         onChange={(id) => {
                           field.onChange(id);
                           const option = woOptions.find((item) => item.id === id);
-                          if (option) form.setValue("qty", option.remaining, { shouldDirty: true });
+                          form.setValue("qty", option ? option.remaining : null, { shouldDirty: true });
                         }}
                         placeholder={t("factory:fields.chooseWorkOrder")}
                         {...fieldProps("workOrderId")}
@@ -156,6 +160,11 @@ export function TransferSheet() {
                   />
                 </div>
               )}
+              {workOrderGone ? (
+                <p role="alert" className="m-0 rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 font-semibold text-warning @lg:col-span-2">
+                  {t("factory:fields.transferGone")}
+                </p>
+              ) : null}
               <FormField
                 id="ft-qty"
                 label={`${t("factory:fields.qty")}${picked?.uom ? ` (${picked.uom})` : record?.uom ? ` (${record.uom})` : ""}`}
@@ -163,7 +172,7 @@ export function TransferSheet() {
                 error={message(errors.qty)}
                 hint={picked ? t("factory:fields.transferHint", { max: formatNumber(picked.remaining, language), uom: picked.uom }) : undefined}
               >
-                <Input id="ft-qty" type="number" min={1} step={1} inputMode="numeric" className="text-right" {...fieldProps("qty", Boolean(picked))} {...form.register("qty", { setValueAs: (value) => (value === "" || value == null ? null : Number(value)) })} />
+                <Input id="ft-qty" type="number" readOnly tabIndex={-1} className="bg-muted text-right" {...fieldProps("qty", Boolean(picked))} {...form.register("qty", { setValueAs: (value) => (value === "" || value == null ? null : Number(value)) })} />
               </FormField>
               <FormField id="ft-date" label={t("factory:fields.date")} required error={message(errors.date)}>
                 <DateField id="ft-date" control={form.control} name="date" clearable={false} {...fieldProps("date")} />
@@ -189,7 +198,6 @@ export function TransferSheet() {
         {!isNew && record ? (
           <>
             <HistoryCard history={record.history} />
-            <LinksCard links={record.links} />
           </>
         ) : null}
       </SheetFormBody>

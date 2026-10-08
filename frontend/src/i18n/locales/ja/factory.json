@@ -75,7 +75,8 @@
     "date": "",
     "warehouse": "",
     "chooseWarehouse": "",
-    "lineGone": ""
+    "lineGone": "",
+    "transferGone": ""
   },
   "steps": {
     "listLabel": "",

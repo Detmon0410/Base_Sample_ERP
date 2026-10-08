@@ -11,7 +11,6 @@
       "attention": "Needs attention",
       "all": "All materials"
     },
-    "hint": "Materials in shortage or near shortage. On order is what suppliers still owe from purchase orders that were sent.",
     "search": "Search by code or name",
     "empty": "Every material is in good supply. Switch to All materials to see them.",
     "noResult": "No material matches. Clear the search or the filters.",

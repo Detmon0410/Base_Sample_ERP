@@ -1,6 +1,6 @@
 # F12 Spec — Second requirement round (Purchase approval, Serial Number and Traceability, header clock, role look)
 
-Status: **APPROVED (all ★). Parts A (Purchase approval), D (header, role hat) and B (Serial Number) BUILT; C (Traceability page) not yet** — see section 9 for what differs · Rule as before: spec → review → build with mock data → API doc → tests → ticks in `docs/test.txt` section 9 (N1–N8).
+Status: **APPROVED (all ★). Parts A (Purchase approval), D (header, role hat), B (Serial Number) and C (Traceability page) BUILT** — see section 9 for what differs · Rule as before: spec → review → build with mock data → API doc → tests → ticks in `docs/test.txt` section 9 (N1–N8).
 Sources: the customer's new requirements (`docs/test.txt` section 9) · `docs/specs/f9-purchase.md` (the PO workflow that exists) · `docs/specs/f7-factory.md` (work order, steps, transfers) · `docs/specs/f8-stock.md` (movements) · `docs/test.txt` R1 Traceability.
 
 Carried-over decisions: JPY only · desktop · EN first, JA keys empty with EN fallback · details open as the side sheet · manual-first workflow (every status change is a button pressed by a person) · tooltips for explanations · mock first, API doc per module.
@@ -172,3 +172,10 @@ When you answer (or say "take the suggestions"), the build starts with A0.
 - Seeds: WO-2026-0001 has 4 numbers (made), WO-2026-0003 all 30 (18 delivered on DN-2026-0002, 11 in stock, 1 not transferred), WO-2026-0005 all 6 (delivered on DN-2026-0001), so the demo draft note DN-2026-0003 (12 pieces of RF-2D) has only 11 units to choose: lower its quantity to 11.
 - The history of the unit (timeline API) is built; the **page that shows it** is part C.
 - A crash of the delivery note sheet when it was opened directly by its address (the record was not loaded yet) was fixed on the way.
+
+## 12. Differences between this draft and what was built (part C)
+
+- The page is `/trace` (the menu entry "Product trace" of the Traceability group, open to every department) with the unit at `/trace/:sn`. The search is **one box** that reads the serial number, product, work order, sale order, delivery note, invoice number, customer and **lot number** (so the forward trace Q8 "from a lot to the customers" is the same search: type the lot). The result list has the status filter and paging like the other lists; a row opens the unit.
+- The unit page has a header (S/N, status, product, work order, sale order, customer and delivery note) and one **vertical timeline**: serial number made · materials issued (material, quantity per unit, lots with their goods receipt and supplier) · each production step (machine, quantities) · work order finished · moved to the warehouse (transfer) · delivered (delivery note, customer, sale order) · invoiced (invoice) · or "work order cancelled". Document numbers are links.
+- A number that does not exist says so in words ("No unit has the serial number …") and suggests searching for a part of it. The S/N in the Work Order table links to the unit.
+- The materials and their lots are at **work order level** (Q6 ★): every unit of the work order shows the same ones, and the lots listed are those of the posted goods receipts of each material (the mock has no per-lot consumption).

@@ -18,7 +18,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | Stock | 3 | 3 |
 | Purchase | 5 | 5 |
 | Accounting | 6 | 6 |
-| Traceability | 0 | 1 |
+| Traceability | 1 | 1 |
 | Master data | 10 | 10 |
 | Administration | 3 | 3 |
 
@@ -71,7 +71,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 | C4 | Supplier payments | `/accounting/payments` | P2 | ✅ | mock | ✅ | ⬜ | Like receipts; only a Manager confirms. API: api/accounting.md |
 | C5 | Journal entries | `/accounting/journal` | P2 | ✅ | mock | ✅ | ⬜ | Entries written by the system, manual entries with a visible balance check, reversing entries, account filter with totals. API: api/accounting.md |
 | C6 | Accounting master | `/accounting/master/*` | P2 | ✅ | mock | ✅ | ⬜ | Chart of accounts (system roles), tax rates, payment methods, bank accounts under four tabs. API: api/accounting.md |
-| R1 | Product trace | `/trace` | P2 | ⬜ | | ⬜ | ⬜ | |
+| R1 | Product trace | `/trace`, `/trace/:sn` | P2 | ✅ | mock | ✅ | ⬜ | Search by serial number, work order, sale order, delivery note, invoice, customer or lot number; one page per unit with its whole life as a timeline (made, materials and lots, steps, finished, warehouse, delivered, invoiced). API: api/serial.md |
 | M1 | Customers | `/master/customers` | P1 | ✅ | mock | ✅ | ⬜ | Shared list/form pattern built here. Tested as Admin; non-Admin gets 403. API: api/master-data.md |
 | M2 | Suppliers | `/master/suppliers` | P1 | ✅ | mock | ✅ | ⬜ | Details sheet with tabs. Tested as Admin: validation, create, supplier links added / edited / removed from both sides, duplicate link blocked. API: api/master-data.md |
 | M3 | Products | `/master/products` | P1 | ✅ | mock | ✅ | ⬜ | Details sheet with tabs. Tested as Admin: validation, create, delete (in use is blocked), BOM add / edit / remove, routing add / move / remove with renumbering. API: api/master-data.md |
@@ -90,6 +90,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-08 | **Second requirement round built with mock data** (spec f12): (A) Purchase **manual approval**: a PO waits as Pending approval until a Purchase Manager approves or rejects it by hand (never the author, an Admin may), an append-only approval log and its page; (D) the header shows date, time and Online, and a safety **helmet in the colour of the role** (white Manager, yellow Worker, red Admin) replaces the profile avatar; (B) **Serial numbers**: one S/N per unit, made only by a button on the Work Order (a table, the button becomes the number), delivery notes name the units they deliver; (C) **Traceability page**: search and the life of a unit. API: api/purchase.md, api/serial.md; 38 new tests. |
 | 2026-10-07 | **Users module built with mock data (U1–U3)** (spec f11-users): the demo users now live in one store behind the login, so users created in the Users page can sign in. Admin only: list with filters, user form with department + role rows (the Admin role stands alone, at least one row), password typed or generated, Reset password (ends that user's sessions), deactivate / reactivate (ends sessions), delete only without activity, last sign-in, protection of your own account and of the last active Admin. U3 is a read-only matrix computed from the same rules the buttons use. API: api/users.md; 19 new tests. |
 | 2026-10-07 | **Accounting module built with mock data (C1–C6 + links)** (spec f10-accounting): customer invoices from delivered delivery notes, receipts, supplier bills from posted goods receipts, payments, a journal that every posted money document writes (balanced, reversed when cancelled) plus manual entries with a visible balance check, and the accounting master (chart with system roles, tax rates, payment methods, bank accounts). A Manager issues invoices / approves bills / confirms payments; a Worker confirms receipts. Sale and Purchase documents link to the invoice / bill; the Dashboard shows the real overdue invoices and unpaid bills; two Accounting demo users (mika@, sora@). API: api/accounting.md; 25 new tests and a status coverage test (every status of every module has a colour, an icon and a text). |
 | 2026-10-07 | **Purchase module built with mock data (P1–P5 + links)** (spec f9-purchase): stock status board, purchase orders (stepper, list with received bar and total, one sheet: supplier first, only its materials, price and lead time from the supplier–material links, expected date from the lead time, Send to supplier by a Manager, Receive goods, Close remaining, Close, Cancel, Revert) and goods receipts (delivered / accepted / rejected with a reason, lot number, Post once, cancel a posted one by a Manager). Posting books the accepted quantity into Stock; Stock shows **On order** and the open POs of a material; the Dashboard counts the POs waiting for goods and lists Draft POs for the Purchase Manager; a supplier or material with a PO cannot be deleted. API: api/purchase.md; 28 new tests. |

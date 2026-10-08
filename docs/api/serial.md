@@ -31,6 +31,7 @@ One **serial number (S/N) identifies one unit** of a finished product. It is mad
 | `transferNumber` | string or `null` | the finished goods transfer that moved it into the warehouse |
 | `deliveryNote` | `{ id, number, status }` or `null` | the delivery note that names it (draft or delivered) |
 | `customerName` | string or `null` | the customer of that delivery note |
+| `invoiceNumbers`, `lots` | string[] | the invoices of its delivery note and the lot numbers of the materials of its Work Order (what the search also reads) |
 | `free` | boolean | `in_stock` and not on any delivery note: it can be picked for a new one |
 
 ### Status (computed, never stored)
@@ -48,7 +49,7 @@ Reverting a delivery note or a transfer moves the units back by itself, because 
 
 | Method | Path | Notes |
 |---|---|---|
-| GET | `/serials` | list; params `q` (S/N, product, Work Order, sale order, customer), `status` (`made, in_stock, delivered, void`), `product` (id), `workOrder` (id), `free` (any value = only units that can be picked), `dn` (with `free`: the units of this draft note stay in the list), `sort` (`sn, createdAt, status, productCode, workOrderNumber`, default `-sn`), `page`, `pageSize` (≤ 200). `meta = { page, pageSize, total, statusCounts }` |
+| GET | `/serials` | list; params `q` (S/N, product, Work Order, sale order, **delivery note, invoice number, customer, lot number of a material the unit was built with** — so a lot can be traced forward to the customers who got it), `status` (`made, in_stock, delivered, void`), `product` (id), `workOrder` (id), `free` (any value = only units that can be picked), `dn` (with `free`: the units of this draft note stay in the list), `sort` (`sn, createdAt, status, productCode, workOrderNumber`, default `-sn`), `page`, `pageSize` (≤ 200). `meta = { page, pageSize, total, statusCounts }` |
 | GET | `/serials/:sn` | one unit with its **timeline**; `404 SERIAL_NOT_FOUND` |
 | GET | `/factory/work-orders/:id/serials` | the units of one Work Order; `meta = { total, qty, made (not void), left, canMake }` (`canMake` = status scheduled / in process / finished) |
 | POST | `/factory/work-orders/:id/serials` | body `{ count }`; makes `count` numbers (one per unit) and answers them (`201`). `400 VALIDATION_ERROR` `count` → `INVALID` (not a whole number ≥ 1) or `TOO_MANY` (**the Work Order would have more numbers than its quantity**); `409 INVALID_STATUS` for a draft or cancelled Work Order; `403` outside Factory |

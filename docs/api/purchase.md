@@ -8,7 +8,7 @@ Envelope, auth, paging and error format: see [README.md](README.md). **Every sta
 | Who | Can |
 |---|---|
 | Purchase **Worker** | create / edit / delete **their own draft** PO, cancel their own draft, **create / edit / delete / post** goods receipts, `cancel` their own draft receipt, read everything in Purchase |
-| Purchase **Manager** and **Admin** | all of the above on anybody's documents, plus `send` (the approval of a PO), `back-to-draft`, `cancel` a sent PO (reason), `close-remaining` (reason), `close`, `revert` (reason), cancel a **posted** receipt (reason) |
+| Purchase **Manager** and **Admin** | all of the above on anybody's documents, plus `approve` / `reject` a PO of somebody else (see **Manual approval**), `send` (an approved PO), `back-to-draft`, `cancel` a sent PO (reason), `close-remaining` (reason), `close`, `revert` (reason), cancel a **posted** receipt (reason) |
 | Anyone else (Factory, Sale, Accounting) | `403 FORBIDDEN` on every `/purchase/*` call (the menu is hidden too). Factory users see the on-order quantities through the Stock API |
 
 The role is the user's role **in Purchase** (a Sale Manager who is a Purchase Worker is a Worker here).
@@ -33,9 +33,9 @@ Row: `{ id, code, name, uom, onHand, available, onOrder, reorderPoint (null when
 | GET | `/purchase/orders` | list; params `q` (number, supplier code / name, material code / name), `status`, `supplier` (id), `material` (id), `from`, `to` (PO date), `deliveryFrom`, `deliveryTo` (expected delivery), `receivable` (any value = only Sent / Partially received), `sort` (`number, date, supplierCode, expectedDate, total, status`, default `-date`), `page`, `pageSize`. `meta = { page, pageSize, total, statusCounts, sums: { total } }` (`statusCounts` is counted with every filter except `status`; `sums.total` is the total of the rows of the current filter) |
 | GET | `/purchase/orders/:id` | one |
 | POST | `/purchase/orders` | create a **draft**: `{ supplierId, date, expectedDate?, warehouseId, remarks, lines: [{ materialId, qty, unitPrice }] }` |
-| PUT | `/purchase/orders/:id` | change a **draft** (author or Manager), same body; `409 INVALID_STATUS` otherwise |
+| PUT | `/purchase/orders/:id` | change a **draft or rejected** PO (author or Manager), same body; `409 INVALID_STATUS` otherwise (a pending PO is locked) |
 | DELETE | `/purchase/orders/:id` | delete a **draft** (author or Manager) |
-| POST | `/purchase/orders/:id/:action` | body `{ note? }`: `send` (draft → sent, Manager), `back-to-draft` (sent → draft, Manager, only while no receipt is posted), `cancel` (draft: its author or a Manager; sent: Manager, **note required**, only while no receipt is posted; draft receipts of the PO are cancelled with it), `close-remaining` (partially received → closed, Manager, **note required**; draft receipts are cancelled), `close` (received → closed, Manager), `revert` (closed or cancelled → the status before, Manager, **note required**; other statuses `409`) |
+| POST | `/purchase/orders/:id/:action` | body `{ note? }`: `request-approval` (draft or rejected → **pending**, author or Manager), `withdraw` (pending → draft, author or Manager), `approve` (pending → **approved**, Manager) and `reject` (pending → **rejected**, Manager, **note required**) — see **Manual approval**; `send` (**approved** → sent, Manager), `back-to-draft` (sent → draft, Manager, only while no receipt is posted), `cancel` (draft, rejected or pending: its author or a Manager; approved: Manager, **note required**; sent: Manager, **note required**, only while no receipt is posted; draft receipts of the PO are cancelled with it), `close-remaining` (partially received → closed, Manager, **note required**; draft receipts are cancelled), `close` (received → closed, Manager), `revert` (closed or cancelled → the status before, Manager, **note required**; other statuses `409`) |
 
 Rules (validation `400` with the field path; codes on the field): **R1** the supplier exists and is active (`REQUIRED` / `INACTIVE` on `supplierId`), the warehouse is a **raw material** warehouse (`REQUIRED` on `warehouseId`), every material exists, is active and **is sold by that supplier** (`REQUIRED`, `INACTIVE`, `NOT_SUPPLIED` on `lines.N.materialId`); **R2** `qty` > 0 (whole for pcs / set / box, up to 3 decimals otherwise: `INVALID` on `lines.N.qty`), `unitPrice` a whole number of yen ≥ 0 (`INVALID`), no material twice (`DUPLICATE`), at least one line (`REQUIRED` on `lines`); `expectedDate` not before `date` (`DATE_ORDER`); `remarks` ≤ 500 (`TOO_LONG`).
 
@@ -44,6 +44,28 @@ PO response: `{ id, number, date, status, supplierId, supplierCode, supplierName
 - Totals like the Sale documents: `amount = round(qty × unitPrice)`, `subtotal` = Σ amounts, `tax = floor(subtotal × 10 %)`, `total = subtotal + tax`.
 - `progress`: `{ ordered, received, percent, late, lateDays }`; `late` = Sent / Partially received and `expectedDate` is before today (nothing changes by itself).
 - `receipts[]`: `{ id, number, date, status, accepted }`. `links[]`: the receipts (`goodsReceipt`) and a placeholder `{ type: "supplierBill", number: null }` until Accounting exists.
+
+## Manual approval of a PO and the approval log (docs/specs/f12-requirements-2.md, N4–N6)
+
+```text
+draft ──request-approval──▶ pending ──approve──▶ approved ──send──▶ sent ▶ partially_received ▶ received ▶ closed
+   ▲   ◀──withdraw────────────┤  └──reject (note)──▶ rejected ──edit, then request-approval──▶ pending
+   └──────── cancelled (draft, rejected, pending: author or Manager; approved: Manager with a note)
+```
+
+- **Nothing is approved or sent by the system.** No amount, date, stock level or timer changes a status; totals are reference data. Only the actions above do, each called by a person.
+- `approve` / `reject`: a Purchase **Manager or Admin**, and **not the person who made the PO** (`403 CANNOT_APPROVE_OWN`); an **Admin always may**. A Worker gets `403 FORBIDDEN`. `reject` needs `note` (the reason).
+- A **pending** PO is locked (no `PUT`); `withdraw` brings it back to draft. A **rejected** PO can be corrected (`PUT`) and asked again.
+- The statuses are: `draft, pending, rejected, approved, sent, partially_received, received, closed, cancelled` (`pending` is shown as "Pending approval"). `statusCounts` has all of them.
+- The PO has `approvals: [{ id, action, status, actor, at, note }]`, oldest first: the entries of the actions `request-approval`, `withdraw`, `approve-order`, `reject-order` (the history of the PO has them too, with the same time and person).
+
+### Approval log — `GET /purchase/approvals` (Purchase Manager and Admin; others `403`)
+
+Read only; entries are never changed or deleted. One row per request, withdrawal, approval or rejection of any PO:
+
+`{ id, poId, poNumber, supplierId, supplierName, total, action ("request-approval" | "withdraw" | "approve-order" | "reject-order"), status (status after), actor, at (ISO date-time), date, note }`
+
+Params: `q` (PO number, supplier, person, reason), `status` (status after), `action`, `po` (id), `supplier` (id), `from`, `to` (date), `sort` (`at, poNumber, action, actor, total, status`, default `-at`), `page`, `pageSize`.
 
 ## Goods receipts — `/purchase/receipts`
 
@@ -66,14 +88,15 @@ Rules: **R3** the PO must be **Sent or Partially received** (`INVALID_STATUS` on
 - The `links` of a purchase order and of a goods receipt include their supplier bills (`type: "supplierBill"`, `to: "/accounting/bills/:id"`); a goods receipt is billed once ([accounting.md](accounting.md)).
 - `GET /stock/balances` rows and `GET /stock/items/materials/:id` get `onOrder`; the item also gets `openOrders: [{ id, number, supplier, expectedDate, status, qty }]` (see [stock.md](stock.md)). A movement's document link `GR` opens `/purchase/receipts/:id` for Purchase users.
 - `DELETE /master/suppliers/:id` and `DELETE /master/materials/:id` answer `409 IN_USE` when a purchase order uses them (they can be deactivated).
-- `GET /dashboard`: `kpis.poWaitingForGoods = { count (Sent + Partially received), nextDueDate }`; `approvals` of a Purchase Manager lists the **Draft** POs (`{ type: "PO", id, number, party: supplier, amountJpy: total }`) that wait to be sent.
+- `GET /dashboard`: `kpis.poWaitingForGoods = { count (Sent + Partially received), nextDueDate }`; `approvals` of a Purchase Manager lists the POs in status **pending** (`{ type: "PO", id, number, party: supplier, amountJpy: total }`) that wait for the Manager's approval.
 
 ## Errors used (besides the common ones)
 
 | `error` | Where | Meaning |
 |---|---|---|
 | `VALIDATION_ERROR` | PO, receipt | field codes above (`NOT_SUPPLIED`, `INACTIVE`, `DUPLICATE`, `TOO_MANY`, `DATE_ORDER`, `REQUIRED`, `INVALID`, `TOO_LONG`); `note` `REQUIRED` for the actions that need a reason |
-| `INVALID_STATUS` | all | the action is not possible in the current status |
+| `INVALID_STATUS` | all | the action is not possible in the current status (e.g. `send` before `approve`) |
+| `CANNOT_APPROVE_OWN` | `approve`, `reject` | `403`, the Manager made this PO; another Manager (or an Admin) must decide |
 | `NOT_ENOUGH_STOCK` | cancelling a posted receipt | `409`, see [stock.md](stock.md) |
 | `IN_USE` | master data delete | `409` |
 
@@ -86,4 +109,5 @@ Rules: **R3** the PO must be **Sent or Partially received** (`INVALID_STATUS` on
 - [ ] Cancelling a posted receipt books the opposite movements and refuses a negative balance; closing or cancelling a PO cancels its draft receipts
 - [ ] `onOrder` and the board suggestion computed from the same open quantities; the dashboard KPI and approvals from the real POs
 - [ ] A supplier / material used by a PO cannot be deleted
+- [ ] Approval: no code path sets `approved` or `sent` except the actions; `approve` / `reject` refuse the author unless Admin; every request / withdrawal / approval / rejection writes an append-only log row (user, time, status after, note) in the same transaction as the status change
 - [ ] Turn off `VITE_USE_MOCK` and re-run the test list in the spec

@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router";
 
 import { PageHeader } from "@/components/common/PageHeader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
-import { canApproveAnywhere, canUse } from "@/utils/permissions";
+import { cn } from "@/lib/utils";
+import { canApproveAnywhere, canUse, isAdmin } from "@/utils/permissions";
 import { formatTime } from "@/utils/format";
 
 import {
@@ -15,14 +17,32 @@ import {
   ProductionBlock,
   StockAlertsBlock,
 } from "./Blocks";
+import { DepartmentPanel } from "./DepartmentPanels";
 import { KpiCard, KpiCardSkeleton } from "./KpiCard";
+import { ShortcutTiles } from "./ShortcutTiles";
 import { KPI_DEFS } from "./kpis";
 
-/** D1 — overview of all departments for every signed-in user (docs/specs/f2-app-shell-dashboard.md). */
+const DEPARTMENTS = ["Sale", "Factory", "Purchase", "Accounting"];
+const OVERVIEW = "overview";
+
+/** The departments of the user that have a panel, in menu order (Admin: all). */
+function panelsOf(user) {
+  return DEPARTMENTS.filter((department) => isAdmin(user) || user?.memberships?.some((membership) => membership.department === department));
+}
+
+/**
+ * D1 — one page per department of the user (docs/specs/d2-dashboard-by-department.md) and an overview of all departments
+ * (docs/specs/f2-app-shell-dashboard.md). Admin opens the overview, everybody else the first department of theirs.
+ */
 export function DashboardPage() {
   const { t, i18n } = useTranslation("dashboard");
   const { user } = useAuth();
   const { status, data, error, retry } = useDashboard();
+  const [params, setParams] = useSearchParams();
+  const departments = panelsOf(user);
+  const views = isAdmin(user) ? [OVERVIEW, ...departments] : [...departments, OVERVIEW];
+  const requested = params.get("view");
+  const view = views.includes(requested) ? requested : isAdmin(user) || departments.length === 0 ? OVERVIEW : departments[0];
 
   const loading = status === "loading";
   const errors = data?.errors ?? {};
@@ -55,6 +75,29 @@ export function DashboardPage() {
         </Alert>
       ) : null}
 
+      <ShortcutTiles />
+
+      {views.length > 1 ? (
+        <div role="tablist" aria-label={t("title")} className="mb-5 flex flex-wrap gap-2">
+          {views.map((name) => (
+            <button
+              key={name}
+              type="button"
+              role="tab"
+              aria-selected={view === name}
+              onClick={() => setParams(name === (isAdmin(user) ? OVERVIEW : departments[0]) ? {} : { view: name }, { replace: true })}
+              className={cn("min-h-11 rounded-md border px-4 text-base font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring", view === name ? "border-primary bg-primary text-primary-foreground" : "border-slate-300 bg-card hover:bg-muted/50")}
+            >
+              {t(`views.${name}`)}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      {view !== OVERVIEW ? (
+        <DepartmentPanel department={view} departments={data?.departments} loading={loading || status === "error"} hasError={Boolean(errors.departments)} onRetry={retry} />
+      ) : (
+        <>
       <section aria-label={t("title")} className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
         {loading || status === "error"
           ? KPI_DEFS.map((def) => <KpiCardSkeleton key={def.key} />)
@@ -86,6 +129,8 @@ export function DashboardPage() {
         <ProductionBlock {...block("production")} />
         <ActivityBlock {...block("activity")} />
       </div>
+        </>
+      )}
     </>
   );
 }

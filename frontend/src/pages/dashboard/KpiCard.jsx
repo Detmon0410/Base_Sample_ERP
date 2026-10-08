@@ -1,4 +1,4 @@
-import { ArrowRightIcon, TriangleAlertIcon } from "lucide-react";
+import { ArrowRightIcon, FactoryIcon, HandshakeIcon, LandmarkIcon, ShoppingCartIcon, TriangleAlertIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -7,10 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const DEPARTMENT_STYLE = {
-  Sale: { color: "#0d6eb3", labelKey: "groups.sale" },
-  Factory: { color: "#0f766e", labelKey: "groups.factory" },
-  Purchase: { color: "#b45309", labelKey: "groups.purchase" },
-  Accounting: { color: "#be185d", labelKey: "groups.accounting" },
+  Sale: { icon: HandshakeIcon, color: "#0d6eb3", labelKey: "groups.sale" },
+  Factory: { icon: FactoryIcon, color: "#0f766e", labelKey: "groups.factory" },
+  Purchase: { icon: ShoppingCartIcon, color: "#b45309", labelKey: "groups.purchase" },
+  Accounting: { icon: LandmarkIcon, color: "#be185d", labelKey: "groups.accounting" },
 };
 
 /** One KPI: department, label, big value, one line of context, link to the filtered list. */
@@ -21,14 +21,14 @@ export function KpiCard({ department, label, value, context, problem = false, to
   const body = (
     <Card
       className={cn(
-        "h-full",
+        "h-full rounded-md border border-slate-300 ring-0",
         canLink && "hover:bg-muted/50",
-        problem && "ring-1 ring-destructive/40",
+        problem && "border-red-400",
       )}
     >
       <CardContent className="flex h-full flex-col gap-1">
         <p className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
-          <span aria-hidden="true" className="size-2.5 rounded-full" style={{ backgroundColor: style.color }} />
+          <style.icon className="size-5 shrink-0" aria-hidden="true" style={{ color: style.color }} />
           {t(`nav:${style.labelKey}`)}
         </p>
         <p className="text-base font-semibold">{label}</p>
@@ -52,7 +52,7 @@ export function KpiCard({ department, label, value, context, problem = false, to
 
   if (canLink) {
     return (
-      <Link to={to} className="rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <Link to={to} className="rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring">
         {body}
       </Link>
     );
@@ -63,7 +63,7 @@ export function KpiCard({ department, label, value, context, problem = false, to
 
 export function KpiCardSkeleton() {
   return (
-    <Card aria-busy="true">
+    <Card aria-busy="true" className="rounded-md border border-slate-300 ring-0">
       <CardContent className="flex flex-col gap-3">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-5 w-40" />

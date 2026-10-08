@@ -13,7 +13,7 @@ export function BlockCard({ title, status, emptyText, onRetry, action, children,
   const { t } = useTranslation("dashboard");
 
   return (
-    <Card className="gap-4">
+    <Card className="gap-4 rounded-md border border-slate-300 ring-0">
       <CardContent className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-bold">{title}</h2>

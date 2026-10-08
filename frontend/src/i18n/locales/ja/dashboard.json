@@ -80,5 +80,78 @@
     "title": "",
     "empty": "",
     "by": ""
+  },
+  "showTable": "",
+  "noData": "",
+  "views": {
+    "overview": "",
+    "Sale": "",
+    "Factory": "",
+    "Purchase": "",
+    "Accounting": ""
+  },
+  "todo": {
+    "title": "",
+    "nothing": ""
+  },
+  "sale": {
+    "openOrders": "",
+    "openOrdersContext": "",
+    "quotationsWaiting": "",
+    "quotationsContext": "",
+    "readyToDeliver": "",
+    "readyContext": "",
+    "salesThisMonth": "",
+    "salesContext": "",
+    "monthlyTitle": "",
+    "monthlySeries": "",
+    "statusTitle": ""
+  },
+  "factory": {
+    "inProcess": "",
+    "inProcessContext": "",
+    "late": "",
+    "lateContext": "",
+    "producedThisWeek": "",
+    "producedContext": "",
+    "toTransfer": "",
+    "toTransferContext": "",
+    "weeklyTitle": "",
+    "weeklySeries": ""
+  },
+  "purchase": {
+    "shortage": "",
+    "shortageContext": "",
+    "poWaiting": "",
+    "poWaitingContext": "",
+    "noDueDate": "",
+    "poToApprove": "",
+    "poToApproveContext": "",
+    "nearShortage": "",
+    "nearContext": "",
+    "levelsTitle": "",
+    "levelsHint": "",
+    "levelsEmpty": ""
+  },
+  "accounting": {
+    "overdueAmount": "",
+    "overdueCount": "",
+    "overdueCountContext": "",
+    "billsDue": "",
+    "billsDueContext": "",
+    "receivedThisMonth": "",
+    "receivedContext": "",
+    "cashTitle": "",
+    "cashIn": "",
+    "cashOut": "",
+    "agingTitle": "",
+    "aging": {
+      "notDue": "",
+      "late30": "",
+      "late60": "",
+      "over60": ""
+    },
+    "overdueContext_one": "",
+    "overdueContext_other": ""
   }
 }

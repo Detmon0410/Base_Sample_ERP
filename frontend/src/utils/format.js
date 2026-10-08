@@ -39,3 +39,8 @@ export function formatDateTime(value, language) {
   if (!value) return "";
   return `${formatDate(value, language)} ${formatTime(value, language)}`;
 }
+
+/** Short number for a chart: 1.2M, 350K (ja: 120万). */
+export function formatCompact(value, language) {
+  return new Intl.NumberFormat(language, { notation: "compact", maximumFractionDigits: 1 }).format(value ?? 0);
+}

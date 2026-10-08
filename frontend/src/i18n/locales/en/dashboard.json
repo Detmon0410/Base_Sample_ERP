@@ -80,5 +80,78 @@
     "title": "Recent activity",
     "empty": "No activity yet.",
     "by": "by {{user}}"
+  },
+  "showTable": "Show the numbers as a table",
+  "noData": "No data yet.",
+  "views": {
+    "overview": "All departments",
+    "Sale": "Sale",
+    "Factory": "Factory",
+    "Purchase": "Stock / Purchase",
+    "Accounting": "Accounting"
+  },
+  "todo": {
+    "title": "To do now",
+    "nothing": "Nothing is waiting for you."
+  },
+  "sale": {
+    "openOrders": "Open Sale Orders",
+    "openOrdersContext": "{{count}} ready to deliver",
+    "quotationsWaiting": "Quotations waiting",
+    "quotationsContext": "Oldest {{count}} days",
+    "readyToDeliver": "Ready to deliver",
+    "readyContext": "A delivery note is to be made",
+    "salesThisMonth": "Sales this month",
+    "salesContext": "Sale orders after confirmation",
+    "monthlyTitle": "Sales in the last 6 months",
+    "monthlySeries": "Sales",
+    "statusTitle": "Sale Orders by status"
+  },
+  "factory": {
+    "inProcess": "Work Orders in process",
+    "inProcessContext": "{{count}} scheduled",
+    "late": "Late Work Orders",
+    "lateContext": "Plan finish date has passed",
+    "producedThisWeek": "Produced this week",
+    "producedContext": "Units finished by the last step",
+    "toTransfer": "To move to the warehouse",
+    "toTransferContext": "Finished, not yet transferred",
+    "weeklyTitle": "Produced per week",
+    "weeklySeries": "Units"
+  },
+  "purchase": {
+    "shortage": "Materials in shortage",
+    "shortageContext": "{{count}} near shortage",
+    "poWaiting": "POs waiting for goods",
+    "poWaitingContext": "Next due {{date}}",
+    "noDueDate": "No delivery date",
+    "poToApprove": "POs to approve",
+    "poToApproveContext": "Waiting for a Manager",
+    "nearShortage": "Near shortage",
+    "nearContext": "Above the reorder point, not by much",
+    "levelsTitle": "Materials to watch",
+    "levelsHint": "The bar is the stock as a share of the reorder point. Red: shortage. Amber: near shortage.",
+    "levelsEmpty": "All materials are at a healthy level."
+  },
+  "accounting": {
+    "overdueAmount": "Overdue invoices",
+    "overdueCount": "Late invoices of customers",
+    "overdueCountContext": "Past the due date, not paid",
+    "billsDue": "Bills due within 7 days",
+    "billsDueContext": "Supplier bills still to pay",
+    "receivedThisMonth": "Money received this month",
+    "receivedContext": "Confirmed receipts",
+    "cashTitle": "Money in and out, last 6 months",
+    "cashIn": "Received",
+    "cashOut": "Paid",
+    "agingTitle": "What customers owe, by how late",
+    "aging": {
+      "notDue": "Not due yet",
+      "late30": "1-30 days late",
+      "late60": "31-60 days late",
+      "over60": "Over 60 days late"
+    },
+    "overdueContext_one": "{{count}} invoice",
+    "overdueContext_other": "{{count}} invoices"
   }
 }

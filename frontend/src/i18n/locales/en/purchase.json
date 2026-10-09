@@ -289,7 +289,7 @@
   },
   "waitingGoods": {
     "title": "Waiting for goods",
-    "hint": "Purchase orders that were sent and have not been fully received. This is what the number of Goods receipt in the menu counts, besides the draft receipts to post.",
+    "hint": "Purchase orders that were sent and have not been fully received.",
     "create": "Receive goods",
     "columns": {
       "po": "Purchase order",

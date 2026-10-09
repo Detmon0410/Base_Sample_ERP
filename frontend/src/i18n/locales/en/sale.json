@@ -215,7 +215,8 @@
     "maxLength": "This is too long. Please shorten it.",
     "qty0": "Enter a whole number, 0 or more.",
     "deliverSomething": "Deliver at least one unit.",
-    "poNumberExists": "This customer already has a PO with this number."
+    "poNumberExists": "This customer already has a PO with this number.",
+    "priceNotSet": "The price is not set yet. Wait for the price list, or type the price (type 0 for a free line)."
   },
   "errors": {
     "FORBIDDEN": "You are not allowed to do this.",

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  * The list is filtered by code or name as the user types. Keyboard: type to search, Tab to the list,
  * Enter to choose, Esc to close.
  */
-export function EntitySelect({ id, options, value, onChange, placeholder, emptyLabel, className, chevronClassName, disabled, "aria-invalid": invalid, "aria-describedby": describedby }) {
+export function EntitySelect({ id, options, value, onChange, placeholder, emptyLabel, className, chevronClassName, disabled, "aria-label": ariaLabel, "aria-invalid": invalid, "aria-describedby": describedby }) {
   const { t } = useTranslation("master");
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
@@ -42,6 +42,7 @@ export function EntitySelect({ id, options, value, onChange, placeholder, emptyL
           type="button"
           id={id}
           disabled={disabled}
+          aria-label={ariaLabel}
           aria-invalid={invalid}
           aria-describedby={describedby}
           aria-haspopup="listbox"

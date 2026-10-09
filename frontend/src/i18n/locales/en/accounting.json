@@ -68,7 +68,7 @@
     },
     "waiting": {
       "title": "Waiting for an invoice",
-      "hint": "Delivered delivery notes that have no invoice yet. This is what the number of Customer invoices in the menu counts, besides the draft invoices to issue.",
+      "hint": "Delivered delivery notes that have no invoice yet.",
       "create": "Create invoice",
       "columns": {
         "source": "Delivery note",
@@ -97,7 +97,7 @@
     },
     "waiting": {
       "title": "Waiting for a bill",
-      "hint": "Posted goods receipts that have no supplier bill yet. This is what the number of Supplier bills in the menu counts, besides the draft bills to approve.",
+      "hint": "Posted goods receipts that have no supplier bill yet.",
       "create": "Create bill",
       "columns": {
         "source": "Goods receipt",

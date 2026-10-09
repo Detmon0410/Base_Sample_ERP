@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { get, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSheetExit } from "@/hooks/useSheetExit";
 import { markRowSeen } from "@/utils/rowSeen";
 import { describedBy } from "@/utils/aria";
-import { notifyMasterChanged } from "@/utils/masterEvents";
+import { notifyMasterChanged, onMasterChanged } from "@/utils/masterEvents";
 import { getCachedRecord, rememberRecords } from "@/utils/recordCache";
 
 // While a saved record is still loading, `record` is this empty object instead of null. The page builds its whole
@@ -87,6 +87,19 @@ export function useRecordForm({
   const dirtyRef = useRef(false);
   dirtyRef.current = isDirty;
 
+  // A message under a field goes away as soon as the field holds a valid value, also when the page filled it (a default that
+  // arrives after the lists are loaded), not only when the user types.
+  useEffect(() => {
+    const subscription = form.watch((_values, { name }) => {
+      if (name && get(form.formState.errors, name)) void form.trigger(name); // `name` may be nested: lines.0.unitPrice
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  // The sheet follows what another user does to the same document (the data of the other tab arrives as a "refresh").
+  const [reloadKey, setReloadKey] = useState(0);
+  useEffect(() => (isNew ? undefined : onMasterChanged(() => setReloadKey((key) => key + 1))), [isNew]);
+
   useEffect(() => {
     if (isNew) return undefined;
     let cancelled = false;
@@ -106,7 +119,7 @@ export function useRecordForm({
     };
     // toValues is a stable module function in every caller.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, isNew, reset, service, cached]);
+  }, [id, isNew, reset, service, cached, reloadKey]);
 
   // A row that the user opens is seen (its red dot goes away), and so is everything the user does to it while it is open: it is
   // marked when the sheet opens, after every save or action, and when it closes.

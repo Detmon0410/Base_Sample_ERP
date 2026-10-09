@@ -215,7 +215,8 @@
     "maxLength": "",
     "qty0": "",
     "deliverSomething": "",
-    "poNumberExists": ""
+    "poNumberExists": "",
+    "priceNotSet": ""
   },
   "errors": {
     "FORBIDDEN": "",

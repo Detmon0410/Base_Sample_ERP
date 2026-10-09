@@ -90,7 +90,12 @@ export function WorkOrderSheet() {
   const lineGone = isNew && waitingLoaded && Boolean(lineValue) && !picked; // this line already has work orders for its whole quantity
 
   const stepDialogs = useStepDialogs({ onChanged: (saved) => page.applyRecord(saved) });
-  const errorText = (error) => notEnoughStockText(error) ?? t(`factory:errors.${error?.code}`, { defaultValue: t("factory:errors.UNKNOWN") });
+  const errorText = (error) => {
+    // scheduling needs the plan dates: say so, instead of "check the highlighted fields"
+    const planMissing = error?.code === "VALIDATION_ERROR" && Array.isArray(error.details) && error.details.some((item) => ["planStart", "planFinish"].includes(item?.path?.[0]));
+    if (planMissing) return t("factory:errors.PLAN_DATES");
+    return notEnoughStockText(error) ?? t(`factory:errors.${error?.code}`, { defaultValue: t("factory:errors.UNKNOWN") });
+  };
 
   const run = async (action, note) => {
     try {

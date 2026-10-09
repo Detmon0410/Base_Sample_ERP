@@ -73,8 +73,6 @@ export function ListPage({
       text={filtered ? noResultText : emptyText}
       onClear={clearFilters}
       clearLabel={t("common.clearFilters")}
-      newTo={newTo}
-      newLabel={newLabel}
     />
   );
 

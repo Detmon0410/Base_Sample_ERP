@@ -115,8 +115,6 @@ export function DocumentListPage({
       text={filtered ? noResultText : emptyText}
       onClear={clear}
       clearLabel={t("sale:filters.clear")}
-      newTo={newTo}
-      newLabel={newLabel}
     />
   );
 

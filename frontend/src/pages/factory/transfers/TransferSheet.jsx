@@ -81,6 +81,11 @@ export function TransferSheet() {
     if (form.getValues("qty") !== wanted) form.setValue("qty", wanted, { shouldDirty: wanted != null });
   }, [isNew, picked, form]);
 
+  // with only one finished goods warehouse there is nothing to choose: it is filled in (the stock adjustment does the same)
+  useEffect(() => {
+    if (isNew && finishedGoods.length === 1 && form.getValues("warehouseId") == null) form.setValue("warehouseId", finishedGoods[0].id, { shouldDirty: false });
+  }, [isNew, finishedGoods, form]);
+
   const run = async (action, note) => {
     try {
       const saved = await transferService.run(record.id, action.key, { note });

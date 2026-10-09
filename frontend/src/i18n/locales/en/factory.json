@@ -178,7 +178,8 @@
     "VALIDATION_ERROR": "Please check the highlighted fields.",
     "NO_ROUTING": "This product has no production steps. Add them in the product's Routing tab first.",
     "STEP_ORDER": "The step before is not done yet.",
-    "STEPS_NOT_DONE": "A step is still running. Finish it first."
+    "STEPS_NOT_DONE": "A step is still running. Finish it first.",
+    "PLAN_DATES": "Set the plan start and the plan finish date, save, then schedule the work order."
   },
   "actions": {
     "saveFirst": "Save your changes first",

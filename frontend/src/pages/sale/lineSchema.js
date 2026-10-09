@@ -5,12 +5,18 @@ export const REQUIRED = "sale:validation.required";
 const QTY = "sale:validation.qty";
 const PRICE = "sale:validation.price";
 
-export const lineSchema = z.object({
-  productId: z.number({ message: REQUIRED }),
-  qty: z.number({ message: QTY }).int(QTY).min(1, QTY),
-  unitPrice: z.number({ message: PRICE }).int(PRICE).min(0, PRICE),
-  priceEdited: z.boolean(),
-});
+export const lineSchema = z
+  .object({
+    productId: z.number({ message: REQUIRED }),
+    qty: z.number({ message: QTY }).int(QTY).min(1, QTY),
+    unitPrice: z.number({ message: PRICE }).int(PRICE).min(0, PRICE),
+    priceEdited: z.boolean(),
+  })
+  // A price of 0 that nobody typed is a price that has not arrived yet (the price list answers a moment after the product is
+  // chosen), so it cannot be saved. A free line is still possible: type the 0.
+  .superRefine((line, context) => {
+    if (line.unitPrice === 0 && !line.priceEdited) context.addIssue({ code: "custom", path: ["unitPrice"], message: "sale:validation.priceNotSet" });
+  });
 
 /** A product may appear once per document. */
 export function checkUniqueProducts(values, ctx) {

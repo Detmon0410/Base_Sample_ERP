@@ -1,19 +1,18 @@
 /**
- * Top of every page. The title is NOT shown visually (the breadcrumb already says where the user is) but stays
- * in the page as a screen-reader-only h1 so every page keeps one heading. A page with nothing else to show
- * (no description, no actions) takes no space at all, so its content starts right under the top bar.
- * Page actions (e.g. the primary action of a page) sit on the right.
+ * The title band at the top of every page: light grey, the title on the left (with a status word in a square box
+ * next to it when the page has one), the page actions on the right (docs/specs/s2-mini-erp-look.md).
  */
-export function PageHeader({ title, description, actions }) {
-  if (!description && !actions) return <h1 className="sr-only">{title}</h1>;
-
+export function PageHeader({ title, status, description, actions }) {
   return (
-    <div className="mb-5 flex items-start justify-between gap-6">
-      <div>
-        <h1 className="sr-only">{title}</h1>
-        {description ? <p className="text-muted-foreground">{description}</p> : null}
+    <div className="-mx-5 -mt-4 mb-5 border-b border-slate-200 bg-[#eeeeee] px-5 py-3">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <h1 className="flex items-center gap-3 text-xl font-bold">
+          {title}
+          {status ? <span className="border border-foreground px-2 py-0.5 text-sm font-medium">{status}</span> : null}
+        </h1>
+        {actions ? <div className="ml-auto flex shrink-0 flex-wrap gap-3">{actions}</div> : null}
       </div>
-      {actions ? <div className="ml-auto flex shrink-0 gap-3">{actions}</div> : null}
+      {description ? <p className="mt-1 text-muted-foreground">{description}</p> : null}
     </div>
   );
 }

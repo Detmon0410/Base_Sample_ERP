@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleAlertIcon, EyeIcon, EyeOffIcon, RefrigeratorIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -68,16 +67,9 @@ export function LoginPage() {
   const passwordInvalid = Boolean(errors.password) || isCredentialError;
 
   return (
-    <Card className="rounded-md border border-slate-300 shadow-none ring-0 [--card-spacing:--spacing(7)]">
+    <Card className="border border-slate-300 [--card-spacing:--spacing(7)]">
       <CardContent className="flex flex-col gap-5">
-        {/* Factory icon is a placeholder for the company logo. */}
-        <div className="flex flex-col items-center gap-3 text-center">
-          <div
-            aria-hidden="true"
-            className="grid size-12 place-items-center text-primary"
-          >
-            <RefrigeratorIcon className="size-10" strokeWidth={1.75} />
-          </div>
+        <div className="text-center">
           <div>
             <h1 className="text-2xl leading-tight font-bold">{t("login.title")}</h1>
             {/* Hidden while the error alert is shown so the card stays within one screen. */}
@@ -89,7 +81,6 @@ export function LoginPage() {
 
         {alertKey ? (
           <Alert variant="destructive" className="p-3 text-base">
-            <CircleAlertIcon />
             <AlertTitle className="text-base font-bold">{t("login.errorSummary")}</AlertTitle>
             <AlertDescription className="text-base">{t(alertKey)}</AlertDescription>
           </Alert>
@@ -118,33 +109,27 @@ export function LoginPage() {
             <FieldLabel htmlFor="password" className="text-base font-semibold">
               {t("login.password")}
             </FieldLabel>
-            {/* The eye is only shown while focus is inside this wrapper (the field or the eye). */}
-            <div className="group/password relative">
+                        <div className="group/password relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
-                className="h-10 pr-12"
+                className="h-10 pr-32"
                 aria-invalid={passwordInvalid ? true : undefined}
                 aria-describedby={
                   errors.password ? "password-error" : isCredentialError ? "email-error" : undefined
                 }
                 {...register("password", { onChange: clearServerError })}
               />
-              {/*
-                Plain button on purpose: no background or frame on hover or click.
-                The focus ring appears for keyboard focus only (focus-visible).
-                The text label lives in aria-label / title because the button is icon-only.
-              */}
               <button
                 type="button"
-                className="pointer-events-none absolute inset-y-0 right-0 my-auto grid size-10 place-items-center rounded-md text-muted-foreground opacity-0 transition-opacity outline-none group-focus-within/password:pointer-events-auto group-focus-within/password:opacity-100 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="absolute inset-y-0 right-0 px-2 text-sm text-link outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
                 aria-pressed={showPassword}
                 title={showPassword ? t("login.hidePassword") : t("login.showPassword")}
                 onClick={() => setShowPassword((visible) => !visible)}
               >
-                {showPassword ? <EyeOffIcon className="size-5" /> : <EyeIcon className="size-5" />}
+                {showPassword ? t("login.hidePassword") : t("login.showPassword")}
               </button>
             </div>
             {errors.password ? (

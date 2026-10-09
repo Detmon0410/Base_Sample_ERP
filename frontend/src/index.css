@@ -1,60 +1,50 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
 /* The app has a light theme only. Without this, Tailwind applies every dark: style when the computer is set to dark mode. */
 @custom-variant dark (&:is(.dark *));
 
 /*
-  Design tokens — Refrigerator Factory
-  Brand: #0D6EB3 on #FFFFFF (contrast 5.4:1). White text on the brand colour is also 5.4:1.
-  Target users are 40-50+, desktop only, so the root size is 18px: every rem-based
-  Tailwind size scales with it (h-11 = 49.5px, text-sm = 15.75px).
+  Design tokens - Refrigerator Factory, Mini ERP look (docs/specs/s2-mini-erp-look.md).
+  Theme colour #7C7BAD, square corners (radius 0), flat: no shadows, no rings, no icons.
+  The root size stays 18px, so every rem-based Tailwind size scales with it.
 */
 :root {
   --background: #ffffff;
-  --foreground: #1a2230;
+  --foreground: #212529;
   --card: #ffffff;
-  --card-foreground: #1a2230;
+  --card-foreground: #212529;
   --popover: #ffffff;
-  --popover-foreground: #1a2230;
-  --primary: #0d6eb3;
+  --popover-foreground: #212529;
+  --primary: #7c7bad;
   --primary-foreground: #ffffff;
-  --secondary: #e5f1fa;
-  --secondary-foreground: #0d6eb3;
-  --muted: #eef1f5;
-  --muted-foreground: #4a5568;
-  --accent: #e5f1fa;
-  --accent-foreground: #0d6eb3;
+  --secondary: #f0f0f0;
+  --secondary-foreground: #212529;
+  --muted: #f0f0f0;
+  --muted-foreground: #5b6168;
+  --accent: #ececf4;
+  --accent-foreground: #212529;
   --destructive: #b42318;
   --success: #1b6e3c;
   --warning: #8a5a00;
-  /* --border is decorative; --input is a control boundary and must reach 3:1 (WCAG 1.4.11) */
-  --border: #c5ceda;
-  --input: #6b7a90;
-  --ring: #0d6eb3;
-  --radius: 0.5rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1a2230;
-  --sidebar-primary: #0d6eb3;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e5f1fa;
-  --sidebar-accent-foreground: #0d6eb3;
-  --sidebar-border: #c5ceda;
-  --sidebar-ring: #0d6eb3;
+  --link: #017e84; /* teal, for links inside the page */
+  --page: #f9f9f9; /* the grey behind the pages */
+  --border: #d5d8dc;
+  --input: #8a9099; /* the underline of a field */
+  --ring: #7c7bad;
+  --radius: 0;
 }
 
 /*
   Type scale, from the most to the least important (root font-size is 18px):
     3xl  31px  one big number on a screen
     2xl  26px  headline numbers
-    xl   22px  title of a sheet / dialog
-    lg   18px  EMPHASIS: document numbers, card titles, totals
+    xl   22px  title of a page
+    lg   18px  EMPHASIS: document numbers, totals
     base 16px  BODY: table cells, field values, buttons
     sm   15px  SECONDARY: labels, table headers, hints, dates, meta
     xs   13px  the smallest: counters, fine print
-  Size says how much a piece of text matters; weight and colour only support it.
 */
 @theme {
   --text-xs: 0.72rem;
@@ -95,34 +85,18 @@
   --color-destructive: var(--destructive);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-link: var(--link);
+  --color-page: var(--page);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
-
-/* A tablet held upright (docs/specs/f15-tablet.md): the menu keeps only its 64px rail in the page layout; when it is opened it lies over the page. */
-@media (max-width: 991px) {
-  [data-slot="sidebar-gap"] {
-    width: var(--sidebar-width-icon) !important;
-  }
-  [data-slot="sidebar-container"] {
-    z-index: 40 !important;
-  }
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
 }
 
 @layer base {
@@ -130,8 +104,7 @@
     @apply border-border outline-ring/50;
   }
 
-  /* A plain look (docs/specs/f14-plain-ui.md): nothing slides, fades or spins. The duration is 1 ms, not none, so a sheet or a
-     dialog still gets its "animation end" and closes properly. */
+  /* A plain look: nothing slides, fades or spins. */
   *,
   *::before,
   *::after {
@@ -153,10 +126,10 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-page text-foreground;
     margin: 0;
     font-size: 0.9rem; /* body text = 16px; the rem scale itself stays on the 18px root */
-    min-width: 320px; /* a phone (docs/specs/f16-mobile.md); it was 640px when only the desktop was designed for */
+    min-width: 320px;
     min-height: 100vh;
     line-height: 1.6;
   }
@@ -164,84 +137,17 @@
   #root {
     min-height: 100vh;
   }
-}
-/* Detail sheet (right side): slide the whole panel in from the edge with a soft deceleration,
-   and fade the dim backdrop (no blur: blurring the page on every frame made the slide stutter). Leaving is shorter than entering. Reduced motion: fade only. */
-@keyframes sheet-slide-in-right {
-  from {
-    transform: translateX(100%);
+
+  /* a link inside the page */
+  main a:not([data-slot="button"]) {
+    color: var(--link);
   }
-  to {
-    transform: translateX(0);
-  }
-}
-@keyframes sheet-slide-out-right {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
-@keyframes sheet-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes sheet-fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
+  main a:not([data-slot="button"]):hover {
+    text-decoration: underline;
   }
 }
 
-[data-slot="sheet-content"][data-side="right"][data-state="open"] {
-  animation: sheet-slide-in-right 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-[data-slot="sheet-content"][data-side="right"][data-state="closed"] {
-  animation: sheet-slide-out-right 140ms cubic-bezier(0.4, 0, 1, 1) both;
-}
-[data-slot="sheet-overlay"][data-state="open"] {
-  animation: sheet-fade-in 140ms ease-out both;
-}
-[data-slot="sheet-overlay"][data-state="closed"] {
-  animation: sheet-fade-out 140ms ease-in both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-slot="sheet-content"][data-side="right"][data-state="open"] {
-    animation: sheet-fade-in 150ms ease-out both;
-  }
-  [data-slot="sheet-content"][data-side="right"][data-state="closed"] {
-    animation: sheet-fade-out 120ms ease-in both;
-  }
-}
-
-/* Radix already pads the page for the removed scrollbar while the sheet is open, so nothing shifts. */
-[data-slot="sheet-content"] {
-  transition: none; /* the keyframes above do the moving; a second transition only adds work */
-  will-change: transform;
-}
-[data-slot="sheet-overlay"] {
-  will-change: opacity;
-}
-
-/* While the sidebar width is being dragged it must follow the pointer at once, not ease toward it. */
-body.sidebar-resizing [data-slot="sidebar-gap"],
-body.sidebar-resizing [data-slot="sidebar-container"] {
-  transition: none !important;
-}
-body.sidebar-resizing {
-  cursor: col-resize;
-  user-select: none;
-}
-
-/* Phone: tables become blocks, one per row, each cell with its column name in front (useStackTables, docs/specs/f16-mobile.md). */
+/* Phone: tables become blocks, one per row, each cell with its column name in front. */
 @media (max-width: 767px) {
   table[data-stack] thead {
     display: none;
@@ -256,7 +162,6 @@ body.sidebar-resizing {
   table[data-stack] tr {
     margin-bottom: 0.5rem;
     border: 1px solid var(--color-slate-300) !important;
-    border-radius: 0.375rem;
     padding: 0.25rem 0.75rem;
   }
   table[data-stack] td {

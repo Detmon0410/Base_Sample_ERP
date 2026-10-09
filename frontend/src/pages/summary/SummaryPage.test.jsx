@@ -33,7 +33,8 @@ describe("the Summary page", () => {
 
     await make(); // New
     const running = await make();
-    await ordersApi.start(running.id); // In Progress
+    await ordersApi.start(running.id);
+    await ordersApi.recordProgress(running.id, { processId: running.lines[0].processes[0].id, status: "In Progress", completedQuantity: 1, workDate: "2026-10-03", note: "" }); // In Progress
     const done = await make();
     await ordersApi.start(done.id);
     await ordersApi.recordProgress(done.id, { processId: done.lines[0].processes[0].id, status: "Completed", completedQuantity: 2, workDate: "2026-10-03", note: "" });

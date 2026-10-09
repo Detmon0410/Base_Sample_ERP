@@ -5,7 +5,7 @@
 //   process: { id, sequence, name, instructions, status: "Not Started" | "In Progress" | "Completed", completedQuantity }
 //   history: one entry for every progress update, never changed: { id, lineId, processId, status, completedQuantity, workDate, note, userId, userName, at }
 //
-// The status of the order is computed, nobody sets it: New (not started) -> In Progress (started) -> Completed (every process of
+// The status of the order is computed, nobody sets it: New (no process has started) -> In Progress (at least one process has started) -> Completed (every process of
 // every line Completed). Every process needs the quantity of its line; "Completed" means the completed quantity equals it.
 // Before the start an Admin may change the whole order; after it only progress is recorded.
 
@@ -30,11 +30,12 @@ const isDay = (value) => {
   return date.getUTCFullYear() === Number(match[1]) && date.getUTCMonth() === Number(match[2]) - 1 && date.getUTCDate() === Number(match[3]);
 };
 
-/** The status of an order, computed from its processes. */
+/** The status of an order, computed from its processes: New until a process has started, Completed when every process is Completed. */
 export function orderStatus(order) {
   if (!order.started) return "New";
   const processes = order.lines.flatMap((line) => line.processes);
-  return processes.length > 0 && processes.every((process) => process.status === "Completed") ? "Completed" : "In Progress";
+  if (processes.length > 0 && processes.every((process) => process.status === "Completed")) return "Completed";
+  return processes.some((process) => process.status !== "Not Started") ? "In Progress" : "New";
 }
 
 function toView(order) {
@@ -59,8 +60,8 @@ function toView(order) {
 }
 
 const toListView = (order) => {
-  const { lines: _lines, history: _history, ...rest } = toView(order);
-  return rest;
+  const { lines, history: _history, ...rest } = toView(order);
+  return { ...rest, productCodes: lines.map((line) => line.productCode).join(" ") }; // the list is searched by product code too
 };
 
 function access(authorization, adminOnly) {
@@ -113,7 +114,7 @@ export const orderRoutes = {
   "GET /orders": ({ authorization, query }) => {
     access(authorization, false);
     const q = text(query.q).toLowerCase();
-    let rows = orders.map(toListView).filter((row) => (!query.status || row.status === query.status) && (!q || [row.orderNumber, row.customerName, row.qtNumber, row.notes].some((value) => String(value).toLowerCase().includes(q))));
+    let rows = orders.map(toListView).filter((row) => (!query.status || row.status === query.status) && (!q || [row.orderNumber, row.customerName, row.qtNumber, row.notes, row.productCodes].some((value) => String(value).toLowerCase().includes(q))));
     rows = rows.sort((a, b) => b.id - a.id);
     const pageSize = Math.max(1, Number(query.pageSize) || 20);
     const page = Math.max(1, Number(query.page) || 1);

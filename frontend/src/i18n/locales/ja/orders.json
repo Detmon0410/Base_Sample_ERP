@@ -40,7 +40,8 @@
     "none": "工程がまだありません。",
     "required": "必要数",
     "completed": "完了数",
-    "status": "状態"
+    "status": "状態",
+    "current": "現在"
   },
   "processStatus": {
     "NotStarted": "未着手",

@@ -40,7 +40,8 @@
     "none": "No processes yet.",
     "required": "Required",
     "completed": "Completed",
-    "status": "Status"
+    "status": "Status",
+    "current": "Current"
   },
   "processStatus": {
     "NotStarted": "Not started",

@@ -113,7 +113,7 @@ export function OrderView({ order, onChanged }) {
         <Section title={t("orders:section")}>
           <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
             {[
-              [t("orders:qt"), order.qtNumber],
+              [t("orders:qt"), admin ? <Link key="qt" to={`/qt/${order.qtId}`}>{order.qtNumber}</Link> : order.qtNumber],
               [t("orders:customer"), order.customerName],
               [t("orders:orderDate"), order.orderDate],
               [t("orders:startedAt"), order.started ? formatDateTime(order.startedAt, language) : t("orders:notStarted")],
@@ -152,7 +152,10 @@ export function OrderView({ order, onChanged }) {
                   return (
                     <TableRow key={process.id}>
                       <TableCell data-label={t("orders:processes.step")}>{process.sequence}</TableCell>
-                      <TableCell data-label={t("orders:processes.name")}>{process.name}</TableCell>
+                      <TableCell data-label={t("orders:processes.name")}>
+                        {process.name}
+                        {order.started && process.id === line.processes.find((item) => item.status !== "Completed")?.id ? <span className="ml-2 border border-foreground px-1 text-sm">{t("orders:processes.current")}</span> : null}
+                      </TableCell>
                       <TableCell data-label={t("orders:processes.instructions")} className="whitespace-normal">
                         {process.instructions}
                       </TableCell>

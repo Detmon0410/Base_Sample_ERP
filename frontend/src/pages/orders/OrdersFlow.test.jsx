@@ -64,7 +64,7 @@ describe("production orders, page by page", () => {
     await user.click(await screen.findByRole("button", { name: "Start production" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
     expect(await screen.findByText("Not started")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("In progress");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("New"); // no process has started yet
     const orderPath = `/orders/${link.getAttribute("href").split("/").pop()}`;
     view.unmount();
 

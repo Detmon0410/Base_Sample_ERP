@@ -59,7 +59,7 @@ describe("production orders of the mock", () => {
 
     const order = call("POST /orders", admin, { body: draft() }).data;
     expect(fails(() => call("POST /orders/:id/start", worker, { params: { id: order.id } })).status).toBe(403);
-    expect(call("POST /orders/:id/start", admin, { params: { id: order.id } }).status).toBe("In Progress");
+    expect(call("POST /orders/:id/start", admin, { params: { id: order.id } }).status).toBe("New"); // no process has started yet
     expect(fails(() => call("PUT /orders/:id", admin, { params: { id: order.id }, body: draft() })).code).toBe("ORDER_LOCKED");
     expect(fails(() => call("POST /orders/:id/start", admin, { params: { id: order.id } })).code).toBe("ALREADY_STARTED");
   });
@@ -82,6 +82,7 @@ describe("production orders of the mock", () => {
 
     progress(worker, order, cut, { status: "Completed", completedQuantity: 10 });
     expect(call("GET /orders/:id", admin, { params: { id: order.id } }).status).toBe("In Progress");
+    expect(view.status).toBe("In Progress"); // a process has started
     view = progress(worker, order, weld, { status: "Completed", completedQuantity: 10 });
     expect(view.status).toBe("Completed");
     expect(view.history).toHaveLength(4);

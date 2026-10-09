@@ -8,7 +8,7 @@ Conventions: [README.md](README.md) · Admin only (others: `403 FORBIDDEN`) · N
 | `GET` | `/invoices` | query `q` (invoice number, customer name, order number), `status` (`Unpaid`, `Paid`), `page`, `pageSize` |
 | `GET` | `/invoices/:id` | the invoice with its payment and receipt |
 | `POST` | `/invoices` | `201`. Body `{ "orderId": 4, "invoiceDate": "2026-10-04" }` |
-| `POST` | `/invoices/:id/payment` | the full payment. Body `{ "paymentDate": "2026-10-10", "amount": 9000 }` |
+| `POST` | `/invoices/:id/payment` | the full payment. Body `{ "paymentDate": "2026-10-10", "amount": 9000, "method": "Bank transfer", "reference": "Slip 123" }` |
 
 There is no `PUT` and no `DELETE`: an issued invoice, its payment and its receipt are never changed or deleted.
 
@@ -18,8 +18,8 @@ There is no `PUT` and no `DELETE`: an issued invoice, its payment and its receip
 
 * `invoiceNumber` is `INV-yyyy-0001`, unique, given by the server.
 * It is a **snapshot** made when it is issued: `lines[]` = `{ productCode, productName, quantity, unitPrice, amount }` and the customer name and address are copied, so later changes of the customer or the products do not change it. `total` = the sum of the `amount`s.
-* `status` is `Unpaid` until the payment, then `Paid`. `payment` is `null` or `{ date, amount }`.
-* `receipt` is `null` until the payment, then `{ receiptNumber, receiptDate, customerName, customerAddress, invoiceNumber, amount }`, with `receiptNumber` = `RC-yyyy-0001` (unique) and `receiptDate` = the payment date.
+* `status` is `Unpaid` until the payment, then `Paid`. `payment` is `null` or `{ date, amount, method, reference }`.
+* `receipt` is `null` until the payment, then `{ receiptNumber, receiptDate, customerName, customerAddress, invoiceNumber, amount, method }`, with `receiptNumber` = `RC-yyyy-0001` (unique) and `receiptDate` = the payment date.
 
 ## Rules and errors
 
@@ -30,7 +30,7 @@ There is no `PUT` and no `DELETE`: an issued invoice, its payment and its receip
 | 409 | `INVOICE_EXISTS` | The order has an invoice already (one invoice per order) |
 | 409 | `ALREADY_PAID` | The invoice is paid already (one full payment per invoice) |
 
-Issuing the invoice locks the order: a progress update of the order answers `409 ORDER_INVOICED` ([orders.md](orders.md)). The payment has only a date and an amount (no method, reference or notes).
+Issuing the invoice locks the order: a progress update of the order answers `409 ORDER_INVOICED` ([orders.md](orders.md)). `method` is required and is one of `Cash`, `Bank transfer`, `Cheque`, `Credit card`, `Other` (`400 VALIDATION_ERROR`, `REQUIRED`, when missing or unknown); `reference` is optional free text (a reference number or notes).
 
 ## Print and PDF
 

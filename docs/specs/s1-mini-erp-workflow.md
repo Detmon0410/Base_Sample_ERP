@@ -13,7 +13,7 @@ This is the first step of the new direction: the workflow and the data first, th
 | 3 | The master data that the new requirements do not list is **cut** (see 5) | user |
 | 4 | **Every progress update is kept** as its own history entry (who, when, quantity, date, note) | user |
 | 5 | **Traceability is cut** together with the serial numbers | user |
-| 6 | **The payment method is cut**: a payment (and its receipt) is a date and an amount only; no method, no reference, no notes | user |
+| 6 | ~~The payment method is cut~~ **Restored to follow the requirements (5.6)**: a payment is a date, an amount, a payment method and an optional reference or notes; the receipt shows the method | user, then the requirements |
 | 7 | The **sidebar moves to the header**: a menu in the top bar, links in one row, the sub-menus as dropdowns | user |
 | 8 | There is **one simple summary page** (numbers only, no charts, no tabs) as the first page | user |
 | 9 | "Not for real use": **keep the business rules of the requirements, but do not polish** (no extra edge-case care: long explanations, many messages, second confirmations) | user |
@@ -36,7 +36,7 @@ This is the first step of the new direction: the workflow and the data first, th
 | 4 | Worker | Production order | Records progress of each process: status, completed quantity, work date, note. A process is Completed only when its completed quantity equals the required quantity |
 | 5 | system | Production order | The order becomes **Completed** when every process of every line is Completed |
 | 6 | Admin | Invoices | Issues **one invoice** for a Completed order (a snapshot of the lines, no tax). Status Unpaid |
-| 7 | Admin | Invoice | Records the **full payment**: date and amount (= the invoice total). The invoice becomes **Paid** and **one receipt** is issued. Invoice and receipt can be printed / saved as PDF |
+| 7 | Admin | Invoice | Records the **full payment**: date, amount (= the invoice total), payment method and an optional reference or notes. The invoice becomes **Paid** and **one receipt** is issued. Invoice and receipt can be printed / saved as PDF |
 | 8 | Admin | Stock | At any time and by hand: add material stock (material, lot, quantity), deduct it when used, adjust after a count. The production never changes the stock by itself |
 
 An order can be Completed with its invoice still Unpaid: the two statuses are separate.
@@ -80,7 +80,7 @@ There is no Manager role, no approval, no menu per department and no permission 
 | The whole Purchase group (stock status board, purchase orders, goods receipts, approval log); suppliers and their materials | – |
 | Supplier bills, supplier payments, journal entries, Accounting master (accounts, tax rates, bank accounts) | Customer invoices and receipts → **Invoice, payment and receipt** |
 | Suppliers, warehouses, units of measure, machines, employees, price lists, routing steps of a product | Customers, products with BOM, materials with lots, users **stay** (reduced fields) |
-| Manager role, every approval, per-department menus, the permission matrix, tax, payment methods, the stock rules NOT_READY / reserve | – |
+| Manager role, every approval, per-department menus, the permission matrix, tax, the stock rules NOT_READY / reserve | – |
 
 ## 6. Rules
 
@@ -113,9 +113,9 @@ There is no Manager role, no approval, no menu per department and no permission 
 
 **The menu** is one row in the top bar (the sidebar is removed):
 
-Summary · Orders ▾ (QT references, Production orders) · Invoices · Stock · Master ▾ (Customers, Products) · Users` and, at the right, the user (name and role as text), the language (text, no flag) and Log out. No icons, no clock, no "Online" mark, no Refresh button, no status-steps button.
+Summary · Orders ▾ (QT references, Production orders) · Invoices · Master ▾ (Customers, Products, Materials and stock, Users)` (the four master data of the requirements, section 4) and, at the right, the user (name and role as text), the language (text, no flag) and Log out. No icons, no clock, no "Online" mark, no Refresh button, no status-steps button.
 
-A Worker sees only `Summary · Production orders · Stock · Products`. On a narrow screen the row becomes one "Menu" button with the same list. Lists search by document number, customer name, product code or material code where it applies.
+A Worker sees only `Summary · Production orders · Master ▾ (Products, Materials and stock)`. The user can also move the menu to a list on the left (one button in the bar). On a narrow screen the row becomes one "Menu" button with the same list. Lists search by document number, customer name, product code or material code where it applies.
 
 ## 7b. What the decisions of the look mean for the code
 
@@ -152,7 +152,7 @@ The ten steps of section 10 of the requirements, as one Playwright case: custome
 
 ## 10. Open questions (with the proposed answer)
 
-Answered in the second round: the Dashboard (one simple summary page), Traceability (cut), the payment method (cut), the number of rules (keep, do not polish), the menu (header, dropdowns).
+Answered in the second round: the Dashboard (one simple summary page), Traceability (cut), the payment method (cut at first, restored later to follow the requirements), the number of rules (keep, do not polish), the menu (header, dropdowns).
 
 | # | Question | Proposal |
 |---|---|---|

@@ -46,4 +46,12 @@ describe("CardList", () => {
     renderList({ rows: [], emptyContent: "Nothing here" });
     expect(screen.getByText("Nothing here")).toBeInTheDocument();
   });
+
+  it("never puts a link inside a link when a cell holds a link of its own", () => {
+    const withLink = [{ key: "name", header: "Name", render: (row) => <a href={`/other/${row.id}`}>{row.name}</a> }, ...columns.slice(1)];
+    const { container } = renderList({ columns: withLink });
+    expect(container.querySelectorAll("a a")).toHaveLength(0);
+    expect(screen.getAllByRole("link")).toHaveLength(2); // the card, and the link of the cell
+    expect(screen.getAllByRole("link").map((link) => link.getAttribute("href")).sort()).toEqual(["/other/1", "/x/1"]);
+  });
 });

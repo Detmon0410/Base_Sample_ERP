@@ -66,12 +66,14 @@ export function CardList({ columns, rows, rowKey, sort, onSortChange, rowTo, sta
       <ul aria-label={ariaLabel} className="m-0 flex list-none flex-col gap-2 p-0">
         {rows.map((row) => {
           const title = valueOf(first, row);
+          const key = rowKey(row);
+          const titleId = `card-title-${key}`;
           const body = (
             <>
               <span className="flex items-start justify-between gap-3">
                 <span className="flex min-w-0 items-center gap-2 text-lg font-semibold text-slate-900">
                   {rowTo && isNew?.(row, rowTo(row)) ? <span role="img" aria-label={t("common.newRow")} className="size-2.5 shrink-0 rounded-full bg-red-600" /> : null}
-                  <span className="min-w-0 break-words">{title}</span>
+                  <span id={titleId} className="min-w-0 break-words">{title}</span>
                 </span>
                 {statusColumn ? <span className="shrink-0">{valueOf(statusColumn, row)}</span> : null}
               </span>
@@ -87,15 +89,14 @@ export function CardList({ columns, rows, rowKey, sort, onSortChange, rowTo, sta
               ) : null}
             </>
           );
+          // The whole card opens the row. The link is laid over the card (not around it), because the cells may hold links of their
+          // own (a document number, a product) and a link inside a link is invalid HTML. Links and buttons of the cells stay clickable.
           return (
-            <li key={rowKey(row)} className="rounded-md border border-slate-300 bg-card">
+            <li key={key} className="relative rounded-md border border-slate-300 bg-card">
               {rowTo ? (
-                <Link to={rowTo(row)} onClick={() => mark?.(rowTo(row))} className="block min-h-12 rounded-md p-3 outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  {body}
-                </Link>
-              ) : (
-                <div className="p-3">{body}</div>
-              )}
+                <Link to={rowTo(row)} onClick={() => mark?.(rowTo(row))} aria-labelledby={titleId} className="absolute inset-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+              ) : null}
+              <div className={cn("p-3", rowTo && "pointer-events-none min-h-12 [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&_a]:relative [&_button]:relative")}>{body}</div>
             </li>
           );
         })}

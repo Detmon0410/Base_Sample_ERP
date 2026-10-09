@@ -82,6 +82,8 @@
     "MUST_BE_COMPLETED": "With the full quantity the status must be Completed.",
     "MUST_BE_ZERO": "A process that is not started has no completed quantity.",
     "REOPEN_NOTE": "Write a note to reopen a completed process.",
-    "INVALID_DATE": "Enter a real date as YYYY-MM-DD."
-  }
+    "INVALID_DATE": "Enter a real date as YYYY-MM-DD.",
+    "ORDER_INVOICED": "The order is invoiced; its progress cannot change."
+  },
+  "invoice": "Invoice"
 }

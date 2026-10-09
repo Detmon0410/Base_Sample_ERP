@@ -117,9 +117,10 @@ export function OrderView({ order, onChanged }) {
               [t("orders:customer"), order.customerName],
               [t("orders:orderDate"), order.orderDate],
               [t("orders:startedAt"), order.started ? formatDateTime(order.startedAt, language) : t("orders:notStarted")],
+              [t("orders:invoice"), order.invoice ? <Link key="invoice" to={`/invoices/${order.invoice.id}`}>{order.invoice.invoiceNumber}</Link> : null],
               [t("orders:notes"), order.notes],
-            ].map(([label, value]) => (
-              <div key={label}>
+            ].map(([label, value], index) => (
+              <div key={index}>
                 <dt className="text-sm font-semibold text-muted-foreground">{label}</dt>
                 <dd>{value || "-"}</dd>
               </div>

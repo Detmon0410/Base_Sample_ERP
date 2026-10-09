@@ -1,0 +1,59 @@
+{
+  "title": "Invoices",
+  "new": "New invoice",
+  "section": "Invoice",
+  "number": "Invoice number",
+  "numberHint": "The number is given when the invoice is issued.",
+  "date": "Invoice date",
+  "customer": "Customer",
+  "order": "Production order",
+  "chooseOrder": "Choose a completed order",
+  "noOrders": "There is no completed order without an invoice.",
+  "total": "Total",
+  "status": {
+    "Unpaid": "Unpaid",
+    "Paid": "Paid"
+  },
+  "issueTitle": "Issue this invoice?",
+  "issueText": "The invoice is a copy of the order as it is now. It cannot be changed or deleted afterwards.",
+  "issued": "The invoice was issued.",
+  "doc": {
+    "invoice": "Invoice",
+    "receipt": "Receipt",
+    "to": "To",
+    "orderRef": "Order",
+    "product": "Product",
+    "quantity": "Quantity",
+    "unitPrice": "Unit price",
+    "amount": "Amount",
+    "total": "Total",
+    "noTax": "No tax is charged."
+  },
+  "print": "Print / save as PDF",
+  "payment": {
+    "title": "Payment",
+    "date": "Payment date",
+    "amount": "Amount paid",
+    "hint": "The payment must be the full total: {{total}}.",
+    "record": "Record the payment",
+    "confirmTitle": "Record the payment?",
+    "confirmText": "The invoice becomes Paid and one receipt is issued. This cannot be changed afterwards.",
+    "done": "The payment was recorded and the receipt was issued.",
+    "paidOn": "Paid on {{date}}: {{amount}}",
+    "unpaid": "Not paid yet."
+  },
+  "receipt": {
+    "title": "Receipt",
+    "number": "Receipt number",
+    "date": "Receipt date",
+    "forInvoice": "For invoice",
+    "received": "Amount received"
+  },
+  "errors": {
+    "ORDER_NOT_COMPLETED": "Only a completed order can be invoiced.",
+    "INVOICE_EXISTS": "This order has an invoice already.",
+    "ALREADY_PAID": "This invoice is paid already.",
+    "MUST_EQUAL_TOTAL": "The payment must be equal to the total of the invoice.",
+    "INVALID_DATE": "Enter a real date as YYYY-MM-DD."
+  }
+}

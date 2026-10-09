@@ -5,6 +5,7 @@ import { AuthLayout } from "@/layouts/AuthLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { CustomersPage } from "@/pages/master/CustomersPage";
+import { InvoicesPage } from "@/pages/invoices/InvoicesPage";
 import { OrdersPage } from "@/pages/orders/OrdersPage";
 import { QtPage } from "@/pages/qt/QtPage";
 import { ProductsPage } from "@/pages/master/ProductsPage";
@@ -20,7 +21,7 @@ import { RequirePermission } from "./RequirePermission";
 
 // Menu entries whose page is built (the key of config/navigation.js). Everything else opens the "not built yet" placeholder.
 // Each module of docs/specs/s1-mini-erp-workflow.md adds its pages here.
-const IMPLEMENTED_PAGES = { qt: QtPage, productionOrders: OrdersPage, customers: CustomersPage, products: ProductsPage, stock: StockPage, users: UsersPage };
+const IMPLEMENTED_PAGES = { qt: QtPage, invoices: InvoicesPage, productionOrders: OrdersPage, customers: CustomersPage, products: ProductsPage, stock: StockPage, users: UsersPage };
 
 /**
  * Route table. Every menu entry in config/navigation.js gets a route (and a wildcard for its /new and /:id pages) guarded by

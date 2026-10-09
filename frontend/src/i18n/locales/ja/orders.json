@@ -82,6 +82,8 @@
     "MUST_BE_COMPLETED": "必要数に達した場合、状態は「完了」にしてください。",
     "MUST_BE_ZERO": "未着手の工程に完了数量は入れられません。",
     "REOPEN_NOTE": "完了した工程を再開するには備考を入力してください。",
-    "INVALID_DATE": "YYYY-MM-DD の形式で実在する日付を入力してください。"
-  }
+    "INVALID_DATE": "YYYY-MM-DD の形式で実在する日付を入力してください。",
+    "ORDER_INVOICED": "請求書を発行済みのため、進捗は変更できません。"
+  },
+  "invoice": "請求書"
 }

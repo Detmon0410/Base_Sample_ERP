@@ -1,0 +1,59 @@
+{
+  "title": "請求書",
+  "new": "請求書を発行",
+  "section": "請求書",
+  "number": "請求書番号",
+  "numberHint": "番号は請求書を発行したときに付きます。",
+  "date": "請求日",
+  "customer": "顧客",
+  "order": "製造指示書",
+  "chooseOrder": "完了した指示書を選択",
+  "noOrders": "請求書が未発行の完了した指示書はありません。",
+  "total": "合計",
+  "status": {
+    "Unpaid": "未入金",
+    "Paid": "入金済"
+  },
+  "issueTitle": "この請求書を発行しますか？",
+  "issueText": "請求書は、現時点の指示書の内容をそのまま写したものです。発行後は変更も削除もできません。",
+  "issued": "請求書を発行しました。",
+  "doc": {
+    "invoice": "請求書",
+    "receipt": "領収書",
+    "to": "宛先",
+    "orderRef": "指示書",
+    "product": "製品",
+    "quantity": "数量",
+    "unitPrice": "単価",
+    "amount": "金額",
+    "total": "合計",
+    "noTax": "消費税は計上していません。"
+  },
+  "print": "印刷 / PDFで保存",
+  "payment": {
+    "title": "入金",
+    "date": "入金日",
+    "amount": "入金額",
+    "hint": "入金は請求合計の全額です：{{total}}",
+    "record": "入金を登録",
+    "confirmTitle": "入金を登録しますか？",
+    "confirmText": "請求書は入金済になり、領収書が1通発行されます。登録後は変更できません。",
+    "done": "入金を登録し、領収書を発行しました。",
+    "paidOn": "{{date}} に入金：{{amount}}",
+    "unpaid": "まだ入金されていません。"
+  },
+  "receipt": {
+    "title": "領収書",
+    "number": "領収書番号",
+    "date": "領収日",
+    "forInvoice": "対象の請求書",
+    "received": "領収金額"
+  },
+  "errors": {
+    "ORDER_NOT_COMPLETED": "請求できるのは、完了した指示書だけです。",
+    "INVOICE_EXISTS": "この指示書には、すでに請求書があります。",
+    "ALREADY_PAID": "この請求書は、すでに入金済です。",
+    "MUST_EQUAL_TOTAL": "入金額は、請求書の合計と同じにしてください。",
+    "INVALID_DATE": "YYYY-MM-DD の形式で実在する日付を入力してください。"
+  }
+}

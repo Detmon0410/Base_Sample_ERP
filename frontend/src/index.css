@@ -187,3 +187,25 @@
     display: none;
   }
 }
+
+/* Print / save as PDF of one document (utils/print.js sets body[data-printing] to the name of the document): only that document is shown. */
+@media print {
+  body[data-printing] * {
+    visibility: hidden;
+  }
+  body[data-printing="invoice"] [data-print-doc="invoice"],
+  body[data-printing="invoice"] [data-print-doc="invoice"] *,
+  body[data-printing="receipt"] [data-print-doc="receipt"],
+  body[data-printing="receipt"] [data-print-doc="receipt"] * {
+    visibility: visible;
+  }
+  body[data-printing="invoice"] [data-print-doc="invoice"],
+  body[data-printing="receipt"] [data-print-doc="receipt"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    border: 0;
+  }
+}

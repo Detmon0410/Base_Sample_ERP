@@ -1,6 +1,7 @@
 import { masterRoutes } from "./master.js";
 import { qtRoutes } from "./qt.js";
 import { orderRoutes } from "./orders.js";
+import { stockRoutes } from "./stock.js";
 import { login, toPublicUser, userFromAuthorization } from "./users.js";
 
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
@@ -16,4 +17,5 @@ export const mockRoutes = {
   ...masterRoutes,
   ...qtRoutes,
   ...orderRoutes,
+  ...stockRoutes, // after masterRoutes: it wraps POST and PUT of /materials
 };

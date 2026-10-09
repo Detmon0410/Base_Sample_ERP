@@ -1,11 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
 
+import { NavIcon } from "@/components/layout/NavIcon";
 import { getVisibleNav } from "@/config/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
-const ITEM = "block px-4 py-2 text-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring";
+const ITEM = "flex items-center gap-3 px-4 py-2 text-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring";
 
 /**
  * The menu as a list on the left (the other place of the menu, see AppHeader). Every entry is shown at once: a menu with
@@ -17,6 +18,7 @@ export function SideNav({ open }) {
 
   const link = (item, indent) => (
     <NavLink key={item.key} to={item.to} end={item.to === "/"} className={({ isActive }) => cn(ITEM, indent && "pl-8", isActive && "bg-accent font-bold")}>
+      <NavIcon name={item.icon} />
       {t(item.labelKey)}
     </NavLink>
   );
@@ -28,7 +30,10 @@ export function SideNav({ open }) {
           link(entry.item, false)
         ) : (
           <div key={entry.key}>
-            <p className="px-4 pt-3 pb-1 text-sm font-bold text-muted-foreground">{t(entry.labelKey)}</p>
+            <p className="flex items-center gap-3 px-4 pt-3 pb-1 text-sm font-bold text-muted-foreground">
+              <NavIcon name={entry.icon} />
+              {t(entry.labelKey)}
+            </p>
             {entry.items.map((item) => link(item, true))}
           </div>
         ),

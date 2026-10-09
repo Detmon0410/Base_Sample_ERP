@@ -3,11 +3,12 @@ import { useTranslation } from "react-i18next";
 import { Link, NavLink, useLocation } from "react-router";
 
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { NavIcon } from "@/components/layout/NavIcon";
 import { getVisibleNav } from "@/config/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
-const ENTRY = "inline-flex h-full items-center px-3 text-primary-foreground/90 outline-none hover:bg-black/10 focus-visible:ring-2 focus-visible:ring-white";
+const ENTRY = "inline-flex h-full items-center gap-2 px-3 text-primary-foreground/90 outline-none hover:bg-black/10 focus-visible:ring-2 focus-visible:ring-white";
 
 /**
  * The bar at the top of every page after the sign-in: the name of the system, the user with the role as a word, the language as
@@ -46,6 +47,7 @@ export function AppHeader({ mode, onToggleMode, narrowOpen, setNarrowOpen }) {
   const nav = getVisibleNav(user);
   const link = (item) => (
     <NavLink key={item.key} to={item.to} end={item.to === "/"} className={({ isActive }) => cn(ENTRY, isActive && "bg-black/15 font-bold")}>
+      <NavIcon name={item.icon} />
       {t(`nav:${item.labelKey}`)}
     </NavLink>
   );
@@ -73,13 +75,16 @@ export function AppHeader({ mode, onToggleMode, narrowOpen, setNarrowOpen }) {
                   onClick={() => setOpen((value) => (value === entry.key ? null : entry.key))}
                   className={cn(ENTRY, "w-full md:w-auto", open === entry.key && "bg-black/15")}
                 >
-                  {t(`nav:${entry.labelKey}`)} <span aria-hidden="true">&nbsp;v</span>
+                  <NavIcon name={entry.icon} />
+                  {t(`nav:${entry.labelKey}`)}
+                  <NavIcon name="down" className="size-3.5" />
                 </button>
                 {open === entry.key ? (
                   <ul className="m-0 min-w-44 list-none border border-slate-300 bg-card p-0 text-slate-700 md:absolute md:top-full md:left-0">
                     {entry.items.map((item) => (
                       <li key={item.key}>
-                        <NavLink to={item.to} className="block px-3 py-2 text-slate-700 outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
+                        <NavLink to={item.to} className="flex items-center gap-2 px-3 py-2 whitespace-nowrap text-slate-700 outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
+                          <NavIcon name={item.icon} />
                           {t(`nav:${item.labelKey}`)}
                         </NavLink>
                       </li>

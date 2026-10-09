@@ -2,31 +2,33 @@ import { canUse } from "@/utils/permissions";
 
 /**
  * Single source of truth for the menu in the header and for the route table (docs/specs/s1-mini-erp-workflow.md, section 7).
- * An entry is a link (`to`) or a menu with sub-entries (`items`). `roles` says who sees it; a menu is shown when at least one of
+ * An entry is a link (`to`) or a menu with sub-entries (`items`); `icon` is the name of its icon (components/layout/NavIcon.jsx). `roles` says who sees it; a menu is shown when at least one of
  * its sub-entries is, and a menu with one visible sub-entry is shown as that sub-entry alone.
  * `labelKey` is an i18n key of the namespace `nav`.
  */
-export const SUMMARY_ITEM = { key: "summary", to: "/", labelKey: "summary", roles: ["Admin", "Worker"] };
+export const SUMMARY_ITEM = { key: "summary", to: "/", labelKey: "summary", icon: "summary", roles: ["Admin", "Worker"] };
 
 export const NAV = [
   SUMMARY_ITEM,
   {
     key: "orders",
     labelKey: "orders",
+    icon: "orders",
     items: [
-      { key: "qt", to: "/qt", labelKey: "qt", roles: ["Admin"] },
-      { key: "productionOrders", to: "/orders", labelKey: "productionOrders", roles: ["Admin", "Worker"] },
+      { key: "qt", to: "/qt", labelKey: "qt", icon: "qt", roles: ["Admin"] },
+      { key: "productionOrders", to: "/orders", labelKey: "productionOrders", icon: "productionOrders", roles: ["Admin", "Worker"] },
     ],
   },
-  { key: "invoices", to: "/invoices", labelKey: "invoices", roles: ["Admin"] },
+  { key: "invoices", to: "/invoices", labelKey: "invoices", icon: "invoices", roles: ["Admin"] },
   {
     key: "master",
     labelKey: "master",
+    icon: "master",
     items: [
-      { key: "customers", to: "/customers", labelKey: "customers", roles: ["Admin"] },
-      { key: "products", to: "/products", labelKey: "products", roles: ["Admin", "Worker"] },
-      { key: "stock", to: "/stock", labelKey: "materialsStock", roles: ["Admin", "Worker"] },
-      { key: "users", to: "/users", labelKey: "users", roles: ["Admin"] },
+      { key: "customers", to: "/customers", labelKey: "customers", icon: "customers", roles: ["Admin"] },
+      { key: "products", to: "/products", labelKey: "products", icon: "products", roles: ["Admin", "Worker"] },
+      { key: "stock", to: "/stock", labelKey: "materialsStock", icon: "stock", roles: ["Admin", "Worker"] },
+      { key: "users", to: "/users", labelKey: "users", icon: "users", roles: ["Admin"] },
     ],
   },
 ];
@@ -44,7 +46,7 @@ export function getVisibleNav(user) {
     }
     const items = entry.items.filter((item) => canUse(user, item.roles));
     if (items.length === 1) visible.push({ type: "link", item: items[0] });
-    else if (items.length > 1) visible.push({ type: "menu", key: entry.key, labelKey: entry.labelKey, items });
+    else if (items.length > 1) visible.push({ type: "menu", key: entry.key, labelKey: entry.labelKey, icon: entry.icon, items });
   }
   return visible;
 }

@@ -33,7 +33,10 @@
     "FORBIDDEN": "この操作を行う権限がありません。",
     "NOT_FOUND": "データが見つかりません。",
     "LOAD_FAILED": "一覧を読み込めませんでした。もう一度お試しください。",
-    "UNKNOWN_ERROR": "予期しないエラーが発生しました。もう一度お試しください。"
+    "UNKNOWN_ERROR": "予期しないエラーが発生しました。もう一度お試しください。",
+    "INVALID_DATE": "YYYY-MM-DD の形式で実在する日付を入力してください。",
+    "FILE_TYPE": "PDF、PNG、JPG のファイルを選択してください。",
+    "FILE_TOO_BIG": "ファイルが 10 MB を超えています。"
   },
   "customers": {
     "title": "顧客",
@@ -93,5 +96,18 @@
       "Accounting": "経理",
       "Administration": "管理"
     }
+  },
+  "qt": {
+    "title": "見積書の参照",
+    "new": "見積書の参照を追加",
+    "section": "見積書の参照",
+    "qtNumber": "見積番号",
+    "qtDate": "見積日",
+    "customer": "顧客",
+    "chooseCustomer": "顧客を選択",
+    "notes": "備考",
+    "file": "見積書ファイル",
+    "attached": "添付ファイル",
+    "fileHint": "PDF、PNG、JPG（10 MB まで）。見積書そのものは、このシステムの外で作成します。"
   }
 }

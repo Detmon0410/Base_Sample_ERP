@@ -33,7 +33,10 @@
     "FORBIDDEN": "You do not have permission to do this.",
     "NOT_FOUND": "The record was not found.",
     "LOAD_FAILED": "The list could not be loaded. Please try again.",
-    "UNKNOWN_ERROR": "An unexpected error occurred. Please try again."
+    "UNKNOWN_ERROR": "An unexpected error occurred. Please try again.",
+    "INVALID_DATE": "Enter a real date as YYYY-MM-DD.",
+    "FILE_TYPE": "Choose a PDF, PNG or JPG file.",
+    "FILE_TOO_BIG": "The file is larger than 10 MB."
   },
   "customers": {
     "title": "Customers",
@@ -93,5 +96,18 @@
       "Accounting": "Accounting",
       "Administration": "Administration"
     }
+  },
+  "qt": {
+    "title": "QT references",
+    "new": "New QT reference",
+    "section": "QT reference",
+    "qtNumber": "QT number",
+    "qtDate": "QT date",
+    "customer": "Customer",
+    "chooseCustomer": "Choose a customer",
+    "notes": "Notes",
+    "file": "QT file",
+    "attached": "Attached file",
+    "fileHint": "PDF, PNG or JPG, up to 10 MB. The quotation itself is made outside this system."
   }
 }

@@ -19,5 +19,7 @@
   "underConstruction": {
     "title": "このページは準備中です",
     "description": "今後追加予定です。メニューから他のページをご利用ください。"
-  }
+  },
+  "toSidebar": "メニューを左へ",
+  "toTopBar": "メニューを上へ"
 }

@@ -1,11 +1,14 @@
+import { useTranslation } from "react-i18next";
 import { Toaster as Sonner } from "sonner";
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
 const Toaster = ({
   ...props
 }) => {
+  const { t } = useTranslation();
   return (
     <Sonner
+      containerAriaLabel={t("common:toasts")} // the region of the messages is read out in the language of the screen
       theme="light"
       className="toaster group"
       icons={{

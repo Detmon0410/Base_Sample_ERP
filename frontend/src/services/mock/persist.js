@@ -4,11 +4,9 @@
 // each entry, so the numbers, the history and the times come out exactly as they were. A change made in another tab (another
 // user in the same browser) is played here too, so the tabs see the same data.
 //
-// Only active with VITE_MOCK_SEED=empty (never in the demo or in the tests).
+// Active in the browser (not in the tests).
 
-import { EMPTY_SEED } from "./seedMode.js";
-
-export const PERSIST = EMPTY_SEED && import.meta.env.MODE !== "test";
+export const PERSIST = import.meta.env.MODE !== "test";
 const KEY = "kanou.testlog.v1";
 const TOKEN = /mock-token-(\d+)/;
 

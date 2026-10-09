@@ -1,8 +1,6 @@
 const TOKEN_KEY = "kanou.token";
 
-// The workflow test: every browser tab is its own sign-in, so a tester can be a Sale user in one tab and an Accounting user in
-// another and watch the requests go from one to the other (docs/specs/f13-workflow-test.md). Everywhere else the sign-in is kept.
-const store = () => (import.meta.env.VITE_MOCK_SEED === "empty" && import.meta.env.MODE !== "test" ? window.sessionStorage : window.localStorage);
+const store = () => window.localStorage;
 
 // Storage can throw (private window, blocked site data), so every access is guarded.
 export function getToken() {

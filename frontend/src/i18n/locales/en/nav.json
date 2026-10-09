@@ -1,86 +1,27 @@
 {
-  "dashboard": "Dashboard",
+  "summary": "Summary",
+  "orders": "Orders",
+  "qt": "QT references",
+  "productionOrders": "Production orders",
+  "invoices": "Invoices",
+  "stock": "Stock",
+  "master": "Master",
+  "customers": "Customers",
+  "products": "Products",
+  "users": "Users",
+  "menu": "Menu",
   "skipToContent": "Skip to main content",
   "mainMenu": "Main menu",
-  "toggleMenu": "Collapse or expand the menu",
-  "groups": {
-    "sale": "Sale",
-    "factory": "Factory",
-    "stock": "Stock",
-    "purchase": "Purchase",
-    "accounting": "Accounting",
-    "traceability": "Traceability",
-    "masterData": "Master Data",
-    "administration": "Administration"
-  },
-  "items": {
-    "quotations": "Quotations",
-    "customerPos": "Customer POs",
-    "saleOrders": "Sale Orders",
-    "deliveryNotes": "Delivery Notes",
-    "workOrders": "Work Orders",
-    "productionTracking": "Production tracking",
-    "fgTransfer": "Finished goods transfer",
-    "stockOverview": "Stock overview",
-    "stockMovements": "Stock movements",
-    "stockAdjustment": "Stock adjustment",
-    "stockStatus": "Stock status board",
-    "purchaseOrders": "Purchase Orders",
-    "goodsReceipt": "Goods receipt",
-    "invoices": "Customer invoices",
-    "receipts": "Customer receipts",
-    "bills": "Supplier bills",
-    "payments": "Supplier payments",
-    "journal": "Journal entries",
-    "accountingMaster": "Accounting master",
-    "productTrace": "Product trace",
-    "customers": "Customers",
-    "suppliers": "Suppliers",
-    "products": "Products",
-    "materials": "Materials",
-    "warehouses": "Warehouses",
-    "machines": "Machines / lines",
-    "employees": "Employees",
-    "uom": "Units of measure",
-    "priceLists": "Price lists",
-    "users": "Users",
-    "roles": "Departments and roles",
-    "purchaseApprovals": "Approval log"
-  },
-  "breadcrumb": {
-    "label": "Breadcrumb",
-    "new": "New",
-    "detail": "Details"
-  },
-  "userMenu": {
-    "open": "Open the user menu",
-    "profile": "Profile",
-    "admin": "Admin",
-    "noDepartment": "All departments",
-    "resetData": "Reset all test data",
-    "resetTitle": "Delete everything that was made?",
-    "resetDescription": "Every customer, product, document and number made in this browser is deleted, and the test starts again from nothing. The users stay. This cannot be undone.",
-    "resetConfirm": "Delete everything",
-    "resetCancel": "Keep the data"
-  },
   "roles": {
     "Admin": "Admin",
-    "Manager": "Manager",
     "Worker": "Worker"
+  },
+  "breadcrumb": {
+    "new": "New",
+    "detail": "Details"
   },
   "underConstruction": {
     "title": "This page is not built yet",
     "description": "It is part of the plan and will be added soon. You can keep using the other pages from the menu."
-  },
-  "resizeSidebar": "Drag to change the menu width",
-  "refresh": "Refresh the data on this page",
-  "hideSteppers": "Hide the status steps on every page",
-  "showSteppers": "Show the status steps on every page",
-  "clock": {
-    "online": "Online",
-    "offline": "Offline"
-  },
-  "closeMenu": "Close the menu",
-  "more": "More",
-  "shortcuts": "Main parts of the system"
+  }
 }

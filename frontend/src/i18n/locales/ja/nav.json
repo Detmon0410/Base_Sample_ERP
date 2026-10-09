@@ -1,86 +1,27 @@
 {
-  "dashboard": "ダッシュボード",
+  "summary": "サマリー",
+  "orders": "受注",
+  "qt": "見積書の参照",
+  "productionOrders": "製造指示書",
+  "invoices": "請求書",
+  "stock": "在庫",
+  "master": "マスター",
+  "customers": "顧客",
+  "products": "製品",
+  "users": "ユーザー",
+  "menu": "メニュー",
   "skipToContent": "本文へ移動",
   "mainMenu": "メインメニュー",
-  "toggleMenu": "メニューを開閉",
-  "groups": {
-    "sale": "営業",
-    "factory": "製造",
-    "stock": "在庫",
-    "purchase": "購買",
-    "accounting": "会計",
-    "traceability": "トレーサビリティ",
-    "masterData": "マスター",
-    "administration": "システム管理"
-  },
-  "items": {
-    "quotations": "見積書",
-    "customerPos": "顧客注文書",
-    "saleOrders": "受注",
-    "deliveryNotes": "納品書",
-    "workOrders": "製造指示書",
-    "productionTracking": "工程進捗",
-    "fgTransfer": "完成品入庫",
-    "stockOverview": "在庫一覧",
-    "stockMovements": "入出庫履歴",
-    "stockAdjustment": "在庫調整",
-    "stockStatus": "在庫状況ボード",
-    "purchaseOrders": "発注書",
-    "goodsReceipt": "入荷",
-    "invoices": "請求書（顧客）",
-    "receipts": "入金",
-    "bills": "仕入請求書",
-    "payments": "支払",
-    "journal": "仕訳",
-    "accountingMaster": "会計マスター",
-    "productTrace": "製品トレース",
-    "customers": "顧客",
-    "suppliers": "仕入先",
-    "products": "製品",
-    "materials": "資材",
-    "warehouses": "倉庫",
-    "machines": "設備・ライン",
-    "employees": "従業員",
-    "uom": "単位",
-    "priceLists": "価格表",
-    "users": "ユーザー管理",
-    "roles": "部署と権限",
-    "purchaseApprovals": "承認履歴"
-  },
-  "breadcrumb": {
-    "label": "パンくずリスト",
-    "new": "新規作成",
-    "detail": "詳細"
-  },
-  "userMenu": {
-    "open": "ユーザーメニューを開く",
-    "profile": "プロフィール",
-    "admin": "管理者",
-    "noDepartment": "全部署",
-    "resetData": "テストデータをすべて初期化",
-    "resetTitle": "作成したデータをすべて削除しますか？",
-    "resetDescription": "このブラウザで作成した顧客・製品・書類・番号はすべて削除され、テストは最初からやり直しになります。ユーザーは残ります。この操作は元に戻せません。",
-    "resetConfirm": "すべて削除する",
-    "resetCancel": "データを残す"
-  },
   "roles": {
     "Admin": "管理者",
-    "Manager": "マネージャー",
     "Worker": "担当者"
+  },
+  "breadcrumb": {
+    "new": "新規作成",
+    "detail": "詳細"
   },
   "underConstruction": {
     "title": "このページは準備中です",
     "description": "今後追加予定です。メニューから他のページをご利用ください。"
-  },
-  "resizeSidebar": "ドラッグしてメニューの幅を変更",
-  "refresh": "このページのデータを更新",
-  "hideSteppers": "全ページのステータス工程を非表示",
-  "showSteppers": "全ページのステータス工程を表示",
-  "clock": {
-    "online": "オンライン",
-    "offline": "オフライン"
-  },
-  "closeMenu": "メニューを閉じる",
-  "more": "その他",
-  "shortcuts": "システムの主な機能"
+  }
 }

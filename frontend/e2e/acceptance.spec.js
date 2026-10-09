@@ -153,6 +153,8 @@ test("the example of the requirements, from the customer to the receipt", async 
 
   // 9. the full payment: Paid, and the receipt
   await page.getByLabel("Amount paid").fill("449999");
+  await page.getByLabel("Payment method").selectOption("Bank transfer");
+  await page.getByLabel("Reference or notes (optional)").fill("Slip 20261010");
   await page.getByRole("button", { name: "Record the payment" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByText("The payment must be equal to the total of the invoice.")).toBeVisible();
@@ -161,6 +163,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Paid");
   await expect(page.getByRole("heading", { level: 2, name: "Receipt" })).toBeVisible();
+  await expect(page.getByText("Payment method: Bank transfer")).toBeVisible();
   await page.getByRole("button", { name: "Print / save as PDF" }).nth(1).click();
   expect(await page.evaluate(() => window.__printed)).toBe("receipt");
 

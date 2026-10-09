@@ -20,8 +20,8 @@ export const PAGES = [
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */
 export const MENU_OF = {
-  admin: ["Summary", "Orders", "Invoices", "Stock", "Master", "Users"],
-  worker: ["Summary", "Production orders", "Stock", "Products"],
+  admin: ["Summary", "Orders", "Invoices", "Master"],
+  worker: ["Summary", "Production orders", "Master"],
 };
 
 /**

@@ -1,28 +1,25 @@
-# Refrigerator Factory
+# Refrigerator Factory — Mini ERP
 
-ERP for a Japan-market manufacturer: Sale, Factory, Stock, Purchase, Accounting, Users, Serial numbers (S/N) and Traceability. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only, no TypeScript. Languages: English and Japanese (factory wording, every screen translated). Currency: JPY only.
+A simplified factory system: keep the QT references, make production orders with their processes, record the progress by hand, keep the material stock by hand, issue an invoice and a receipt. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only. Languages: English and Japanese. Currency: JPY only, no tax.
 
-This is a pnpm workspace with `backend/` and `frontend/`.
+This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accounting, serial numbers, 33 pages) is on branch `jay`.
 
 ## Where the project is
 
 | Part | State |
 |---|---|
-| Frontend | **Built** for all modules, running on a **mock API** (no backend needed). Desktop, tablet (768–992 px) and phone (below 768 px) layouts. |
-| API contract | **Written** per module in [docs/api](docs/api/README.md); the mock answers every call and its tests are the acceptance tests for the real API. |
-| Backend | **Only a sample** (the `User` table). The real API is the next job: start with [the guide for the backend developer](docs/api/README.md#for-the-person-who-writes-the-backend). |
+| Plan | [docs/specs/s1-mini-erp-workflow.md](docs/specs/s1-mini-erp-workflow.md) (workflow, data, pages) and [docs/specs/s2-mini-erp-look.md](docs/specs/s2-mini-erp-look.md) (the look) |
+| Source of the requirements | [BaseRequirement_md/simplified_factory_system_requirements.md](BaseRequirement_md/simplified_factory_system_requirements.md) |
+| Frontend | the shell only (step P0): sign-in, two roles, the menu in the header, the pages open as "not built yet". The pages come one by one: see [docs/pages-progress.md](docs/pages-progress.md) |
+| Backend | only a sample (the `User` table); the real API comes after the pages |
 
 ## Structure
 
 ```text
 backend/    Express API (MVC + Service layer, Prisma/MySQL)
-frontend/   React app (Vite, Tailwind v4, shadcn/ui, i18next, vitest)
-docs/
-  api/              the API contract per module (start with README.md)
-  specs/            the design of each round of work (f2 ... f16, d1, d2)
-  pages-progress.md the page tracker and the change log
-  frontend-plan.md  the original plan
-BaseRequirement_md/ the requirements from the customer
+frontend/   React app (Vite, Tailwind v4, i18next, vitest, Playwright)
+docs/       the specs, the progress of the steps and the API contract
+BaseRequirement_md/   the requirements
 ```
 
 ## Run the frontend with the mock (no database)
@@ -33,15 +30,13 @@ pnpm install
 pnpm run dev          # http://localhost:5173
 ```
 
-`frontend/.env.development` decides what the mock starts with:
-
-- `VITE_USE_MOCK=true` answers every API call from `frontend/src/services/mock/` (set to `false` to call the real API at `VITE_API_URL`).
-- `VITE_MOCK_SEED=empty` starts with **no business records** (the workflow test); the work you do is kept in the browser. Remove the line for the demo data. The test users are in `frontend/src/services/mock/users.js`.
+`VITE_USE_MOCK=true` (in `frontend/.env.development`) answers every API call from `frontend/src/services/mock/`; what a person does is kept in the browser. The users: `admin@gmail.com` / `admin` (Admin) and `worker@gmail.com` / `worker` (Worker).
 
 ```bash
-pnpm run test         # vitest (mock rules, pages, components)
+pnpm run test         # vitest
 pnpm run lint
 pnpm run build
+pnpm run e2e          # Playwright (a browser is installed once: pnpm exec playwright install chromium)
 ```
 
 ## Run the full stack
@@ -52,33 +47,4 @@ pnpm run db:migrate   # after you fill DATABASE_URL in backend/.env
 pnpm run kanou        # backend http://localhost:3000/api and frontend http://localhost:5173
 ```
 
-Other scripts: `pnpm run db:studio` opens Prisma Studio (http://localhost:5555).
-
-Never commit real credentials — commit `.env.example`, not `.env`.
-
-## Modules
-
-| Menu | What it does |
-|---|---|
-| Sale | Quotations, customer POs, sale orders (Manager confirmation), delivery notes |
-| Factory | Work orders, production tracking per step, finished goods transfer, S/N of each unit |
-| Stock | Balances (on hand, reserved, available), movements, adjustments (Manager approval) |
-| Purchase | Stock status board, purchase orders (manual approval by a Manager), goods receipts |
-| Accounting | Invoices, receipts, supplier bills, payments, journal, accounting master |
-| Traceability | Search an S/N and read the whole life of that unit |
-| Master Data | Customers, suppliers, products (BOM, routing), materials, warehouses, machines, employees, units, price lists |
-| Administration | Users with department + role, the permission matrix |
-
-Departments are Sale, Factory, Purchase and Accounting; roles are Admin, Manager and Worker. The menu and the Dashboard follow the department and role of the signed-in user.
-
-## Backend API today
-
-```text
-GET    /api/users
-GET    /api/users/:id
-POST   /api/users
-PUT    /api/users/:id
-DELETE /api/users/:id
-```
-
-The contract of everything else is in [docs/api](docs/api/README.md).
+Never commit real credentials: commit `.env.example`, not `.env`.

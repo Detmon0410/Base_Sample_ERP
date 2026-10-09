@@ -18,5 +18,6 @@ export default defineConfig({
     // The API tests run against the local mock (services/mock), exactly like the app in demo mode.
     env: { VITE_USE_MOCK: 'true' },
     css: false,
+    exclude: ["**/node_modules/**", "e2e/**"], // e2e/ is Playwright (npm run e2e)
   },
 })

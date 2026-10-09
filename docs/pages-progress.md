@@ -9,7 +9,7 @@ Plan: [specs/s1-mini-erp-workflow.md](specs/s1-mini-erp-workflow.md) (workflow a
 | P0 | Prune: the cut pages, mock modules, services, config, tests, texts and docs are deleted; two roles (Admin, Worker); the menu in the header; the 8 menu pages open as "not built yet" | ✅ |
 | U1 | The base of the look: tokens, `ui/` parts, the header, the page parts, the login | ✅ |
 | P1 | Customers, products + BOM, materials + lots, users (pages, not sheets) | ✅ |
-| P2 | QT references with the file | ⬜ |
+| P2 | QT references with the file | ✅ |
 | P3 | Production orders, product lines, processes, progress history | ⬜ |
 | P4 | Stock changes and history | ⬜ |
 | P5 | Invoice, payment, receipt, print / PDF | ⬜ |
@@ -23,3 +23,4 @@ Plan: [specs/s1-mini-erp-workflow.md](specs/s1-mini-erp-workflow.md) (workflow a
 | 2026-10-09 | **P0**: pruned to the shell. Users: Admin and Worker only (`admin@gmail.com` / `admin`, `worker@gmail.com` / `worker`). The sidebar is gone; the menu is a row in the header (a bare structure, the look is U1). Kept as the base of the next steps: `ui/` (alert-dialog, badge, table, textarea and the parts of the sign-in), `services/crud.js`, `utils/format.js`, `utils/dates.js`, `utils/aria.js`, the mock adapter with its persistence log. |
 | 2026-10-09 | **U1**: the look base. Theme #7C7BAD, radius 0, flat (no shadows or rings), underline-only fields, bold-header lists with thin lines, grey page-title band with a status word in a square box, purple header bar, teal links (#017E84). No icons left: lucide-react removed, login uses a text "Show password". |
 | 2026-10-09 | **P1**: master data. Customers (`/customers`), products with BOM (`/products`), materials with lots (`/stock`, the stock changes come in P4), users (`/users`). Each is a list (search, status filter, 20 rows a page) and a page for a new or an existing record; errors only after Save, after Save the list opens, a record is made inactive after a confirmation (never deleted). A Worker reads products and materials only. Mock: `services/mock/master.js`; shared parts: `RecordList`, `RecordFormPage`, `FormFields`, `useLoad`. Tests: `master.test.js` (6) and `e2e/master.spec.js`. |
+| 2026-10-09 | **P2**: QT references (`/qt`, Admin). QT number (unique, typed), QT date (typed YYYY-MM-DD), customer, notes, the QT file (PDF / PNG / JPG up to 10 MB, kept as a data URL in the mock; download link on the record). The list does not carry the file data. Mock: `services/mock/qt.js` (built on the `resource()` helper of `master.js`). Tests: `qt.test.js` (3). Playwright is not run for P2 on request; its case comes later. |

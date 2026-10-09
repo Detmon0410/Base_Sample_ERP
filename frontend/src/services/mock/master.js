@@ -8,17 +8,17 @@ import { mockUsers, toPublicUser, userFromAuthorization } from "./users.js";
 import { DEPARTMENTS, ROLES } from "@/utils/permissions";
 
 const stamp = () => new Date().toISOString();
-const text = (value) => String(value ?? "").trim();
-const number = (value) => (value === "" || value === null || value === undefined ? NaN : Number(value));
+export const text = (value) => String(value ?? "").trim();
+export const number = (value) => (value === "" || value === null || value === undefined ? NaN : Number(value));
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const invalid = (issues) => {
+export const invalid = (issues) => {
   throw new MockHttpError(400, "VALIDATION_ERROR", "Validation failed", issues);
 };
-const issue = (field, code) => ({ path: field.split("."), code });
+export const issue = (field, code) => ({ path: field.split("."), code });
 
 /** Builds the 5 routes of one resource. `normalize(body, record)` returns the clean fields or throws through `invalid`. */
-function resource({ path, store, readRoles, normalize, unique = [], searchIn, toView = (record) => record, beforeStatus }) {
+export function resource({ path, store, readRoles, normalize, unique = [], searchIn, toView = (record) => record, toListView = toView, beforeStatus }) {
   let nextId = store.reduce((max, record) => Math.max(max, record.id), 0) + 1;
 
   const access = (authorization, write) => {
@@ -44,11 +44,11 @@ function resource({ path, store, readRoles, normalize, unique = [], searchIn, to
     [`GET ${path}`]: ({ authorization, query }) => {
       access(authorization, false);
       const q = text(query.q).toLowerCase();
-      let rows = store.filter((record) => (!query.status || record.status === query.status) && (!q || searchIn.some((field) => String(record[field] ?? "").toLowerCase().includes(q))));
+      let rows = store.filter((record) => (!query.status || record.status === query.status) && (!q || searchIn.some((field) => String((typeof field === "function" ? field(record) : record[field]) ?? "").toLowerCase().includes(q))));
       rows = [...rows].sort((a, b) => b.id - a.id);
       const pageSize = Math.max(1, Number(query.pageSize) || 20);
       const page = Math.max(1, Number(query.page) || 1);
-      return new MockResponse({ data: rows.slice((page - 1) * pageSize, page * pageSize).map(toView), meta: { page, pageSize, total: rows.length } });
+      return new MockResponse({ data: rows.slice((page - 1) * pageSize, page * pageSize).map(toListView), meta: { page, pageSize, total: rows.length } });
     },
     [`GET ${path}/:id`]: ({ authorization, params }) => {
       access(authorization, false);

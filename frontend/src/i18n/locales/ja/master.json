@@ -1,0 +1,97 @@
+{
+  "status": {
+    "active": "有効",
+    "inactive": "無効"
+  },
+  "list": {
+    "search": "検索",
+    "status": "状態",
+    "statusColumn": "状態",
+    "all": "すべて",
+    "empty": "まだ登録がありません。",
+    "noMatch": "該当するデータがありません。"
+  },
+  "form": {
+    "back": "一覧へ戻る",
+    "notFound": "データが見つかりません",
+    "saved": "保存しました。",
+    "statusChanged": "状態を変更しました。",
+    "checkFields": "入力内容を確認してください。印のある項目をご確認ください。",
+    "makeInactive": "無効にする",
+    "makeActive": "有効にする",
+    "inactiveTitle": "このデータを無効にしますか？",
+    "inactiveText": "データは残りますが、新しい作業では選べなくなります。あとで有効に戻せます。",
+    "activeTitle": "このデータを有効にしますか？",
+    "activeText": "新しい作業で選べるようになります。"
+  },
+  "errors": {
+    "REQUIRED": "入力または選択してください。",
+    "INVALID": "正しい値を入力してください。",
+    "DUPLICATE": "この値はすでに使われています。",
+    "TOO_SHORT": "6文字以上で入力してください。",
+    "CANNOT_DEACTIVATE_SELF": "自分のアカウントは無効にできません。",
+    "FORBIDDEN": "この操作を行う権限がありません。",
+    "NOT_FOUND": "データが見つかりません。",
+    "LOAD_FAILED": "一覧を読み込めませんでした。もう一度お試しください。",
+    "UNKNOWN_ERROR": "予期しないエラーが発生しました。もう一度お試しください。"
+  },
+  "customers": {
+    "title": "顧客",
+    "new": "顧客を追加",
+    "section": "顧客",
+    "name": "名称",
+    "address": "住所",
+    "email": "メールアドレス",
+    "telephone": "電話番号"
+  },
+  "products": {
+    "title": "製品",
+    "new": "製品を追加",
+    "section": "製品",
+    "code": "コード",
+    "name": "品名",
+    "price": "単価",
+    "bom": "部品表（製品1台あたり）",
+    "bomLines": "材料数",
+    "material": "材料",
+    "quantity": "数量",
+    "chooseMaterial": "材料を選択",
+    "noBom": "材料がまだありません。",
+    "addLine": "材料を追加",
+    "removeLine": "削除"
+  },
+  "materials": {
+    "title": "材料と在庫",
+    "new": "材料を追加",
+    "section": "材料",
+    "code": "コード",
+    "name": "品名",
+    "lots": "ロット",
+    "lotNumber": "ロット番号",
+    "quantity": "数量",
+    "lotCount": "ロット数",
+    "total": "在庫合計",
+    "noLots": "ロットがまだありません。",
+    "addLot": "ロットを追加",
+    "removeLot": "削除"
+  },
+  "users": {
+    "title": "ユーザー",
+    "new": "ユーザーを追加",
+    "section": "ユーザー",
+    "name": "氏名",
+    "email": "メールアドレス",
+    "department": "部署",
+    "role": "権限",
+    "password": "パスワード",
+    "newPassword": "新しいパスワード",
+    "passwordHint": "パスワードを変更しない場合は空欄のままにしてください。",
+    "chooseDepartment": "部署を選択",
+    "departments": {
+      "Sales": "営業",
+      "Factory": "工場",
+      "Accounting": "経理",
+      "Administration": "管理"
+    }
+  }
+}

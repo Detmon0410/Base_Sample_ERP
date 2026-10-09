@@ -1,0 +1,97 @@
+{
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "list": {
+    "search": "Search",
+    "status": "Status",
+    "statusColumn": "Status",
+    "all": "All",
+    "empty": "Nothing here yet.",
+    "noMatch": "No record matches."
+  },
+  "form": {
+    "back": "Back to the list",
+    "notFound": "Record not found",
+    "saved": "Saved.",
+    "statusChanged": "The status was changed.",
+    "checkFields": "Some fields need your attention. Please check the marked fields.",
+    "makeInactive": "Make inactive",
+    "makeActive": "Make active",
+    "inactiveTitle": "Make this record inactive?",
+    "inactiveText": "It stays in the system but cannot be chosen for new work. You can make it active again.",
+    "activeTitle": "Make this record active?",
+    "activeText": "It can be chosen for new work again."
+  },
+  "errors": {
+    "REQUIRED": "Enter or choose a value.",
+    "INVALID": "Enter a valid value.",
+    "DUPLICATE": "This value is already used.",
+    "TOO_SHORT": "Enter at least 6 characters.",
+    "CANNOT_DEACTIVATE_SELF": "You cannot make your own account inactive.",
+    "FORBIDDEN": "You do not have permission to do this.",
+    "NOT_FOUND": "The record was not found.",
+    "LOAD_FAILED": "The list could not be loaded. Please try again.",
+    "UNKNOWN_ERROR": "An unexpected error occurred. Please try again."
+  },
+  "customers": {
+    "title": "Customers",
+    "new": "New customer",
+    "section": "Customer",
+    "name": "Name",
+    "address": "Address",
+    "email": "Email",
+    "telephone": "Telephone"
+  },
+  "products": {
+    "title": "Products",
+    "new": "New product",
+    "section": "Product",
+    "code": "Code",
+    "name": "Name",
+    "price": "Price",
+    "bom": "Bill of materials (for one product)",
+    "bomLines": "Materials",
+    "material": "Material",
+    "quantity": "Quantity",
+    "chooseMaterial": "Choose a material",
+    "noBom": "No materials yet.",
+    "addLine": "Add a material",
+    "removeLine": "Remove"
+  },
+  "materials": {
+    "title": "Materials and stock",
+    "new": "New material",
+    "section": "Material",
+    "code": "Code",
+    "name": "Name",
+    "lots": "Lots",
+    "lotNumber": "Lot number",
+    "quantity": "Quantity",
+    "lotCount": "Lots",
+    "total": "Total quantity",
+    "noLots": "No lots yet.",
+    "addLot": "Add a lot",
+    "removeLot": "Remove"
+  },
+  "users": {
+    "title": "Users",
+    "new": "New user",
+    "section": "User",
+    "name": "Name",
+    "email": "Email",
+    "department": "Department",
+    "role": "Role",
+    "password": "Password",
+    "newPassword": "New password",
+    "passwordHint": "Leave the password empty to keep the current one.",
+    "chooseDepartment": "Choose a department",
+    "departments": {
+      "Sales": "Sales",
+      "Factory": "Factory",
+      "Accounting": "Accounting",
+      "Administration": "Administration"
+    }
+  }
+}

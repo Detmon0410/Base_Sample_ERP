@@ -78,6 +78,7 @@
   },
   "customers": {
     "new": "",
+    "singular": "",
     "empty": "",
     "noResult": "",
     "columns": {

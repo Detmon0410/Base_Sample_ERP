@@ -18,7 +18,7 @@ const ICONS = { uom: RulerIcon, warehouses: WarehouseIcon, machines: CogIcon, em
 
 /** Create / edit form of a flat master data entity (config/simpleMaster.js). */
 export function SimpleFormPage({ entity }) {
-  const { t } = useTranslation(["master", "nav"]);
+  const { t, i18n } = useTranslation(["master", "nav"]);
   const schema = useMemo(() => buildSchema(entity), [entity]);
   const toValues = useMemo(() => (record) => toFormValues(entity, record), [entity]);
   const page = useRecordForm({
@@ -35,7 +35,9 @@ export function SimpleFormPage({ entity }) {
   const renderField = (field) => {
     const id = `${prefix}-${field.name}`;
     const label = t(`master:${entity.key}.form.fields.${field.name}`);
-    const placeholder = t(`master:${entity.key}.form.placeholders.${field.name}`, { defaultValue: "" });
+    // a field without a placeholder text has none (i18next would print the key for an empty default, so ask first)
+    const placeholderKey = `master:${entity.key}.form.placeholders.${field.name}`;
+    const placeholder = i18n.exists(placeholderKey) ? t(placeholderKey) : undefined;
 
     if (field.type === "select") {
       return (

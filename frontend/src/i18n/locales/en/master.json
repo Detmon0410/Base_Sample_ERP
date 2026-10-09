@@ -78,6 +78,7 @@
   },
   "customers": {
     "new": "New customer",
+    "singular": "customer",
     "empty": "No customers yet.",
     "noResult": "No customer matches. Clear the search or the status filter.",
     "columns": {

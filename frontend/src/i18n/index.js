@@ -51,6 +51,14 @@ i18n
     ns: ["common", "auth", "nav", "dashboard", "master", "sale", "factory", "stock", "purchase", "accounting", "users", "trace"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
+    // Development only: a key with no text in English is a bug. It is collected in window.__missingKeys and reported as a console
+    // error, so the Playwright tests (which fail on a console error) catch it on every page they visit.
+    saveMissing: import.meta.env.DEV,
+    missingKeyHandler: (languages, namespace, key) => {
+      if (!languages.includes("en")) return; // another language falls back to English, that is not an error
+      (window.__missingKeys ??= new Set()).add(`${namespace}:${key}`);
+      console.error(`Missing translation: ${namespace}:${key}`);
+    },
     detection: {
       order: ["localStorage"],
       lookupLocalStorage: LANGUAGE_STORAGE_KEY,

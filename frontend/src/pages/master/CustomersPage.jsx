@@ -12,6 +12,7 @@ function CustomerForm() {
   const { t } = useTranslation("master");
   return (
     <RecordFormPage
+      withStatus={false}
       api={customersApi}
       listPath="/customers"
       newTitle={t("customers.new")}
@@ -46,6 +47,7 @@ export function CustomersPage() {
         index
         element={
           <RecordList
+            withStatus={false}
             api={customersApi}
             base="/customers"
             title={t("customers.title")}

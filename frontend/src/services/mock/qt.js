@@ -29,6 +29,7 @@ export const qtRoutes = resource({
   store: qtReferences,
   readRoles: ["Admin"],
   unique: ["qtNumber"],
+  withStatus: true,
   searchIn: ["qtNumber", "notes", customerName],
   toView: withCustomer,
   toListView: withoutFileData,

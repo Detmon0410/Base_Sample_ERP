@@ -23,16 +23,17 @@ import { applyServerErrors } from "@/utils/serverErrors";
 /**
  * The page of one record (a new one, or `/:id`): the title band with the status word, the fields (`children`), and Save / Cancel
  * at the bottom (docs/specs/s1-mini-erp-workflow.md, section 7b). Errors are shown only after Save; after Save the list opens.
- * A record is never deleted: an Admin makes it inactive (after a confirmation) or active again.
+ * With `withStatus` (a QT reference) an Admin makes the record inactive (after a confirmation) or active again; master data has no status.
  *
  *   api        the calls of the resource (services/crud.js)
  *   listPath   where Cancel and a successful Save go
  *   newTitle   title of a new record;  titleOf(record) the title of an existing one
  *   defaults   the empty form;  toForm(record) -> form values;  toBody(values) -> what is sent
+ *   withStatus the status word, and the button that makes the record inactive or active (default true)
  *   readOnly   no Save and no status button (a Worker looking at products or materials)
  *   children   ({ form, record, readOnly }) => the fields
  */
-export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, children }) {
+export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, withStatus = true, children }) {
   const { id } = useParams();
   const isNew = !id;
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
 
   return (
     <>
-      <PageHeader title={isNew ? newTitle : titleOf(record)} status={record ? t(`master:status.${record.status}`) : null} />
+      <PageHeader title={isNew ? newTitle : titleOf(record)} status={withStatus && record ? t(`master:status.${record.status}`) : null} />
 
       <form noValidate onSubmit={onSubmit} className="flex max-w-3xl flex-col gap-5">
         {summary ? (
@@ -105,7 +106,7 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
           <Button asChild variant="outline">
             <Link to={listPath}>{readOnly ? t("master:form.back") : t("common:actions.cancel")}</Link>
           </Button>
-          {readOnly || isNew ? null : (
+          {readOnly || isNew || !withStatus ? null : (
             <Button type="button" variant={active ? "destructive" : "outline"} className="ml-auto" onClick={() => setAsking(true)}>
               {active ? t("master:form.makeInactive") : t("master:form.makeActive")}
             </Button>

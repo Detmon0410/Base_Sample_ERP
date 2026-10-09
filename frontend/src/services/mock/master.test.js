@@ -47,22 +47,21 @@ describe("master data of the mock", () => {
     expect(fails(() => call("GET /users", worker)).status).toBe(403);
   });
 
-  it("makes a record inactive instead of deleting it, and an inactive user cannot sign in", () => {
+  it("has no status and no delete for master data, and a user can sign in at once", () => {
     const made = call("POST /users", admin, { body: { name: "Mika", department: "Factory", email: "Mika@Factory.jp", role: "Worker", password: "secret1" } }).data;
     expect(made).toMatchObject({ email: "mika@factory.jp", role: "Worker" });
     expect(made.password).toBeUndefined();
     expect(login({ email: "mika@factory.jp", password: "secret1" }).user.name).toBe("Mika");
 
-    call("PATCH /users/:id/status", admin, { params: { id: made.id }, body: { status: "inactive" } });
-    expect(fails(() => login({ email: "mika@factory.jp", password: "secret1" })).code).toBe("ACCOUNT_INACTIVE");
-    expect(call("GET /users", admin, { query: { status: "inactive" } }).meta.total).toBe(1);
-    expect(mockRoutes["DELETE /users/:id"]).toBeUndefined();
+    for (const resource of ["customers", "products", "materials", "users"]) {
+      expect(mockRoutes[`PATCH /${resource}/:id/status`]).toBeUndefined();
+      expect(mockRoutes[`DELETE /${resource}/:id`]).toBeUndefined();
+    }
   });
 
-  it("refuses a short password, a second user with the same e-mail, and making yourself inactive", () => {
+  it("refuses a short password and a second user with the same e-mail", () => {
     expect(fails(() => call("POST /users", admin, { body: { name: "A", department: "Sales", email: "x@y.jp", role: "Admin", password: "123" } })).details).toEqual([{ path: ["password"], code: "TOO_SHORT" }]);
     expect(fails(() => call("POST /users", admin, { body: { name: "A", department: "Sales", email: "ADMIN@gmail.com", role: "Admin", password: "123456" } })).status).toBe(409);
-    expect(fails(() => call("PATCH /users/:id/status", admin, { params: { id: admin.id }, body: { status: "inactive" } })).code).toBe("CANNOT_DEACTIVATE_SELF");
   });
 
   it("pages the list: 20 rows a page, newest first", () => {

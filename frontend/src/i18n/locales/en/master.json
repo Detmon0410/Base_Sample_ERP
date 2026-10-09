@@ -29,7 +29,6 @@
     "INVALID": "Enter a valid value.",
     "DUPLICATE": "This value is already used.",
     "TOO_SHORT": "Enter at least 6 characters.",
-    "CANNOT_DEACTIVATE_SELF": "You cannot make your own account inactive.",
     "FORBIDDEN": "You do not have permission to do this.",
     "NOT_FOUND": "The record was not found.",
     "LOAD_FAILED": "The list could not be loaded. Please try again.",

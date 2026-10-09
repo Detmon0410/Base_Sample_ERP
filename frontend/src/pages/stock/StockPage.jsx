@@ -64,6 +64,7 @@ function MaterialForm() {
   const readOnly = !isAdmin(user);
   return (
     <RecordFormPage
+      withStatus={false}
       api={materialsApi}
       listPath="/stock"
       newTitle={t("materials.new")}
@@ -113,6 +114,7 @@ export function StockPage() {
         index
         element={
           <RecordList
+            withStatus={false}
             api={materialsApi}
             base="/stock"
             title={t("materials.title")}

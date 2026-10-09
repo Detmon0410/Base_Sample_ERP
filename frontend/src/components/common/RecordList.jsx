@@ -16,13 +16,13 @@ const PAGE_SIZE = 20;
  * with Previous / Next (docs/specs/s2-mini-erp-look.md). The first column of a row is the link to its page (`${base}/${id}`).
  * `columns` is [{ key, header, cell?(row) }]; the status column is added at the end.
  */
-export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf }) {
+export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf, withStatus = true }) {
   const { t } = useTranslation(["master", "common"]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data, error, loading } = useLoad(() => api.list({ q: q.trim() || undefined, status: status || undefined, page, pageSize: PAGE_SIZE }), [q, status, page]);
+  const { data, error, loading } = useLoad(() => api.list({ q: q.trim() || undefined, status: withStatus ? status || undefined : undefined, page, pageSize: PAGE_SIZE }), [q, status, page]);
   const rows = data?.items ?? [];
   const total = data?.meta?.total ?? 0;
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
@@ -53,21 +53,23 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
             }}
           />
         </label>
-        <label className="flex w-48 flex-col gap-1 text-sm font-semibold">
-          {t("master:list.status")}
-          <NativeSelect
-            value={status}
-            onChange={(event) => {
-              setStatus(event.target.value);
-              setPage(1);
-            }}
-            options={statusOptions ?? [
-              { value: "", label: t("master:list.all") },
-              { value: "active", label: t("master:status.active") },
-              { value: "inactive", label: t("master:status.inactive") },
-            ]}
-          />
-        </label>
+        {withStatus ? (
+          <label className="flex w-48 flex-col gap-1 text-sm font-semibold">
+            {t("master:list.status")}
+            <NativeSelect
+              value={status}
+              onChange={(event) => {
+                setStatus(event.target.value);
+                setPage(1);
+              }}
+              options={statusOptions ?? [
+                { value: "", label: t("master:list.all") },
+                { value: "active", label: t("master:status.active") },
+                { value: "inactive", label: t("master:status.inactive") },
+              ]}
+            />
+          </label>
+        ) : null}
       </div>
 
       {error ? (
@@ -84,7 +86,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
                     {column.header}
                   </TableHead>
                 ))}
-                <TableHead className="px-4">{t("master:list.statusColumn")}</TableHead>
+                {withStatus ? <TableHead className="px-4">{t("master:list.statusColumn")}</TableHead> : null}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -98,9 +100,11 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
                       </TableCell>
                     );
                   })}
-                  <TableCell data-label={t("master:list.statusColumn")} className="px-4 py-3">
-                    {statusOf ? statusOf(row) : t(`master:status.${row.status}`)}
-                  </TableCell>
+                  {withStatus ? (
+                    <TableCell data-label={t("master:list.statusColumn")} className="px-4 py-3">
+                      {statusOf ? statusOf(row) : t(`master:status.${row.status}`)}
+                    </TableCell>
+                  ) : null}
                 </TableRow>
               ))}
             </TableBody>

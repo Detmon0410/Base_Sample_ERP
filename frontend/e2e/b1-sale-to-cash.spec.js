@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-import { act, expectStatus, expectToast, openAs, openRow, pick, pickFirst, pickToday, save, seedOpeningStock, sheet } from "./flow.js";
-import { USERS, settle, watchErrors } from "./helpers.js";
+import { act, errorsOf, expectStatus, expectToast, openAs, openRow, pick, pickFirst, pickToday, save, seedOpeningStock, sheet } from "./flow.js";
+import { USERS, settle } from "./helpers.js";
 
 // B1 of docs/specs/t1-playwright-test-plan.md: from a quotation to the money in the bank, one tab per user.
 test("B1 sale to cash: quotation, order, production, delivery, invoice, receipt", async ({ context }) => {
@@ -9,7 +9,6 @@ test("B1 sale to cash: quotation, order, production, delivery, invoice, receipt"
   await seedOpeningStock(context);
 
   const saleWorker = await openAs(context, USERS.saleWorker);
-  const errors = watchErrors(saleWorker);
 
   await test.step("Sale Worker makes a quotation and sends it", async () => {
     await saleWorker.goto("/sale/quotations");
@@ -208,5 +207,5 @@ test("B1 sale to cash: quotation, order, production, delivery, invoice, receipt"
     await manager.close();
   });
 
-  expect(errors.take()).toEqual([]);
+  expect(errorsOf(context), "errors in the browser, in any tab").toEqual([]);
 });

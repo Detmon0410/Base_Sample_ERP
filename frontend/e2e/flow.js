@@ -1,14 +1,23 @@
 import { expect } from "@playwright/test";
 
-import { USERS, settle, signIn } from "./helpers.js";
+import { USERS, settle, signIn, watchErrors } from "./helpers.js";
 
 // Helpers for the end-to-end cases of the workflow (docs/specs/t1-playwright-test-plan.md, part B).
 
-/** A second tab of the same browser context, signed in as another user. The data is shared, the sign-in is not. */
+const watchers = new WeakMap();
+
+/** A tab of the same browser context, signed in as another user. The data is shared, the sign-in is not. What goes wrong in the tab is kept: see `errorsOf`. */
 export async function openAs(context, user) {
   const page = await context.newPage();
+  if (!watchers.has(context)) watchers.set(context, []);
+  watchers.get(context).push({ user: user.email, watch: watchErrors(page) });
   await signIn(page, user);
   return page;
+}
+
+/** Every console error, exception, failed request and missing translation of the tabs opened with `openAs`, with the user of the tab. */
+export function errorsOf(context) {
+  return (watchers.get(context) ?? []).flatMap(({ user, watch }) => watch.take().map((error) => `${user}: ${error}`));
 }
 
 /** Choose an option of an EntitySelect (the button with the id), by a part of its text: "C001", "RF-2D" ... */

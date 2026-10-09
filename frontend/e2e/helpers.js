@@ -106,14 +106,21 @@ export async function settle(page) {
   await expect(page.locator('main [aria-busy="true"]')).toHaveCount(0, { timeout: 15 * 1000 });
 }
 
-/** Texts on screen that look like a translation key that was not found, e.g. "accounting.overdueContext". */
+/** Texts on screen, and placeholders / labels / titles of fields, that look like a translation key that was not found, e.g. "accounting.overdueContext". */
 export async function rawKeys(page) {
   return page.evaluate(() => {
     const found = new Set();
+    const looksLikeKey = (text) => /^[a-z][a-zA-Z0-9]*([.][a-zA-Z0-9_]+)+$/.test(text) && !/[.](com|test|jp|js|md)$/.test(text);
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
       const text = walker.currentNode.textContent.trim();
-      if (/^[a-z][a-zA-Z0-9]*(\.[a-zA-Z0-9_]+){1,}$/.test(text) && !/\.(com|test|jp|js|md)$/.test(text)) found.add(text);
+      if (looksLikeKey(text)) found.add(text);
+    }
+    for (const element of document.querySelectorAll("[placeholder], [aria-label], [title], [alt]")) {
+      for (const name of ["placeholder", "aria-label", "title", "alt"]) {
+        const value = (element.getAttribute(name) ?? "").trim();
+        if (value && looksLikeKey(value)) found.add(`${name}: ${value}`);
+      }
     }
     return [...found];
   });

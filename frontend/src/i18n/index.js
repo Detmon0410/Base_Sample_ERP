@@ -7,12 +7,14 @@ import enCommon from "./locales/en/common.json";
 import enMaster from "./locales/en/master.json";
 import enInvoices from "./locales/en/invoices.json";
 import enNav from "./locales/en/nav.json";
+import enSummary from "./locales/en/summary.json";
 import enOrders from "./locales/en/orders.json";
 import jaAuth from "./locales/ja/auth.json";
 import jaCommon from "./locales/ja/common.json";
 import jaMaster from "./locales/ja/master.json";
 import jaInvoices from "./locales/ja/invoices.json";
 import jaNav from "./locales/ja/nav.json";
+import jaSummary from "./locales/ja/summary.json";
 import jaOrders from "./locales/ja/orders.json";
 
 export const SUPPORTED_LANGUAGES = [
@@ -27,8 +29,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { common: enCommon, auth: enAuth, nav: enNav, master: enMaster, orders: enOrders, invoices: enInvoices },
-      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, master: jaMaster, orders: jaOrders, invoices: jaInvoices },
+      en: { common: enCommon, auth: enAuth, nav: enNav, master: enMaster, orders: enOrders, invoices: enInvoices, summary: enSummary },
+      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, master: jaMaster, orders: jaOrders, invoices: jaInvoices, summary: jaSummary },
     },
     supportedLngs: SUPPORTED_LANGUAGES.map((language) => language.code),
     // English is the primary language. JA files hold the same keys with empty
@@ -36,7 +38,7 @@ i18n
     fallbackLng: "en",
     returnEmptyString: false,
     defaultNS: "common",
-    ns: ["common", "auth", "nav", "master", "orders", "invoices"],
+    ns: ["common", "auth", "nav", "master", "orders", "invoices", "summary"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
     // Development only: a key with no text in English is a bug. It is collected in window.__missingKeys and reported as a console

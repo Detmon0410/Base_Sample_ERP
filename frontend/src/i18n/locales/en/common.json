@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "Refrigerator Factory",
-    "tagline": "Manage sales, production, stock, purchasing and accounting in one place."
+    "name": "Refrigerator Factory"
   },
   "language": {
     "label": "Language"
@@ -9,13 +8,9 @@
   "actions": {
     "save": "Save",
     "cancel": "Cancel",
-    "back": "Back",
-    "backToDashboard": "Back to Dashboard",
-    "retry": "Try again",
     "saving": "Saving…",
-    "approve": "Approve",
-    "reject": "Reject",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "backToSummary": "Back to the Summary"
   },
   "pages": {
     "notFound": {
@@ -33,52 +28,7 @@
     "showing": "Showing {{from}}–{{to}} of {{total}}",
     "none": "No records",
     "previous": "Previous",
-    "next": "Next",
-    "page": "Page {{page}}",
-    "show": "Show",
-    "perPage": "Rows per page"
-  },
-  "detail": {
-    "noLinkedDocuments": "No linked documents yet.",
-    "history": "Status history",
-    "noHistory": "No history yet.",
-    "by": "by {{name}}",
-    "resize": "Drag to resize the panel"
-  },
-  "approval": {
-    "waiting": "Waiting for approval by the {{department}} Manager.",
-    "approveTitle": "Approve this document?",
-    "approveDescription": "The document moves on to the next step and the requester is notified.",
-    "rejectTitle": "Reject this document?",
-    "rejectDescription": "The document goes back to the requester. Please say what needs to change.",
-    "reasonLabel": "Reason",
-    "reasonRequired": "A reason is required.",
-    "reasonPlaceholder": "What needs to change?"
-  },
-  "toolbar": {
-    "filters": "Filters",
-    "search": "Search",
-    "all": "All",
-    "from": "From",
-    "to": "To",
-    "done": "Done",
-    "noMatch": "No match",
-    "clearAll": "Clear filters",
-    "remove": "Remove filter"
-  },
-  "empty": {
-    "noRecordsTitle": "Nothing here yet",
-    "noResultTitle": "No results"
-  },
-  "datePicker": {
-    "choose": "Choose a date",
-    "clear": "Clear",
-    "today": "Today"
-  },
-  "views": {
-    "cards": "Cards",
-    "table": "Table",
-    "label": "Show as"
+    "next": "Next"
   },
   "toasts": "Notifications"
 }

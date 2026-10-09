@@ -16,10 +16,6 @@
     "Admin": "管理者",
     "Worker": "担当者"
   },
-  "breadcrumb": {
-    "new": "新規作成",
-    "detail": "詳細"
-  },
   "underConstruction": {
     "title": "このページは準備中です",
     "description": "今後追加予定です。メニューから他のページをご利用ください。"

@@ -1,0 +1,10 @@
+{
+  "orders": "製造指示書",
+  "new": "新規",
+  "inProgress": "作業中",
+  "completed": "完了",
+  "invoices": "請求書",
+  "unpaidCount": "未入金の請求書",
+  "unpaidTotal": "未入金の合計",
+  "failed": "数値を読み込めませんでした。もう一度お試しください。"
+}

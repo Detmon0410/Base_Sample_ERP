@@ -1,0 +1,10 @@
+{
+  "orders": "Production orders",
+  "new": "New",
+  "inProgress": "In progress",
+  "completed": "Completed",
+  "invoices": "Invoices",
+  "unpaidCount": "Unpaid invoices",
+  "unpaidTotal": "Unpaid total",
+  "failed": "The numbers could not be loaded. Please try again."
+}

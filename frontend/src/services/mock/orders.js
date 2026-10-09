@@ -15,6 +15,8 @@ import { qtReferences } from "./qt.js";
 import { userFromAuthorization } from "./users.js";
 
 export const orders = [];
+/** The invoices live here too: an order that has an invoice cannot change any more (the store is filled by invoices.js). */
+export const invoices = [];
 
 const STATUSES = ["Not Started", "In Progress", "Completed"];
 let nextId = 1;
@@ -47,6 +49,10 @@ function toView(order) {
     status: orderStatus(order),
     qtNumber: qtReferences.find((qt) => qt.id === order.qtId)?.qtNumber ?? "",
     customerName: customers.find((customer) => customer.id === order.customerId)?.name ?? "",
+    invoice: (() => {
+      const invoice = invoices.find((item) => item.orderId === order.id);
+      return invoice ? { id: invoice.id, invoiceNumber: invoice.invoiceNumber, status: invoice.status } : null;
+    })(),
     lines,
     history: [...order.history].reverse().map((entry) => ({ ...entry, processName: names.get(entry.processId) ?? "" })),
   };
@@ -165,6 +171,7 @@ export const orderRoutes = {
     const user = access(authorization, false);
     const order = find(params.id);
     if (!order.started) throw new MockHttpError(409, "ORDER_NOT_STARTED", "The order has not started");
+    if (invoices.some((invoice) => invoice.orderId === order.id)) throw new MockHttpError(409, "ORDER_INVOICED", "The order is invoiced; its progress cannot change");
 
     const processId = Number(body.processId);
     const line = order.lines.find((item) => item.processes.some((process) => process.id === processId));

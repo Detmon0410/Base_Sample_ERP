@@ -36,7 +36,9 @@
     "UNKNOWN_ERROR": "An unexpected error occurred. Please try again.",
     "INVALID_DATE": "Enter a real date as YYYY-MM-DD.",
     "FILE_TYPE": "Choose a PDF, PNG or JPG file.",
-    "FILE_TOO_BIG": "The file is larger than 10 MB."
+    "FILE_TOO_BIG": "The file is larger than 10 MB.",
+    "STOCK_NEGATIVE": "This change would make the lot negative.",
+    "LOT_NOT_FOUND": "This lot does not exist. Choose an existing lot."
   },
   "customers": {
     "title": "Customers",
@@ -109,5 +111,42 @@
     "file": "QT file",
     "attached": "Attached file",
     "fileHint": "PDF, PNG or JPG, up to 10 MB. The quotation itself is made outside this system."
+  },
+  "stock": {
+    "lotsTitle": "Lots and quantities",
+    "lotsHint": "The quantity of a lot changes only through a stock change.",
+    "noLots": "No lots yet.",
+    "lotNumber": "Lot number",
+    "quantity": "Quantity",
+    "total": "Total",
+    "changeTitle": "Change the stock",
+    "kind": "Type",
+    "kinds": {
+      "Add": "Add stock",
+      "Deduct": "Deduct (used)",
+      "Adjust": "Adjust after a count"
+    },
+    "lot": "Lot",
+    "chooseLot": "Choose a lot",
+    "newLot": "A new lot",
+    "newLotNumber": "New lot number",
+    "changeQuantity": "Quantity",
+    "adjustHint": "For an adjustment enter a plus or a minus number.",
+    "changeDate": "Date",
+    "order": "Production order (optional)",
+    "noOrder": "None",
+    "note": "Note",
+    "save": "Save the change",
+    "saved": "The stock was changed.",
+    "historyTitle": "Stock history",
+    "noHistory": "No stock changes yet.",
+    "colDate": "Date",
+    "colType": "Type",
+    "colLot": "Lot",
+    "colChange": "Change",
+    "colBalance": "Lot balance",
+    "colOrder": "Production order",
+    "colNote": "Note",
+    "colBy": "By"
   }
 }

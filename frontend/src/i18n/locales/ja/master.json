@@ -36,7 +36,9 @@
     "UNKNOWN_ERROR": "予期しないエラーが発生しました。もう一度お試しください。",
     "INVALID_DATE": "YYYY-MM-DD の形式で実在する日付を入力してください。",
     "FILE_TYPE": "PDF、PNG、JPG のファイルを選択してください。",
-    "FILE_TOO_BIG": "ファイルが 10 MB を超えています。"
+    "FILE_TOO_BIG": "ファイルが 10 MB を超えています。",
+    "STOCK_NEGATIVE": "この変更ではロットの在庫がマイナスになります。",
+    "LOT_NOT_FOUND": "このロットは存在しません。既存のロットを選んでください。"
   },
   "customers": {
     "title": "顧客",
@@ -109,5 +111,42 @@
     "file": "見積書ファイル",
     "attached": "添付ファイル",
     "fileHint": "PDF、PNG、JPG（10 MB まで）。見積書そのものは、このシステムの外で作成します。"
+  },
+  "stock": {
+    "lotsTitle": "ロットと数量",
+    "lotsHint": "ロットの数量は、在庫の変更でのみ変わります。",
+    "noLots": "ロットがまだありません。",
+    "lotNumber": "ロット番号",
+    "quantity": "数量",
+    "total": "合計",
+    "changeTitle": "在庫を変更",
+    "kind": "種類",
+    "kinds": {
+      "Add": "入庫",
+      "Deduct": "出庫（使用）",
+      "Adjust": "棚卸による調整"
+    },
+    "lot": "ロット",
+    "chooseLot": "ロットを選択",
+    "newLot": "新しいロット",
+    "newLotNumber": "新しいロット番号",
+    "changeQuantity": "数量",
+    "adjustHint": "調整では、プラスまたはマイナスの数を入力してください。",
+    "changeDate": "日付",
+    "order": "製造指示書（任意）",
+    "noOrder": "なし",
+    "note": "備考",
+    "save": "変更を保存",
+    "saved": "在庫を変更しました。",
+    "historyTitle": "在庫の履歴",
+    "noHistory": "在庫の変更はまだありません。",
+    "colDate": "日付",
+    "colType": "種類",
+    "colLot": "ロット",
+    "colChange": "増減",
+    "colBalance": "ロット残",
+    "colOrder": "製造指示書",
+    "colNote": "備考",
+    "colBy": "入力者"
   }
 }

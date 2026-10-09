@@ -1,6 +1,6 @@
 import { useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Route, Routes } from "react-router";
+import { Route, Routes, useParams } from "react-router";
 
 import { Section, TextField } from "@/components/common/FormFields";
 import { RecordFormPage } from "@/components/common/RecordFormPage";
@@ -12,11 +12,13 @@ import { formatNumber } from "@/utils/format";
 import { materialsApi } from "@/services/master.service";
 import { isAdmin } from "@/utils/permissions";
 
+import { StockChanges } from "./StockChanges";
+
 const EMPTY = { code: "", name: "", lots: [] };
 
 const total = (lots) => lots.reduce((sum, lot) => sum + Number(lot.quantity || 0), 0);
 
-/** The lots of a material: a lot number and the quantity of each. (Later the quantity changes only through a stock change, P4.) */
+/** The lots a NEW material starts with (each becomes an "Add" in the stock history). After that the lots change only through stock changes. */
 function LotLines({ form, readOnly }) {
   const { t } = useTranslation("master");
   const { fields, append, remove } = useFieldArray({ control: form.control, name: "lots" });
@@ -71,7 +73,7 @@ function MaterialForm() {
       toForm={(record) => ({ code: record.code, name: record.name, lots: record.lots })}
       toBody={(values) => values}
     >
-      {({ form }) => {
+      {({ form, record }) => {
         const errors = form.formState.errors;
         return (
           <>
@@ -81,7 +83,7 @@ function MaterialForm() {
                 <TextField label={t("materials.name")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />
               </div>
             </Section>
-            <LotLines form={form} readOnly={readOnly} />
+            {record ? null : <LotLines form={form} readOnly={readOnly} />}
           </>
         );
       }}
@@ -89,7 +91,19 @@ function MaterialForm() {
   );
 }
 
-/** Materials and stock: the materials with their quantity in all lots (the Worker only reads). The stock changes come in P4. */
+/** One material: its fields, and (once it exists) its lots, the stock changes (Admin) and the history. */
+function MaterialPage() {
+  const { id } = useParams();
+  const { user } = useAuth();
+  return (
+    <>
+      <MaterialForm />
+      {id ? <StockChanges materialId={id} canChange={isAdmin(user)} /> : null}
+    </>
+  );
+}
+
+/** Materials and stock: the materials with their quantity in all lots (the Worker only reads). */
 export function StockPage() {
   const { t, i18n } = useTranslation("master");
   const { user } = useAuth();
@@ -113,8 +127,8 @@ export function StockPage() {
           />
         }
       />
-      <Route path="new" element={<MaterialForm />} />
-      <Route path=":id" element={<MaterialForm />} />
+      <Route path="new" element={<MaterialPage />} />
+      <Route path=":id" element={<MaterialPage />} />
     </Routes>
   );
 }

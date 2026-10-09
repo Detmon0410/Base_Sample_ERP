@@ -85,5 +85,6 @@
     "INVALID_DATE": "YYYY-MM-DD の形式で実在する日付を入力してください。",
     "ORDER_INVOICED": "請求書を発行済みのため、進捗は変更できません。"
   },
-  "invoice": "請求書"
+  "invoice": "請求書",
+  "receipt": "領収書"
 }

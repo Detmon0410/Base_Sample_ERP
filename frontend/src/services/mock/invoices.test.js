@@ -39,7 +39,7 @@ describe("invoices, payments and receipts of the mock", () => {
     call("PUT /customers/:id", admin, { params: { id: customer.id }, body: { name: "Renamed", address: "Elsewhere" } });
     call("PUT /products/:id", admin, { params: { id: product.id }, body: { code: "INV-P", name: "Renamed", price: 5 } });
     expect(call("GET /invoices/:id", admin, { params: { id: invoice.id } })).toMatchObject({ customerName: "Invoice Customer", total: 9000 });
-    expect(call("GET /orders/:id", admin, { params: { id: made.id } }).invoice).toEqual({ id: invoice.id, invoiceNumber: invoice.invoiceNumber, status: "Unpaid" });
+    expect(call("GET /orders/:id", admin, { params: { id: made.id } }).invoice).toEqual({ id: invoice.id, invoiceNumber: invoice.invoiceNumber, status: "Unpaid", receiptNumber: null });
   });
 
   it("refuses an order that is not Completed, a second invoice for an order, and a Worker", () => {

@@ -118,6 +118,7 @@ export function OrderView({ order, onChanged }) {
               [t("orders:orderDate"), order.orderDate],
               [t("orders:startedAt"), order.started ? formatDateTime(order.startedAt, language) : t("orders:notStarted")],
               [t("orders:invoice"), order.invoice ? <Link key="invoice" to={`/invoices/${order.invoice.id}`}>{order.invoice.invoiceNumber}</Link> : null],
+              [t("orders:receipt"), order.invoice?.receiptNumber ? <Link key="receipt" to={`/invoices/${order.invoice.id}`}>{order.invoice.receiptNumber}</Link> : null],
               [t("orders:notes"), order.notes],
             ].map(([label, value], index) => (
               <div key={index}>

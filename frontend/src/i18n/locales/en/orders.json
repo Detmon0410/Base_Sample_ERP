@@ -85,5 +85,6 @@
     "INVALID_DATE": "Enter a real date as YYYY-MM-DD.",
     "ORDER_INVOICED": "The order is invoiced; its progress cannot change."
   },
-  "invoice": "Invoice"
+  "invoice": "Invoice",
+  "receipt": "Receipt"
 }

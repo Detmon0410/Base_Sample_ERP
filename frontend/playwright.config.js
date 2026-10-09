@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 // End-to-end tests (docs/specs/t1-playwright-test-plan.md). They run the app on its mock API with no business records
-// (VITE_MOCK_SEED=empty, from .env.development), so every test starts from the same empty state.
+// (a browser context starts with an empty browser, so every test starts from the same state).
 const PORT = 5310;
 
 export default defineConfig({

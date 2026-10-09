@@ -1,68 +1,28 @@
 import { expect } from "@playwright/test";
 
-/** The test users of the empty start (docs/specs/f13-workflow-test.md). */
+/** The users of the mock (frontend/src/services/mock/users.js). */
 export const USERS = {
   admin: { email: "admin@gmail.com", password: "admin" },
-  saleManager: { email: "sale.manager@kanou.test", password: "test1234" },
-  saleWorker: { email: "sale.worker@kanou.test", password: "test1234" },
-  factoryManager: { email: "factory.manager@kanou.test", password: "test1234" },
-  factoryWorker: { email: "factory.worker@kanou.test", password: "test1234" },
-  purchaseManager: { email: "purchase.manager@kanou.test", password: "test1234" },
-  purchaseWorker: { email: "purchase.worker@kanou.test", password: "test1234" },
-  accountingManager: { email: "accounting.manager@kanou.test", password: "test1234" },
-  accountingWorker: { email: "accounting.worker@kanou.test", password: "test1234" },
+  worker: { email: "worker@gmail.com", password: "worker" },
 };
 
-/** Every page of the menu (same list as src/config/navigation.js), its menu group and its "New" button when it has one. */
+/** Every page of the menu (src/config/navigation.js) and who may open it. */
 export const PAGES = [
-  { path: "/", group: null, name: "Dashboard" },
-  { path: "/sale/quotations", group: "Sale", name: "Quotations", newButton: true },
-  { path: "/sale/customer-pos", group: "Sale", name: "Customer POs", newButton: true },
-  { path: "/sale/orders", group: "Sale", name: "Sale Orders", newButton: true },
-  { path: "/sale/deliveries", group: "Sale", name: "Delivery Notes" },
-  { path: "/factory/work-orders", group: "Factory", name: "Work Orders", newButton: true },
-  { path: "/factory/tracking", group: "Factory", name: "Production tracking" },
-  { path: "/factory/transfers", group: "Factory", name: "FG Transfer", newButton: true },
-  { path: "/stock", group: "Stock", name: "Stock overview" },
-  { path: "/stock/movements", group: "Stock", name: "Stock movements" },
-  { path: "/stock/adjustments", group: "Stock", name: "Stock adjustment", newButton: true },
-  { path: "/purchase/stock-status", group: "Purchase", name: "Stock status board" },
-  { path: "/purchase/orders", group: "Purchase", name: "Purchase orders", newButton: true },
-  { path: "/purchase/receipts", group: "Purchase", name: "Goods receipt", newButton: true },
-  { path: "/purchase/approvals", group: "Purchase", name: "Approval log" },
-  { path: "/accounting/invoices", group: "Accounting", name: "Invoices", newButton: true },
-  { path: "/accounting/receipts", group: "Accounting", name: "Customer receipts", newButton: true },
-  { path: "/accounting/bills", group: "Accounting", name: "Supplier bills", newButton: true },
-  { path: "/accounting/payments", group: "Accounting", name: "Supplier payments", newButton: true },
-  { path: "/accounting/journal", group: "Accounting", name: "Journal", newButton: true },
-  { path: "/accounting/master", group: "Accounting", name: "Accounting master" },
-  { path: "/trace", group: "Traceability", name: "Product trace" },
-  { path: "/master/customers", group: "Master Data", name: "Customers", newButton: true },
-  { path: "/master/suppliers", group: "Master Data", name: "Suppliers", newButton: true },
-  { path: "/master/products", group: "Master Data", name: "Products", newButton: true },
-  { path: "/master/materials", group: "Master Data", name: "Materials", newButton: true },
-  { path: "/master/warehouses", group: "Master Data", name: "Warehouses", newButton: true },
-  { path: "/master/machines", group: "Master Data", name: "Machines", newButton: true },
-  { path: "/master/employees", group: "Master Data", name: "Employees", newButton: true },
-  { path: "/master/uom", group: "Master Data", name: "Units of measure", newButton: true },
-  { path: "/master/price-lists", group: "Master Data", name: "Price lists", newButton: true },
-  { path: "/admin/users", group: "Administration", name: "Users", newButton: true },
-  { path: "/admin/roles", group: "Administration", name: "Departments & roles" },
+  { path: "/", name: "Summary", roles: ["admin", "worker"] },
+  { path: "/qt", name: "QT references", roles: ["admin"] },
+  { path: "/orders", name: "Production orders", roles: ["admin", "worker"] },
+  { path: "/invoices", name: "Invoices", roles: ["admin"] },
+  { path: "/stock", name: "Stock", roles: ["admin", "worker"] },
+  { path: "/customers", name: "Customers", roles: ["admin"] },
+  { path: "/products", name: "Products", roles: ["admin", "worker"] },
+  { path: "/users", name: "Users", roles: ["admin"] },
 ];
 
-/** The menu groups each user should see (Traceability is open to every department). */
-export const GROUPS_OF = {
-  admin: ["Sale", "Factory", "Stock", "Purchase", "Accounting", "Traceability", "Master Data", "Administration"],
-  saleManager: ["Sale", "Traceability"],
-  saleWorker: ["Sale", "Traceability"],
-  factoryManager: ["Factory", "Stock", "Traceability"],
-  factoryWorker: ["Factory", "Stock", "Traceability"],
-  purchaseManager: ["Stock", "Purchase", "Traceability"],
-  purchaseWorker: ["Stock", "Purchase", "Traceability"],
-  accountingManager: ["Accounting", "Traceability"],
-  accountingWorker: ["Accounting", "Traceability"],
+/** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */
+export const MENU_OF = {
+  admin: ["Summary", "Orders", "Invoices", "Stock", "Master", "Users"],
+  worker: ["Summary", "Production orders", "Stock", "Products"],
 };
-export const ALL_GROUPS = GROUPS_OF.admin;
 
 /**
  * Collects what goes wrong in the browser while a test runs: console errors, uncaught exceptions, failed requests.

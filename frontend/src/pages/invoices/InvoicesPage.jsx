@@ -20,6 +20,8 @@ import { printDocument } from "@/utils/print";
 import { applyServerErrors } from "@/utils/serverErrors";
 
 const STATUSES = ["Unpaid", "Paid"];
+const METHODS = ["Cash", "Bank transfer", "Cheque", "Credit card", "Other"];
+const methodKey = (method) => String(method).split(" ").map((word) => word[0].toUpperCase() + word.slice(1)).join(""); // "Bank transfer" -> "BankTransfer", the key of its text
 
 /** A new invoice: choose a Completed order that has none, and the date. The invoice copies the order as it is now. */
 function InvoiceNew() {
@@ -154,6 +156,9 @@ function ReceiptDocument({ receipt, language }) {
       <p className="mt-6">
         {t("receipt.forInvoice")}: {receipt.invoiceNumber}
       </p>
+      <p>
+        {t("receipt.method")}: {t(`payment.methods.${methodKey(receipt.method)}`)}
+      </p>
       <p className="mt-4 text-right text-xl font-bold">
         {t("receipt.received")}: {formatCurrency(receipt.amount, language)}
       </p>
@@ -167,7 +172,7 @@ function PaymentForm({ invoice, onDone }) {
   const { t, i18n } = useTranslation(["invoices", "common"]);
   const [summary, setSummary] = useState(null);
   const [pending, setPending] = useState(null);
-  const form = useForm({ defaultValues: { paymentDate: todayIso(), amount: "" } });
+  const form = useForm({ defaultValues: { paymentDate: todayIso(), amount: "", method: "", reference: "" } });
   const errors = form.formState.errors;
 
   const pay = async () => {
@@ -195,6 +200,13 @@ function PaymentForm({ invoice, onDone }) {
         <div className="grid gap-5 sm:grid-cols-2">
           <TextField label={t("invoices:payment.date")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
           <TextField label={t("invoices:payment.amount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
+          <SelectField
+            label={t("invoices:payment.method")}
+            options={[{ value: "", label: t("invoices:payment.chooseMethod") }, ...METHODS.map((value) => ({ value, label: t(`invoices:payment.methods.${methodKey(value)}`) }))]}
+            error={errors.method?.message}
+            {...form.register("method")}
+          />
+          <TextField label={t("invoices:payment.reference")} error={errors.reference?.message} {...form.register("reference")} />
           <p className="text-sm text-muted-foreground sm:col-span-2">{t("invoices:payment.hint", { total: formatCurrency(invoice.total, i18n.language) })}</p>
         </div>
         <div>
@@ -233,7 +245,10 @@ function InvoicePage() {
 
         <Section title={t("invoices:payment.title")}>
           {invoice.payment ? (
-            <p>{t("invoices:payment.paidOn", { date: invoice.payment.date, amount: formatCurrency(invoice.payment.amount, language) })}</p>
+            <p>
+              {t("invoices:payment.paidOn", { date: invoice.payment.date, amount: formatCurrency(invoice.payment.amount, language), method: t(`invoices:payment.methods.${methodKey(invoice.payment.method)}`) })}
+              {invoice.payment.reference ? ` - ${invoice.payment.reference}` : ""}
+            </p>
           ) : (
             <PaymentForm invoice={invoice} onDone={reload} />
           )}

@@ -39,15 +39,26 @@
     "confirmTitle": "Record the payment?",
     "confirmText": "The invoice becomes Paid and one receipt is issued. This cannot be changed afterwards.",
     "done": "The payment was recorded and the receipt was issued.",
-    "paidOn": "Paid on {{date}}: {{amount}}",
-    "unpaid": "Not paid yet."
+    "paidOn": "Paid on {{date}}: {{amount}} by {{method}}",
+    "unpaid": "Not paid yet.",
+    "method": "Payment method",
+    "chooseMethod": "Choose a payment method",
+    "reference": "Reference or notes (optional)",
+    "methods": {
+      "Cash": "Cash",
+      "BankTransfer": "Bank transfer",
+      "Cheque": "Cheque",
+      "CreditCard": "Credit card",
+      "Other": "Other"
+    }
   },
   "receipt": {
     "title": "Receipt",
     "number": "Receipt number",
     "date": "Receipt date",
     "forInvoice": "For invoice",
-    "received": "Amount received"
+    "received": "Amount received",
+    "method": "Payment method"
   },
   "errors": {
     "ORDER_NOT_COMPLETED": "Only a completed order can be invoiced.",

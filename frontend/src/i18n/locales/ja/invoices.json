@@ -39,15 +39,26 @@
     "confirmTitle": "入金を登録しますか？",
     "confirmText": "請求書は入金済になり、領収書が1通発行されます。登録後は変更できません。",
     "done": "入金を登録し、領収書を発行しました。",
-    "paidOn": "{{date}} に入金：{{amount}}",
-    "unpaid": "まだ入金されていません。"
+    "paidOn": "{{date}} に {{method}} で入金：{{amount}}",
+    "unpaid": "まだ入金されていません。",
+    "method": "支払方法",
+    "chooseMethod": "支払方法を選択",
+    "reference": "参照番号・備考（任意）",
+    "methods": {
+      "Cash": "現金",
+      "BankTransfer": "銀行振込",
+      "Cheque": "小切手",
+      "CreditCard": "クレジットカード",
+      "Other": "その他"
+    }
   },
   "receipt": {
     "title": "領収書",
     "number": "領収書番号",
     "date": "領収日",
     "forInvoice": "対象の請求書",
-    "received": "領収金額"
+    "received": "領収金額",
+    "method": "支払方法"
   },
   "errors": {
     "ORDER_NOT_COMPLETED": "請求できるのは、完了した指示書だけです。",

@@ -69,6 +69,11 @@ describe("invoices, page by page", () => {
     await user.type(screen.getByLabelText("Amount paid"), "700");
     await user.click(screen.getByRole("button", { name: "Record the payment" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
+    expect(await screen.findByText("Enter or choose a value.")).toBeInTheDocument(); // the payment method is required
+    await user.selectOptions(screen.getByLabelText("Payment method"), "Bank transfer");
+    await user.type(screen.getByLabelText("Reference or notes (optional)"), "Slip 555");
+    await user.click(screen.getByRole("button", { name: "Record the payment" }));
+    await user.click(await screen.findByRole("button", { name: "Confirm" }));
     expect(await screen.findByText("The payment must be equal to the total of the invoice.")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Unpaid");
 
@@ -81,6 +86,8 @@ describe("invoices, page by page", () => {
     expect(await screen.findByRole("heading", { level: 2, name: "Receipt" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Paid");
     expect(screen.getByText(/^Amount received: ¥750$/)).toBeInTheDocument();
+    expect(screen.getByText("Payment method: Bank transfer")).toBeInTheDocument(); // on the receipt
+    expect(screen.getByText(/Bank transfer - Slip 555$/)).toBeInTheDocument(); // the payment made
     expect(screen.queryByLabelText("Amount paid")).not.toBeInTheDocument(); // one payment only
 
     // print: only the chosen document is marked for the paper

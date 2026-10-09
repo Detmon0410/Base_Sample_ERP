@@ -1,15 +1,18 @@
 // Invoices, payments and receipts (docs/specs/s1-mini-erp-workflow.md, section 2 steps 6-7). No tax anywhere.
 //
 // An invoice: { id, invoiceNumber, invoiceDate, orderId, customerName, customerAddress, lines, total, status: "Unpaid" | "Paid",
-//               payment: { date, amount } | null, receipt: { receiptNumber, receiptDate, customerName, customerAddress, invoiceNumber, amount } | null }
+//               payment: { date, amount, method, reference } | null,
+//               receipt: { receiptNumber, receiptDate, customerName, customerAddress, invoiceNumber, amount, method } | null }
 // It is a snapshot: later changes of the customer or the products do not change it. An issued invoice and its receipt are never
-// changed or deleted. One invoice for a Completed order; one full payment (= the total) per invoice, which makes the invoice Paid
-// and issues one receipt.
+// changed or deleted. One invoice for a Completed order; one full payment (= the total) per invoice, with its method and an optional
+// reference or notes, which makes the invoice Paid and issues one receipt.
 
 import { MockHttpError, MockResponse } from "./errors.js";
 import { customers, invalid, issue, number, products, text } from "./master.js";
 import { invoices, orderStatus, orders } from "./orders.js";
 import { userFromAuthorization } from "./users.js";
+
+export const PAYMENT_METHODS = ["Cash", "Bank transfer", "Cheque", "Credit card", "Other"];
 
 const isDay = (value) => {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
@@ -98,14 +101,17 @@ export const invoiceRoutes = {
     if (invoice.status === "Paid") throw new MockHttpError(409, "ALREADY_PAID", "The invoice is paid already");
     const date = text(body.paymentDate);
     const amount = number(body.amount);
+    const method = text(body.method);
+    const reference = text(body.reference);
     const issues = [];
+    if (!PAYMENT_METHODS.includes(method)) issues.push(issue("method", "REQUIRED"));
     if (!date) issues.push(issue("paymentDate", "REQUIRED"));
     else if (!isDay(date)) issues.push(issue("paymentDate", "INVALID_DATE"));
     if (!Number.isFinite(amount) || amount < 0) issues.push(issue("amount", "INVALID"));
     else if (amount !== invoice.total) issues.push(issue("amount", "MUST_EQUAL_TOTAL"));
     if (issues.length) invalid(issues);
 
-    invoice.payment = { date, amount };
+    invoice.payment = { date, amount, method, reference };
     invoice.status = "Paid";
     invoice.receipt = {
       receiptNumber: next("RC", invoices.filter((item) => item.receipt).map((item) => item.receipt.receiptNumber)),
@@ -114,6 +120,7 @@ export const invoiceRoutes = {
       customerAddress: invoice.customerAddress,
       invoiceNumber: invoice.invoiceNumber,
       amount,
+      method,
     };
     return view(invoice);
   },

@@ -90,6 +90,7 @@ A page is **done** only when: UI built, all strings through i18n (EN), keyboard 
 
 | Date | Change |
 |---|---|
+| 2026-10-09 | **Japanese translation of the whole system** (12 files, about 2,000 texts) in factory wording, following the wording of the Kanou-Fe-V2 project: 見積書, 受注, 製造指示書, 工程進捗, 完成品入庫, 在庫調整, 発注書, 入荷, 仕入先, 請求書, 仕訳, 製造番号（S/N）. A test checks that the Japanese files have the same keys and placeholders as the English ones. |
 | 2026-10-09 | **The name of the system is "Refrigerator Factory"** (English) and "冷蔵庫工場" (Japanese), replacing Klong: the header of the menu, the sign-in page and the title of the browser tab follow the language (`common:app.name`). |
 | 2026-10-09 | **Request counters removed** (the red dots and numbers in the menu, the "To do now" row of the Dashboard, `GET /notifications`, `api/notifications.md`). The red dot on a new table row and the "Waiting" panels stay. |
 | 2026-10-08 | **Docs for the backend**: `api/notifications.md` (the request counters), the `NOT_READY` answer of Sale, the table of error codes and a guide for the backend developer in `api/README.md`; the `departments` block in `api/dashboard.md`. This file was repaired (the Factory rows had been glued to the title and the summary was wrong). |

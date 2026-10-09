@@ -1,6 +1,6 @@
 # Refrigerator Factory
 
-ERP for a Japan-market manufacturer: Sale, Factory, Stock, Purchase, Accounting, Users, Serial numbers (S/N) and Traceability. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only, no TypeScript. Language: English first, Japanese keys are empty and fall back to English. Currency: JPY only.
+ERP for a Japan-market manufacturer: Sale, Factory, Stock, Purchase, Accounting, Users, Serial numbers (S/N) and Traceability. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only, no TypeScript. Languages: English and Japanese (factory wording, every screen translated). Currency: JPY only.
 
 This is a pnpm workspace with `backend/` and `frontend/`.
 

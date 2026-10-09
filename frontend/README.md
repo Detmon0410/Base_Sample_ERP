@@ -42,7 +42,7 @@ src/
 
 ## Rules the code follows
 
-- Every text goes through i18n (`en` is filled, `ja` is empty and falls back to English).
+- Every text goes through i18n, in English (`en`) and Japanese (`ja`, factory wording). `src/i18n/keysParity.test.js` checks that both files have the same keys and placeholders; in development a text missing in English is a console error.
 - A status is always text + icon, never colour alone. Base text 18 px, controls about 48 px, visible focus, keyboard use.
 - Layouts: desktop, tablet (768–992 px, the menu is a rail) and phone (below 768 px, lists are cards). See `docs/specs/f15-tablet.md` and `f16-mobile.md`.
 - Plain look (thin borders, no shadows, nothing moves): `docs/specs/f14-plain-ui.md`.

@@ -48,4 +48,5 @@ src/
 
 - `pnpm run test` runs the mock of every module (`services/mock/*.test.js`) and, for orders, stock, invoices and the Summary, the pages driven like a person would (`pages/*/*.test.jsx`).
 - What a person makes in the browser is kept in a log in `localStorage` (`kanou.testlog.v1`) and played again on reload.
-- A list is `RecordList`; a record page is `RecordFormPage`: errors only after Save, the list opens after Save, nothing is deleted (a record is made inactive after a confirmation).
+- A list is `RecordList`; a record page is `RecordFormPage`: errors only after Save, the list opens after Save, master data has no status and nothing is deleted (a QT reference can be made inactive after a confirmation).
+- The menu is a row in the top bar or a list on the left: one button in the bar moves it (`utils/layoutMode.js`, `components/layout/SideNav.jsx`); the choice is kept in this browser.

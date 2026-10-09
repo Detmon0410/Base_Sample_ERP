@@ -3,19 +3,18 @@
 Pages: `/customers`, `/products`, `/stock`, `/users` · Frontend: `frontend/src/pages/master`, `pages/stock`, `pages/users`, `services/master.service.js` · Mock: `services/mock/master.js`, `services/mock/stock.js`
 Conventions: [README.md](README.md) · Data: [the specification, section 4](../specs/s1-mini-erp-workflow.md)
 
-## The five calls of every resource
+## The four calls of every resource
 
-`{resource}` is `customers`, `products`, `materials` or `users`. Nothing is deleted: a record is made **inactive**.
+`{resource}` is `customers`, `products`, `materials` or `users`. Master data has **no status**: there is no inactive record and nothing is deleted.
 
 | Method | Path | Body | Result |
 |---|---|---|---|
 | `GET` | `/{resource}` | – (query: `q`, `status`, `page`, `pageSize`) | `data`: records, newest first; `meta`: `{ page, pageSize, total }` |
 | `GET` | `/{resource}/:id` | – | the record |
-| `POST` | `/{resource}` | the fields | `201`, the record (starts `active`) |
+| `POST` | `/{resource}` | the fields | `201`, the record |
 | `PUT` | `/{resource}/:id` | the fields | the record |
-| `PATCH` | `/{resource}/:id/status` | `{ "status": "active" \| "inactive" }` | the record |
 
-Query: `q` searches the fields named below (case-insensitive, contains), `status` filters `active` / `inactive`, `pageSize` is 20 in the frontend.
+Query: `q` searches the fields named below (case-insensitive, contains), `pageSize` is 20 in the frontend.
 
 ## Who may call
 
@@ -41,11 +40,10 @@ Errors
 |---:|---|---|
 | 400 | `VALIDATION_ERROR` | `errors` = `[{ "path": ["bom", "0", "quantity"], "code": "INVALID" }]`. Codes: `REQUIRED`, `INVALID`, `DUPLICATE`, `TOO_SHORT` |
 | 409 | `DUPLICATE_VALUE` | A unique value (`code`, `email`) is used already; `errors` names the field with `DUPLICATE` |
-| 409 | `CANNOT_DEACTIVATE_SELF` | A user makes their own account inactive |
 | 404 | `NOT_FOUND` | No such record |
 | 403 | `FORBIDDEN` | The role may not do this |
 
-Making a user inactive, or changing a password, ends their sessions ([auth.md](auth.md)).
+Changing the password of a user ends their sessions ([auth.md](auth.md)). A user account cannot be disabled in this version.
 
 ## Stock changes of a material
 
@@ -71,8 +69,8 @@ A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, 
 ## Data needed
 
 ```text
-Customer(id, name, address, email, telephone, status)
-Product(id, code UNIQUE, name, price, status)         ProductBom(product_id, material_id, quantity)
-Material(id, code UNIQUE, name, status)               MaterialLot(material_id, lot_number, quantity)   UNIQUE(material_id, lot_number)
+Customer(id, name, address, email, telephone)
+Product(id, code UNIQUE, name, price)         ProductBom(product_id, material_id, quantity)
+Material(id, code UNIQUE, name)               MaterialLot(material_id, lot_number, quantity)   UNIQUE(material_id, lot_number)
 StockChange(id, material_id, lot_number, kind, change, balance, change_date, note, order_id NULL, user_id, at)
 ```

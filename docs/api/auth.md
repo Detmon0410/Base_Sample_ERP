@@ -51,7 +51,7 @@ The frontend only hides what a role may not use (`frontend/src/utils/permissions
 
 ## Sessions
 
-* A new password, or making a user inactive, ends the sessions of that user: the next call with the old token answers `401 UNAUTHORIZED`. The mock keeps a counter of the session inside the token; a real backend may use a token version or a deny-list.
+* A new password ends the sessions of that user: the next call with the old token answers `401 UNAUTHORIZED`. The mock keeps a counter of the session inside the token; a real backend may use a token version or a deny-list.
 * Token: opaque or JWT, sent as `Authorization: Bearer`; the frontend keeps it in `localStorage` (`kanou.token`). Expiry is not decided (suggested: one work shift, 8-12 h); there is no refresh. Open decision: header token (now) or an httpOnly cookie (needs `credentials: include`, CORS with credentials and CSRF protection).
 
 ## Data needed

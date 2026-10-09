@@ -88,11 +88,11 @@ There is no Manager role, no approval, no menu per department and no permission 
 - Quantities entered are positive; a stock adjustment may be + or −; a stock change that would make a lot negative is refused.
 - The completed quantity of a process cannot exceed the required quantity; it is Completed only when equal.
 - Order prices are 0 or more.
-- A record already used is not deleted: it is made inactive.
+- Master data (customers, products, materials, users) has no status and is not deleted. A QT reference can be made inactive.
 - An issued invoice and receipt cannot be edited or deleted.
 - After an invoice is issued the product quantities and the process lists of the order cannot change.
 - One invoice per order; one full payment per invoice; the payment equals the invoice total.
-- The order status is **computed** from its processes (New → In Progress when one starts → Completed when all are completed); nobody sets it by hand.
+- The order status is **computed** from its processes (New until a process has started → In Progress when one has → Completed when all are completed); nobody sets it by hand.
 - The invoice keeps the data as issued: later changes of the customer or product do not change it.
 
 ## 7. Pages (10) and the menu in the header

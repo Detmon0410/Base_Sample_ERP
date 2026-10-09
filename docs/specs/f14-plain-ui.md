@@ -15,7 +15,7 @@ Status: **BUILT (light level)** · Request: make the UI less polished ("does not
 
 * The size of the text (18 px), the height of the controls (about 48 px), visible focus, keyboard use, and the contrast of the text: the users are 40–50 and older.
 * A status is always text + icon, never colour alone.
-* The role helmet and the date/time in the header (customer requirements N7, N8), the menu icons, the red request counters and the new-row dots (the workflow test).
+* The role helmet and the date/time in the header (customer requirements N7, N8), the menu icons, and the new-row dots (the workflow test; the red request counters of the menu were removed later).
 * The side sheet, the status stepper and the vertical timelines (the medium level, see below).
 
 ## Not done (medium level, only if asked)

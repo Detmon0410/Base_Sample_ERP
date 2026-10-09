@@ -90,10 +90,6 @@
     "Purchase": "",
     "Accounting": ""
   },
-  "todo": {
-    "title": "",
-    "nothing": ""
-  },
   "sale": {
     "openOrders": "",
     "openOrdersContext": "",

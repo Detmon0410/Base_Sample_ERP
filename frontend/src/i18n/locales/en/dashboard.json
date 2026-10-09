@@ -90,10 +90,6 @@
     "Purchase": "Stock / Purchase",
     "Accounting": "Accounting"
   },
-  "todo": {
-    "title": "To do now",
-    "nothing": "Nothing is waiting for you."
-  },
   "sale": {
     "openOrders": "Open Sale Orders",
     "openOrdersContext": "{{count}} ready to deliver",

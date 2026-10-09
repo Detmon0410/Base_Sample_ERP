@@ -80,26 +80,6 @@
     "online": "Online",
     "offline": "Offline"
   },
-  "requests": {
-    "waiting_one": "{{count}} request waiting",
-    "waiting_other": "{{count}} requests waiting",
-    "new": "New: something arrived since you last opened this",
-    "items": {
-      "saleOrders": "orders waiting for a Manager to confirm, and orders ready to deliver",
-      "deliveryNotes": "delivery notes to confirm when the goods leave",
-      "workOrders": "order lines waiting for a work order, work orders to schedule, to start or to finish",
-      "fgTransfer": "finished work orders not yet moved to the warehouse, and transfers to post",
-      "stockAdjustment": "stock adjustments waiting for a Manager",
-      "stockStatus": "materials that are short and not on order yet",
-      "purchaseOrders": "orders waiting for approval or to send, and rejected orders to correct",
-      "goodsReceipt": "purchase orders waiting for goods, and receipts to post",
-      "invoices": "delivered goods with no invoice yet, and draft invoices to issue",
-      "bills": "goods received with no bill yet, and draft bills to approve",
-      "receipts": "draft receipts of money to confirm",
-      "payments": "draft payments to confirm",
-      "journal": "draft journal entries to post"
-    }
-  },
   "closeMenu": "Close the menu",
   "more": "More",
   "shortcuts": "Main parts of the system"

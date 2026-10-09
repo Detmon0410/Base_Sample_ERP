@@ -1,10 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-import { CountBadge } from "@/components/common/CountBadge";
 import { getVisibleGroups } from "@/config/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { useNotifications } from "@/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 
 /** The colour of the bar under each box. Same family as the department colours of the number cards. */
@@ -21,12 +19,10 @@ const BAR = {
 
 /**
  * Big boxes to the main parts of the system, one per menu group the user may open (the first page of the group).
- * The red number is the same counter as the menu (what waits in the group).
  */
 export function ShortcutTiles() {
   const { t } = useTranslation("nav");
   const { user } = useAuth();
-  const { groups } = useNotifications();
   const visible = getVisibleGroups(user).filter((group) => group.items.length > 0);
 
   return (
@@ -45,7 +41,6 @@ export function ShortcutTiles() {
             >
               <Icon className="size-6 shrink-0 max-md:size-5" aria-hidden="true" />
               {t(group.labelKey)}
-              <CountBadge count={groups[group.key]?.total} className="absolute top-2 right-3 text-base" />
             </Link>
           </li>
           );

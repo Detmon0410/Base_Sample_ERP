@@ -1,7 +1,6 @@
 import { EMPTY_SEED } from "./seedMode.js";
 import { buildDashboard } from "./dashboard.js";
 import { INTERNAL_TOKEN, login, requireAdmin, toPublicUser, userFromAuthorization, usersRoutes } from "./users.js";
-import { buildNotifications } from "./notifications.js";
 import { masterDataRoutes } from "./masterData.js";
 import { factoryRoutes } from "./factory.js";
 import { purchaseRoutes } from "./purchase.js";
@@ -53,10 +52,6 @@ export const mockRoutes = {
   "GET /auth/me": ({ authorization }) => toPublicUser(userFromAuthorization(authorization)),
 
   "POST /auth/logout": () => null,
-
-  // The request counters of the menu: documents that wait for somebody of the department (docs/specs/f13-workflow-test.md)
-  "GET /notifications": ({ authorization }) =>
-    buildNotifications(userFromAuthorization(authorization), (key, query) => mockRoutes[key]({ authorization: INTERNAL_TOKEN, body: {}, params: {}, query })),
 
   "GET /dashboard": ({ authorization }) =>
     buildDashboard(userFromAuthorization(authorization), ledger, () => masterStore?.materials ?? [], () => purchaseStore, () => accountingStore, (key, query) => mockRoutes[key]({ authorization: INTERNAL_TOKEN, body: {}, params: {}, query })),

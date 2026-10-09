@@ -1,10 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 
-import { CountBadge } from "@/components/common/CountBadge";
 import { useAuth } from "@/hooks/useAuth";
-import { useNotifications } from "@/hooks/useNotifications";
-import { NAV_GROUPS } from "@/config/navigation";
 import { canUse } from "@/utils/permissions";
 import { formatCompact, formatCurrency, formatDate, formatNumber } from "@/utils/format";
 
@@ -12,60 +8,6 @@ import { BlockCard } from "./BlockCard";
 import { ProductionBlock } from "./Blocks";
 import { KpiCard } from "./KpiCard";
 import { BarChart, BarList } from "./charts";
-
-/** The menu groups whose waiting work is shown in the "To do now" row of a department. Stock belongs to Factory and Purchase. */
-const TODO_GROUPS = { Sale: ["sale"], Factory: ["factory", "stock"], Purchase: ["purchase", "stock"], Accounting: ["accounting"] };
-
-/**
- * "To do now": the same counters as the red numbers of the menu (so the two can never disagree), each one a link to its list.
- * Nothing waiting is said in words.
- */
-function TodoRow({ department }) {
-  const { t } = useTranslation(["dashboard", "nav"]);
-  const { groups } = useNotifications();
-  const { user } = useAuth();
-  const entries = TODO_GROUPS[department].flatMap((groupKey) => {
-    const group = NAV_GROUPS.find((candidate) => candidate.key === groupKey);
-    const counts = groups[groupKey]?.items ?? {};
-    return (group?.items ?? []).filter((item) => counts[item.key] > 0).map((item) => ({ item, count: counts[item.key], group }));
-  });
-
-  return (
-    <section aria-label={t("dashboard:todo.title")} className="rounded-md border border-slate-300 bg-card p-4">
-      <h2 className="m-0 mb-3 text-lg font-bold">{t("dashboard:todo.title")}</h2>
-      {entries.length === 0 ? (
-        <p className="m-0 text-muted-foreground">{t("dashboard:todo.nothing")}</p>
-      ) : (
-        <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 xl:grid-cols-3">
-          {entries.map(({ item, count, group }) => {
-            const open = canUse(user, group.access);
-            const body = (
-              <>
-                <span className="min-w-0">
-                  <span className="block font-semibold">{t(`nav:${item.labelKey}`)}</span>
-                  <span className="block text-sm text-muted-foreground">{t(`nav:requests.items.${item.key}`, { defaultValue: "" })}</span>
-                </span>
-                <CountBadge count={count} className="text-2xl" />
-              </>
-            );
-            const className = "flex min-h-14 items-center justify-between gap-3 rounded-md border border-slate-300 bg-card p-3";
-            return (
-              <li key={item.key}>
-                {open ? (
-                  <Link to={item.to} className={`${className} outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring`}>
-                    {body}
-                  </Link>
-                ) : (
-                  <div className={className}>{body}</div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </section>
-  );
-}
 
 function Kpis({ children }) {
   return <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">{children}</section>;
@@ -223,12 +165,11 @@ function AccountingPanel({ data, loading, hasError, onRetry }) {
 const PANELS = { Sale: SalePanel, Factory: FactoryPanel, Purchase: PurchasePanel, Accounting: AccountingPanel };
 const KEYS = { Sale: "sale", Factory: "factory", Purchase: "purchase", Accounting: "accounting" };
 
-/** The page of one department: what to do now, the numbers, the charts. */
+/** The page of one department: the numbers and the charts. */
 export function DepartmentPanel({ department, departments, loading, hasError, onRetry }) {
   const Content = PANELS[department];
   return (
     <div className="flex flex-col gap-5">
-      <TodoRow department={department} />
       <Content data={departments?.[KEYS[department]]} loading={loading} hasError={hasError} onRetry={onRetry} />
     </div>
   );

@@ -12,7 +12,7 @@ Status: **BUILT** (all answers ★ accepted) · Purpose: test the whole system f
 | **Users** | An Admin and a Manager and a Worker of each department (see below). They have never signed in. |
 | **Data is kept** | Everything the tester makes is kept in the browser, so a reload or a closed browser loses nothing. The browser keeps a **log of every change** (who, what, when) and plays it again on an empty mock when the page opens, with the clock set to the time of each change, so numbers, history and times are exactly as they were. **Reset all test data** (user menu) deletes the log and starts again from nothing. |
 | **One sign-in per tab** | In this mode the sign-in lives in the tab, not in the browser. Open one tab per user (Sale in one, Accounting in another) and a change in one tab is played in the others at once (the log is shared), so the requests can be followed from tab to tab. |
-| **Request counters** | In the menu, a red **dot** on a group (Sale, Factory ...) and a red **number** on an entry show how many documents **wait now** for the user's department (hover the number to read what it counts; it can be higher than the rows of the page because it also counts what has no document yet, for example goods received that still have no bill). Only what the user can act on is counted (a Worker does not see what needs a Manager). It updates after any change, every 10 seconds, and when the user comes back to the tab. API: `GET /notifications`. |
+| **Request counters (removed)** | The red dots and numbers in the menu, the "To do now" row of the Dashboard and `GET /notifications` were built here and later **removed on request**. The "Waiting" panels of the pages and the red dot on a new table row stay. |
 | **Work that has no row yet** | A number can count work that is not a row of the page yet. So the pages show it: **Customer invoices** has a panel *Waiting for an invoice* (delivered delivery notes with no invoice) and **Supplier bills** a panel *Waiting for a bill* (posted goods receipts with no bill), **Goods receipt** a panel *Waiting for goods* (purchase orders sent and not fully received), each row with a button that opens the new document already made from it. Factory has *Waiting for a work order* the same way. The panels are not drawn when nothing waits. |
 | **New rows in the tables** | In every list, a small red **dot** before the first column marks a row that is **new for this user**: a document that arrived or changed (its newest history entry, else its updated time) after the user first appeared in this browser or after the user last opened that row. **Opening the row (clicking it) makes its dot go away.** What the user does to a row while its sheet is open (save, approve, post ...) does not make it new for that user. If it changes again later, the dot comes back. What each user has seen is kept per user in the browser (Reset all test data forgets it). A user's first appearance is the first time they sign in on this browser, so sign in as each user once before the test starts and the requests that come later show up as new. |
 
@@ -32,33 +32,9 @@ Password `test1234` for all, except the Admin (`admin`).
 | Takeshi Ito / Mei Yamamoto (Purchase Manager / Worker) | `purchase.manager@kanou.test` / `purchase.worker@kanou.test` | Purchase and Stock |
 | Naoko Kobayashi / Ryo Nakamura (Accounting Manager / Worker) | `accounting.manager@kanou.test` / `accounting.worker@kanou.test` | Accounting |
 
-## What the counters count
+## What the counters counted (removed)
 
-A request is a document that waits for somebody of the department. *Worker* = anyone of the department; *Manager* = needs a Manager (or Admin), who sees both.
-
-| Menu group | Menu entry | Counts | Who |
-|---|---|---|---|
-| Sale | Sale Orders | orders waiting for confirmation | Manager |
-| | Sale Orders | orders ready to deliver | Worker |
-| | Delivery Notes | draft delivery notes | Worker |
-| Factory | Work Orders | order lines waiting for a work order, scheduled work orders to start | Worker |
-| | Work Orders | draft work orders to schedule, running ones with every step done to finish | Manager |
-| | FG Transfer | finished work orders with units not transferred yet | Worker |
-| | FG Transfer | draft transfers to post | Manager |
-| Stock | Stock Adjustment | adjustments waiting for approval | Manager |
-| Purchase | Stock Status | materials short or near short and not on order | Worker |
-| | Purchase Orders | rejected orders to correct | Worker |
-| | Purchase Orders | orders waiting for approval, approved orders to send | Manager |
-| | Goods Receipt | purchase orders waiting for goods, draft receipts to post | Worker |
-| Accounting | Invoices | delivered delivery notes with no invoice | Worker |
-| | Invoices | draft invoices to issue | Manager |
-| | Bills | goods received with no bill | Worker |
-| | Bills | draft bills to approve | Manager |
-| | Receipts | draft receipts of money to confirm | Worker |
-| | Payments | draft payments to confirm | Manager |
-| | Journal | draft journal entries to post | Manager |
-
-The number of a group is the sum of its entries. An Admin sees every group.
+The counters of the menu are gone. The pages that showed the same work still have it: Customer invoices *Waiting for an invoice*, Supplier bills *Waiting for a bill*, Goods receipt *Waiting for goods*, Work Orders *Waiting for a work order*.
 
 ## How to start
 

@@ -115,7 +115,6 @@ Added by [d2](../specs/d2-dashboard-by-department.md). An object with **one key 
 
 The mock calls the list routes (`frontend/src/services/mock/dashboardDepartments.js`) and is capped at 100 rows per list; **the backend must use SQL aggregates** (GROUP BY month / week / status) and an index on the document date columns.
 
-The "To do now" row of each tab uses `GET /notifications` ([notifications.md](notifications.md)), not this block.
 
 ## Visibility
 

@@ -10,11 +10,11 @@ Replaces the single overview as the first screen. The overview stays as the tab 
 | Department user | the departments of the user, then All departments | the first department |
 | No department | All departments | All departments |
 
-The tab is in the URL (`/?view=Sale`). Stock is part of the Purchase tab (and of the "To do now" of Factory).
+The tab is in the URL (`/?view=Sale`). Stock is part of the Purchase tab.
 
 ## Every department tab
 
-1. **To do now**: the same counters as the red numbers of the menu (`GET /notifications`), each one a link to its list. Nothing waiting says so in words.
+1. ~~To do now~~ (removed together with the request counters of the menu, see f13).
 2. **Four number cards** (link to the filtered list when the user may open it).
 3. **Charts** drawn with plain CSS (no library); every bar chart has the numbers as a table under it (`Show the numbers as a table`). A chart without data says "No data yet".
 

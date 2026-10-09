@@ -1,5 +1,5 @@
 // The workflow test branch (docs/specs/f13-workflow-test.md): the mock starts with no business records, a user for every
-// department, and counts the requests that wait for each department from the real documents.
+// department, and the gates between the departments (an order cannot be marked ready before its goods are in the warehouse).
 const ACCOUNTS = ["admin@gmail.com", "sale.manager@kanou.test", "sale.worker@kanou.test", "factory.manager@kanou.test", "factory.worker@kanou.test", "purchase.manager@kanou.test", "purchase.worker@kanou.test", "accounting.manager@kanou.test", "accounting.worker@kanou.test"];
 
 async function start() {
@@ -8,15 +8,13 @@ async function start() {
   const auth = await import("../auth.service.js");
   const { setToken } = await import("@/utils/session");
   const sale = await import("../sale.service.js");
-  const { getNotifications } = await import("../notification.service.js");
   const { api } = await import("../api.js");
   const { getDashboard } = await import("../dashboard.service.js");
   const as = async (email) => {
     const { token } = await auth.login({ email, password: email === "admin@gmail.com" ? "admin" : "test1234" });
     setToken(token);
   };
-  const counts = async () => Object.fromEntries(Object.entries((await getNotifications()).groups).map(([group, value]) => [group, value.total]));
-  return { as, sale, api, counts, getNotifications, getDashboard };
+  return { as, sale, api, getDashboard };
 }
 
 afterEach(() => vi.unstubAllEnvs());
@@ -80,7 +78,7 @@ describe("an empty start", () => {
   });
 });
 
-describe("the request counters of the menu", () => {
+describe("the workflow gates", () => {
   async function withOrder(t) {
     await t.as("sale.worker@kanou.test");
     const quotation = await t.sale.quotationService.create({ customerId: 1, date: "2026-10-08", validUntil: "2026-11-08", salesPersonId: null, remarks: "", lines: [{ productId: 1, qty: 2, unitPrice: 50000 }] });
@@ -89,35 +87,7 @@ describe("the request counters of the menu", () => {
     return t.sale.quotationService.run(quotation.id, "create-order", {});
   }
 
-  it("is zero everywhere at the start, and only for the departments of the user", async () => {
-    const t = await start();
-    await t.as("sale.worker@kanou.test");
-    expect(await t.counts()).toEqual({ sale: 0 });
-    await t.as("factory.manager@kanou.test");
-    expect(await t.counts()).toEqual({ factory: 0, stock: 0 });
-    await t.as("accounting.worker@kanou.test");
-    expect(await t.counts()).toEqual({ accounting: 0 });
-    await t.as("admin@gmail.com");
-    expect(Object.keys(await t.counts()).sort()).toEqual(["accounting", "factory", "purchase", "sale", "stock"]);
-  });
-
-  it("counts a sale order that waits for a Manager for the Manager only, then moves the request to the Factory", async () => {
-    const t = await start();
-    const order = await withOrder(t);
-    await t.sale.saleOrderService.run(order.id, "request-confirm", { note: "please" });
-    expect(await t.counts()).toEqual({ sale: 0 }); // a Worker cannot decide it
-    await t.as("sale.manager@kanou.test");
-    expect((await t.getNotifications()).groups.sale.items.saleOrders).toBe(1);
-    await t.sale.saleOrderService.run(order.id, "approve", {});
-    expect(await t.counts()).toEqual({ sale: 0 });
-    await t.sale.saleOrderService.run(order.id, "send-to-factory", {});
-    await t.as("factory.worker@kanou.test");
-    expect((await t.getNotifications()).groups.factory.items.workOrders).toBe(1); // an order line waits for a work order
-    await t.as("admin@gmail.com");
-    expect((await t.counts()).factory).toBe(1);
-  });
-
-  it("does not let an order be marked ready before its goods are in the warehouse, so the Factory still sees it waiting", async () => {
+  it("does not let an order be marked ready before its goods are in the warehouse, so the Factory still has it waiting for a work order", async () => {
     const t = await start();
     const order = await withOrder(t);
     await t.sale.saleOrderService.run(order.id, "request-confirm", { note: "" });
@@ -137,7 +107,7 @@ describe("the request counters of the menu", () => {
     expect((await t.api.get("/factory/waiting-orders")).data.data).toHaveLength(1); // the order is still waiting for a work order
   });
 
-  it("changes when a document changes (the dashboard counts the same order)", async () => {
+  it("shows the order that waits for a Manager on the dashboard until it is approved", async () => {
     const t = await start();
     const order = await withOrder(t);
     await t.sale.saleOrderService.run(order.id, "request-confirm", { note: "" });

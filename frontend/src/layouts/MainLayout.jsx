@@ -1,18 +1,19 @@
 import { useTranslation } from "react-i18next";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
 
 import { RouteLoading } from "@/components/common/RouteLoading";
 
 import { AppHeader } from "@/components/layout/AppHeader";
-import { NotificationsProvider } from "@/components/layout/NotificationsProvider";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/useAuth";
 import { useNarrow } from "@/hooks/useNarrow";
 import { useStackTables } from "@/hooks/useStackTables";
 import { useSidebarState } from "@/hooks/useSidebarState";
 import { useSidebarWidth } from "@/hooks/useSidebarWidth";
+import { ensureSince } from "@/utils/rowSeen";
 
 /**
  * Application frame for every page after login: collapsible sidebar on the left,
@@ -27,6 +28,9 @@ export function MainLayout() {
   const sidebarWidth = useSidebarWidth();
   const narrow = useNarrow();
   useStackTables(); // tables are blocks on a phone
+  const { user } = useAuth();
+  const userId = user?.id ?? null;
+  useEffect(() => ensureSince(userId), [userId]); // what arrives from now on is new for this user (the red dot of a new row)
   const [peek, setPeek] = useState(false); // the menu opened over the page (narrow screens only)
   const { pathname } = useLocation();
   const [seenPath, setSeenPath] = useState(pathname);
@@ -37,7 +41,6 @@ export function MainLayout() {
 
   return (
     <TooltipProvider delayDuration={200}>
-      <NotificationsProvider>
       <SidebarProvider
         open={narrow ? peek : open}
         onOpenChange={narrow ? setPeek : setOpen}
@@ -62,7 +65,6 @@ export function MainLayout() {
           </main>
         </SidebarInset>
       </SidebarProvider>
-      </NotificationsProvider>
     </TooltipProvider>
   );
 }

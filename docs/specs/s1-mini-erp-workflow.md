@@ -113,9 +113,9 @@ There is no Manager role, no approval, no menu per department and no permission 
 
 **The menu** is one row in the top bar (the sidebar is removed):
 
-Summary · Orders ▾ (QT references, Production orders) · Invoices · Master ▾ (Customers, Products, Materials and stock, Users)` (the four master data of the requirements, section 4) and, at the right, the user (name and role as text), the language (text, no flag) and Log out. No icons, no clock, no "Online" mark, no Refresh button, no status-steps button.
+Summary · Orders ▾ (QT references, Production orders) · Invoices · Master ▾ (Customers, Products, Stock, Users)` (the four master data of the requirements, section 4) and, at the right, the user (name and role as text), the language (text, no flag) and Log out. No icons, no clock, no "Online" mark, no Refresh button, no status-steps button.
 
-A Worker sees only `Summary · Production orders · Master ▾ (Products, Materials and stock)`. The user can also move the menu to a list on the left (one button in the bar). On a narrow screen the row becomes one "Menu" button with the same list. Lists search by document number, customer name, product code or material code where it applies.
+A Worker sees only `Summary · Production orders · Master ▾ (Products, Stock)`. The user can also move the menu to a list on the left (one button in the bar). On a narrow screen the row becomes one "Menu" button with the same list. Lists search by document number, customer name, product code or material code where it applies.
 
 ## 7b. What the decisions of the look mean for the code
 

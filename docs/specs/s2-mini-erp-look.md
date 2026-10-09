@@ -2,7 +2,7 @@
 
 Status: **ACCEPTED** (answers of the user: U1–U4 and the order of work below) · Branch: `mini-erp` · Goes with [S1](s1-mini-erp-workflow.md) (workflow and data) · Reference: 4 screenshots of Odoo (Purchase app: settings, website portal, list of requests for quotation with its filters and tiles)
 
-**Given by the user:** the theme colour is **#7C7BAD**; **buttons have no rounded corners**; the look is old (2013) and a little harder to use; no icons, no flags, no clock (S1, decisions 11–16).
+**Given by the user:** the theme colour is **#7C7BAD**; **buttons have no rounded corners**; the look is old (2013) and a little harder to use; no flags, no clock (S1, decisions 11–16). **Changed later by the user: the menu has icons** (the top bar, its lists and the left menu; `lucide-react`, small, always with the words beside them); the rest of the pages stays without icons.
 
 ## 1. What the reference shows (and what we take)
 

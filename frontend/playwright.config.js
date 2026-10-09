@@ -15,6 +15,7 @@ export default defineConfig({
   reporter: [["list"], ["html", { outputFolder: "e2e-report", open: "never" }], ["json", { outputFile: "e2e-results/results.json" }]],
   use: {
     baseURL: `http://localhost:${PORT}`,
+    actionTimeout: 15 * 1000, // fail fast when a button or field is not there
     locale: "en-US",
     timezoneId: "Asia/Tokyo",
     video: "retain-on-failure",

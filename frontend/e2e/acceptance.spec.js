@@ -100,7 +100,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await orderLink.click();
   await page.getByRole("button", { name: "Start production" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("In progress");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("New"); // started, but no process has started yet
   await logOut(page);
 
   // 5. a Worker records progress and completes 10 units on every process
@@ -167,7 +167,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   // 10. the order shows its QT reference, the progress, the invoice and the receipt
   await open(page, "/orders", orderNumber);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Completed");
-  await expect(page.getByText("QT-001")).toBeVisible();
+  await expect(page.getByRole("link", { name: "QT-001" })).toBeVisible();
   await expect(page.getByRole("link", { name: invoiceNumber })).toBeVisible();
   await expect(page.getByRole("link", { name: /^RC-\d{4}-0001$/ })).toBeVisible();
   const progress = page.getByRole("heading", { name: "Progress history" }).locator("xpath=ancestor::section");

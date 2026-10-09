@@ -13,7 +13,7 @@ const newRecord = async (page, entry, button) => {
   await page.getByRole("link", { name: button }).click();
 };
 
-test("Admin makes a customer, a material with a lot, a product with a BOM and a user, then changes and deactivates", async ({ page }) => {
+test("Admin makes a customer, a material with a lot, a product with a BOM and a user, then changes one", async ({ page }) => {
   const errors = watchErrors(page);
   await signIn(page, USERS.admin);
 
@@ -74,29 +74,15 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page).toHaveURL(/\/users$/);
 
-  // change a record, then make it inactive after the confirmation
+  // change a record; master data has no status and no way to deactivate or delete
   await page.getByRole("link", { name: "Mika Sato" }).click();
+  await expect(page.getByRole("button", { name: "Make inactive" })).toHaveCount(0);
   await page.getByLabel("Name").fill("Mika Sato-Ito");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("link", { name: "Mika Sato-Ito" })).toBeVisible();
-  await page.getByRole("link", { name: "Mika Sato-Ito" }).click();
-  await page.getByRole("button", { name: "Make inactive" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Inactive");
-  await page.getByRole("link", { name: "Cancel" }).click();
-  await page.getByLabel("Status").selectOption("inactive");
-  await expect(page.getByRole("link", { name: "Mika Sato-Ito" })).toBeVisible();
+  await expect(page.getByLabel("Status")).toHaveCount(0);
 
-  // your own account cannot be made inactive
-  await page.goto("/users");
-  await settle(page);
-  await page.getByLabel("Status").selectOption("active");
-  await page.getByRole("link", { name: "Admin", exact: true }).click();
-  await page.getByRole("button", { name: "Make inactive" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(page.getByText("You cannot make your own account inactive.")).toBeVisible();
-
-  // a dialog, a refused save and a refused status change are answers of the mock, not errors of the page
+  // a refused save is an answer of the mock, not errors of the page
   expect(errors.take().filter((line) => !/HTTP (400|409)/.test(line))).toEqual([]);
 });
 

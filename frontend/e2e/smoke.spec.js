@@ -66,3 +66,23 @@ test("the language buttons are words, and the text follows the language", async 
   await page.getByRole("button", { name: "English" }).click();
   await expect(page.getByRole("button", { name: "Menu", exact: true }).or(page.getByRole("link", { name: "Summary" })).first()).toBeVisible();
 });
+
+test("the menu moves from the top bar to a list on the left and back, and every entry still opens", async ({ page }) => {
+  await signIn(page, USERS.admin);
+  const narrow = (page.viewportSize()?.width ?? 1280) < 768;
+  await page.getByRole("button", { name: "Menu on the left" }).click();
+  if (narrow) await page.getByRole("button", { name: "Menu", exact: true }).click();
+  const menu = page.getByRole("navigation", { name: "Main menu" });
+  await expect(menu.locator("xpath=ancestor::header")).toHaveCount(0); // not in the bar any more
+  for (const word of ["QT references", "Production orders", "Invoices", "Stock", "Customers", "Products", "Users"]) {
+    await expect(menu.getByRole("link", { name: word, exact: true })).toBeVisible();
+  }
+  await menu.getByRole("link", { name: "Customers", exact: true }).click();
+  await expect(page).toHaveURL(/\/customers$/);
+  expect(await overflowX(page)).toBeLessThanOrEqual(1);
+
+  await page.reload(); // the choice is kept
+  await expect(page.getByRole("button", { name: "Menu on top" })).toBeVisible();
+  await page.getByRole("button", { name: "Menu on top" }).click();
+  await expect(page.getByRole("button", { name: "Menu on the left" })).toBeVisible();
+});

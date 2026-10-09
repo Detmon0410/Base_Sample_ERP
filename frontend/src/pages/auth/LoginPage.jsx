@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleAlertIcon, EyeIcon, EyeOffIcon, FactoryIcon } from "lucide-react";
+import { CircleAlertIcon, EyeIcon, EyeOffIcon, RefrigeratorIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -74,9 +74,9 @@ export function LoginPage() {
         <div className="flex flex-col items-center gap-3 text-center">
           <div
             aria-hidden="true"
-            className="grid size-12 place-items-center rounded-xl bg-secondary text-primary"
+            className="grid size-12 place-items-center text-primary"
           >
-            <FactoryIcon className="size-7" strokeWidth={1.75} />
+            <RefrigeratorIcon className="size-10" strokeWidth={1.75} />
           </div>
           <div>
             <h1 className="text-2xl leading-tight font-bold">{t("login.title")}</h1>

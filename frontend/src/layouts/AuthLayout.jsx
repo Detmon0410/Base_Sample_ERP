@@ -1,4 +1,4 @@
-import { FactoryIcon } from "lucide-react";
+import { RefrigeratorIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
 
@@ -20,7 +20,7 @@ export function AuthLayout() {
 
       <header className="relative flex h-14 shrink-0 items-center justify-between px-8 text-primary">
         <p className="flex items-center gap-2.5 text-lg font-bold tracking-wide">
-          <FactoryIcon className="size-6" aria-hidden="true" />
+          <RefrigeratorIcon className="size-6" aria-hidden="true" />
           {t("app.name")}
         </p>
         <LanguageSwitcher />

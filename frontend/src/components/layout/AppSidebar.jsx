@@ -1,4 +1,4 @@
-import { ChevronRightIcon, FactoryIcon } from "lucide-react";
+import { ChevronRightIcon, RefrigeratorIcon } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
@@ -108,9 +108,9 @@ export function AppSidebar({ width }) {
         <div className="flex w-full items-center gap-3 overflow-hidden group-data-[collapsible=icon]:justify-center">
           <div
             aria-hidden="true"
-            className="grid size-8 shrink-0 place-items-center rounded-lg bg-white text-primary"
+            className="grid size-8 shrink-0 place-items-center text-primary-foreground"
           >
-            <FactoryIcon className="size-4.5" />
+            <RefrigeratorIcon className="size-6" />
           </div>
           <span className="truncate text-base font-bold tracking-wide text-primary-foreground group-data-[collapsible=icon]:hidden">
             {t("common:app.name")}

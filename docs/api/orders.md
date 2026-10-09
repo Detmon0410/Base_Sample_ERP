@@ -41,7 +41,7 @@ Body of `progress`: `{ "processId": 12, "status": "Not Started" | "In Progress" 
 `{ id, orderNumber, qtId, qtNumber, customerId, customerName, orderDate, notes, status, started, startedAt, invoice, lines, history, createdAt, updatedAt }`
 
 * `status` is **computed**, never sent: `New` (not started) → `In Progress` (started) → `Completed` (every process of every line is `Completed`).
-* `invoice` is `null` or `{ id, invoiceNumber, status }`.
+* `invoice` is `null` or `{ id, invoiceNumber, status, receiptNumber }` (`receiptNumber` is `null` until the payment); the order page links to the invoice and its receipt.
 * `lines[]`: `{ id, productId, productCode, productName, quantity, unitPrice, processes[] }`; `processes[]`: `{ id, sequence, name, instructions, status, completedQuantity }`. The required quantity of a process is the `quantity` of its line.
 * `history[]`, newest first, one entry for **every** progress update (never changed): `{ id, lineId, processId, processName, status, completedQuantity, workDate, note, userId, userName, at }`.
 

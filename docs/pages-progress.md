@@ -7,7 +7,7 @@ Plan: [specs/s1-mini-erp-workflow.md](specs/s1-mini-erp-workflow.md) (workflow a
 | Step | Work | State |
 |---|---|---|
 | P0 | Prune: the cut pages, mock modules, services, config, tests, texts and docs are deleted; two roles (Admin, Worker); the menu in the header; the 8 menu pages open as "not built yet" | ✅ |
-| U1 | The base of the look: tokens, `ui/` parts, the header, the page parts, the login | ⬜ |
+| U1 | The base of the look: tokens, `ui/` parts, the header, the page parts, the login | ✅ |
 | P1 | Customers, products + BOM, materials + lots, users (pages, not sheets) | ⬜ |
 | P2 | QT references with the file | ⬜ |
 | P3 | Production orders, product lines, processes, progress history | ⬜ |
@@ -21,3 +21,4 @@ Plan: [specs/s1-mini-erp-workflow.md](specs/s1-mini-erp-workflow.md) (workflow a
 | Date | Change |
 |---|---|
 | 2026-10-09 | **P0**: pruned to the shell. Users: Admin and Worker only (`admin@gmail.com` / `admin`, `worker@gmail.com` / `worker`). The sidebar is gone; the menu is a row in the header (a bare structure, the look is U1). Kept as the base of the next steps: `ui/` (alert-dialog, badge, table, textarea and the parts of the sign-in), `services/crud.js`, `utils/format.js`, `utils/dates.js`, `utils/aria.js`, the mock adapter with its persistence log. |
+| 2026-10-09 | **U1**: the look base. Theme #7C7BAD, radius 0, flat (no shadows or rings), underline-only fields, bold-header lists with thin lines, grey page-title band with a status word in a square box, purple header bar, teal links (#017E84). No icons left: lucide-react removed, login uses a text "Show password". |

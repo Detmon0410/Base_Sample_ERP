@@ -1,4 +1,4 @@
-# Klong ERP Frontend
+# Refrigerator Factory Frontend
 
 React + Vite + Tailwind v4 + shadcn/ui (JavaScript, no TypeScript). It runs on a mock API until the backend exists. Project overview: [../README.md](../README.md). API contract: [../docs/api](../docs/api/README.md).
 
@@ -30,7 +30,7 @@ src/
     layout/          header, sidebar, menus
     sale/ factory/ stock/ purchase/ accounting/ admin/ auth/   parts of one module
   config/            navigation, permissions, status and action rules per module
-  hooks/             shared hooks (auth, notifications, narrow / phone, row seen ...)
+  hooks/             shared hooks (auth, narrow / phone, row seen ...)
   i18n/locales/      en and ja, one file per namespace
   layouts/           MainLayout (shell) and AuthLayout
   pages/             route-level pages per module (list + sheet)

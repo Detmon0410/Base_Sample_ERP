@@ -60,6 +60,7 @@ i18n
 
 function syncDocumentLanguage(language) {
   document.documentElement.lang = language?.startsWith("ja") ? "ja" : "en";
+  document.title = i18n.t("common:app.name"); // the name of the system follows the language
 }
 
 syncDocumentLanguage(i18n.resolvedLanguage);

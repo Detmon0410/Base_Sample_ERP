@@ -24,7 +24,7 @@ Decisions already made: sidebar is **collapsible**; the Dashboard is an **overvi
 | Item | Spec |
 |---|---|
 | Width | Expanded **208px**, collapsed **64px** (icons only). Fixed, full height, own scroll if the menu is long |
-| Top | Factory icon + "Klong" (name hides when collapsed) |
+| Top | Factory icon + "Refrigerator Factory" (name hides when collapsed) |
 | Toggle | Button in the header (☰ icon) with `aria-label` "Collapse / Expand menu", `aria-expanded`; keyboard shortcut `Ctrl/Cmd + B` |
 | Memory | Open/closed state saved per browser in `localStorage` key `kanou.sidebar` (default: expanded) |
 | Item size | Height 45px, label 18px (sub-pages 16px, wrapping onto two lines when a name is long, never cut with "…"), icon 20px. Collapsed: icon only, the label shows as a **tooltip** on hover and on keyboard focus |

@@ -1,4 +1,4 @@
-# Klong ERP
+# Refrigerator Factory
 
 ERP for a Japan-market manufacturer: Sale, Factory, Stock, Purchase, Accounting, Users, Serial numbers (S/N) and Traceability. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only, no TypeScript. Language: English first, Japanese keys are empty and fall back to English. Currency: JPY only.
 
@@ -69,7 +69,7 @@ Never commit real credentials — commit `.env.example`, not `.env`.
 | Master Data | Customers, suppliers, products (BOM, routing), materials, warehouses, machines, employees, units, price lists |
 | Administration | Users with department + role, the permission matrix |
 
-Departments are Sale, Factory, Purchase and Accounting; roles are Admin, Manager and Worker. The menu, the red request counters and the Dashboard follow the department and role of the signed-in user.
+Departments are Sale, Factory, Purchase and Accounting; roles are Admin, Manager and Worker. The menu and the Dashboard follow the department and role of the signed-in user.
 
 ## Backend API today
 

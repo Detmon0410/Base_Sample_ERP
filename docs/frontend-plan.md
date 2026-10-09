@@ -1,4 +1,4 @@
-# Klong ERP — Frontend Plan
+# Refrigerator Factory — Frontend Plan
 
 Status: **BUILT with mock data (the plan below is the original; what was built is in the tracker)** · Progress tracker: [pages-progress.md](pages-progress.md)
 

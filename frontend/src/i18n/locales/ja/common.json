@@ -1,83 +1,84 @@
 {
   "app": {
     "name": "冷蔵庫工場",
-    "tagline": ""
+    "tagline": "営業・製造・在庫・購買・会計をひとつのシステムで管理します。"
   },
   "language": {
-    "label": ""
+    "label": "言語"
   },
   "actions": {
-    "save": "",
-    "cancel": "",
-    "back": "",
-    "backToDashboard": "",
-    "retry": "",
-    "saving": "",
-    "approve": "",
-    "reject": "",
-    "confirm": ""
+    "save": "保存",
+    "cancel": "キャンセル",
+    "back": "戻る",
+    "backToDashboard": "ダッシュボードに戻る",
+    "retry": "再試行",
+    "saving": "保存中…",
+    "approve": "承認",
+    "reject": "却下",
+    "confirm": "確認"
   },
   "pages": {
     "notFound": {
-      "title": "",
-      "description": ""
+      "title": "ページが見つかりません",
+      "description": "お探しのページは存在しないか、移動されました。"
     },
     "forbidden": {
-      "title": "",
-      "description": ""
+      "title": "アクセス権限がありません",
+      "description": "このアカウントではこのページを開けません。必要な場合は管理者に連絡してください。"
     }
   },
-  "loading": "",
+  "loading": "読み込み中…",
   "pagination": {
-    "label": "",
-    "showing": "",
-    "none": "",
-    "previous": "",
-    "next": "",
-    "page": "",
-    "show": "",
-    "perPage": ""
+    "label": "ページ切替",
+    "showing": "{{total}} 件中 {{from}}–{{to}} 件を表示",
+    "none": "データなし",
+    "previous": "前へ",
+    "next": "次へ",
+    "page": "{{page}} ページ",
+    "show": "表示件数",
+    "perPage": "1ページの表示件数"
   },
   "detail": {
-    "noLinkedDocuments": "",
-    "history": "",
-    "noHistory": "",
-    "by": "",
-    "resize": ""
+    "noLinkedDocuments": "関連書類はまだありません。",
+    "history": "ステータス履歴",
+    "noHistory": "履歴はまだありません。",
+    "by": "{{name}}",
+    "resize": "ドラッグしてパネルの幅を変更"
   },
   "approval": {
-    "waiting": "",
-    "approveTitle": "",
-    "approveDescription": "",
-    "rejectTitle": "",
-    "rejectDescription": "",
-    "reasonLabel": "",
-    "reasonRequired": "",
-    "reasonPlaceholder": ""
+    "waiting": "{{department}}マネージャーの承認待ちです。",
+    "approveTitle": "この書類を承認しますか？",
+    "approveDescription": "書類は次の工程に進み、申請者に通知されます。",
+    "rejectTitle": "この書類を却下しますか？",
+    "rejectDescription": "書類は申請者に差し戻されます。修正が必要な点を入力してください。",
+    "reasonLabel": "理由",
+    "reasonRequired": "理由は必須です。",
+    "reasonPlaceholder": "修正が必要な点を入力してください"
   },
   "toolbar": {
-    "filters": "",
-    "search": "",
-    "all": "",
-    "from": "",
-    "to": "",
-    "done": "",
-    "noMatch": "",
-    "clearAll": "",
-    "remove": ""
+    "filters": "絞り込み",
+    "search": "検索",
+    "all": "すべて",
+    "from": "開始",
+    "to": "終了",
+    "done": "決定",
+    "noMatch": "該当なし",
+    "clearAll": "絞り込みを解除",
+    "remove": "条件を削除"
   },
   "empty": {
-    "noRecordsTitle": "",
-    "noResultTitle": ""
+    "noRecordsTitle": "まだデータがありません",
+    "noResultTitle": "該当なし"
   },
   "datePicker": {
-    "choose": "",
-    "clear": "",
-    "today": ""
+    "choose": "日付を選択",
+    "clear": "クリア",
+    "today": "今日"
   },
   "views": {
-    "cards": "",
-    "table": "",
-    "label": ""
-  }
+    "cards": "カード",
+    "table": "一覧表",
+    "label": "表示形式"
+  },
+  "toasts": "通知"
 }

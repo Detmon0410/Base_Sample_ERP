@@ -79,5 +79,6 @@
     "cards": "Cards",
     "table": "Table",
     "label": "Show as"
-  }
+  },
+  "toasts": "Notifications"
 }

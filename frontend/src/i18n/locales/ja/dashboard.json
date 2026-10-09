@@ -1,153 +1,153 @@
 {
-  "title": "",
-  "loadError": "",
-  "loadErrorPage": "",
-  "refreshFailed": "",
-  "retry": "",
-  "noLinkAccess": "",
+  "title": "ダッシュボード",
+  "loadError": "このセクションを読み込めませんでした。",
+  "loadErrorPage": "ダッシュボードを読み込めませんでした。",
+  "refreshFailed": "更新できませんでした。{{time}} 時点のデータを表示しています。",
+  "retry": "再試行",
+  "noLinkAccess": "このページへのアクセス権限がありません。",
   "kpis": {
     "openSaleOrders": {
-      "label": "",
-      "context": ""
+      "label": "未完了の受注",
+      "context": "出荷可能 {{count}} 件"
     },
     "quotationsWaiting": {
-      "label": "",
-      "context": ""
+      "label": "回答待ちの見積書",
+      "context": "最長 {{count}} 日経過"
     },
     "workOrdersInProcess": {
-      "label": "",
-      "context": ""
+      "label": "製造中の製造指示書",
+      "context": "計画済み {{count}} 件"
     },
     "lateWorkOrders": {
-      "label": "",
-      "context": ""
+      "label": "遅延している製造指示書",
+      "context": "完了予定日を過ぎています"
     },
     "materialsInShortage": {
-      "label": "",
-      "context": ""
+      "label": "欠品中の資材",
+      "context": "欠品間近 {{count}} 件"
     },
     "poWaitingForGoods": {
-      "label": "",
-      "context": ""
+      "label": "入荷待ちの発注書",
+      "context": "次回入荷予定 {{date}}"
     },
     "overdueInvoices": {
-      "label": "",
-      "context": ""
+      "label": "期日超過の請求書",
+      "context": "{{count}} 件"
     },
     "unpaidSupplierBills": {
-      "label": "",
-      "context": ""
+      "label": "未払いの仕入請求書",
+      "context": "7日以内に期日 {{count}} 件"
     }
   },
   "approvals": {
-    "title": "",
-    "empty": "",
-    "open": "",
+    "title": "あなたの承認待ち",
+    "empty": "承認待ちの書類はありません。",
+    "open": "開く",
     "types": {
-      "QT": "",
-      "SO": "",
-      "WO": "",
-      "PO": "",
-      "INVOICE": "",
-      "BILL": ""
+      "QT": "見積書",
+      "SO": "受注",
+      "WO": "製造指示書",
+      "PO": "発注書",
+      "INVOICE": "請求書",
+      "BILL": "仕入請求書"
     }
   },
   "myRecent": {
-    "title": "",
-    "empty": ""
+    "title": "最近作成した書類",
+    "empty": "まだ書類を作成していません。"
   },
   "stockAlerts": {
-    "title": "",
-    "empty": "",
-    "viewAll": "",
-    "material": "",
-    "quantity": "",
-    "status": "",
+    "title": "資材の在庫アラート",
+    "empty": "すべての資材が適正在庫です。",
+    "viewAll": "在庫状況ボードを見る",
+    "material": "資材",
+    "quantity": "現在庫 / 発注点",
+    "status": "ステータス",
     "statuses": {
-      "SHORTAGE": "",
-      "NEAR_SHORTAGE": ""
+      "SHORTAGE": "欠品",
+      "NEAR_SHORTAGE": "欠品間近"
     }
   },
   "production": {
-    "title": "",
-    "empty": "",
-    "late": "",
-    "steps": "",
-    "planFinish": "",
-    "qty": ""
+    "title": "製造中の指示",
+    "empty": "製造中の製造指示書はありません。",
+    "late": "遅延",
+    "steps": "{{total}} 工程中 {{done}} 工程完了",
+    "planFinish": "完了予定 {{date}}",
+    "qty": "数量 {{qty}}"
   },
   "activity": {
-    "title": "",
-    "empty": "",
-    "by": ""
+    "title": "最近の操作",
+    "empty": "まだ操作履歴はありません。",
+    "by": "{{user}}"
   },
-  "showTable": "",
-  "noData": "",
+  "showTable": "数値を表で表示",
+  "noData": "まだデータがありません。",
   "views": {
-    "overview": "",
-    "Sale": "",
-    "Factory": "",
-    "Purchase": "",
-    "Accounting": ""
+    "overview": "全部署",
+    "Sale": "営業",
+    "Factory": "製造",
+    "Purchase": "在庫・購買",
+    "Accounting": "会計"
   },
   "sale": {
-    "openOrders": "",
-    "openOrdersContext": "",
-    "quotationsWaiting": "",
-    "quotationsContext": "",
-    "readyToDeliver": "",
-    "readyContext": "",
-    "salesThisMonth": "",
-    "salesContext": "",
-    "monthlyTitle": "",
-    "monthlySeries": "",
-    "statusTitle": ""
+    "openOrders": "未完了の受注",
+    "openOrdersContext": "出荷可能 {{count}} 件",
+    "quotationsWaiting": "回答待ちの見積書",
+    "quotationsContext": "最長 {{count}} 日経過",
+    "readyToDeliver": "出荷可能",
+    "readyContext": "納品書の作成が必要です",
+    "salesThisMonth": "今月の売上",
+    "salesContext": "確定後の受注",
+    "monthlyTitle": "過去6か月の売上",
+    "monthlySeries": "売上",
+    "statusTitle": "ステータス別の受注"
   },
   "factory": {
-    "inProcess": "",
-    "inProcessContext": "",
-    "late": "",
-    "lateContext": "",
-    "producedThisWeek": "",
-    "producedContext": "",
-    "toTransfer": "",
-    "toTransferContext": "",
-    "weeklyTitle": "",
-    "weeklySeries": ""
+    "inProcess": "製造中の製造指示書",
+    "inProcessContext": "計画済み {{count}} 件",
+    "late": "遅延している製造指示書",
+    "lateContext": "完了予定日を過ぎています",
+    "producedThisWeek": "今週の生産数",
+    "producedContext": "最終工程を完了した台数",
+    "toTransfer": "入庫待ち",
+    "toTransferContext": "製造完了・未入庫",
+    "weeklyTitle": "週別の生産数",
+    "weeklySeries": "台数"
   },
   "purchase": {
-    "shortage": "",
-    "shortageContext": "",
-    "poWaiting": "",
-    "poWaitingContext": "",
-    "noDueDate": "",
-    "poToApprove": "",
-    "poToApproveContext": "",
-    "nearShortage": "",
-    "nearContext": "",
-    "levelsTitle": "",
-    "levelsHint": "",
-    "levelsEmpty": ""
+    "shortage": "欠品中の資材",
+    "shortageContext": "欠品間近 {{count}} 件",
+    "poWaiting": "入荷待ちの発注書",
+    "poWaitingContext": "次回入荷予定 {{date}}",
+    "noDueDate": "納期未設定",
+    "poToApprove": "承認待ちの発注書",
+    "poToApproveContext": "マネージャーの承認待ち",
+    "nearShortage": "欠品間近",
+    "nearContext": "発注点をわずかに上回っています",
+    "levelsTitle": "注意が必要な資材",
+    "levelsHint": "バーは発注点に対する在庫の割合です。赤：欠品、黄：欠品間近。",
+    "levelsEmpty": "すべての資材が適正在庫です。"
   },
   "accounting": {
-    "overdueAmount": "",
-    "overdueCount": "",
-    "overdueCountContext": "",
-    "billsDue": "",
-    "billsDueContext": "",
-    "receivedThisMonth": "",
-    "receivedContext": "",
-    "cashTitle": "",
-    "cashIn": "",
-    "cashOut": "",
-    "agingTitle": "",
+    "overdueAmount": "期日超過の請求書",
+    "overdueCount": "顧客の期日超過請求書",
+    "overdueCountContext": "支払期日を過ぎた未入金分",
+    "billsDue": "7日以内に期日の仕入請求書",
+    "billsDueContext": "未払いの仕入請求書",
+    "receivedThisMonth": "今月の入金額",
+    "receivedContext": "確定済みの入金",
+    "cashTitle": "過去6か月の入出金",
+    "cashIn": "入金",
+    "cashOut": "支払",
+    "agingTitle": "売掛金の年齢分析",
     "aging": {
-      "notDue": "",
-      "late30": "",
-      "late60": "",
-      "over60": ""
+      "notDue": "期日前",
+      "late30": "1〜30日超過",
+      "late60": "31〜60日超過",
+      "over60": "60日超過"
     },
-    "overdueContext_one": "",
-    "overdueContext_other": ""
+    "overdueContext_one": "{{count}} 件",
+    "overdueContext_other": "{{count}} 件"
   }
 }

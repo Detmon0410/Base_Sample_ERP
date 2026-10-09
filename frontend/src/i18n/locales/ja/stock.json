@@ -1,236 +1,236 @@
 {
   "status": {
-    "shortage": "",
-    "near_shortage": "",
-    "normal": "",
-    "in_stock": "",
-    "out_of_stock": "",
-    "not_set": ""
+    "shortage": "欠品",
+    "near_shortage": "欠品間近",
+    "normal": "適正",
+    "in_stock": "在庫あり",
+    "out_of_stock": "在庫なし",
+    "not_set": "発注点未設定"
   },
   "overview": {
     "tabs": {
-      "label": "",
-      "material": "",
-      "product": ""
+      "label": "表示",
+      "material": "資材",
+      "product": "製品"
     },
-    "search": "",
-    "emptyMaterial": "",
-    "emptyProduct": "",
-    "noResult": "",
+    "search": "品番・品名で検索",
+    "emptyMaterial": "資材はまだ登録されていません。マスターで登録してください。",
+    "emptyProduct": "製品はまだ登録されていません。マスターで登録してください。",
+    "noResult": "該当する品目がありません。検索条件または絞り込みを解除してください。",
     "filters": {
-      "warehouse": ""
+      "warehouse": "倉庫"
     },
     "columns": {
-      "code": "",
-      "name": "",
-      "warehouse": "",
-      "onHand": "",
-      "reorderPoint": "",
-      "status": "",
-      "reserved": "",
-      "available": "",
-      "onOrder": ""
+      "code": "品番",
+      "name": "品名",
+      "warehouse": "倉庫",
+      "onHand": "現在庫",
+      "reorderPoint": "発注点",
+      "status": "ステータス",
+      "reserved": "引当",
+      "available": "有効在庫",
+      "onOrder": "発注残"
     },
-    "reservedHint": ""
+    "reservedHint": "引当 = 未完了の書類で予約済みの数量（計画確定した製造指示書の資材、下書き納品書の製品）。有効在庫 = 現在庫 − 引当。"
   },
   "item": {
-    "materialTitle": "",
-    "productTitle": "",
-    "notFound": "",
-    "loadError": "",
-    "backToList": "",
+    "materialTitle": "資材の在庫",
+    "productTitle": "製品の在庫",
+    "notFound": "この品目は存在しません。",
+    "loadError": "この品目の在庫を読み込めませんでした。",
+    "backToList": "在庫一覧に戻る",
     "cards": {
-      "summary": "",
-      "warehouses": "",
-      "movements": "",
-      "usedIn": "",
-      "openOrders": ""
+      "summary": "在庫",
+      "warehouses": "倉庫別",
+      "movements": "最近の入出庫",
+      "usedIn": "使用先",
+      "openOrders": "未完了の発注書"
     },
     "fields": {
-      "onHand": "",
-      "reorderPoint": "",
-      "reorderQty": "",
-      "status": "",
-      "category": "",
-      "reserved": "",
-      "available": "",
-      "onOrder": ""
+      "onHand": "現在庫（全倉庫）",
+      "reorderPoint": "発注点",
+      "reorderQty": "発注数量",
+      "status": "ステータス",
+      "category": "分類",
+      "reserved": "引当",
+      "available": "有効在庫",
+      "onOrder": "発注残"
     },
-    "noMovements": "",
-    "usedInHint": "",
-    "perUnit": "",
-    "allMovements": "",
-    "newAdjustment": "",
-    "editMaster": "",
-    "setOpening": "",
-    "noStockYet": "",
+    "noMovements": "入出庫はまだありません。",
+    "usedInHint": "部品表（BOM）でこの資材を使用する製品と、1台あたりの使用数量です。",
+    "perUnit": "1台あたり {{qty}} {{uom}}",
+    "allMovements": "すべての入出庫",
+    "newAdjustment": "新規在庫調整",
+    "editMaster": "マスターで編集",
+    "setOpening": "期首在庫を設定",
+    "noStockYet": "この品目には在庫も入出庫もありません。期首在庫を設定して開始してください。",
     "openOrders": {
-      "hint": "",
-      "po": "",
-      "supplier": "",
-      "expected": "",
-      "open": ""
+      "hint": "仕入先からの未納数量（送付済み発注書の未入荷分）です。",
+      "po": "発注書",
+      "supplier": "仕入先",
+      "expected": "入荷予定日",
+      "open": "未納数量"
     }
   },
   "movements": {
-    "search": "",
-    "empty": "",
-    "noResult": "",
-    "dateLabel": "",
+    "search": "品目・書類番号で検索",
+    "empty": "入出庫はまだありません。",
+    "noResult": "該当する入出庫がありません。検索条件または絞り込みを解除してください。",
+    "dateLabel": "日付",
     "columns": {
-      "at": "",
-      "type": "",
-      "item": "",
-      "warehouse": "",
-      "qty": "",
-      "balance": "",
-      "document": "",
-      "by": "",
-      "number": "",
-      "fromTo": ""
+      "at": "日時",
+      "type": "区分",
+      "item": "品目",
+      "warehouse": "倉庫",
+      "qty": "数量",
+      "balance": "処理後在庫",
+      "document": "書類",
+      "by": "担当者",
+      "number": "入出庫番号",
+      "fromTo": "出庫元 → 入庫先"
     },
     "filters": {
-      "type": "",
-      "kind": "",
-      "warehouse": ""
+      "type": "区分",
+      "kind": "品目区分",
+      "warehouse": "倉庫"
     },
     "kinds": {
-      "material": "",
-      "product": ""
+      "material": "資材",
+      "product": "製品"
     },
     "types": {
-      "opening": "",
-      "receipt": "",
-      "consume": "",
-      "produce": "",
-      "deliver": "",
-      "adjust": ""
+      "opening": "期首在庫",
+      "receipt": "購買入荷",
+      "consume": "製造指示の資材払出",
+      "produce": "完成品入庫",
+      "deliver": "販売出荷",
+      "adjust": "在庫調整"
     },
-    "noDocument": ""
+    "noDocument": "—"
   },
   "adjustments": {
-    "singular": "",
-    "new": "",
-    "edit": "",
-    "view": "",
-    "search": "",
-    "empty": "",
-    "noResult": "",
-    "dateLabel": "",
+    "singular": "在庫調整",
+    "new": "新規在庫調整",
+    "edit": "在庫調整を編集",
+    "view": "在庫調整",
+    "search": "番号・品目で検索",
+    "empty": "在庫調整はまだありません。棚卸数と在庫が合わない場合に作成してください。",
+    "noResult": "該当する在庫調整がありません。検索条件または絞り込みを解除してください。",
+    "dateLabel": "日付",
     "columns": {
-      "number": "",
-      "date": "",
-      "item": "",
-      "warehouse": "",
-      "counted": "",
-      "difference": "",
-      "status": ""
+      "number": "調整番号",
+      "date": "日付",
+      "item": "品目",
+      "warehouse": "倉庫",
+      "counted": "棚卸数",
+      "difference": "差異",
+      "status": "ステータス"
     },
     "filters": {
-      "kind": "",
-      "warehouse": ""
+      "kind": "品目区分",
+      "warehouse": "倉庫"
     }
   },
   "cards": {
-    "adjustment": ""
+    "adjustment": "在庫調整"
   },
   "fields": {
-    "itemType": "",
-    "item": "",
-    "chooseItem": "",
-    "warehouse": "",
-    "chooseWarehouse": "",
-    "onHandNow": "",
-    "onHandAtApproval": "",
-    "counted": "",
-    "difference": "",
-    "reason": "",
-    "chooseReason": "",
-    "date": "",
-    "remarks": "",
-    "remarksOther": "",
-    "createdBy": "",
-    "changedWarning": "",
-    "differenceHint": "",
-    "openingHint": ""
+    "itemType": "品目区分",
+    "item": "品目",
+    "chooseItem": "品目を選択",
+    "warehouse": "倉庫",
+    "chooseWarehouse": "倉庫を選択",
+    "onHandNow": "現在庫",
+    "onHandAtApproval": "承認時の在庫",
+    "counted": "棚卸数",
+    "difference": "差異",
+    "reason": "理由",
+    "chooseReason": "理由を選択",
+    "date": "日付",
+    "remarks": "備考",
+    "remarksOther": "備考（「その他」の場合は必須）",
+    "createdBy": "作成者",
+    "changedWarning": "申請後に在庫が変動しました（{{before}} → {{now}}）。結果は棚卸数どおりになります。",
+    "differenceHint": "マネージャーが承認すると、この差異が計上されます。",
+    "openingHint": "この倉庫でのこの品目の最初の数量です。承認後に期首在庫として計上されます。"
   },
   "kinds": {
-    "material": "",
-    "product": ""
+    "material": "資材",
+    "product": "製品"
   },
   "reasons": {
-    "recount": "",
-    "damaged": "",
-    "lost": "",
-    "found": "",
-    "other": "",
-    "opening": ""
+    "recount": "再棚卸",
+    "damaged": "破損",
+    "lost": "紛失",
+    "found": "発見",
+    "other": "その他",
+    "opening": "期首在庫"
   },
   "validation": {
-    "required": "",
-    "qty": "",
-    "wholeQty": "",
-    "noteRequired": "",
-    "maxLength": "",
-    "openingNotAllowed": ""
+    "required": "必須項目です。",
+    "qty": "0以上を入力してください。",
+    "wholeQty": "0以上の整数を入力してください。",
+    "noteRequired": "理由が「その他」の場合は備考を入力してください。",
+    "maxLength": "500文字以内で入力してください。",
+    "openingNotAllowed": "期首在庫は、この倉庫で入出庫のない品目にのみ設定できます。"
   },
   "actions": {
-    "saveFirst": "",
+    "saveFirst": "先に変更を保存してください",
     "request": {
-      "button": "",
-      "title": "",
-      "description": "",
-      "confirm": "",
-      "done": ""
+      "button": "承認依頼",
+      "title": "この在庫調整の承認をマネージャーに依頼しますか？",
+      "description": "承認待ちの間は編集できません。作成者以外のマネージャーが承認または却下します。",
+      "confirm": "承認依頼",
+      "done": "承認を依頼しました"
     },
     "approve": {
-      "button": "",
-      "title": "",
-      "description": "",
-      "confirm": "",
-      "done": ""
+      "button": "承認",
+      "title": "この在庫調整を承認しますか？",
+      "description": "在庫がすぐに変更されます。棚卸数が現在庫になり、入出庫履歴が記録されます。",
+      "confirm": "承認",
+      "done": "在庫調整を承認し、在庫を更新しました"
     },
     "reject": {
-      "button": "",
-      "title": "",
-      "description": "",
-      "confirm": "",
-      "done": ""
+      "button": "却下",
+      "title": "この在庫調整を却下しますか？",
+      "description": "在庫は変更されません。作成者に理由を伝えてください。",
+      "confirm": "却下",
+      "done": "在庫調整を却下しました"
     },
     "back-to-draft": {
-      "button": "",
-      "title": "",
-      "description": "",
-      "confirm": "",
-      "done": ""
+      "button": "下書きに戻す",
+      "title": "下書きに戻しますか？",
+      "description": "再度編集して、あとで承認を依頼できます。",
+      "confirm": "下書きに戻す",
+      "done": "在庫調整を下書きに戻しました"
     },
     "cancel": {
-      "button": "",
-      "title": "",
-      "description": "",
-      "confirm": "",
-      "done": ""
+      "button": "在庫調整を取消",
+      "title": "この在庫調整を取消しますか？",
+      "description": "取消として一覧に残ります。在庫は変更されません。",
+      "confirm": "在庫調整を取消",
+      "done": "在庫調整を取消しました"
     }
   },
   "errors": {
-    "UNKNOWN": "",
-    "FORBIDDEN": "",
-    "NOT_FOUND": "",
-    "INVALID_STATUS": "",
-    "VALIDATION_ERROR": "",
-    "NOT_ENOUGH_STOCK": "",
-    "HAS_MOVEMENTS": "",
-    "NOT_READY": ""
+    "UNKNOWN": "エラーが発生しました。再度お試しください。",
+    "FORBIDDEN": "この操作の権限がありません。",
+    "NOT_FOUND": "このデータは存在しません。",
+    "INVALID_STATUS": "現在のステータスではこの操作はできません。",
+    "VALIDATION_ERROR": "入力内容を確認してください（強調表示の項目）。",
+    "NOT_ENOUGH_STOCK": "在庫が不足しています。",
+    "HAS_MOVEMENTS": "この品目はこの倉庫ですでに入出庫があります。",
+    "NOT_READY": "受注は出荷可能ではありません。製品がまだ製品倉庫にありません。先に製造指示書を完了し、完成品を入庫してください。"
   },
   "short": {
-    "title": "",
-    "item": ""
+    "title": "在庫が不足しています",
+    "item": "{{code}}：必要数 {{needed}} {{uom}}、在庫 {{has}}"
   },
   "issued": {
-    "title": "",
-    "hint": "",
-    "material": "",
-    "qty": "",
-    "warehouse": ""
+    "title": "払出済み資材",
+    "hint": "製造指示書の着手時に資材倉庫から払い出された資材です。差し戻しまたは取消すると戻ります。",
+    "material": "資材",
+    "qty": "数量",
+    "warehouse": "倉庫"
   }
 }

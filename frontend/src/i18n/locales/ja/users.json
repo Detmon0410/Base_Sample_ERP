@@ -1,189 +1,189 @@
 {
   "status": {
-    "active": "",
-    "inactive": ""
+    "active": "有効",
+    "inactive": "無効"
   },
   "departments": {
-    "Sale": "",
-    "Factory": "",
-    "Purchase": "",
-    "Accounting": "",
-    "Stock": "",
-    "Administration": ""
+    "Sale": "営業",
+    "Factory": "製造",
+    "Purchase": "購買",
+    "Accounting": "会計",
+    "Stock": "在庫",
+    "Administration": "システム管理"
   },
   "roles": {
-    "Admin": "",
-    "Manager": "",
-    "Worker": ""
+    "Admin": "管理者",
+    "Manager": "マネージャー",
+    "Worker": "担当者"
   },
   "list": {
-    "new": "",
-    "search": "",
-    "empty": "",
-    "noResult": "",
-    "you": "",
-    "neverSignedIn": "",
-    "noAssignment": "",
+    "new": "新規ユーザー",
+    "search": "氏名・メールアドレスで検索",
+    "empty": "ユーザーはまだ登録されていません。",
+    "noResult": "該当するユーザーがいません。検索条件または絞り込みを解除してください。",
+    "you": "本人",
+    "neverSignedIn": "ログイン履歴なし",
+    "noAssignment": "部署なし",
     "filters": {
-      "department": "",
-      "role": ""
+      "department": "部署",
+      "role": "権限"
     },
     "columns": {
-      "name": "",
-      "email": "",
-      "assignments": "",
-      "lastLoginAt": "",
-      "status": ""
+      "name": "氏名",
+      "email": "メールアドレス",
+      "assignments": "部署と権限",
+      "lastLoginAt": "最終ログイン",
+      "status": "ステータス"
     }
   },
   "form": {
     "title": {
-      "new": ""
+      "new": "新規ユーザー"
     },
-    "singular": "",
+    "singular": "ユーザー",
     "sections": {
-      "account": "",
-      "assignments": "",
-      "password": "",
-      "info": ""
+      "account": "アカウント",
+      "assignments": "部署と権限",
+      "password": "パスワード",
+      "info": "ログインと記録"
     },
     "fields": {
-      "name": "",
-      "email": "",
-      "password": ""
+      "name": "氏名",
+      "email": "メールアドレス（ログインに使用）",
+      "password": "パスワード"
     },
     "placeholders": {
-      "name": "",
-      "email": ""
+      "name": "例：山田 太郎",
+      "email": "name@company.com"
     },
     "password": {
-      "hint": "",
-      "show": "",
-      "hide": "",
-      "generate": "",
-      "copy": "",
-      "copied": "",
-      "generatedNote": "",
-      "hintLabel": ""
+      "hint": "英字と数字を含む8文字以上。登録後すぐにログインできます。",
+      "show": "パスワードを表示",
+      "hide": "パスワードを隠す",
+      "generate": "自動生成",
+      "copy": "コピー",
+      "copied": "コピーしました",
+      "generatedNote": "今すぐ控えるかコピーしてください。再表示はできません。",
+      "hintLabel": "パスワードの条件"
     },
     "assignments": {
-      "hint": "",
-      "department": "",
-      "role": "",
-      "add": "",
-      "remove": "",
-      "adminRow": "",
-      "pickDepartment": "",
-      "pickRole": "",
-      "none": "",
-      "hintLabel": ""
+      "hint": "ユーザーは複数の部署に所属でき、部署ごとに権限を持ちます。管理者権限は単独で設定し、全部署とユーザー管理を担当します。",
+      "department": "部署",
+      "role": "権限",
+      "add": "部署を追加",
+      "remove": "この行を削除",
+      "adminRow": "全部署",
+      "pickDepartment": "部署を選択",
+      "pickRole": "権限を選択",
+      "none": "部署と権限を1つ以上追加してください。",
+      "hintLabel": "部署と権限について"
     },
     "resetPassword": {
-      "button": "",
-      "title": "",
-      "description": "",
-      "confirm": "",
-      "done": "",
-      "newPassword": ""
+      "button": "パスワードを再設定",
+      "title": "パスワードの再設定",
+      "description": "{{name}} さんの新しいパスワードを設定します。このユーザーのログインはすぐに終了し、新しいパスワードで再ログインが必要になります。",
+      "confirm": "パスワードを再設定",
+      "done": "パスワードを再設定しました。{{name}} さんはログアウトされました。",
+      "newPassword": "新しいパスワード"
     },
     "info": {
-      "lastLoginAt": "",
-      "never": ""
+      "lastLoginAt": "最終ログイン",
+      "never": "ログイン履歴なし"
     },
-    "self": "",
-    "inUse": "",
-    "selfLabel": "",
-    "inUseLabel": ""
+    "self": "ご自身のアカウントです。自分のアカウントの無効化・削除・パスワード再設定・権限変更はできません。",
+    "inUse": "このユーザーはログインまたは書類の作業履歴があるため削除できません。代わりに無効化してください。",
+    "selfLabel": "ご自身のアカウントについて",
+    "inUseLabel": "このユーザーを削除できない理由"
   },
   "validation": {
-    "required": "",
-    "weakPassword": "",
-    "adminAlone": "",
-    "duplicate": "",
-    "assignmentsRequired": "",
-    "pick": ""
+    "required": "必須項目です。",
+    "weakPassword": "英字と数字を含む8文字以上で入力してください。",
+    "adminAlone": "管理者権限は部署と組み合わせられません。",
+    "duplicate": "この部署はすでに追加されています。",
+    "assignmentsRequired": "部署と権限を1つ以上追加してください。",
+    "pick": "選択してください。"
   },
   "errors": {
-    "EMAIL_ALREADY_EXISTS": "",
-    "LAST_ADMIN": "",
-    "CANNOT_CHANGE_SELF": "",
-    "IN_USE": "",
-    "WEAK_PASSWORD": ""
+    "EMAIL_ALREADY_EXISTS": "このメールアドレスは他のユーザーが使用しています。",
+    "LAST_ADMIN": "有効な管理者はこのユーザーだけです。先に別のユーザーを管理者にしてください。",
+    "CANNOT_CHANGE_SELF": "自分のアカウントにはこの操作はできません。",
+    "IN_USE": "このユーザーはログインまたは書類の作業履歴があるため削除できません。代わりに無効化してください。",
+    "WEAK_PASSWORD": "英字と数字を含む8文字以上で入力してください。"
   },
   "matrixPage": {
-    "intro": "",
-    "tableLabel": "",
-    "menuLabel": "",
-    "action": "",
-    "yes": "",
-    "no": "",
-    "menuTitle": "",
-    "menuIntro": "",
-    "menu": "",
-    "menuUsers": "",
+    "intro": "各権限でできる操作と、ユーザーごとに表示されるメニューです。このページは規則の表示のみで、権限の付与はユーザー管理で行います。",
+    "tableLabel": "権限ごとにできる操作",
+    "menuLabel": "ユーザーごとに表示されるメニュー",
+    "action": "操作",
+    "yes": "可",
+    "no": "不可",
+    "menuTitle": "メニュー",
+    "menuIntro": "部署または権限で許可されたメニューグループが表示されます。",
+    "menu": "メニューグループ",
+    "menuUsers": "対象ユーザー",
     "audiences": {
-      "Sale": "",
-      "Factory": "",
-      "Purchase": "",
-      "Accounting": "",
-      "Admin": ""
+      "Sale": "営業",
+      "Factory": "製造",
+      "Purchase": "購買",
+      "Accounting": "会計",
+      "Admin": "管理者"
     },
-    "note": ""
+    "note": "マネージャーと担当者は各セクションの部署内で有効です。管理者は部署を持たず、自分の作業の承認依頼を除くすべての操作ができます。"
   },
   "matrix": {
     "Sale": {
-      "work": "",
-      "sendQuotation": "",
-      "acceptQuotation": "",
-      "requestConfirm": "",
-      "approveOrder": "",
-      "sendToFactory": "",
-      "cancelRunningOrder": "",
-      "confirmDelivery": "",
-      "closeOrder": "",
-      "revertOrder": ""
+      "work": "営業書類の作成・編集",
+      "sendQuotation": "見積書の送付",
+      "acceptQuotation": "見積書の承諾を記録",
+      "requestConfirm": "受注の承認を依頼",
+      "approveOrder": "受注の承認（確定）",
+      "sendToFactory": "確定した受注を製造へ送る",
+      "cancelRunningOrder": "製造中の受注を取消",
+      "confirmDelivery": "納品の確定",
+      "closeOrder": "納品済み受注の完了",
+      "revertOrder": "受注の直前の操作を取消"
     },
     "Factory": {
-      "work": "",
-      "schedule": "",
-      "start": "",
-      "startStep": "",
-      "doneStep": "",
-      "reopenStep": "",
-      "finish": "",
-      "cancelRunning": "",
-      "transfer": "",
-      "revertWorkOrder": ""
+      "work": "製造書類の作成・編集",
+      "schedule": "製造指示書の計画",
+      "start": "製造指示書の着手",
+      "startStep": "工程の開始",
+      "doneStep": "工程の完了",
+      "reopenStep": "完了した工程の再開",
+      "finish": "製造指示書の完了",
+      "cancelRunning": "製造中の指示書を取消",
+      "transfer": "完成品を在庫へ入庫",
+      "revertWorkOrder": "製造指示書の直前の操作を取消"
     },
     "Stock": {
-      "view": "",
-      "createAdjustment": "",
-      "approveAdjustment": ""
+      "view": "在庫の照会と入出庫の記録",
+      "createAdjustment": "在庫調整の申請",
+      "approveAdjustment": "他者の在庫調整の承認"
     },
     "Purchase": {
-      "work": "",
-      "editOrder": "",
-      "requestApproval": "",
-      "approveOrder": "",
-      "sendOrder": "",
-      "receiveGoods": "",
-      "postReceipt": "",
-      "closeOrder": "",
-      "cancelPostedReceipt": ""
+      "work": "購買書類の作成・編集",
+      "editOrder": "下書きの発注書を編集",
+      "requestApproval": "発注書の承認をマネージャーに依頼",
+      "approveOrder": "他者の発注書の承認・却下",
+      "sendOrder": "承認済み発注書を仕入先へ送付",
+      "receiveGoods": "入荷の受入",
+      "postReceipt": "入荷を在庫に計上",
+      "closeOrder": "入荷済み発注書の完了",
+      "cancelPostedReceipt": "計上済み入荷の取消"
     },
     "Accounting": {
-      "work": "",
-      "issueInvoice": "",
-      "approveBill": "",
-      "confirmReceipt": "",
-      "confirmPayment": "",
-      "cancelConfirmedMoney": "",
-      "postEntry": "",
-      "changeMaster": ""
+      "work": "会計書類の作成・編集",
+      "issueInvoice": "請求書の発行",
+      "approveBill": "仕入請求書の承認",
+      "confirmReceipt": "入金の確定",
+      "confirmPayment": "支払の確定",
+      "cancelConfirmedMoney": "確定済み入金・支払の取消",
+      "postEntry": "仕訳の計上",
+      "changeMaster": "会計マスターの変更"
     },
     "Administration": {
-      "users": "",
-      "masterData": ""
+      "users": "ユーザー管理",
+      "masterData": "全部署のマスターデータの変更"
     }
   }
 }

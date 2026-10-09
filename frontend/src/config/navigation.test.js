@@ -10,12 +10,12 @@ const shape = (user) =>
   getVisibleNav(user).map((entry) => (entry.type === "link" ? entry.item.labelKey : `${entry.labelKey} > ${entry.items.map((item) => item.labelKey).join(", ")}`));
 
 describe("the menu of the header", () => {
-  it("shows an Admin everything: two menus with sub-entries, the others as links", () => {
-    expect(shape(admin)).toEqual(["summary", "orders > qt, productionOrders", "invoices", "stock", "master > customers, products", "users"]);
+  it("shows an Admin everything: the two menus with their entries, the others as links", () => {
+    expect(shape(admin)).toEqual(["summary", "orders > qt, productionOrders", "invoices", "master > customers, products, materialsStock, users"]);
   });
 
-  it("shows a Worker only the production orders, the stock and the products, each as a link (a menu with one entry is that entry)", () => {
-    expect(shape(worker)).toEqual(["summary", "productionOrders", "stock", "products"]);
+  it("shows a Worker the production orders as a link and, under Master, only the products and the materials and stock (a menu with one entry is that entry)", () => {
+    expect(shape(worker)).toEqual(["summary", "productionOrders", "master > products, materialsStock"]);
   });
 
   it("shows nothing to somebody who is not signed in", () => {

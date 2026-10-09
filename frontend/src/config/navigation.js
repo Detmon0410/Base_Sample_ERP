@@ -19,16 +19,16 @@ export const NAV = [
     ],
   },
   { key: "invoices", to: "/invoices", labelKey: "invoices", roles: ["Admin"] },
-  { key: "stock", to: "/stock", labelKey: "stock", roles: ["Admin", "Worker"] },
   {
     key: "master",
     labelKey: "master",
     items: [
       { key: "customers", to: "/customers", labelKey: "customers", roles: ["Admin"] },
       { key: "products", to: "/products", labelKey: "products", roles: ["Admin", "Worker"] },
+      { key: "stock", to: "/stock", labelKey: "materialsStock", roles: ["Admin", "Worker"] },
+      { key: "users", to: "/users", labelKey: "users", roles: ["Admin"] },
     ],
   },
-  { key: "users", to: "/users", labelKey: "users", roles: ["Admin"] },
 ];
 
 /** Every page that has a menu entry, in menu order. */

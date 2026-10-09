@@ -6,10 +6,12 @@ import enAuth from "./locales/en/auth.json";
 import enCommon from "./locales/en/common.json";
 import enMaster from "./locales/en/master.json";
 import enNav from "./locales/en/nav.json";
+import enOrders from "./locales/en/orders.json";
 import jaAuth from "./locales/ja/auth.json";
 import jaCommon from "./locales/ja/common.json";
 import jaMaster from "./locales/ja/master.json";
 import jaNav from "./locales/ja/nav.json";
+import jaOrders from "./locales/ja/orders.json";
 
 export const SUPPORTED_LANGUAGES = [
   { code: "en", label: "English", short: "EN" },
@@ -23,8 +25,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { common: enCommon, auth: enAuth, nav: enNav, master: enMaster },
-      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, master: jaMaster },
+      en: { common: enCommon, auth: enAuth, nav: enNav, master: enMaster, orders: enOrders },
+      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, master: jaMaster, orders: jaOrders },
     },
     supportedLngs: SUPPORTED_LANGUAGES.map((language) => language.code),
     // English is the primary language. JA files hold the same keys with empty
@@ -32,7 +34,7 @@ i18n
     fallbackLng: "en",
     returnEmptyString: false,
     defaultNS: "common",
-    ns: ["common", "auth", "nav", "master"],
+    ns: ["common", "auth", "nav", "master", "orders"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
     // Development only: a key with no text in English is a bug. It is collected in window.__missingKeys and reported as a console

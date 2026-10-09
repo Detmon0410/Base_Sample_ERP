@@ -1,0 +1,87 @@
+{
+  "title": "製造指示書",
+  "new": "製造指示書を追加",
+  "section": "指示書",
+  "orderNumber": "指示書番号",
+  "numberHint": "番号は保存したときに付きます。",
+  "qt": "見積書の参照",
+  "chooseQt": "見積書の参照を選択",
+  "customer": "顧客",
+  "chooseCustomer": "顧客を選択",
+  "orderDate": "受注日",
+  "notes": "備考",
+  "startedAt": "着手日時",
+  "notStarted": "まだ着手していません",
+  "status": {
+    "New": "新規",
+    "InProgress": "作業中",
+    "Completed": "完了"
+  },
+  "lines": {
+    "title": "製品",
+    "line": "製品 {{n}}",
+    "product": "製品",
+    "chooseProduct": "製品を選択",
+    "quantity": "数量",
+    "unitPrice": "合意単価",
+    "add": "製品を追加",
+    "remove": "この製品を削除",
+    "none": "製品がまだありません。"
+  },
+  "processes": {
+    "title": "工程",
+    "name": "工程名",
+    "instructions": "作業指示",
+    "step": "順",
+    "add": "工程を追加",
+    "remove": "削除",
+    "up": "上へ",
+    "down": "下へ",
+    "none": "工程がまだありません。",
+    "required": "必要数",
+    "completed": "完了数",
+    "status": "状態"
+  },
+  "processStatus": {
+    "NotStarted": "未着手",
+    "InProgress": "作業中",
+    "Completed": "完了"
+  },
+  "progress": {
+    "record": "進捗を入力",
+    "reopen": "再開",
+    "title": "{{name}} の進捗",
+    "status": "状態",
+    "completedQuantity": "完了数量（これまでの合計）",
+    "workDate": "作業日",
+    "note": "備考",
+    "reopenHint": "この工程は完了しています。再開するには備考が必要です。",
+    "save": "進捗を保存",
+    "saved": "進捗を保存しました。",
+    "history": "進捗の履歴",
+    "noHistory": "進捗の記録はまだありません。",
+    "when": "記録日時",
+    "process": "工程",
+    "by": "入力者"
+  },
+  "start": {
+    "button": "生産を開始",
+    "title": "生産を開始しますか？",
+    "text": "開始後は、製品と工程を変更できません。作業者が進捗を入力できるようになります。",
+    "hint": "先に保存してください。開始は保存済みの内容で行われます。",
+    "done": "生産を開始しました。"
+  },
+  "errors": {
+    "ORDER_NOT_READY": "製品を1件以上、各製品に工程を1件以上登録してください。",
+    "ORDER_LOCKED": "生産が始まっているため、製品と工程は変更できません。",
+    "ORDER_NOT_STARTED": "生産はまだ始まっていません。",
+    "ALREADY_STARTED": "生産はすでに始まっています。",
+    "COMPLETED_LOCKED": "この工程は完了しています。再開できるのは管理者だけです。",
+    "TOO_HIGH": "必要数を超えています。",
+    "MUST_EQUAL_REQUIRED": "完了にするには必要数すべてが必要です。",
+    "MUST_BE_COMPLETED": "必要数に達した場合、状態は「完了」にしてください。",
+    "MUST_BE_ZERO": "未着手の工程に完了数量は入れられません。",
+    "REOPEN_NOTE": "完了した工程を再開するには備考を入力してください。",
+    "INVALID_DATE": "YYYY-MM-DD の形式で実在する日付を入力してください。"
+  }
+}

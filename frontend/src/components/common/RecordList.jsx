@@ -16,7 +16,7 @@ const PAGE_SIZE = 20;
  * with Previous / Next (docs/specs/s2-mini-erp-look.md). The first column of a row is the link to its page (`${base}/${id}`).
  * `columns` is [{ key, header, cell?(row) }]; the status column is added at the end.
  */
-export function RecordList({ api, base, title, columns, canCreate, newLabel }) {
+export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf }) {
   const { t } = useTranslation(["master", "common"]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("");
@@ -61,7 +61,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel }) {
               setStatus(event.target.value);
               setPage(1);
             }}
-            options={[
+            options={statusOptions ?? [
               { value: "", label: t("master:list.all") },
               { value: "active", label: t("master:status.active") },
               { value: "inactive", label: t("master:status.inactive") },
@@ -99,7 +99,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel }) {
                     );
                   })}
                   <TableCell data-label={t("master:list.statusColumn")} className="px-4 py-3">
-                    {t(`master:status.${row.status}`)}
+                    {statusOf ? statusOf(row) : t(`master:status.${row.status}`)}
                   </TableCell>
                 </TableRow>
               ))}

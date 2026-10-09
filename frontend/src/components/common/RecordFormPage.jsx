@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useLoad } from "@/hooks/useLoad";
+import { applyServerErrors } from "@/utils/serverErrors";
 
 /**
  * The page of one record (a new one, or `/:id`): the title band with the status word, the fields (`children`), and Save / Cancel
@@ -42,13 +43,7 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
   const { data: record, error: loadError, loading, reload } = useLoad(() => (isNew ? Promise.resolve(null) : api.get(id)), [id]);
   const form = useForm({ defaultValues: defaults, values: record ? toForm(record) : undefined });
 
-  const show = (error) => {
-    const issues = Array.isArray(error?.details) ? error.details : [];
-    for (const item of issues) {
-      form.setError(item.path.join("."), { type: "server", message: t(`master:errors.${item.code}`, { defaultValue: t("master:errors.INVALID") }) });
-    }
-    setSummary(issues.length ? t("master:form.checkFields") : t(`master:errors.${error?.code}`, { defaultValue: t("master:errors.UNKNOWN_ERROR") }));
-  };
+  const show = (error) => setSummary(applyServerErrors(form, error, t));
 
   const onSubmit = form.handleSubmit(async (values) => {
     setSummary(null);

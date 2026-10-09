@@ -1,0 +1,87 @@
+{
+  "title": "Production orders",
+  "new": "New production order",
+  "section": "Order",
+  "orderNumber": "Order number",
+  "numberHint": "The number is given when the order is saved.",
+  "qt": "QT reference",
+  "chooseQt": "Choose a QT reference",
+  "customer": "Customer",
+  "chooseCustomer": "Choose a customer",
+  "orderDate": "Order date",
+  "notes": "Notes",
+  "startedAt": "Started",
+  "notStarted": "Not started yet",
+  "status": {
+    "New": "New",
+    "InProgress": "In progress",
+    "Completed": "Completed"
+  },
+  "lines": {
+    "title": "Products",
+    "line": "Product line {{n}}",
+    "product": "Product",
+    "chooseProduct": "Choose a product",
+    "quantity": "Quantity",
+    "unitPrice": "Agreed unit price",
+    "add": "Add a product",
+    "remove": "Remove this product",
+    "none": "No products yet."
+  },
+  "processes": {
+    "title": "Processes",
+    "name": "Process",
+    "instructions": "Instructions",
+    "step": "Step",
+    "add": "Add a process",
+    "remove": "Remove",
+    "up": "Move up",
+    "down": "Move down",
+    "none": "No processes yet.",
+    "required": "Required",
+    "completed": "Completed",
+    "status": "Status"
+  },
+  "processStatus": {
+    "NotStarted": "Not started",
+    "InProgress": "In progress",
+    "Completed": "Completed"
+  },
+  "progress": {
+    "record": "Record progress",
+    "reopen": "Reopen",
+    "title": "Progress of {{name}}",
+    "status": "Status",
+    "completedQuantity": "Completed quantity (total so far)",
+    "workDate": "Work date",
+    "note": "Note",
+    "reopenHint": "This process is completed. Reopening it needs a note.",
+    "save": "Save progress",
+    "saved": "Progress saved.",
+    "history": "Progress history",
+    "noHistory": "No progress recorded yet.",
+    "when": "Recorded",
+    "process": "Process",
+    "by": "By"
+  },
+  "start": {
+    "button": "Start production",
+    "title": "Start the production?",
+    "text": "After the start the products and the processes cannot be changed. The workers can then record progress.",
+    "hint": "Save your changes first: the start uses the saved order.",
+    "done": "The production has started."
+  },
+  "errors": {
+    "ORDER_NOT_READY": "The order needs at least one product, and every product needs at least one process.",
+    "ORDER_LOCKED": "The production has started; the products and the processes cannot be changed.",
+    "ORDER_NOT_STARTED": "The production has not started yet.",
+    "ALREADY_STARTED": "The production has started already.",
+    "COMPLETED_LOCKED": "This process is completed. Only an Admin can reopen it.",
+    "TOO_HIGH": "The quantity is larger than the quantity required.",
+    "MUST_EQUAL_REQUIRED": "A completed process must have the full quantity.",
+    "MUST_BE_COMPLETED": "With the full quantity the status must be Completed.",
+    "MUST_BE_ZERO": "A process that is not started has no completed quantity.",
+    "REOPEN_NOTE": "Write a note to reopen a completed process.",
+    "INVALID_DATE": "Enter a real date as YYYY-MM-DD."
+  }
+}

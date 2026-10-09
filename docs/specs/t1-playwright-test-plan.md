@@ -1,6 +1,6 @@
 # T1 — Playwright test plan
 
-Status: **PLAN** (nothing installed yet) · Purpose: find out (1) whether the system follows the workflow from start to finish, (2) whether the code has bugs, (3) where the UX should be changed. Flow of the system: [../api/README.md](../api/README.md) and [f13-workflow-test.md](f13-workflow-test.md).
+Status: **IN PROGRESS** — smoke test ([report](../reports/e2e-smoke-2026-10-09.md)) and B1 ([report](../reports/e2e-b1-2026-10-09.md)) are done; next B2 · Purpose: find out (1) whether the system follows the workflow from start to finish, (2) whether the code has bugs, (3) where the UX should be changed. Flow of the system: [../api/README.md](../api/README.md) and [f13-workflow-test.md](f13-workflow-test.md).
 
 **Deliverable:** a report in three lists — *Bugs*, *Workflow differences*, *UX suggestions* — with the video / trace of every case that failed. The result is not known yet: the system has never been run end to end by a script.
 

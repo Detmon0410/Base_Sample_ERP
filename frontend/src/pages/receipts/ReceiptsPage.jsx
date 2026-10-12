@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useLoad } from "@/hooks/useLoad";
 import { receiptsApi } from "@/services/invoices.service";
 import { formatCurrency } from "@/utils/format";
-import { methodKey } from "@/utils/format";
 import { DocumentActions, ReceiptDocument } from "@/pages/invoices/Documents";
 
 /** One receipt: the paper, the PDF and the print, and the link to its invoice. */
@@ -60,7 +59,6 @@ export function ReceiptsPage() {
               { key: "customerName", header: t("customer") },
               { key: "invoiceNumber", header: t("receipt.forInvoice") },
               { key: "amount", header: t("doc.amount"), cell: (row) => formatCurrency(row.amount, i18n.language) },
-              { key: "method", header: t("payment.method"), cell: (row) => t(`payment.methods.${methodKey(row.method)}`) },
             ]}
           />
         }

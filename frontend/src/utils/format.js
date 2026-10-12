@@ -44,6 +44,3 @@ export function formatDateTime(value, language) {
 export function formatCompact(value, language) {
   return new Intl.NumberFormat(language, { notation: "compact", maximumFractionDigits: 1 }).format(value ?? 0);
 }
-
-/** "Bank transfer" -> "BankTransfer", the key of its text. */
-export const methodKey = (method) => String(method).split(" ").map((word) => word[0].toUpperCase() + word.slice(1)).join("");

@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatNumber } from "@/utils/format";
-import { methodKey } from "@/utils/format";
 import { downloadPdf } from "@/utils/pdf";
 import { printDocument } from "@/utils/print";
 
@@ -88,9 +87,6 @@ export function ReceiptDocument({ receipt, language }) {
       <p className="whitespace-pre-line">{receipt.customerAddress}</p>
       <p className="mt-6">
         {t("receipt.forInvoice")}: {receipt.invoiceNumber}
-      </p>
-      <p>
-        {t("receipt.method")}: {t(`payment.methods.${methodKey(receipt.method)}`)}
       </p>
       <p className="mt-4 text-right text-xl font-bold">
         {t("receipt.received")}: {formatCurrency(receipt.amount, language)}

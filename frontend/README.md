@@ -31,7 +31,7 @@ src/
   hooks/         useAuth, useLoad
   i18n/locales/  en and ja, one file per namespace
   layouts/       MainLayout (the frame) and AuthLayout (the sign-in)
-  pages/         one folder per module: auth, summary, qt, orders, invoices, stock, master (customers, products), users, system
+  pages/         one folder per module: auth, dashboard, qt, orders, invoices, stock, master (customers, products), users, system
   routes/        the route table and its guards
   services/      one *.service.js per module; api.js is the Axios client
     mock/        the mock API (adapter, one file per module, the persistence log); each has a test
@@ -46,7 +46,7 @@ src/
 
 ## The mock and the tests
 
-- `pnpm run test` runs the mock of every module (`services/mock/*.test.js`) and, for orders, stock, invoices and the Summary, the pages driven like a person would (`pages/*/*.test.jsx`).
+- `pnpm run test` runs the mock of every module (`services/mock/*.test.js`) and, for orders, stock, invoices, the Dashboard and the deletes, the pages driven like a person would (`pages/*/*.test.jsx`).
 - What a person makes in the browser is kept in a log in `localStorage` (`kanou.testlog.v1`) and played again on reload.
 - A list is `RecordList`; a record page is `RecordFormPage`: errors only after Save, the list opens after Save, no record has a status Active / Inactive (only orders and invoices have the steps of their workflow); an existing record has a Delete after a confirmation, and a record that is still used is refused with the places that use it.
 - The menu is a row in the top bar or a list on the left: one button in the bar moves it (`utils/layoutMode.js`, `components/layout/SideNav.jsx`); the choice is kept in this browser.

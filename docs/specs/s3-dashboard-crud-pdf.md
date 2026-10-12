@@ -1,6 +1,6 @@
 # S3 - Dashboard, full CRUD, readable menu, PDF download
 
-Status: **ACCEPTED by the user.** S3-A (menu names) is done; S3-B to S3-F are next.
+Status: **ACCEPTED by the user.** S3-A to S3-E are done (menu names, no status, delete, PDF, Dashboard); S3-F (the closing tests and docs) is next.
 Base: S1 ([s1-mini-erp-workflow.md](s1-mini-erp-workflow.md)) and S2 (the look). The main reference stays
 [simplified_factory_system_requirements.md](../../BaseRequirement_md/simplified_factory_system_requirements.md).
 

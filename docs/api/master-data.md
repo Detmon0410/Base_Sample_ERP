@@ -5,11 +5,11 @@ Conventions: [README.md](README.md) · Data: [the specification, section 4](../s
 
 ## The four calls of every resource
 
-`{resource}` is `customers`, `products`, `materials` or `users`. Master data has **no status**: there is no inactive record and nothing is deleted.
+`{resource}` is `customers`, `products`, `materials` or `users`. Master data has **no status** (no active / inactive). The delete comes in step S3-C of [the plan](../specs/s3-dashboard-crud-pdf.md).
 
 | Method | Path | Body | Result |
 |---|---|---|---|
-| `GET` | `/{resource}` | – (query: `q`, `status`, `page`, `pageSize`) | `data`: records, newest first; `meta`: `{ page, pageSize, total }` |
+| `GET` | `/{resource}` | – (query: `q`, `page`, `pageSize`) | `data`: records, newest first; `meta`: `{ page, pageSize, total }` |
 | `GET` | `/{resource}/:id` | – | the record |
 | `POST` | `/{resource}` | the fields | `201`, the record |
 | `PUT` | `/{resource}/:id` | the fields | the record |

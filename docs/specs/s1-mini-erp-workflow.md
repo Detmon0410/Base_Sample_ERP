@@ -88,7 +88,7 @@ There is no Manager role, no approval, no menu per department and no permission 
 - Quantities entered are positive; a stock adjustment may be + or −; a stock change that would make a lot negative is refused.
 - The completed quantity of a process cannot exceed the required quantity; it is Completed only when equal.
 - Order prices are 0 or more.
-- Master data (customers, products, materials, users) has no status and is not deleted. A QT reference can be made inactive.
+- No record has a status Active / Inactive (changed by the user; see S3). Used records are protected by refusing the delete, from step S3-C on.
 - An issued invoice and receipt cannot be edited or deleted.
 - After an invoice is issued the product quantities and the process lists of the order cannot change.
 - One invoice per order; one full payment per invoice; the payment equals the invoice total.
@@ -161,6 +161,6 @@ Answered in the second round: the Dashboard (one simple summary page), Traceabil
 | Q6 | Progress of one process | each update adds a history entry; the completed quantity is the **latest total**, not a sum of the entries |
 | Q7 | Unit of a quantity (pcs, kg) | no units: product quantities are pieces, material quantities are plain numbers (up to 3 decimals) |
 | Q8 | Where is the QT file kept | in the browser mock as a data URL (max 10 MB, PDF / PNG / JPG), like the old customer PO file |
-| Q9 | Inactive records | customers, products, materials and users can be made inactive; they are not offered for new orders |
+| Q9 | Inactive records | not used: there is no inactive record (S3); a used record cannot be deleted |
 | Q10 | The old big system | stays on branch `jay`; this branch drops its code (P0) and starts a new mock |
 | Q11 | The mock and the backend | like before: everything runs on the mock in the browser; the API contract is written for the few modules left, the backend comes later |

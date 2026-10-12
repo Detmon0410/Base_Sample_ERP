@@ -23,14 +23,13 @@ Success `200`: `data` = `{ "token": "<access token>", "user": <user> }`.
 |---:|---|---|
 | 400 | `VALIDATION_ERROR` | `email` or `password` missing or malformed |
 | 401 | `INVALID_CREDENTIALS` | Unknown email **or** wrong password (the same answer for both) |
-| 403 | `ACCOUNT_INACTIVE` | The credentials are right but the user is `inactive` (check the password first) |
 | 500 | `INTERNAL_SERVER_ERROR` | Unexpected failure |
 
 A `401` from this endpoint is not an expired session: the frontend does not redirect on it. Passwords are stored hashed (bcrypt or argon2); the hash and the password are never returned. Rate limiting per IP and email is advised.
 
 ## 2. `GET /auth/me`
 
-`data` is the same `user` object. `401 UNAUTHORIZED` when the token is missing, invalid, expired, or its user is now `inactive`; the frontend then clears the token and opens `/login`.
+`data` is the same `user` object. `401 UNAUTHORIZED` when the token is missing, invalid, expired; the frontend then clears the token and opens `/login`.
 
 ## 3. `POST /auth/logout`
 
@@ -45,7 +44,6 @@ No body. `200`, `data: null`; idempotent (an already invalid token may also answ
 | `department` | `"Sales"` \| `"Factory"` \| `"Accounting"` \| `"Administration"` | Only a field of the user; it gives no access |
 | `email` | string | Unique |
 | `role` | `"Admin"` \| `"Worker"` | The only thing that decides what the user may do |
-| `status` | `"active"` \| `"inactive"` | Only `active` users can sign in or use a token |
 
 The frontend only hides what a role may not use (`frontend/src/utils/permissions.js`). **The backend enforces the same rules on every endpoint** (the table in each module document says who may call what).
 
@@ -57,7 +55,7 @@ The frontend only hides what a role may not use (`frontend/src/utils/permissions
 ## Data needed
 
 ```text
-User(id, name, department, email UNIQUE, password_hash, role, status, last_login_at, created_at, updated_at)
+User(id, name, department, email UNIQUE, password_hash, role, last_login_at, created_at, updated_at)
 ```
 
 Seed: one Admin.

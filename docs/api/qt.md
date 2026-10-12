@@ -7,11 +7,10 @@ The quotation is made outside the system; only its reference is kept.
 
 | Method | Path | Notes |
 |---|---|---|
-| `GET` | `/qt` | query `q` (QT number, notes, customer name), `status`, `page`, `pageSize`. Rows carry `customerName` and `file: { name, type }` **without the file data** |
+| `GET` | `/qt` | query `q` (QT number, notes, customer name), `page`, `pageSize`. Rows carry `customerName` and `file: { name, type }` **without the file data** |
 | `GET` | `/qt/:id` | the record with `file: { name, type, dataUrl }` |
 | `POST` | `/qt` | `201`, the record |
 | `PUT` | `/qt/:id` | the record |
-| `PATCH` | `/qt/:id/status` | `{ "status": "active" \| "inactive" }` |
 
 Body of `POST` / `PUT`:
 
@@ -29,5 +28,5 @@ Body of `POST` / `PUT`:
 Errors: `400 VALIDATION_ERROR` with codes `REQUIRED`, `INVALID_DATE`, `FILE_TYPE`, `FILE_TOO_BIG`; `409 DUPLICATE_VALUE` for a used `qtNumber`.
 
 ```text
-QtReference(id, qt_number UNIQUE, qt_date, customer_id, notes, file_name, file_type, file_path, status)
+QtReference(id, qt_number UNIQUE, qt_date, customer_id, notes, file_name, file_type, file_path)
 ```

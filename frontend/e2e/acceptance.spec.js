@@ -157,6 +157,17 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(history.getByRole("row", { name: /Deduct/ })).toContainText("-25");
   await expect(history.getByRole("row", { name: /Deduct/ })).toContainText(orderNumber);
 
+  // the movements page: the same deduction among the changes of every material; a click on the row opens the material
+  await open(page, "/stock/movements");
+  await expect(page.getByRole("row", { name: /Deduct/ })).toContainText("STEEL-01");
+  await expect(page.getByRole("row", { name: /Deduct/ })).toContainText("-25");
+  await expect(page.getByRole("row", { name: /Deduct/ })).toContainText(orderNumber);
+  await page.getByLabel("Type").selectOption("Add");
+  await expect(page.getByRole("row", { name: /Deduct/ })).toHaveCount(0);
+  await page.getByLabel("Type").selectOption("Deduct");
+  await page.getByRole("row", { name: /Deduct/ }).getByText("Used for the order").click();
+  await expect(page).toHaveURL(/\/stock\/materials\/\d+$/);
+
   // 8. an invoice for the completed order, and its document sent to print / PDF
   await open(page, "/invoices", "New invoice");
   await page.getByLabel("Production order").selectOption({ label: `${orderNumber} Tokyo Cold Chain` });

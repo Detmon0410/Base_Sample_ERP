@@ -1,7 +1,7 @@
 {
   "dashboard": "Dashboard",
   "orders": "Orders",
-  "qt": "Quotations (QT)",
+  "qt": "Quotations",
   "productionOrders": "Production orders",
   "invoices": "Invoices",
   "stock": "Stock",

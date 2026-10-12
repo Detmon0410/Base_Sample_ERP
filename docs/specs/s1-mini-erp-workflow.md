@@ -101,16 +101,16 @@ There is no Manager role, no approval, no menu per department and no permission 
 |---|---|---|---|
 | Login | `/login` | yes | yes |
 | **Summary** (the first page): numbers of production orders by status (New / In Progress / Completed), the number and total of Unpaid invoices | `/` | yes | yes (orders only) |
-| QT references | `/qt` | yes | no |
-| Production orders (list, search, status filter) | `/orders` | yes | yes |
-| New order | `/orders/new` | yes | no |
-| Order details and progress (a page) | `/orders/:id` | yes | yes (records progress) |
-| Invoices (the payment is recorded on the invoice) | `/invoices` (the group Accounting, see S5) | yes | no |
-| Receipts (a list, and one receipt) | `/receipts` (the group Accounting, see S5) | yes | no |
+| QT references | `/sale/quotations` | yes | no |
+| Production orders (list, search, status filter) | `/sale/orders` | yes | yes |
+| New order | `/sale/orders/new` | yes | no |
+| Order details and progress (a page) | `/sale/orders/:id` | yes | yes (records progress) |
+| Invoices (the payment is recorded on the invoice) | `/accounting/invoices` (the group Accounting, see S5) | yes | no |
+| Receipts (a list, and one receipt) | `/accounting/receipts` (the group Accounting, see S5) | yes | no |
 | Materials and stock (lots, manual changes, history) | `/stock/materials` (the Stock group, see S4) | yes | read only |
-| Customers | `/customers` | yes | no |
-| Products and BOM | `/products` | yes | read only |
-| Users | `/users` | yes | no |
+| Customers | `/master/customers` | yes | no |
+| Products and BOM | `/master/products` | yes | read only |
+| Users | `/master/users` | yes | no |
 
 **The menu** is one row in the top bar (the sidebar is removed):
 

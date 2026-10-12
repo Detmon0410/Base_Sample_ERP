@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Navigate, Route, Routes, useParams } from "react-router";
 
+import { StatusBadge } from "@/components/common/StatusBadge";
 import { PageHeader } from "@/components/common/PageHeader";
 import { RecordList } from "@/components/common/RecordList";
 import { useAuth } from "@/hooks/useAuth";
@@ -43,7 +44,7 @@ export function OrdersPage() {
             canCreate={isAdmin(user)}
             newLabel={t("new")}
             statusOptions={[{ value: "", label: t("master:list.all") }, ...statuses.map((value) => ({ value, label: t(`status.${statusKey(value)}`) }))]}
-            statusOf={(row) => t(`status.${statusKey(row.status)}`)}
+            statusOf={(row) => <StatusBadge tone={{ New: "neutral", InProgress: "progress", Completed: "good" }[statusKey(row.status)]}>{t(`status.${statusKey(row.status)}`)}</StatusBadge>}
             columns={[
               { key: "orderNumber", header: t("orderNumber") },
               { key: "orderDate", header: t("orderDate") },

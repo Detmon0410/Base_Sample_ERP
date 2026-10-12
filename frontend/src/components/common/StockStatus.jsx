@@ -1,13 +1,8 @@
 import { useTranslation } from "react-i18next";
 
-import { cn } from "@/lib/utils";
+import { StatusBadge } from "@/components/common/StatusBadge";
 
-// Each class is written out in full so that Tailwind finds it. The words always say the status; the colour only helps.
-const STYLES = {
-  Normal: "border-border text-foreground",
-  Low: "border-warning text-warning",
-  Out: "border-destructive text-destructive",
-};
+const TONES = { Normal: "good", Low: "warn", Out: "bad" };
 
 /**
  * The stock status of a material (Normal / Low / Out, from its minimum level; see services/mock/stockStatus.js and
@@ -16,5 +11,5 @@ const STYLES = {
 export function StockStatus({ status }) {
   const { t } = useTranslation("master");
   if (!status) return <span className="text-muted-foreground">-</span>;
-  return <span className={cn("inline-block border px-2 py-0.5 text-sm font-bold", STYLES[status])}>{t(`stock.status.${status}`)}</span>;
+  return <StatusBadge tone={TONES[status]}>{t(`stock.status.${status}`)}</StatusBadge>;
 }

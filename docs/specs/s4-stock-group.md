@@ -1,6 +1,6 @@
 # S4 - The Stock group: overview, materials, movements
 
-Status: **ACCEPTED by the user** (the proposals Q1-Q3 too). S4-A (the menu and the routes), S4-B (the movements page) and S4-C (the overview) are done; S4-D (the minimum level and the status) and S4-E are next.
+Status: **ACCEPTED by the user** (the proposals Q1-Q3 too). S4-A to S4-D are done (the menu, the movements, the overview, the minimum level and the status); S4-E (the closing tests and docs) is next.
 Base: S1, S3 and the requirements ([simplified_factory_system_requirements.md](../../BaseRequirement_md/simplified_factory_system_requirements.md), 4.3 and 5.4).
 The old system's Stock (branch `jay`, [f8-stock.md](https://github.com/Detmon0410/Kanou_Sample_ERP/blob/jay/docs/specs/f8-stock.md)) was the example: an overview of the balances, a ledger of the movements, the status of a balance.
 

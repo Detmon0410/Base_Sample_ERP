@@ -51,7 +51,7 @@ Others answer `403 FORBIDDEN`.
 |---|---|---|---|
 | customers | `name` (required), `address`, `email`, `telephone` | name, email, telephone | `email`, when given, is an email |
 | products | `code` (required, unique), `name` (required), `price` (0 or more, whole yen), `bom`: `[{ materialId, quantity }]` | code, name | each `materialId` exists, `quantity` is more than 0, a material appears once in the BOM. The BOM is for reference: it never moves stock |
-| materials | `code` (required, unique), `name` (required), `lots`: `[{ lotNumber, quantity }]` (up to 3 decimals) | code, name | a lot number is unique inside the material (case-insensitive). `lots` is read on **create** only; afterwards a lot changes only through stock changes (below), and `PUT` ignores `lots` |
+| materials | `code` (required, unique), `name` (required), `minLevel` (optional, 0 or more, up to 3 decimals; `""` or `null` means none), `lots`: `[{ lotNumber, quantity }]` (up to 3 decimals) | code, name | a lot number is unique inside the material (case-insensitive). `lots` is read on **create** only; afterwards a lot changes only through stock changes (below), and `PUT` ignores `lots` |
 | users | `name`, `department`, `email` (unique, lower-cased), `role`, `password` | name, email, department | `department` is one of the four, `role` is `Admin` or `Worker`. `password` is required on create and at least 6 characters; on `PUT` an empty password keeps the current one. The password is never returned; the response also has `createdAt`, `lastLoginAt` |
 
 Errors
@@ -87,7 +87,20 @@ Quantities have up to 3 decimals. A change that would make the lot negative is r
 
 ### The overview of the whole stock: `GET /stock/overview` and `GET /materials`
 
-The page `/stock` is read only, for an Admin and a Worker. Its numbers come from `GET /stock/overview` (any signed-in user): `{ "materials": 12, "lots": 19 }` - how many materials and how many lots there are. Its table is `GET /materials` (query `q` for the code or the name, `page`, `pageSize` 20): every material comes with its `lots` `[{ lotNumber, quantity }]`, so the page shows the total of a material (the sum of its lots) and, under it, each lot, without a call for each material.
+The page `/stock` is read only, for an Admin and a Worker. Its numbers come from `GET /stock/overview` (any signed-in user): `{ "materials": 12, "lots": 19, "low": 2, "out": 1 }` - how many materials and lots there are, and how many materials are `Low` and `Out` (below). Its table is `GET /materials` (query `q` for the code or the name, `page`, `pageSize` 20): every material comes with its `lots` `[{ lotNumber, quantity }]`, its `total` (the sum of its lots) and its `stockStatus`, so the page shows the total, the status and, under it, each lot, without a call for each material. `GET /materials` also takes `status` (`Normal`, `Low`, `Out`).
+
+### The minimum level and the stock status of a material
+
+The requirements have no minimum level; it is an **optional addition** ([S4](../specs/s4-stock-group.md), Q1). Every view of a material (`GET /materials`, `GET /materials/:id`, the answer of a stock change, `leastStock` of the [Dashboard](dashboard.md)) carries `total` and `stockStatus`, computed by **one rule** on the server:
+
+| `stockStatus` | When |
+|---|---|
+| `null` | the material has no `minLevel` (the system does not guess a status) |
+| `Out` | it has a `minLevel` and the total of its lots is 0 |
+| `Low` | the total is at or below the `minLevel` |
+| `Normal` | the total is above the `minLevel` |
+
+`400 VALIDATION_ERROR` with `INVALID` on `minLevel` when it is negative or not a number.
 
 ### The movements of every material: `GET /stock-changes`
 

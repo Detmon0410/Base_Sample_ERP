@@ -11,6 +11,7 @@ The quotation is made outside the system; only its reference is kept.
 | `GET` | `/qt/:id` | the record with `file: { name, type, dataUrl }` |
 | `POST` | `/qt` | `201`, the record |
 | `PUT` | `/qt/:id` | the record |
+| `DELETE` | `/qt/:id` | `200`, `data: null`; `409 IN_USE` when a production order uses the QT reference (`errors`: see [master-data.md](master-data.md#delete-and-409-in_use)); the file goes with it |
 
 Body of `POST` / `PUT`:
 

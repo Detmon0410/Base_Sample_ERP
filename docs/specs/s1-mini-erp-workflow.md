@@ -88,7 +88,7 @@ There is no Manager role, no approval, no menu per department and no permission 
 - Quantities entered are positive; a stock adjustment may be + or −; a stock change that would make a lot negative is refused.
 - The completed quantity of a process cannot exceed the required quantity; it is Completed only when equal.
 - Order prices are 0 or more.
-- No record has a status Active / Inactive (changed by the user; see S3). Used records are protected by refusing the delete, from step S3-C on.
+- No record has a status Active / Inactive (changed by the user; see S3). Used records are protected by refusing the delete (S3-C, done).
 - An issued invoice and receipt cannot be edited or deleted.
 - After an invoice is issued the product quantities and the process lists of the order cannot change.
 - One invoice per order; one full payment per invoice; the payment equals the invoice total.

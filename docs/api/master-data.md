@@ -3,9 +3,9 @@
 Pages: `/customers`, `/products`, `/stock`, `/users` · Frontend: `frontend/src/pages/master`, `pages/stock`, `pages/users`, `services/master.service.js` · Mock: `services/mock/master.js`, `services/mock/stock.js`
 Conventions: [README.md](README.md) · Data: [the specification, section 4](../specs/s1-mini-erp-workflow.md)
 
-## The four calls of every resource
+## The five calls of every resource
 
-`{resource}` is `customers`, `products`, `materials` or `users`. Master data has **no status** (no active / inactive). The delete comes in step S3-C of [the plan](../specs/s3-dashboard-crud-pdf.md).
+`{resource}` is `customers`, `products`, `materials` or `users`. Master data has **no status** (no active / inactive): a record that is not used is deleted, and a record that is used is **kept** by refusing the delete ([plan S3](../specs/s3-dashboard-crud-pdf.md), section 5).
 
 | Method | Path | Body | Result |
 |---|---|---|---|
@@ -13,8 +13,28 @@ Conventions: [README.md](README.md) · Data: [the specification, section 4](../s
 | `GET` | `/{resource}/:id` | – | the record |
 | `POST` | `/{resource}` | the fields | `201`, the record |
 | `PUT` | `/{resource}/:id` | the fields | the record |
+| `DELETE` | `/{resource}/:id` | – | `200`, `data: null`; or `409 IN_USE` (below) |
 
 Query: `q` searches the fields named below (case-insensitive, contains), `pageSize` is 20 in the frontend.
+
+## Delete and `409 IN_USE`
+
+`DELETE` is for the Admin. A record that is still used is not deleted; the answer is
+
+```json
+{ "success": false, "error": "IN_USE", "message": "...", "errors": [ { "kind": "order", "count": 2, "items": ["ORD-2026-0001", "ORD-2026-0002"] } ] }
+```
+
+`errors` is a list of the places where the record is used: `kind`, how many (`count`) and the first five names (`items`; the frontend adds "..." when `count` is larger). The frontend shows them under the title of the record.
+
+| Record | Refused when (`kind`) | When it is deleted, it also removes |
+|---|---|---|
+| customer | a QT reference (`qt`) or a production order (`order`) uses it. An invoice keeps its own copy of the name and address | – |
+| product | a line of a production order uses it (`order`) | its BOM |
+| material | the BOM of a product uses it (`product`), or it has a stock change after its first stock (`stockChange`) | its lots and the first stock ("Initial stock") |
+| user | it is the user who is signed in (`self`), the last Admin (`lastAdmin`), or it recorded a progress update (`progress`) or a stock change (`stock`) | – |
+
+A QT reference is deleted the same way (`DELETE /qt/:id`, refused with `order` when a production order uses it; its file goes with it).
 
 ## Who may call
 
@@ -40,6 +60,7 @@ Errors
 |---:|---|---|
 | 400 | `VALIDATION_ERROR` | `errors` = `[{ "path": ["bom", "0", "quantity"], "code": "INVALID" }]`. Codes: `REQUIRED`, `INVALID`, `DUPLICATE`, `TOO_SHORT` |
 | 409 | `DUPLICATE_VALUE` | A unique value (`code`, `email`) is used already; `errors` names the field with `DUPLICATE` |
+| 409 | `IN_USE` | `DELETE` of a record that is still used (above) |
 | 404 | `NOT_FOUND` | No such record |
 | 403 | `FORBIDDEN` | The role may not do this |
 

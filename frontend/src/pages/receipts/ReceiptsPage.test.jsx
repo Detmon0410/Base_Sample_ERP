@@ -28,7 +28,7 @@ describe("the receipts pages", () => {
       await ordersApi.start(order.id);
       await ordersApi.recordProgress(order.id, { processId: order.lines[0].processes[0].id, status: "Completed", completedQuantity: 1, workDate: todayIso(), note: "" });
       const invoice = await invoicesApi.create({ orderId: order.id, invoiceDate: todayIso() });
-      return invoicesApi.pay(invoice.id, { paymentDate: todayIso(), amount: price, method: "Cheque", reference: "" });
+      return invoicesApi.pay(invoice.id, { paymentDate: todayIso(), amount: price });
     };
     await pay("Alpha Foods", 1000);
     await pay("Beta Cold", 2500);
@@ -49,7 +49,6 @@ describe("the receipts pages", () => {
     await waitFor(() => expect(within(table).getAllByRole("row")).toHaveLength(3));
     const beta = within(table).getByRole("row", { name: /Beta Cold/ });
     expect(beta).toHaveTextContent("¥2,500");
-    expect(beta).toHaveTextContent("Cheque");
 
     await user.type(screen.getByLabelText("Search"), "alpha");
     await waitFor(() => expect(within(table).getAllByRole("row")).toHaveLength(2));

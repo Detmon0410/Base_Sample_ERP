@@ -54,17 +54,15 @@ describe("invoices, payments and receipts of the mock", () => {
 
   it("takes the full payment once: the invoice is Paid and one receipt is issued", () => {
     const invoice = issue(order(true)).data;
-    const pay = (extra) => call("POST /invoices/:id/payment", admin, { params: { id: invoice.id }, body: { paymentDate: "2026-10-10", amount: invoice.total, method: "Bank transfer", reference: "Slip 123", ...extra } });
+    const pay = (extra) => call("POST /invoices/:id/payment", admin, { params: { id: invoice.id }, body: { paymentDate: "2026-10-10", amount: invoice.total, ...extra } });
 
     expect(fails(() => pay({ amount: invoice.total - 1 })).details).toEqual([{ path: ["amount"], code: "MUST_EQUAL_TOTAL" }]);
     expect(fails(() => pay({ paymentDate: "" })).details).toEqual([{ path: ["paymentDate"], code: "REQUIRED" }]);
-    expect(fails(() => pay({ method: "" })).details).toEqual([{ path: ["method"], code: "REQUIRED" }]);
-    expect(fails(() => pay({ method: "Gold" })).details).toEqual([{ path: ["method"], code: "REQUIRED" }]);
     expect(call("GET /invoices/:id", admin, { params: { id: invoice.id } }).status).toBe("Unpaid");
 
     const paid = pay();
-    expect(paid).toMatchObject({ status: "Paid", payment: { date: "2026-10-10", amount: invoice.total, method: "Bank transfer", reference: "Slip 123" } });
-    expect(paid.receipt).toMatchObject({ receiptNumber: `RC-${new Date().getFullYear()}-0001`, receiptDate: "2026-10-10", invoiceNumber: invoice.invoiceNumber, amount: invoice.total, method: "Bank transfer", customerName: "Renamed" }); // the customer as it was renamed by the first test, when this invoice was issued
+    expect(paid).toMatchObject({ status: "Paid", payment: { date: "2026-10-10", amount: invoice.total } });
+    expect(paid.receipt).toMatchObject({ receiptNumber: `RC-${new Date().getFullYear()}-0001`, receiptDate: "2026-10-10", invoiceNumber: invoice.invoiceNumber, amount: invoice.total, customerName: "Renamed" }); // the customer as it was renamed by the first test, when this invoice was issued
     expect(fails(() => pay()).code).toBe("ALREADY_PAID");
   });
 
@@ -85,7 +83,7 @@ describe("receipts of the mock", () => {
   const paid = () => {
     const made = order(true);
     const invoice = issue(made).data;
-    call("POST /invoices/:id/payment", admin, { params: { id: invoice.id }, body: { paymentDate: "2026-10-12", amount: invoice.total, method: "Cash" } });
+    call("POST /invoices/:id/payment", admin, { params: { id: invoice.id }, body: { paymentDate: "2026-10-12", amount: invoice.total } });
     return { made, invoice };
   };
 
@@ -96,7 +94,7 @@ describe("receipts of the mock", () => {
     expect(meta.total).toBeGreaterThanOrEqual(2);
     expect(data[0].invoiceNumber).toBe(second.invoice.invoiceNumber);
     expect(data[1].invoiceNumber).toBe(first.invoice.invoiceNumber);
-    expect(data[0]).toMatchObject({ invoiceId: second.invoice.id, amount: second.invoice.total, method: "Cash", receiptDate: "2026-10-12" });
+    expect(data[0]).toMatchObject({ invoiceId: second.invoice.id, amount: second.invoice.total, receiptDate: "2026-10-12" });
 
     expect(call("GET /receipts", admin, { query: { q: first.invoice.invoiceNumber } }).data.map((row) => row.id)).toEqual([data[1].id]);
     expect(call("GET /receipts", admin, { query: { q: data[0].receiptNumber } }).data).toHaveLength(1);

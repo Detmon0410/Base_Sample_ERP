@@ -53,7 +53,7 @@ describe("GET /dashboard of the mock", () => {
     expect(data.invoicing.months[5]).toMatchObject({ invoiced: 500, paid: 0 });
     expect(data.invoicing.paidThisMonth).toEqual({ count: 0, total: 0 });
 
-    call("POST /invoices/:id/payment", admin, { params: { id: invoice.id }, body: { paymentDate: today(), amount: 500, method: "Cash" } });
+    call("POST /invoices/:id/payment", admin, { params: { id: invoice.id }, body: { paymentDate: today(), amount: 500 } });
     data = call("GET /dashboard", admin);
     expect(data.invoicing.unpaid).toEqual({ count: 0, total: 0 });
     expect(data.invoicing.paidThisMonth).toEqual({ count: 1, total: 500 });

@@ -198,8 +198,6 @@ test("the example of the requirements, from the customer to the receipt", async 
 
   // 9. the full payment: Paid, and the receipt
   await page.getByLabel("Amount paid").fill("449999");
-  await page.getByLabel("Payment method").selectOption("Bank transfer");
-  await page.getByLabel("Reference or notes (optional)").fill("Slip 20261010");
   await page.getByRole("button", { name: "Record the payment" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByText("The payment must be equal to the total of the invoice.")).toBeVisible();
@@ -207,13 +205,13 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Record the payment" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Paid");
-  await expect(page.getByText(/Bank transfer - Slip 20261010$/)).toBeVisible(); // the payment made
+  await expect(page.getByText(/^Paid on \d{4}-\d{2}-\d{2}: ¥450,000$/)).toBeVisible(); // the payment made
 
   // the receipt has its own page (the group Accounting), reached from the invoice
   await page.getByRole("link", { name: /^RC-\d{4}-0001$/ }).click();
   await expect(page).toHaveURL(/\/receipts\/\d+$/);
   await expect(page.getByRole("heading", { level: 2, name: "Receipt" })).toBeVisible();
-  await expect(page.getByText("Payment method: Bank transfer")).toBeVisible();
+  await expect(page.getByText(/Payment method/)).toHaveCount(0); // there is no payment method
   const receiptNumber = (await page.locator("[data-print-doc=receipt] dd").first().textContent()).trim();
   await downloadPdf(page, 0, `${receiptNumber}.pdf`); // the receipt as a PDF file
   await page.getByRole("button", { name: "Print", exact: true }).click();

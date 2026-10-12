@@ -92,7 +92,7 @@ describe("the Dashboard", () => {
     await ordersApi.start(order.id);
     await ordersApi.recordProgress(order.id, { processId: order.lines[0].processes[0].id, status: "Completed", completedQuantity: 1, workDate: todayIso(), note: "" });
     const invoice = await invoicesApi.create({ orderId: order.id, invoiceDate: todayIso() });
-    await invoicesApi.pay(invoice.id, { paymentDate: todayIso(), amount: 5000, method: "Cash", reference: "" });
+    await invoicesApi.pay(invoice.id, { paymentDate: todayIso(), amount: 5000 });
 
     renderAs(mockUsers[0]);
     expect(await tile(/^Paid this month\s*¥5,000$/)).toBeInTheDocument();

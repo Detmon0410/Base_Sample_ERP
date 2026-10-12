@@ -75,9 +75,7 @@ describe("invoices, page by page", () => {
     await user.type(screen.getByLabelText("Amount paid"), "700");
     await user.click(screen.getByRole("button", { name: "Record the payment" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
-    expect(await screen.findByText("Enter or choose a value.")).toBeInTheDocument(); // the payment method is required
-    await user.selectOptions(screen.getByLabelText("Payment method"), "Bank transfer");
-    await user.type(screen.getByLabelText("Reference or notes (optional)"), "Slip 555");
+    expect(await screen.findByText("The payment must be equal to the total of the invoice.")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Record the payment" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
     expect(await screen.findByText("The payment must be equal to the total of the invoice.")).toBeInTheDocument();
@@ -92,7 +90,7 @@ describe("invoices, page by page", () => {
     // Paid: the invoice shows the payment made and a link to its receipt, which is on its own page
     expect(await screen.findByRole("link", { name: /^RC-\d{4}-\d{4}$/ })).toHaveAttribute("href", expect.stringMatching(/^\/accounting\/receipts\/\d+$/));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Paid");
-    expect(screen.getByText(/Bank transfer - Slip 555$/)).toBeInTheDocument(); // the payment made
+    expect(screen.getByText(/^Paid on \d{4}-\d{2}-\d{2}: ¥750$/)).toBeInTheDocument(); // the payment made
     expect(screen.queryByLabelText("Amount paid")).not.toBeInTheDocument(); // one payment only
     expect(screen.queryByRole("heading", { level: 2, name: "Receipt" })).not.toBeInTheDocument(); // the paper of the receipt is not here
 
@@ -101,11 +99,11 @@ describe("invoices, page by page", () => {
     expect(downloadPdf.mock.calls[0][0]).toHaveAttribute("data-print-doc", "invoice");
     expect(downloadPdf.mock.calls[0][1]).toMatch(/^INV-\d{4}-\d{4}\.pdf$/);
 
-    // the receipt page: the paper, the method, the PDF, the print, and the way back to the invoice
+    // the receipt page: the paper, the PDF, the print, and the way back to the invoice
     await user.click(screen.getByRole("link", { name: /^RC-\d{4}-\d{4}$/ }));
     expect(await screen.findByRole("heading", { level: 2, name: "Receipt" })).toBeInTheDocument();
     expect(screen.getByText(/^Amount received: ¥750$/)).toBeInTheDocument();
-    expect(screen.getByText("Payment method: Bank transfer")).toBeInTheDocument();
+    expect(screen.queryByText(/Payment method/)).not.toBeInTheDocument(); // there is no payment method
     await user.click(screen.getByRole("button", { name: "Download PDF" }));
     expect(downloadPdf.mock.calls[1][0]).toHaveAttribute("data-print-doc", "receipt");
     expect(downloadPdf.mock.calls[1][1]).toMatch(/^RC-\d{4}-\d{4}\.pdf$/);

@@ -170,7 +170,7 @@ export function DashboardPage() {
                   {data.leastStock.map((material) => (
                     <TableRow key={material.id}>
                       <TableCell data-label={t("dashboard:code")}>
-                        <Link to={`/stock/${material.id}`}>{material.code}</Link>
+                        <Link to={`/stock/materials/${material.id}`}>{material.code}</Link>
                       </TableCell>
                       <TableCell data-label={t("dashboard:name")}>{material.name}</TableCell>
                       <TableCell data-label={t("dashboard:quantity")} className="text-right">

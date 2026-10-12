@@ -22,5 +22,7 @@
   },
   "toSidebar": "メニューを左へ",
   "toTopBar": "メニューを上へ",
-  "materialsStock": "材料・在庫"
+  "materialsStock": "材料・在庫",
+  "stockOverview": "在庫一覧",
+  "movements": "入出庫履歴"
 }

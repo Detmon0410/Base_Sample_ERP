@@ -65,7 +65,7 @@ function MaterialForm() {
   return (
     <RecordFormPage
       api={materialsApi}
-      listPath="/stock"
+      listPath="/stock/materials"
       newTitle={t("materials.new")}
       titleOf={(record) => `${record.code} ${record.name}`}
       defaults={EMPTY}
@@ -114,7 +114,7 @@ export function StockPage() {
         element={
           <RecordList
                   api={materialsApi}
-            base="/stock"
+            base="/stock/materials"
             title={t("materials.title")}
             canCreate={isAdmin(user)}
             newLabel={t("materials.new")}

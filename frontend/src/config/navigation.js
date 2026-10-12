@@ -21,13 +21,22 @@ export const NAV = [
   },
   { key: "invoices", to: "/invoices", labelKey: "invoices", icon: "invoices", roles: ["Admin"] },
   {
+    key: "stockGroup",
+    labelKey: "stock",
+    icon: "stockGroup",
+    items: [
+      { key: "stockOverview", to: "/stock", labelKey: "stockOverview", icon: "overview", roles: ["Admin", "Worker"] },
+      { key: "materials", to: "/stock/materials", labelKey: "materialsStock", icon: "stock", roles: ["Admin", "Worker"] },
+      { key: "movements", to: "/stock/movements", labelKey: "movements", icon: "movements", roles: ["Admin", "Worker"] },
+    ],
+  },
+  {
     key: "master",
     labelKey: "master",
     icon: "master",
     items: [
       { key: "customers", to: "/customers", labelKey: "customers", icon: "customers", roles: ["Admin"] },
       { key: "products", to: "/products", labelKey: "products", icon: "products", roles: ["Admin", "Worker"] },
-      { key: "stock", to: "/stock", labelKey: "materialsStock", icon: "stock", roles: ["Admin", "Worker"] },
       { key: "users", to: "/users", labelKey: "users", icon: "users", roles: ["Admin"] },
     ],
   },

@@ -39,7 +39,7 @@ describe("where the menu is", () => {
 
     const menu = screen.getByRole("navigation", { name: "Main menu" });
     expect(menu.closest("header")).toBeNull(); // no longer in the bar
-    for (const name of ["Dashboard", "Quotations (QT)", "Production orders", "Invoices and receipts", "Customers", "Products and BOM", "Materials and stock", "Users"]) {
+    for (const name of ["Dashboard", "Quotations (QT)", "Production orders", "Invoices and receipts", "Overview", "Materials and stock", "Movements", "Customers", "Products and BOM", "Users"]) {
       expect(within(menu).getByRole("link", { name })).toBeInTheDocument();
     }
     expect(window.localStorage.getItem("kanou.layout")).toBe("side");
@@ -57,6 +57,6 @@ describe("where the menu is", () => {
     window.localStorage.setItem("kanou.layout", "side");
     renderLayout(mockUsers[1]);
     const menu = screen.getByRole("navigation", { name: "Main menu" });
-    expect(within(menu).getAllByRole("link").map((link) => link.textContent)).toEqual(["Dashboard", "Production orders", "Products and BOM", "Materials and stock"]);
+    expect(within(menu).getAllByRole("link").map((link) => link.textContent)).toEqual(["Dashboard", "Production orders", "Overview", "Materials and stock", "Movements", "Products and BOM"]);
   });
 });

@@ -1,4 +1,5 @@
 import {
+  ArrowLeftRight,
   Boxes,
   ChevronDown,
   ClipboardList,
@@ -6,10 +7,12 @@ import {
   Factory,
   FileText,
   LayoutDashboard,
+  LayoutList,
   Package,
   ReceiptText,
   UserCog,
   Users,
+  Warehouse,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -25,6 +28,9 @@ const ICONS = {
   customers: Users,
   products: Package,
   stock: Boxes,
+  stockGroup: Warehouse,
+  overview: LayoutList,
+  movements: ArrowLeftRight,
   users: UserCog,
   down: ChevronDown,
 };

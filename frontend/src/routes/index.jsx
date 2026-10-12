@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes, useParams } from "react-router";
 
 import { NAV_ITEMS } from "@/config/navigation";
 import { AuthLayout } from "@/layouts/AuthLayout";
@@ -22,7 +22,13 @@ import { RequirePermission } from "./RequirePermission";
 
 // Menu entries whose page is built (the key of config/navigation.js). Everything else opens the "not built yet" placeholder.
 // Each module of docs/specs/s1-mini-erp-workflow.md adds its pages here.
-const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, productionOrders: OrdersPage, customers: CustomersPage, products: ProductsPage, stock: StockPage, users: UsersPage };
+const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, productionOrders: OrdersPage, materials: StockPage, customers: CustomersPage, products: ProductsPage, users: UsersPage };
+
+/** An old address of a material, /stock/<id> (a saved link, the Dashboard of before): it opens the material where it is now. */
+function LegacyMaterialRedirect() {
+  const { id } = useParams();
+  return /^\d+$/.test(id) ? <Navigate to={`/stock/materials/${id}`} replace /> : <NotFoundPage />;
+}
 
 /**
  * Route table. Every menu entry in config/navigation.js gets a route (and a wildcard for its /new and /:id pages) guarded by
@@ -49,6 +55,10 @@ export function AppRoutes() {
               </Route>
             );
           })}
+
+          <Route element={<RequirePermission roles={["Admin", "Worker"]} />}>
+            <Route path="stock/:id" element={<LegacyMaterialRedirect />} />
+          </Route>
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>

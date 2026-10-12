@@ -22,5 +22,7 @@
   },
   "toSidebar": "Menu on the left",
   "toTopBar": "Menu on top",
-  "materialsStock": "Materials and stock"
+  "materialsStock": "Materials and stock",
+  "stockOverview": "Overview",
+  "movements": "Movements"
 }

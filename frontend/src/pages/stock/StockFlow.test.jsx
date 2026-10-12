@@ -18,7 +18,7 @@ const renderAs = (user, path) => {
     <AuthContext.Provider value={{ user: toPublicUser(user), status: "authenticated" }}>
       <MemoryRouter initialEntries={[path]}>
         <Routes>
-          <Route path="/stock/*" element={<StockPage />} />
+          <Route path="/stock/materials/*" element={<StockPage />} />
         </Routes>
       </MemoryRouter>
     </AuthContext.Provider>,
@@ -30,7 +30,7 @@ describe("stock changes, page by page", () => {
     const user = userEvent.setup();
     setToken(tokenOf(mockUsers[0]));
     const material = await materialsApi.create({ code: "FLOW-M", name: "Flow steel", lots: [{ lotNumber: "A1", quantity: 10 }] });
-    renderAs(mockUsers[0], `/stock/${material.id}`);
+    renderAs(mockUsers[0], `/stock/materials/${material.id}`);
 
     const lots = (await screen.findByRole("heading", { name: "Lots and quantities" })).closest("section");
     expect(within(lots).getByRole("row", { name: /A1/ })).toHaveTextContent("10");
@@ -80,7 +80,7 @@ describe("stock changes, page by page", () => {
   it("shows a Worker the lots and the history, without the form", async () => {
     setToken(tokenOf(mockUsers[0]));
     const material = await materialsApi.create({ code: "FLOW-W", name: "For the Worker", lots: [{ lotNumber: "W1", quantity: 4 }] });
-    renderAs(mockUsers[1], `/stock/${material.id}`);
+    renderAs(mockUsers[1], `/stock/materials/${material.id}`);
     await screen.findByRole("heading", { name: "Stock history" });
     expect(screen.queryByRole("button", { name: "Save the change" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument();

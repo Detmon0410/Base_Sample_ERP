@@ -13,7 +13,6 @@ export const PAGES = [
   { path: "/sale/orders", name: "Production orders", roles: ["admin", "worker"] },
   { path: "/accounting/invoices", name: "Invoices", roles: ["admin"] },
   { path: "/accounting/receipts", name: "Receipts", roles: ["admin"] },
-  { path: "/stock", name: "Overview", roles: ["admin", "worker"] },
   { path: "/stock/materials", name: "Materials and stock", roles: ["admin", "worker"] },
   { path: "/stock/movements", name: "Movements", roles: ["admin", "worker"] },
   { path: "/master/customers", name: "Customers", roles: ["admin"] },

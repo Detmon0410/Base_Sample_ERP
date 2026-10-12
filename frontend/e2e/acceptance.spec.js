@@ -171,14 +171,12 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("row", { name: /Deduct/ }).getByText("Used for the order").click();
   await expect(page).toHaveURL(/\/stock\/materials\/\d+$/);
 
-  // the overview of the whole stock: the material with its lot and the quantity after the deduction
-  await open(page, "/stock");
-  const steelBlock = page.getByRole("link", { name: "STEEL-01" }).locator("xpath=ancestor::tbody");
-  await expect(steelBlock).toContainText("Steel sheet");
-  await expect(steelBlock).toContainText("LOT-A");
-  await expect(steelBlock).toContainText("75");
-  await expect(steelBlock).toContainText("Low"); // 75 is at or below the minimum level of 80
-  await expect(page.getByRole("link", { name: /^Low\s*\d+$/ })).toBeVisible();
+  // the list of the materials: the quantity after the deduction and the status
+  await open(page, "/stock/materials");
+  const steelRow = page.getByRole("row", { name: /STEEL-01/ });
+  await expect(steelRow).toContainText("Steel sheet");
+  await expect(steelRow).toContainText("75");
+  await expect(steelRow).toContainText("Low"); // 75 is at or below the minimum level of 80
   await page.getByLabel("Status").selectOption("Normal");
   await expect(page.getByRole("link", { name: "STEEL-01" })).toHaveCount(0);
 

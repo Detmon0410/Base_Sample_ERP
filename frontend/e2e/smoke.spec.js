@@ -54,37 +54,33 @@ test("a page opened without signing in goes to the sign-in page", async ({ page 
   await expect(page).toHaveURL(/\/login/);
 });
 
-test("the language buttons are words, and the text follows the language", async ({ page }) => {
+test("the user menu holds who the user is, the language and Log out; the language is words and the text follows it", async ({ page }) => {
   await signIn(page, USERS.admin);
   const narrow = (page.viewportSize()?.width ?? 1280) < 768;
-  const openMenu = async (name) => {
-    if (narrow) await page.getByRole("button", { name, exact: true }).click(); // the menu of a narrow screen opens with one button
-  };
-  await page.getByRole("button", { name: "日本語" }).first().click();
-  await openMenu("メニュー");
-  await expect(page.getByRole("link", { name: "ダッシュボード" }).first()).toBeVisible();
-  await page.getByRole("button", { name: "English" }).click();
-  await expect(page.getByRole("button", { name: "Menu", exact: true }).or(page.getByRole("link", { name: "Dashboard" })).first()).toBeVisible();
-});
+  const userMenu = page.getByRole("group", { name: /User menu|ユーザーメニュー/ });
 
-test("the menu moves from the top bar to a list on the left and back, and every entry still opens", async ({ page }) => {
-  await signIn(page, USERS.admin);
-  const narrow = (page.viewportSize()?.width ?? 1280) < 768;
-  await page.getByRole("button", { name: "Menu on the left" }).click();
-  if (narrow) await page.getByRole("button", { name: "Menu", exact: true }).click();
-  const menu = page.getByRole("navigation", { name: "Main menu" });
-  await expect(menu.locator("xpath=ancestor::header")).toHaveCount(0); // not in the bar any more
-  for (const word of ["Quotations (QT)", "Production orders", "Invoices", "Receipts", "Customers", "Products and BOM", "Materials and stock", "Users"]) {
-    await expect(menu.getByRole("link", { name: word, exact: true })).toBeVisible();
-  }
-  await menu.getByRole("link", { name: "Customers", exact: true }).click();
-  await expect(page).toHaveURL(/\/customers$/);
+  // closed: nothing of it is on the screen; opened by the name of the user
+  await expect(page.getByRole("button", { name: "Log out" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Admin", exact: true }).click();
+  await expect(userMenu).toContainText("admin@gmail.com");
+  await expect(userMenu).toContainText("Administration");
+  await expect(userMenu.getByRole("button", { name: "Log out" })).toBeVisible();
   expect(await overflowX(page)).toBeLessThanOrEqual(1);
 
-  await page.reload(); // the choice is kept
-  await expect(page.getByRole("button", { name: "Menu on top" })).toBeVisible();
-  await page.getByRole("button", { name: "Menu on top" }).click();
-  await expect(page.getByRole("button", { name: "Menu on the left" })).toBeVisible();
+  await userMenu.getByRole("button", { name: "日本語" }).click();
+  if (narrow) await page.getByRole("button", { name: "メニュー", exact: true }).click(); // the menu of a narrow screen opens with one button
+  await expect(page.getByRole("link", { name: "ダッシュボード" }).first()).toBeVisible();
+  await expect(page.getByRole("group", { name: "ユーザーメニュー" })).toContainText("管理者"); // the role in Japanese
+  await page.getByRole("group", { name: "ユーザーメニュー" }).getByRole("button", { name: "English" }).click();
+  await expect(page.getByRole("button", { name: "Menu", exact: true }).or(page.getByRole("link", { name: "Dashboard" })).first()).toBeVisible();
+
+  // there is no sidebar and no button that moves the menu
+  await expect(page.getByRole("button", { name: /Menu on the left|Menu on top/ })).toHaveCount(0);
+  await expect(page.locator("aside")).toHaveCount(0);
+
+  // a click outside closes it
+  await page.mouse.click(4, 400); // the bottom left of the page, where the list of a phone does not reach
+  await expect(page.getByRole("group", { name: "User menu" })).toHaveCount(0);
 });
 
 test("an old address of a material, /stock/<id>, opens the material where it is now", async ({ page }) => {

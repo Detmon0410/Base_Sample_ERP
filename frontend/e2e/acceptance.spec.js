@@ -21,7 +21,9 @@ const downloadPdf = async (page, index, fileName) => {
   expect(bytes.length).toBeGreaterThan(5000); // a drawn page, not an empty file
 };
 
-const logOut = async (page) => {
+/** Log out is in the user menu: the name of the user opens it. */
+const logOut = async (page, name) => {
+  await page.getByRole("button", { name, exact: true }).click();
   await page.getByRole("button", { name: "Log out" }).click();
   await expect(page).toHaveURL(/\/login/);
 };
@@ -113,7 +115,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Start production" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("New"); // started, but no process has started yet
-  await logOut(page);
+  await logOut(page, "Admin");
 
   // 5. a Worker records progress and completes 10 units on every process
   await signIn(page, WORKER);
@@ -142,7 +144,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   // 6. the order is Completed
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Completed");
   await expect(page.getByRole("button", { name: "Record progress" })).toHaveCount(0); // a Worker cannot reopen
-  await logOut(page);
+  await logOut(page, WORKER.name);
 
   // 7. the Admin deducts material stock by hand and reads the history
   await signIn(page, USERS.admin);

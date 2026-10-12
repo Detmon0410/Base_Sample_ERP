@@ -69,7 +69,7 @@ function TableRow({
     <tr
       data-slot="table-row"
       className={cn(
-        "transition-colors bg-card hover:bg-muted has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "transition-colors odd:bg-card even:bg-[#f3f3f9] hover:bg-accent has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
         className
       )}
       {...props}

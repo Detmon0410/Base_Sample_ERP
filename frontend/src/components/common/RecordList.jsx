@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import { NativeSelect } from "@/components/common/FormFields";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -13,7 +13,8 @@ const PAGE_SIZE = 20;
 
 /**
  * A list page: the title band, a search box, a status filter, a table with a bold header and thin lines, 20 rows a page
- * with Previous / Next (docs/specs/s2-mini-erp-look.md). The first column of a row is the link to its page (`${base}/${id}`).
+ * with Previous / Next (docs/specs/s2-mini-erp-look.md). A click anywhere in a row opens its page (`${base}/${id}`); the first column
+ * is also a link to it, for the keyboard. The rows alternate in colour.
  * `columns` is [{ key, header, cell?(row) }]. A page with its own statuses (orders, invoices) gives `statusOptions` and `statusOf` and
  * gets the status filter and the status column at the end; master data has no status.
  */
@@ -22,6 +23,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
+  const navigate = useNavigate();
   const withStatus = Boolean(statusOptions); // only the lists of orders and invoices have a status (their step in the workflow)
 
   const { data, error, loading } = useLoad(() => api.list({ q: q.trim() || undefined, status: withStatus ? status || undefined : undefined, page, pageSize: PAGE_SIZE }), [q, status, page]);
@@ -89,7 +91,12 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
             </TableHeader>
             <TableBody>
               {rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  className="cursor-pointer"
+                  // a click anywhere in the row opens the record (the link of the first cell stays for the keyboard)
+                  onClick={(event) => !event.target.closest("a") && navigate(`${base}/${row.id}`)}
+                >
                   {columns.map((column, index) => {
                     const value = column.cell ? column.cell(row) : row[column.key];
                     return (

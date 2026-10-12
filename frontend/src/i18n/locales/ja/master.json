@@ -143,7 +143,13 @@
     "to": "終了日（YYYY-MM-DD）",
     "colMaterial": "材料",
     "noMovements": "在庫の変更はまだありません。",
-    "noMatch": "該当する在庫の変更がありません。"
+    "noMatch": "該当する在庫の変更がありません。",
+    "overviewTitle": "在庫一覧",
+    "materialsCount": "材料",
+    "lotsCount": "ロット",
+    "searchMaterial": "検索（材料のコードまたは品名）",
+    "lotsOf": "ロット数：{{count}}",
+    "noMaterialsYet": "材料がまだありません。"
   },
   "delete": {
     "button": "削除",

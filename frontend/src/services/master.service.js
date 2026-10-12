@@ -9,6 +9,8 @@ export const usersApi = createCrud("/users");
 
 /** The stock changes of a material (docs/specs/s1-mini-erp-workflow.md, section 2 step 8). */
 export const stockApi = {
+  /** The numbers of the overview: { materials, lots } */
+  overview: async () => unwrap(await api.get("/stock/overview")),
   /** The ledger of every stock change: params { q, type, from, to, page, pageSize } -> { items, meta }, newest first. */
   listChanges: async (params) => unwrapList(await api.get("/stock-changes", { params })),
   /** The history, newest first. */

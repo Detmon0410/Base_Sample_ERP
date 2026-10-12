@@ -46,6 +46,12 @@ const today = () => {
 };
 
 export const stockRoutes = {
+  // the numbers on top of the overview page (docs/specs/s4-stock-group.md, section 3.1); any signed-in user
+  "GET /stock/overview": ({ authorization }) => {
+    userFromAuthorization(authorization);
+    return { materials: materials.length, lots: materials.reduce((sum, material) => sum + material.lots.length, 0) };
+  },
+
   // the ledger of every stock change of every material (docs/specs/s4-stock-group.md, section 3.2); read only, any signed-in user
   "GET /stock-changes": ({ authorization, query }) => {
     userFromAuthorization(authorization);

@@ -1,3 +1,4 @@
+import { Boxes } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Route, Routes, useParams } from "react-router";
@@ -25,7 +26,7 @@ function LotLines({ form, readOnly }) {
   const errors = form.formState.errors.lots;
 
   return (
-    <Section title={t("materials.lots")}>
+    <Section icon={Boxes} title={t("materials.lots")}>
       {fields.length === 0 ? <p className="mb-3 text-muted-foreground">{t("materials.noLots")}</p> : null}
       <div className="flex flex-col gap-4">
         {fields.map((field, index) => (
@@ -77,7 +78,7 @@ function MaterialForm() {
         const errors = form.formState.errors;
         return (
           <>
-            <Section title={t("materials.section")}>
+            <Section icon={Boxes} title={t("materials.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <TextField label={t("materials.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
                 <TextField label={t("materials.name")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />

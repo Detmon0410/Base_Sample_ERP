@@ -1,3 +1,4 @@
+import { UserCog } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Route, Routes } from "react-router";
 
@@ -26,7 +27,7 @@ function UserForm() {
       {({ form, record }) => {
         const errors = form.formState.errors;
         return (
-          <Section title={t("master:users.section")}>
+          <Section icon={UserCog} title={t("master:users.section")}>
             <div className="grid gap-5 sm:grid-cols-2">
               <TextField label={t("master:users.name")} error={errors.name?.message} {...form.register("name")} />
               <TextField label={t("master:users.email")} type="email" autoComplete="off" error={errors.email?.message} {...form.register("email")} />

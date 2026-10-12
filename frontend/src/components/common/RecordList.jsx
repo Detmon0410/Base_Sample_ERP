@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
@@ -38,7 +39,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
         actions={
           canCreate ? (
             <Button asChild>
-              <Link to={`${base}/new`}>{newLabel}</Link>
+              <Link to={`${base}/new`}><Plus aria-hidden="true" />{newLabel}</Link>
             </Button>
           ) : null
         }

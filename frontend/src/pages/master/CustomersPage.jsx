@@ -1,3 +1,4 @@
+import { Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Route, Routes } from "react-router";
 
@@ -23,7 +24,7 @@ function CustomerForm() {
       {({ form }) => {
         const errors = form.formState.errors;
         return (
-          <Section title={t("customers.section")}>
+          <Section icon={Users} title={t("customers.section")}>
             <div className="grid gap-5 sm:grid-cols-2">
               <TextField label={t("customers.name")} error={errors.name?.message} className="sm:col-span-2" {...form.register("name")} />
               <TextField label={t("customers.address")} error={errors.address?.message} className="sm:col-span-2" {...form.register("address")} />

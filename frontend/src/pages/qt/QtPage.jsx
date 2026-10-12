@@ -1,3 +1,4 @@
+import { FileText } from "lucide-react";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Routes } from "react-router";
@@ -79,7 +80,7 @@ function QtForm() {
       {({ form }) => {
         const errors = form.formState.errors;
         return (
-          <Section title={t("qt.section")}>
+          <Section icon={FileText} title={t("qt.section")}>
             <div className="grid gap-5 sm:grid-cols-2">
               <TextField label={t("qt.qtNumber")} error={errors.qtNumber?.message} {...form.register("qtNumber")} />
               <TextField label={t("qt.qtDate")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.qtDate?.message} {...form.register("qtDate")} />

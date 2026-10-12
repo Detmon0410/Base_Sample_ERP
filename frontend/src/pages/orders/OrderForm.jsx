@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { ClipboardList, Layers, ListOrdered, Package, Play, Plus, Save, Trash2, X } from "lucide-react";
 import { useId, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -63,7 +63,10 @@ function BomBlock({ form, index, products, materials }) {
 
   return (
     <div className="mt-6">
-      <h3 className="mb-2 text-base font-bold">{t("bom.title")}</h3>
+      <h3 className="mb-2 flex items-center gap-2 text-base font-bold">
+        <Layers aria-hidden="true" className="size-4 text-primary" />
+        {t("bom.title")}
+      </h3>
       {product.bom.length === 0 ? (
         <p className="text-muted-foreground">{t("bom.none")}</p>
       ) : (
@@ -98,7 +101,7 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
   const options = [{ value: "", label: t("lines.chooseProduct") }, ...products.map((product) => ({ value: String(product.id), label: `${product.code} ${product.name}` }))];
 
   return (
-    <Section title={t("lines.line", { n: index + 1 })}>
+    <Section icon={Package} title={t("lines.line", { n: index + 1 })}>
       <div className="grid gap-5 sm:grid-cols-[1fr_9rem_11rem]">
         <SelectField
           label={t("lines.product")}
@@ -118,7 +121,10 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
 
       <BomBlock form={form} index={index} products={products} materials={materials} />
 
-      <h3 className="mt-6 mb-2 text-base font-bold">{t("processes.title")}</h3>
+      <h3 className="mt-6 mb-2 flex items-center gap-2 text-base font-bold">
+        <ListOrdered aria-hidden="true" className="size-4 text-primary" />
+        {t("processes.title")}
+      </h3>
       {processes.fields.length === 0 ? <p className="mb-3 text-muted-foreground">{t("processes.none")}</p> : null}
       <ol className="flex list-none flex-col gap-4 p-0">
         {processes.fields.map((field, step) => (
@@ -211,7 +217,7 @@ export function OrderForm({ order, onChanged }) {
           </Alert>
         ) : null}
 
-        <Section title={t("orders:section")}>
+        <Section icon={ClipboardList} title={t("orders:section")}>
           <div className="grid gap-5 sm:grid-cols-2">
             <SelectField
               label={t("orders:qt")}
@@ -250,15 +256,15 @@ export function OrderForm({ order, onChanged }) {
 
         <div className="flex flex-wrap items-center gap-3">
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? t("common:actions.saving") : t("common:actions.save")}
+            <Save aria-hidden="true" />{form.formState.isSubmitting ? t("common:actions.saving") : t("common:actions.save")}
           </Button>
           <Button asChild variant="outline">
-            <Link to="/sale/orders">{t("common:actions.cancel")}</Link>
+            <Link to="/sale/orders"><X aria-hidden="true" />{t("common:actions.cancel")}</Link>
           </Button>
           {order ? (
             <span className="ml-auto flex flex-col items-end gap-1">
               <Button type="button" onClick={() => setAsking(true)}>
-                {t("orders:start.button")}
+                <Play aria-hidden="true" />{t("orders:start.button")}
               </Button>
               <span className="text-sm text-muted-foreground">{t("orders:start.hint")}</span>
             </span>
@@ -273,7 +279,7 @@ export function OrderForm({ order, onChanged }) {
             <AlertDialogDescription>{t("orders:start.text")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("common:actions.cancel")}</AlertDialogCancel>
+            <AlertDialogCancel><X aria-hidden="true" />{t("common:actions.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={start}>{t("common:actions.confirm")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

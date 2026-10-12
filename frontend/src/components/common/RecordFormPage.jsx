@@ -1,3 +1,4 @@
+import { ArrowLeft, Save, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -71,7 +72,7 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
       <>
         <PageHeader title={t("master:form.notFound")} />
         <p>
-          <Link to={listPath}>{t("master:form.back")}</Link>
+          <Link to={listPath}><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
         </p>
       </>
     );
@@ -107,15 +108,18 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
         <div className="flex flex-wrap items-center gap-3">
           {readOnly ? null : (
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? t("common:actions.saving") : t("common:actions.save")}
+              <Save aria-hidden="true" />{form.formState.isSubmitting ? t("common:actions.saving") : t("common:actions.save")}
             </Button>
           )}
           <Button asChild variant="outline">
-            <Link to={listPath}>{readOnly ? t("master:form.back") : t("common:actions.cancel")}</Link>
+            <Link to={listPath}>
+              {readOnly ? <ArrowLeft aria-hidden="true" /> : <X aria-hidden="true" />}
+              {readOnly ? t("master:form.back") : t("common:actions.cancel")}
+            </Link>
           </Button>
           {readOnly || isNew ? null : (
             <Button type="button" variant="destructive" className="ml-auto" onClick={() => setAsking(true)}>
-              {t("master:delete.button")}
+              <Trash2 aria-hidden="true" />{t("master:delete.button")}
             </Button>
           )}
         </div>

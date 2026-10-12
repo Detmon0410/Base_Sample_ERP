@@ -1,3 +1,4 @@
+import { ArrowLeftRight, Boxes, History, Save } from "lucide-react";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -54,7 +55,7 @@ function ChangeForm({ material, onDone }) {
   });
 
   return (
-    <Section title={t("master:stock.changeTitle")}>
+    <Section icon={ArrowLeftRight} title={t("master:stock.changeTitle")}>
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-5">
         {summary ? (
           <Alert variant="destructive">
@@ -77,7 +78,7 @@ function ChangeForm({ material, onDone }) {
         </div>
         <div>
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? t("common:actions.saving") : t("master:stock.save")}
+            <Save aria-hidden="true" />{form.formState.isSubmitting ? t("common:actions.saving") : t("master:stock.save")}
           </Button>
         </div>
       </form>
@@ -105,7 +106,7 @@ export function StockChanges({ materialId, canChange }) {
 
   return (
     <div className="mt-6 flex max-w-4xl flex-col gap-5">
-      <Section title={t("stock.lotsTitle")}>
+      <Section icon={Boxes} title={t("stock.lotsTitle")}>
         <p className="mb-3 text-sm text-muted-foreground">{t("stock.lotsHint")}</p>
         {lots.length === 0 ? (
           <p className="text-muted-foreground">{t("stock.noLots")}</p>
@@ -137,7 +138,7 @@ export function StockChanges({ materialId, canChange }) {
 
       {canChange ? <ChangeForm material={material.data} onDone={changed} /> : null}
 
-      <Section title={t("stock.historyTitle")}>
+      <Section icon={History} title={t("stock.historyTitle")}>
         {history.data.length === 0 ? (
           <p className="text-muted-foreground">{t("stock.noHistory")}</p>
         ) : (

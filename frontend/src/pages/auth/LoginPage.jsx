@@ -1,3 +1,4 @@
+import { LogIn } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -138,7 +139,7 @@ export function LoginPage() {
           </Field>
 
           <Button type="submit" className="mt-1 h-10 w-full" disabled={isSubmitting}>
-            {isSubmitting ? t("login.submitting") : t("login.submit")}
+            <LogIn aria-hidden="true" />{isSubmitting ? t("login.submitting") : t("login.submit")}
           </Button>
         </form>
       </CardContent>

@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, Route, Routes, useParams } from "react-router";
 
@@ -25,7 +26,7 @@ function ReceiptPage() {
         <div className="flex flex-wrap gap-3">
           <DocumentActions name="receipt" number={receipt.receiptNumber} />
           <Button asChild variant="outline">
-            <Link to="/accounting/receipts">{t("master:form.back")}</Link>
+            <Link to="/accounting/receipts"><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
           </Button>
         </div>
         <ReceiptDocument receipt={receipt} language={i18n.language} />

@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -13,10 +14,10 @@ export function Pagination({ page, setPage, total, pageSize }) {
       <span className="text-muted-foreground">{total === 0 ? t("pagination.none") : t("pagination.showing", { from, to, total })}</span>
       <span className="ml-auto flex gap-3">
         <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-          {t("pagination.previous")}
+          <ChevronLeft aria-hidden="true" />{t("pagination.previous")}
         </Button>
         <Button variant="outline" size="sm" disabled={to >= total} onClick={() => setPage(page + 1)}>
-          {t("pagination.next")}
+          {t("pagination.next")}<ChevronRight aria-hidden="true" />
         </Button>
       </span>
     </nav>

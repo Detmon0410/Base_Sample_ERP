@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Layers, Package, Plus, Trash2 } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Route, Routes } from "react-router";
@@ -25,7 +25,7 @@ function BomLines({ form, readOnly }) {
   const errors = form.formState.errors.bom;
 
   return (
-    <Section title={t("products.bom")}>
+    <Section icon={Layers} title={t("products.bom")}>
       {fields.length === 0 ? <p className="mb-3 text-muted-foreground">{t("products.noBom")}</p> : null}
       <div className="flex flex-col gap-4">
         {fields.map((field, index) => (
@@ -84,7 +84,7 @@ function ProductForm() {
         const errors = form.formState.errors;
         return (
           <>
-            <Section title={t("products.section")}>
+            <Section icon={Package} title={t("products.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <TextField label={t("products.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
                 <TextField label={t("products.price")} type="number" min="0" step="1" disabled={readOnly} error={errors.price?.message} {...form.register("price")} />

@@ -1,3 +1,4 @@
+import { ArrowLeft, Banknote, ReceiptText, Save, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -6,6 +7,7 @@ import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Section, SelectField, TextField } from "@/components/common/FormFields";
+import { StatusBadge } from "@/components/common/StatusBadge";
 import { PageHeader } from "@/components/common/PageHeader";
 import { RecordList } from "@/components/common/RecordList";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -56,7 +58,7 @@ function InvoiceNew() {
             <AlertDescription className="text-base">{summary}</AlertDescription>
           </Alert>
         ) : null}
-        <Section title={t("invoices:section")}>
+        <Section icon={ReceiptText} title={t("invoices:section")}>
           <div className="grid gap-5 sm:grid-cols-2">
             <SelectField label={t("invoices:order")} options={options} error={errors.orderId?.message} className="sm:col-span-2" {...form.register("orderId")} />
             {orders.data && open.length === 0 ? <p className="text-muted-foreground sm:col-span-2">{t("invoices:noOrders")}</p> : null}
@@ -65,9 +67,9 @@ function InvoiceNew() {
           </div>
         </Section>
         <div className="flex gap-3">
-          <Button type="submit">{t("common:actions.save")}</Button>
+          <Button type="submit"><Save aria-hidden="true" />{t("common:actions.save")}</Button>
           <Button asChild variant="outline">
-            <Link to="/accounting/invoices">{t("common:actions.cancel")}</Link>
+            <Link to="/accounting/invoices"><X aria-hidden="true" />{t("common:actions.cancel")}</Link>
           </Button>
         </div>
       </form>
@@ -112,7 +114,7 @@ function PaymentForm({ invoice, onDone }) {
           <p className="text-sm text-muted-foreground sm:col-span-2">{t("invoices:payment.hint", { total: formatCurrency(invoice.total, i18n.language) })}</p>
         </div>
         <div>
-          <Button type="submit">{t("invoices:payment.record")}</Button>
+          <Button type="submit"><Banknote aria-hidden="true" />{t("invoices:payment.record")}</Button>
         </div>
       </form>
       <ConfirmDialog open={pending !== null} onOpenChange={(value) => !value && setPending(null)} title={t("invoices:payment.confirmTitle")} text={t("invoices:payment.confirmText")} onConfirm={pay} />
@@ -137,13 +139,13 @@ function InvoicePage() {
         <div className="flex flex-wrap gap-3">
           <DocumentActions name="invoice" number={invoice.invoiceNumber} />
           <Button asChild variant="outline">
-            <Link to="/accounting/invoices">{t("master:form.back")}</Link>
+            <Link to="/accounting/invoices"><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
           </Button>
         </div>
 
         <InvoiceDocument invoice={invoice} language={language} />
 
-        <Section title={t("invoices:payment.title")}>
+        <Section icon={Banknote} title={t("invoices:payment.title")}>
           {invoice.payment ? (
             <p>
               {t("invoices:payment.paidOn", { date: invoice.payment.date, amount: formatCurrency(invoice.payment.amount, language) })}
@@ -178,7 +180,7 @@ export function InvoicesPage() {
             canCreate
             newLabel={t("new")}
             statusOptions={[{ value: "", label: t("master:list.all") }, ...STATUSES.map((value) => ({ value, label: t(`status.${value}`) }))]}
-            statusOf={(row) => t(`status.${row.status}`)}
+            statusOf={(row) => <StatusBadge tone={row.status === "Paid" ? "good" : "warn"}>{t(`status.${row.status}`)}</StatusBadge>}
             columns={[
               { key: "invoiceNumber", header: t("number") },
               { key: "invoiceDate", header: t("date") },

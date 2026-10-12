@@ -1,3 +1,4 @@
+import { LayoutDashboard } from "lucide-react";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 
@@ -16,7 +17,7 @@ export function MessagePage({ code, title, description, actionTo = "/" }) {
           <h1 className="text-2xl font-bold">{title}</h1>
           <p className="text-muted-foreground">{description}</p>
           <Button asChild size="lg" className="mt-2">
-            <Link to={actionTo}>{t("actions.backToDashboard")}</Link>
+            <Link to={actionTo}><LayoutDashboard aria-hidden="true" />{t("actions.backToDashboard")}</Link>
           </Button>
         </CardContent>
       </Card>

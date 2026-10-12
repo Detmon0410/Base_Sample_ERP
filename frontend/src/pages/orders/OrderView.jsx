@@ -1,3 +1,4 @@
+import { ArrowLeft, ClipboardList, History, Pencil, Save, X } from "lucide-react";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -79,10 +80,10 @@ function ProgressForm({ order, line, process, onDone, onCancel }) {
       </div>
       <div className="flex gap-3">
         <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? t("common:actions.saving") : t("orders:progress.save")}
+          <Save aria-hidden="true" />{form.formState.isSubmitting ? t("common:actions.saving") : t("orders:progress.save")}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
-          {t("common:actions.cancel")}
+          <X aria-hidden="true" />{t("common:actions.cancel")}
         </Button>
       </div>
     </form>
@@ -110,7 +111,7 @@ export function OrderView({ order, onChanged }) {
       <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} />
 
       <div className="flex max-w-5xl flex-col gap-5">
-        <Section title={t("orders:section")}>
+        <Section icon={ClipboardList} title={t("orders:section")}>
           <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
             {[
               [t("orders:qt"), admin ? <Link key="qt" to={`/sale/quotations/${order.qtId}`}>{order.qtNumber}</Link> : order.qtNumber],
@@ -165,7 +166,7 @@ export function OrderView({ order, onChanged }) {
                       <TableCell>
                         {canRecord ? (
                           <Button type="button" variant="outline" size="xs" onClick={() => setEditing(process.id)}>
-                            {process.status === "Completed" ? t("orders:progress.reopen") : t("orders:progress.record")}
+                            <Pencil aria-hidden="true" />{process.status === "Completed" ? t("orders:progress.reopen") : t("orders:progress.record")}
                           </Button>
                         ) : null}
                       </TableCell>
@@ -180,7 +181,7 @@ export function OrderView({ order, onChanged }) {
           </Section>
         ))}
 
-        <Section title={t("orders:progress.history")}>
+        <Section icon={History} title={t("orders:progress.history")}>
           {order.history.length === 0 ? (
             <p className="text-muted-foreground">{t("orders:progress.noHistory")}</p>
           ) : (
@@ -217,7 +218,7 @@ export function OrderView({ order, onChanged }) {
 
         <div>
           <Button asChild variant="outline">
-            <Link to="/sale/orders">{t("master:form.back")}</Link>
+            <Link to="/sale/orders"><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
           </Button>
         </div>
       </div>

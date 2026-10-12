@@ -1,3 +1,4 @@
+import { Download, Printer } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -115,10 +116,10 @@ export function DocumentActions({ name, number }) {
   return (
     <div className="flex flex-wrap gap-3">
       <Button type="button" disabled={busy} onClick={download}>
-        {busy ? t("makingPdf") : t("downloadPdf")}
+        <Download aria-hidden="true" />{busy ? t("makingPdf") : t("downloadPdf")}
       </Button>
       <Button type="button" variant="outline" onClick={() => printDocument(name, number)}>
-        {t("print")}
+        <Printer aria-hidden="true" />{t("print")}
       </Button>
     </div>
   );

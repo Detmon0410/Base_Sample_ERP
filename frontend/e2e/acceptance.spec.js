@@ -57,6 +57,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await open(page, "/stock/materials", "New material");
   await page.getByLabel("Code").fill("STEEL-01");
   await page.getByLabel("Name", { exact: true }).fill("Steel sheet");
+  await page.getByLabel("Minimum level (optional)").fill("80"); // 100 in the lot is above it: Normal until the deduction of step 7
   await page.getByRole("button", { name: "Add a lot" }).click();
   await page.getByLabel("Lot number").fill("LOT-A");
   await page.getByLabel("Quantity").fill("100");
@@ -174,6 +175,10 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(steelBlock).toContainText("Steel sheet");
   await expect(steelBlock).toContainText("LOT-A");
   await expect(steelBlock).toContainText("75");
+  await expect(steelBlock).toContainText("Low"); // 75 is at or below the minimum level of 80
+  await expect(page.getByRole("link", { name: /^Low\s*1$/ })).toBeVisible();
+  await page.getByLabel("Status").selectOption("Normal");
+  await expect(page.getByRole("link", { name: "STEEL-01" })).toHaveCount(0);
 
   // 8. an invoice for the completed order, and its document sent to print / PDF
   await open(page, "/invoices", "New invoice");
@@ -254,7 +259,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("link", { name: /^Paid this month\s*¥450,000$/ })).toBeVisible();
   await expect(page.getByText("No order is in progress.")).toBeVisible();
   await expect(page.getByText("No unpaid invoice.")).toBeVisible();
-  await expect(page.getByRole("link", { name: "STEEL-01" })).toBeVisible(); // the material with the least stock
+  await expect(page.getByRole("row", { name: /STEEL-01/ })).toContainText("Low"); // the material with the least stock, with its status
   await expect(page.getByRole("img", { name: /Invoiced and paid, last 6 months/ })).toBeVisible();
 
   // the pages that now hold real data show no untranslated key

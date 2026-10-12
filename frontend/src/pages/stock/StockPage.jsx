@@ -5,6 +5,7 @@ import { Route, Routes, useParams } from "react-router";
 import { Section, TextField } from "@/components/common/FormFields";
 import { RecordFormPage } from "@/components/common/RecordFormPage";
 import { RecordList } from "@/components/common/RecordList";
+import { StockStatus } from "@/components/common/StockStatus";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,9 +15,8 @@ import { isAdmin } from "@/utils/permissions";
 
 import { StockChanges } from "./StockChanges";
 
-const EMPTY = { code: "", name: "", lots: [] };
-
-const total = (lots) => lots.reduce((sum, lot) => sum + Number(lot.quantity || 0), 0);
+const STOCK_STATUSES = ["Normal", "Low", "Out"];
+const EMPTY = { code: "", name: "", minLevel: "", lots: [] };
 
 /** The lots a NEW material starts with (each becomes an "Add" in the stock history). After that the lots change only through stock changes. */
 function LotLines({ form, readOnly }) {
@@ -70,7 +70,7 @@ function MaterialForm() {
       titleOf={(record) => `${record.code} ${record.name}`}
       defaults={EMPTY}
       readOnly={readOnly}
-      toForm={(record) => ({ code: record.code, name: record.name, lots: record.lots })}
+      toForm={(record) => ({ code: record.code, name: record.name, minLevel: record.minLevel ?? "", lots: record.lots })}
       toBody={(values) => values}
     >
       {({ form, record }) => {
@@ -81,6 +81,8 @@ function MaterialForm() {
               <div className="grid gap-5 sm:grid-cols-2">
                 <TextField label={t("materials.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
                 <TextField label={t("materials.name")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />
+                <TextField label={t("materials.minLevel")} type="number" min="0" step="0.001" disabled={readOnly} error={errors.minLevel?.message} className="sm:col-span-2" {...form.register("minLevel")} />
+                <p className="text-sm text-muted-foreground sm:col-span-2">{t("materials.minLevelHint")}</p>
               </div>
             </Section>
             {record ? null : <LotLines form={form} readOnly={readOnly} />}
@@ -113,16 +115,18 @@ export function StockPage() {
         index
         element={
           <RecordList
-                  api={materialsApi}
+            api={materialsApi}
             base="/stock/materials"
             title={t("materials.title")}
             canCreate={isAdmin(user)}
             newLabel={t("materials.new")}
+            statusOptions={[{ value: "", label: t("list.all") }, ...STOCK_STATUSES.map((value) => ({ value, label: t(`stock.status.${value}`) }))]}
+            statusOf={(row) => <StockStatus status={row.stockStatus} />}
             columns={[
               { key: "code", header: t("materials.code") },
               { key: "name", header: t("materials.name") },
               { key: "lotCount", header: t("materials.lotCount"), cell: (row) => formatNumber(row.lots.length, i18n.language) },
-              { key: "total", header: t("materials.total"), cell: (row) => formatNumber(total(row.lots), i18n.language) },
+              { key: "total", header: t("materials.total"), cell: (row) => formatNumber(row.total, i18n.language) },
             ]}
           />
         }

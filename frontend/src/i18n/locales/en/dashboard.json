@@ -23,9 +23,10 @@
   "invoiceDate": "Invoice date",
   "total": "Total",
   "stockTitle": "Materials with the least stock",
-  "stockHint": "The 5 materials with the lowest total quantity. The system has no minimum level, so this is only a ranking.",
+  "stockHint": "The 5 materials with the lowest total quantity. A material with a minimum level shows its status (Normal, Low or Out); one without shows a dash.",
   "noMaterials": "No material yet.",
   "code": "Code",
   "name": "Name",
-  "quantity": "Total quantity"
+  "quantity": "Total quantity",
+  "status": "Status"
 }

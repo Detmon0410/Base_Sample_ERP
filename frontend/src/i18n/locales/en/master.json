@@ -67,7 +67,9 @@
     "total": "Total quantity",
     "noLots": "No lots yet.",
     "addLot": "Add a lot",
-    "removeLot": "Remove"
+    "removeLot": "Remove",
+    "minLevel": "Minimum level (optional)",
+    "minLevelHint": "When the total of all the lots is at or below this number the material is Low, and at 0 it is Out. Without a number the material has no status."
   },
   "users": {
     "title": "Users",
@@ -149,7 +151,13 @@
     "lotsCount": "Lots",
     "searchMaterial": "Search (material code or name)",
     "lotsOf": "Lots: {{count}}",
-    "noMaterialsYet": "No material yet."
+    "noMaterialsYet": "No material yet.",
+    "status": {
+      "Normal": "Normal",
+      "Low": "Low",
+      "Out": "Out"
+    },
+    "colStatus": "Status"
   },
   "delete": {
     "button": "Delete",

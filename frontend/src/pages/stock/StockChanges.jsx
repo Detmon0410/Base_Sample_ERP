@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { NativeSelect, Section, SelectField, TextField } from "@/components/common/FormFields";
+import { StockStatus } from "@/components/common/StockStatus";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -125,7 +126,9 @@ export function StockChanges({ materialId, canChange }) {
               ))}
               <TableRow>
                 <TableCell className="font-bold">{t("stock.total")}</TableCell>
-                <TableCell className="font-bold">{formatNumber(total, language)}</TableCell>
+                <TableCell className="font-bold">
+                  {formatNumber(total, language)} {material.data.stockStatus ? <StockStatus status={material.data.stockStatus} /> : null}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>

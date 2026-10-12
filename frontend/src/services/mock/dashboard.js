@@ -2,7 +2,7 @@
 //
 //   orders       how many production orders are New / InProgress / Completed (every signed-in user)
 //   inProgress   the orders in progress, with their progress over all processes: { id, orderNumber, customerName, done, required, percent }
-//   leastStock   the 5 materials with the lowest total quantity (every signed-in user; a ranking only, there is no minimum level)
+//   leastStock   the 5 materials with the lowest total quantity, with their stock status (null without a minimum level); every signed-in user
 //   invoicing    Admin only (null for a Worker):
 //                  unpaid { count, total }, paidThisMonth { count, total },
 //                  months  the last 6 months, oldest first: { month: "YYYY-MM", invoiced, paid } (sums of money),
@@ -10,6 +10,7 @@
 
 import { customers, materials } from "./master.js";
 import { invoices, orderStatus, orders } from "./orders.js";
+import { materialView } from "./stockStatus.js";
 import { userFromAuthorization } from "./users.js";
 
 const LISTED = 5;
@@ -49,7 +50,7 @@ export const dashboardRoutes = {
       .map((order) => ({ id: order.id, orderNumber: order.orderNumber, customerName: customerNameOf(order), ...progressOf(order) }));
 
     const leastStock = materials
-      .map((material) => ({ id: material.id, code: material.code, name: material.name, total: material.lots.reduce((sum, lot) => sum + lot.quantity, 0) }))
+      .map((material) => ({ id: material.id, code: material.code, name: material.name, total: materialView(material).total, stockStatus: materialView(material).stockStatus }))
       .sort((a, b) => a.total - b.total || a.code.localeCompare(b.code))
       .slice(0, LISTED);
 

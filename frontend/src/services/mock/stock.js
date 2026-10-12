@@ -8,6 +8,7 @@
 import { MockHttpError, MockResponse } from "./errors.js";
 import { invalid, issue, materials, masterRoutes, number, text } from "./master.js";
 import { orders } from "./orders.js";
+import { materialView } from "./stockStatus.js";
 import { userFromAuthorization } from "./users.js";
 
 export const stockChanges = [];
@@ -49,7 +50,13 @@ export const stockRoutes = {
   // the numbers on top of the overview page (docs/specs/s4-stock-group.md, section 3.1); any signed-in user
   "GET /stock/overview": ({ authorization }) => {
     userFromAuthorization(authorization);
-    return { materials: materials.length, lots: materials.reduce((sum, material) => sum + material.lots.length, 0) };
+    const statuses = materials.map((material) => materialView(material).stockStatus);
+    return {
+      materials: materials.length,
+      lots: materials.reduce((sum, material) => sum + material.lots.length, 0),
+      low: statuses.filter((status) => status === "Low").length,
+      out: statuses.filter((status) => status === "Out").length,
+    };
   },
 
   // the ledger of every stock change of every material (docs/specs/s4-stock-group.md, section 3.2); read only, any signed-in user
@@ -136,6 +143,6 @@ export const stockRoutes = {
     target.quantity = balance;
     material.updatedAt = new Date().toISOString();
     log(material, target.lotNumber, kind, change, balance, { changeDate, note, orderId }, user);
-    return new MockResponse({ data: material, status: 201 });
+    return new MockResponse({ data: materialView(material), status: 201 });
   },
 };

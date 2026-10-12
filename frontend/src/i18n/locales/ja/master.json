@@ -67,7 +67,9 @@
     "total": "在庫合計",
     "noLots": "ロットがまだありません。",
     "addLot": "ロットを追加",
-    "removeLot": "削除"
+    "removeLot": "削除",
+    "minLevel": "最低在庫数（任意）",
+    "minLevelHint": "全ロットの合計がこの数以下になると「在庫少」、0 になると「在庫切れ」です。数を入れない材料には状態が付きません。"
   },
   "users": {
     "title": "ユーザー",
@@ -149,7 +151,13 @@
     "lotsCount": "ロット",
     "searchMaterial": "検索（材料のコードまたは品名）",
     "lotsOf": "ロット数：{{count}}",
-    "noMaterialsYet": "材料がまだありません。"
+    "noMaterialsYet": "材料がまだありません。",
+    "status": {
+      "Normal": "通常",
+      "Low": "在庫少",
+      "Out": "在庫切れ"
+    },
+    "colStatus": "状態"
   },
   "delete": {
     "button": "削除",

@@ -65,6 +65,28 @@ describe("the stock overview page", () => {
     expect(await screen.findByText("the page of a material")).toBeInTheDocument();
   });
 
+  it("shows the status of a material with a minimum level, counts the Low and the Out, and filters by the status", async () => {
+    const user = userEvent.setup();
+    setToken(tokenOf(mockUsers[0]));
+    await materialsApi.create({ code: "OS-NORMAL", name: "Plenty", minLevel: 5, lots: [{ lotNumber: "N", quantity: 50 }] });
+    await materialsApi.create({ code: "OS-LOW", name: "Running down", minLevel: 20, lots: [{ lotNumber: "L", quantity: 8 }] });
+    await materialsApi.create({ code: "OS-OUT", name: "Finished", minLevel: 3, lots: [{ lotNumber: "O", quantity: 0 }] });
+    await materialsApi.create({ code: "OS-NONE", name: "No minimum", lots: [{ lotNumber: "X", quantity: 1 }] });
+
+    renderAs(mockUsers[0]);
+    const block = async (code) => (await screen.findByRole("link", { name: code })).closest("tbody");
+    expect(within(await block("OS-NORMAL")).getAllByText("Normal").length).toBeGreaterThan(0);
+    expect(await block("OS-LOW")).toHaveTextContent("Low");
+    expect(await block("OS-OUT")).toHaveTextContent("Out");
+    expect(await block("OS-NONE")).not.toHaveTextContent(/Normal|Low|Out/); // no minimum level, no status
+    expect(await screen.findByRole("link", { name: /^Low\s*[1-9]/ })).toBeInTheDocument(); // the numbers on top
+
+    await user.selectOptions(screen.getByLabelText("Status"), "Low");
+    await waitFor(() => expect(screen.queryByRole("link", { name: "OS-NORMAL" })).not.toBeInTheDocument());
+    expect(screen.getByRole("link", { name: "OS-LOW" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "OS-OUT" })).not.toBeInTheDocument();
+  });
+
   it("is open to a Worker, and says so when nothing matches", async () => {
     const user = userEvent.setup();
     renderAs(mockUsers[1]);

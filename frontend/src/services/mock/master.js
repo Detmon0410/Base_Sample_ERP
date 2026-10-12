@@ -4,6 +4,7 @@
 // List params: { q, page, pageSize }  ->  data: [...], meta: { page, pageSize, total }
 
 import { MockHttpError, MockResponse } from "./errors.js";
+import { materialView, STOCK_STATUSES } from "./stockStatus.js";
 import { mockUsers, toPublicUser, userFromAuthorization } from "./users.js";
 import { DEPARTMENTS, ROLES } from "@/utils/permissions";
 
@@ -18,7 +19,7 @@ export const invalid = (issues) => {
 export const issue = (field, code) => ({ path: field.split("."), code });
 
 /** Builds the routes of one resource. `normalize(body, record)` returns the clean fields or throws through `invalid`. */
-export function resource({ path, store, readRoles, normalize, unique = [], searchIn, toView = (record) => record, toListView = toView }) {
+export function resource({ path, store, readRoles, normalize, unique = [], searchIn, toView = (record) => record, toListView = toView, filter = () => true }) {
   let nextId = store.reduce((max, record) => Math.max(max, record.id), 0) + 1;
 
   const access = (authorization, write) => {
@@ -44,7 +45,7 @@ export function resource({ path, store, readRoles, normalize, unique = [], searc
     [`GET ${path}`]: ({ authorization, query }) => {
       access(authorization, false);
       const q = text(query.q).toLowerCase();
-      let rows = store.filter((record) => (!q || searchIn.some((field) => String((typeof field === "function" ? field(record) : record[field]) ?? "").toLowerCase().includes(q))));
+      let rows = store.filter((record) => filter(record, query) && (!q || searchIn.some((field) => String((typeof field === "function" ? field(record) : record[field]) ?? "").toLowerCase().includes(q))));
       rows = [...rows].sort((a, b) => b.id - a.id);
       const pageSize = Math.max(1, Number(query.pageSize) || 20);
       const page = Math.max(1, Number(query.page) || 1);
@@ -73,6 +74,7 @@ export function resource({ path, store, readRoles, normalize, unique = [], searc
   };
 }
 
+export { STOCK_STATUSES };
 export const customers = [];
 export const products = [];
 export const materials = [];
@@ -123,11 +125,16 @@ const materialRoutes = resource({
   readRoles: ["Admin", "Worker"],
   unique: ["code"],
   searchIn: ["code", "name"],
+  toView: materialView,
+  // the list can be filtered by the stock status (Normal, Low, Out) of the minimum level
+  filter: (record, query) => !query.status || materialView(record).stockStatus === query.status,
   normalize: (body) => {
-    const data = { code: text(body.code), name: text(body.name), lots: [] };
+    const minLevel = body.minLevel === "" || body.minLevel === null || body.minLevel === undefined ? null : Math.round(number(body.minLevel) * 1000) / 1000;
+    const data = { code: text(body.code), name: text(body.name), minLevel, lots: [] };
     const issues = [];
     if (!data.code) issues.push(issue("code", "REQUIRED"));
     if (!data.name) issues.push(issue("name", "REQUIRED"));
+    if (minLevel !== null && !(minLevel >= 0)) issues.push(issue("minLevel", "INVALID"));
     (Array.isArray(body.lots) ? body.lots : []).forEach((lot, index) => {
       const lotNumber = text(lot.lotNumber);
       const quantity = number(lot.quantity);

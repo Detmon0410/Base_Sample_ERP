@@ -3,6 +3,7 @@ import { Link } from "react-router";
 
 import { BarList, GroupedBars } from "@/components/common/Charts";
 import { Section } from "@/components/common/FormFields";
+import { StockStatus } from "@/components/common/StockStatus";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLoad } from "@/hooks/useLoad";
@@ -32,7 +33,7 @@ function Progress({ percent }) {
  * An Admin sees everything; a Worker sees the orders and the materials only. A tile and a row link to the page that explains the number.
  */
 export function DashboardPage() {
-  const { t, i18n } = useTranslation(["dashboard", "nav", "common"]);
+  const { t, i18n } = useTranslation(["dashboard", "nav", "common", "master"]);
   const { data, error, loading } = useLoad(getDashboard, []);
   const language = i18n.language;
   const number = (value) => formatNumber(value, language);
@@ -164,6 +165,7 @@ export function DashboardPage() {
                     <TableHead>{t("dashboard:code")}</TableHead>
                     <TableHead>{t("dashboard:name")}</TableHead>
                     <TableHead className="text-right">{t("dashboard:quantity")}</TableHead>
+                    <TableHead>{t("dashboard:status")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -175,6 +177,9 @@ export function DashboardPage() {
                       <TableCell data-label={t("dashboard:name")}>{material.name}</TableCell>
                       <TableCell data-label={t("dashboard:quantity")} className="text-right">
                         {number(material.total)}
+                      </TableCell>
+                      <TableCell data-label={t("dashboard:status")}>
+                        <StockStatus status={material.stockStatus} />
                       </TableCell>
                     </TableRow>
                   ))}

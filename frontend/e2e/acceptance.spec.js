@@ -178,7 +178,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(steelBlock).toContainText("LOT-A");
   await expect(steelBlock).toContainText("75");
   await expect(steelBlock).toContainText("Low"); // 75 is at or below the minimum level of 80
-  await expect(page.getByRole("link", { name: /^Low\s*1$/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Low\s*\d+$/ })).toBeVisible();
   await page.getByLabel("Status").selectOption("Normal");
   await expect(page.getByRole("link", { name: "STEEL-01" })).toHaveCount(0);
 

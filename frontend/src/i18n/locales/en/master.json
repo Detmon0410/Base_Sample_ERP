@@ -26,7 +26,8 @@
     "FILE_TYPE": "Choose a PDF, PNG or JPG file.",
     "FILE_TOO_BIG": "The file is larger than 10 MB.",
     "STOCK_NEGATIVE": "This change would make the lot negative.",
-    "LOT_NOT_FOUND": "This lot does not exist. Choose an existing lot."
+    "LOT_NOT_FOUND": "This lot does not exist. Choose an existing lot.",
+    "IN_USE": "This record is still used and cannot be deleted."
   },
   "customers": {
     "title": "Customers",
@@ -136,5 +137,22 @@
     "colOrder": "Production order",
     "colNote": "Note",
     "colBy": "By"
+  },
+  "delete": {
+    "button": "Delete",
+    "title": "Delete this record?",
+    "text": "\"{{name}}\" will be deleted for good. This cannot be undone.",
+    "done": "Deleted.",
+    "refused": "This record cannot be deleted because it is still used:",
+    "used": {
+      "self": "It is the account you are signed in with.",
+      "lastAdmin": "It is the last Admin.",
+      "qt": "QT references: {{items}}",
+      "order": "Production orders: {{items}}",
+      "product": "Products: {{items}}",
+      "progress": "Progress updates recorded by this user: {{count}}",
+      "stock": "Stock changes recorded by this user: {{count}}",
+      "stockChange": "Stock changes after the first stock: {{count}}"
+    }
   }
 }

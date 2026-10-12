@@ -191,10 +191,16 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(progress.getByRole("row")).toHaveCount(5); // the header and the four updates
   await expect(progress.getByText("Mika Sato").first()).toBeVisible();
 
-  // the Summary: no order is New or In progress, one is Completed, nothing is unpaid
+  // the Dashboard: no order is New or in progress, one is Completed, nothing is unpaid, the payment of this month is in the money tile
   await open(page, "/");
-  await expect(page.getByText("Completed").locator("xpath=..")).toContainText("1");
-  await expect(page.getByText("Unpaid invoices").locator("xpath=..")).toContainText("0");
+  await expect(page.getByRole("link", { name: /^Completed\s*1$/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^New\s*0$/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Unpaid invoices\s*0$/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Paid this month\s*¥450,000$/ })).toBeVisible();
+  await expect(page.getByText("No order is in progress.")).toBeVisible();
+  await expect(page.getByText("No unpaid invoice.")).toBeVisible();
+  await expect(page.getByRole("link", { name: "STEEL-01" })).toBeVisible(); // the material with the least stock
+  await expect(page.getByRole("img", { name: /Invoiced and paid, last 6 months/ })).toBeVisible();
 
   // the pages that now hold real data show no untranslated key
   for (const path of ["/orders", "/stock", "/invoices", "/qt", "/products", "/customers", "/users"]) {

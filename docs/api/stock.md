@@ -1,6 +1,6 @@
-# API - Stock: overview, materials, movements
+# API - Stock: materials, movements
 
-Pages (the Stock group of the menu, [S4](../specs/s4-stock-group.md)): `/stock` (overview), `/stock/materials` (the materials, their lots and the stock changes), `/stock/movements` (every movement) · Frontend: `frontend/src/pages/stock`, `services/master.service.js` (`stockApi`) · Mock: `services/mock/stock.js`, `services/mock/stockStatus.js`
+Pages (the Stock group of the menu, [S4](../specs/s4-stock-group.md)): `/stock/materials` (the materials, their lots and the stock changes), `/stock/movements` (every movement) · Frontend: `frontend/src/pages/stock`, `services/master.service.js` (`stockApi`) · Mock: `services/mock/stock.js`, `services/mock/stockStatus.js`
 Conventions: [README.md](README.md) · The five calls of a material (`GET`, `POST`, `PUT`, `DELETE`), its fields and the delete rules: [master-data.md](master-data.md)
 
 Who may call: an Admin and a Worker read everything on this page; only an Admin makes a stock change (`403 FORBIDDEN` for a Worker).
@@ -24,9 +24,9 @@ Body: `{ "kind": "Add" | "Deduct" | "Adjust", "lotNumber", "quantity", "changeDa
 
 Quantities have up to 3 decimals. A change that would make the lot negative is refused: `409 STOCK_NEGATIVE`, `errors: [{ path: ["quantity"], code: "STOCK_NEGATIVE" }]`, and the lot stays as it was. Other codes: `LOT_NOT_FOUND` (Deduct or Adjust on a lot that does not exist), `INVALID_DATE`, `REQUIRED`, `INVALID`.
 
-## The overview of the whole stock: `GET /stock/overview` and `GET /materials`
+## The list of the materials: `GET /materials`
 
-The page `/stock` is read only, for an Admin and a Worker. Its numbers come from `GET /stock/overview` (any signed-in user): `{ "materials": 12, "lots": 19, "low": 2, "out": 1 }` - how many materials and lots there are, and how many materials are `Low` and `Out` (below). Its table is `GET /materials` (query `q` for the code or the name, `page`, `pageSize` 20): every material comes with its `lots` `[{ lotNumber, quantity }]`, its `total` (the sum of its lots) and its `stockStatus`, so the page shows the total, the status and, under it, each lot, without a call for each material. `GET /materials` also takes `status` (`Normal`, `Low`, `Out`).
+There is **no overview page and no `GET /stock/overview`** (removed 2026-10-12, at the request of the user); the address `/stock` opens `/stock/materials`. The list of the materials is `GET /materials` (query `q` for the code or the name, `status` = `Normal`, `Low` or `Out`, `page`, `pageSize` 20): every material comes with its `lots`, its `total` and its `stockStatus`.
 
 ## The minimum level and the stock status of a material
 

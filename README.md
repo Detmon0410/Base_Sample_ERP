@@ -10,7 +10,7 @@ This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accou
 |---|---|
 | Plan | [docs/specs/s1-mini-erp-workflow.md](docs/specs/s1-mini-erp-workflow.md) (workflow, data, pages) and [docs/specs/s2-mini-erp-look.md](docs/specs/s2-mini-erp-look.md) (the look) |
 | Source of the requirements | [BaseRequirement_md/simplified_factory_system_requirements.md](BaseRequirement_md/simplified_factory_system_requirements.md) |
-| Frontend | built on the mock API (steps P0-P7 and S3-S5): sign-in, two roles, the menu in the header, the Dashboard, QT references, production orders with progress, the Stock group (overview, materials and stock changes, movements), the Accounting group (invoices with payment, receipts), customers, products, users. English and Japanese. The acceptance test (P7) is next: see [docs/pages-progress.md](docs/pages-progress.md) |
+| Frontend | built on the mock API (steps P0-P7 and S3-S5): sign-in, two roles, the menu in the header, the Dashboard, QT references, production orders with progress, the Stock group (materials and stock changes, movements), the Accounting group (invoices with payment, receipts), customers, products, users. English and Japanese. The acceptance test (P7) is next: see [docs/pages-progress.md](docs/pages-progress.md) |
 | Backend | only a sample (the `User` table). The API it has to answer is written in [docs/api](docs/api/README.md) |
 
 ## Structure

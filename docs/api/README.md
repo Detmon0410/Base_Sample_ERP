@@ -32,7 +32,7 @@ What the frontend expects from the backend, module by module. The frontend calls
 |---|---|---|
 | Sign-in and the session | [auth.md](auth.md) | Frontend done (mock), **backend not implemented** |
 | Customers, products with BOM, materials (their fields), users; delete and `IN_USE` | [master-data.md](master-data.md) | Frontend done (mock), backend not implemented |
-| Stock: overview, lots and stock changes, movements, the minimum level and the status | [stock.md](stock.md) | Frontend done (mock), backend not implemented |
+| Stock: lots and stock changes, movements, the minimum level and the status | [stock.md](stock.md) | Frontend done (mock), backend not implemented |
 | QT references | [qt.md](qt.md) | Frontend done (mock), backend not implemented |
 | Production orders, processes, progress | [orders.md](orders.md) | Frontend done (mock), backend not implemented |
 | Accounting: invoices and payment | [invoices.md](invoices.md) | Frontend done (mock), backend not implemented |

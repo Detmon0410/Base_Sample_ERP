@@ -66,7 +66,7 @@ Errors
 
 Changing the password of a user ends their sessions ([auth.md](auth.md)). A user account cannot be disabled in this version.
 
-## Stock changes, the overview, the movements and the stock status
+## Stock changes, the movements and the stock status
 
 They are in their own document: [stock.md](stock.md). A material has an optional `minLevel` here (a field), and its views carry `total` and `stockStatus` ([stock.md](stock.md#the-minimum-level-and-the-stock-status-of-a-material)).
 

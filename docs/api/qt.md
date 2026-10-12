@@ -7,7 +7,7 @@ The quotation is made outside the system; only its reference is kept.
 
 | Method | Path | Notes |
 |---|---|---|
-| `GET` | `/qt` | query `q` (QT number, notes, customer name), `page`, `pageSize`. Rows carry `customerName` and `file: { name, type }` **without the file data** |
+| `GET` | `/qt` | query `q` (QT number, notes, customer name), `page`, `pageSize`. Rows carry `customerName` and `file: { name, type }` (or `null`) **without the file data** |
 | `GET` | `/qt/:id` | the record with `file: { name, type, dataUrl }` |
 | `POST` | `/qt` | `201`, the record |
 | `PUT` | `/qt/:id` | the record |
@@ -24,7 +24,7 @@ Body of `POST` / `PUT`:
 | `qtNumber` | Required, unique (typed by the user; it comes from Sales) |
 | `qtDate` | Required, a real date `YYYY-MM-DD` |
 | `customerId` | Required, an existing customer |
-| `file` | Required: PDF, PNG or JPG, up to 10 MB. The mock keeps it as a data URL; a real backend should take a multipart upload and answer with a download URL instead |
+| `file` | **Optional** (the requirements ask to attach the file Sales sends, 5.1, but the user chose not to force it): `null` or missing means no file. When sent: PDF, PNG or JPG, up to 10 MB. The mock keeps it as a data URL; a real backend should take a multipart upload and answer with a download URL instead |
 
 Errors: `400 VALIDATION_ERROR` with codes `REQUIRED`, `INVALID_DATE`, `FILE_TYPE`, `FILE_TOO_BIG`; `409 DUPLICATE_VALUE` for a used `qtNumber`.
 

@@ -1,3 +1,5 @@
+import fs from "node:fs";
+
 import { expect, test } from "@playwright/test";
 
 import { USERS, rawKeys, settle, signIn, watchErrors } from "./helpers.js";
@@ -9,6 +11,15 @@ test.skip(({ viewport }) => (viewport?.width ?? 1280) < 1000, "one flow, on the 
 test.setTimeout(3 * 60 * 1000);
 
 const WORKER = { name: "Mika Sato", email: "mika@factory.jp", password: "secret1" };
+
+/** Clicks a "Download PDF" button and checks the file: its name is the number of the document, and it is a real PDF. */
+const downloadPdf = async (page, index, fileName) => {
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download PDF" }).nth(index).click()]);
+  expect(download.suggestedFilename()).toBe(fileName);
+  const bytes = fs.readFileSync(await download.path());
+  expect(bytes.subarray(0, 5).toString()).toBe("%PDF-");
+  expect(bytes.length).toBeGreaterThan(5000); // a drawn page, not an empty file
+};
 
 const logOut = async (page) => {
   await page.getByRole("button", { name: "Log out" }).click();
@@ -148,7 +159,8 @@ test("the example of the requirements, from the customer to the receipt", async 
   const invoiceNumber = (await invoiceLink.textContent()).trim();
   await invoiceLink.click();
   await expect(page.getByText("Total: ¥450,000", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Print / save as PDF" }).click();
+  await downloadPdf(page, 0, `${invoiceNumber}.pdf`); // the invoice as a PDF file
+  await page.getByRole("button", { name: "Print", exact: true }).click();
   expect(await page.evaluate(() => window.__printed)).toBe("invoice");
 
   // 9. the full payment: Paid, and the receipt
@@ -164,7 +176,9 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Paid");
   await expect(page.getByRole("heading", { level: 2, name: "Receipt" })).toBeVisible();
   await expect(page.getByText("Payment method: Bank transfer")).toBeVisible();
-  await page.getByRole("button", { name: "Print / save as PDF" }).nth(1).click();
+  const receiptNumber = (await page.locator("[data-print-doc=receipt] dd").first().textContent()).trim();
+  await downloadPdf(page, 1, `${receiptNumber}.pdf`); // the receipt as a PDF file
+  await page.getByRole("button", { name: "Print", exact: true }).nth(1).click();
   expect(await page.evaluate(() => window.__printed)).toBe("receipt");
 
   // 10. the order shows its QT reference, the progress, the invoice and the receipt

@@ -49,7 +49,7 @@
     "telephone": "電話番号"
   },
   "products": {
-    "title": "製品",
+    "title": "製品・部品表",
     "new": "製品を追加",
     "section": "製品",
     "code": "コード",
@@ -65,7 +65,7 @@
     "removeLine": "削除"
   },
   "materials": {
-    "title": "材料と在庫",
+    "title": "材料・在庫",
     "new": "材料を追加",
     "section": "材料",
     "code": "コード",
@@ -99,7 +99,7 @@
     }
   },
   "qt": {
-    "title": "見積書の参照",
+    "title": "見積書（QT）",
     "new": "見積書の参照を追加",
     "section": "見積書の参照",
     "qtNumber": "見積番号",

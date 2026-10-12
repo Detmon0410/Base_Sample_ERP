@@ -1,13 +1,13 @@
 {
-  "summary": "Summary",
+  "summary": "Dashboard",
   "orders": "Orders",
-  "qt": "QT references",
+  "qt": "Quotations (QT)",
   "productionOrders": "Production orders",
-  "invoices": "Invoices",
+  "invoices": "Invoices and receipts",
   "stock": "Stock",
-  "master": "Master",
+  "master": "Master data",
   "customers": "Customers",
-  "products": "Products",
+  "products": "Products and BOM",
   "users": "Users",
   "menu": "Menu",
   "skipToContent": "Skip to main content",
@@ -22,5 +22,5 @@
   },
   "toSidebar": "Menu on the left",
   "toTopBar": "Menu on top",
-  "materialsStock": "Stock"
+  "materialsStock": "Materials and stock"
 }

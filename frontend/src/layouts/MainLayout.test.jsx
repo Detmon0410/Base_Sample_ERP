@@ -29,7 +29,7 @@ describe("where the menu is", () => {
     const menu = screen.getByRole("navigation", { name: "Main menu" });
     expect(menu.closest("header")).not.toBeNull();
     expect(within(menu).getByRole("button", { name: /Orders/ })).toBeInTheDocument();
-    expect(within(menu).queryByRole("link", { name: "QT references" })).not.toBeInTheDocument();
+    expect(within(menu).queryByRole("link", { name: "Quotations (QT)" })).not.toBeInTheDocument();
   });
 
   it("moves to a list on the left with one button, shows every entry at once, and remembers the choice", async () => {
@@ -39,7 +39,7 @@ describe("where the menu is", () => {
 
     const menu = screen.getByRole("navigation", { name: "Main menu" });
     expect(menu.closest("header")).toBeNull(); // no longer in the bar
-    for (const name of ["Summary", "QT references", "Production orders", "Invoices", "Customers", "Products", "Stock", "Users"]) {
+    for (const name of ["Dashboard", "Quotations (QT)", "Production orders", "Invoices and receipts", "Customers", "Products and BOM", "Materials and stock", "Users"]) {
       expect(within(menu).getByRole("link", { name })).toBeInTheDocument();
     }
     expect(window.localStorage.getItem("kanou.layout")).toBe("side");
@@ -57,6 +57,6 @@ describe("where the menu is", () => {
     window.localStorage.setItem("kanou.layout", "side");
     renderLayout(mockUsers[1]);
     const menu = screen.getByRole("navigation", { name: "Main menu" });
-    expect(within(menu).getAllByRole("link").map((link) => link.textContent)).toEqual(["Summary", "Production orders", "Products", "Stock"]);
+    expect(within(menu).getAllByRole("link").map((link) => link.textContent)).toEqual(["Dashboard", "Production orders", "Products and BOM", "Materials and stock"]);
   });
 });

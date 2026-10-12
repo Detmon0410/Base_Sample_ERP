@@ -49,7 +49,7 @@
     "telephone": "Telephone"
   },
   "products": {
-    "title": "Products",
+    "title": "Products and BOM",
     "new": "New product",
     "section": "Product",
     "code": "Code",
@@ -99,7 +99,7 @@
     }
   },
   "qt": {
-    "title": "QT references",
+    "title": "Quotations (QT)",
     "new": "New QT reference",
     "section": "QT reference",
     "qtNumber": "QT number",

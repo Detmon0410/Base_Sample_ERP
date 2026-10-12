@@ -85,6 +85,10 @@ Body: `{ "kind": "Add" | "Deduct" | "Adjust", "lotNumber", "quantity", "changeDa
 
 Quantities have up to 3 decimals. A change that would make the lot negative is refused: `409 STOCK_NEGATIVE`, `errors: [{ path: ["quantity"], code: "STOCK_NEGATIVE" }]`, and the lot stays as it was. Other codes: `LOT_NOT_FOUND` (Deduct or Adjust on a lot that does not exist), `INVALID_DATE`, `REQUIRED`, `INVALID`.
 
+### The overview of the whole stock: `GET /stock/overview` and `GET /materials`
+
+The page `/stock` is read only, for an Admin and a Worker. Its numbers come from `GET /stock/overview` (any signed-in user): `{ "materials": 12, "lots": 19 }` - how many materials and how many lots there are. Its table is `GET /materials` (query `q` for the code or the name, `page`, `pageSize` 20): every material comes with its `lots` `[{ lotNumber, quantity }]`, so the page shows the total of a material (the sum of its lots) and, under it, each lot, without a call for each material.
+
 ### The movements of every material: `GET /stock-changes`
 
 The ledger of every stock change of every material together (the page `/stock/movements`); read only, for an Admin and a Worker.

@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -21,10 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import { useLoad } from "@/hooks/useLoad";
-import { customersApi, productsApi } from "@/services/master.service";
+import { customersApi, materialsApi, productsApi } from "@/services/master.service";
 import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
 import { todayIso } from "@/utils/dates";
+import { formatNumber } from "@/utils/format";
 
 import { applyServerErrors, statusKey } from "@/utils/serverErrors";
 
@@ -44,8 +45,52 @@ const toForm = (order) => ({
   })),
 });
 
+/**
+ * The materials of the product of a line (its BOM), for the quantity of the line. Reference only and separate from the processes:
+ * it cannot be changed here (it comes from the product), and it does not look at the stock, so there is no warning when a material is short.
+ */
+function BomBlock({ form, index, products, materials }) {
+  const { t, i18n } = useTranslation("orders");
+  const productId = useWatch({ control: form.control, name: `lines.${index}.productId` });
+  const quantity = Number(useWatch({ control: form.control, name: `lines.${index}.quantity` })) || 0;
+  const product = products.find((item) => String(item.id) === String(productId));
+  if (!product) return null;
+  const name = (materialId) => {
+    const material = materials.find((item) => item.id === materialId);
+    return material ? `${material.code} ${material.name}` : String(materialId);
+  };
+
+  return (
+    <div className="mt-6">
+      <h3 className="mb-2 text-base font-bold">{t("bom.title")}</h3>
+      {product.bom.length === 0 ? (
+        <p className="text-muted-foreground">{t("bom.none")}</p>
+      ) : (
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="py-1 pr-4 font-semibold">{t("bom.material")}</th>
+              <th className="py-1 pr-4 text-right font-semibold">{t("bom.perUnit")}</th>
+              <th className="py-1 text-right font-semibold">{t("bom.needed")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {product.bom.map((line) => (
+              <tr key={line.materialId} className="border-b border-border">
+                <td className="py-1 pr-4">{name(line.materialId)}</td>
+                <td className="py-1 pr-4 text-right">{formatNumber(line.quantity, i18n.language)}</td>
+                <td className="py-1 text-right">{quantity > 0 ? formatNumber(line.quantity * quantity, i18n.language) : "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
 /** One product line: the product, the quantity, the agreed unit price and the ordered list of its processes. */
-function LineEditor({ form, index, products, onRemove, canRemove }) {
+function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
   const { t } = useTranslation("orders");
   const processes = useFieldArray({ control: form.control, name: `lines.${index}.processes` });
   const errors = form.formState.errors.lines?.[index];
@@ -69,6 +114,8 @@ function LineEditor({ form, index, products, onRemove, canRemove }) {
         <TextField label={t("lines.quantity")} type="number" min="1" step="1" error={errors?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
         <TextField label={t("lines.unitPrice")} type="number" min="0" step="1" error={errors?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
       </div>
+
+      <BomBlock form={form} index={index} products={products} materials={materials} />
 
       <h3 className="mt-6 mb-2 text-base font-bold">{t("processes.title")}</h3>
       {processes.fields.length === 0 ? <p className="mb-3 text-muted-foreground">{t("processes.none")}</p> : null}
@@ -126,8 +173,10 @@ export function OrderForm({ order, onChanged }) {
   const qtList = useLoad(() => qtApi.list({ pageSize: 200 }), []);
   const customerList = useLoad(() => customersApi.list({ pageSize: 200 }), []);
   const productList = useLoad(() => productsApi.list({ pageSize: 200 }), []);
+  const materialList = useLoad(() => materialsApi.list({ pageSize: 200 }), []);
   const qts = qtList.data?.items ?? [];
   const products = productList.data?.items ?? [];
+  const materials = materialList.data?.items ?? [];
 
   const qtOptions = [{ value: "", label: t("orders:chooseQt") }, ...qts.map((qt) => ({ value: String(qt.id), label: `${qt.qtNumber} ${qt.customerName}` }))];
   const customerOptions = [{ value: "", label: t("orders:chooseCustomer") }, ...(customerList.data?.items ?? []).map((customer) => ({ value: String(customer.id), label: customer.name }))];
@@ -195,7 +244,7 @@ export function OrderForm({ order, onChanged }) {
 
         {lines.fields.length === 0 ? <p className="text-muted-foreground">{t("orders:lines.none")}</p> : null}
         {lines.fields.map((field, index) => (
-          <LineEditor key={field.id} form={form} index={index} products={products} canRemove={lines.fields.length > 1} onRemove={() => lines.remove(index)} />
+          <LineEditor key={field.id} form={form} index={index} products={products} materials={materials} canRemove={lines.fields.length > 1} onRemove={() => lines.remove(index)} />
         ))}
         <div>
           <Button type="button" variant="outline" onClick={() => lines.append(emptyLine())}>

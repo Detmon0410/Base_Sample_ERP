@@ -20,11 +20,12 @@
     "title": "このページは準備中です",
     "description": "今後追加予定です。メニューから他のページをご利用ください。"
   },
-  "toSidebar": "メニューを左へ",
-  "toTopBar": "メニューを上へ",
   "materialsStock": "材料・在庫",
   "stockOverview": "在庫一覧",
   "movements": "入出庫履歴",
   "accounting": "経理",
-  "receipts": "領収書"
+  "receipts": "領収書",
+  "userMenu": "ユーザーメニュー",
+  "role": "権限",
+  "department": "部署"
 }

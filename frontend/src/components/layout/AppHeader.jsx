@@ -11,24 +11,24 @@ import { cn } from "@/lib/utils";
 const ENTRY = "inline-flex h-full items-center gap-2 px-3 text-primary-foreground/90 outline-none hover:bg-black/10 focus-visible:ring-2 focus-visible:ring-white";
 
 /**
- * The bar at the top of every page after the sign-in: the name of the system, the user with the role as a word, the language as
- * words, the button that moves the menu, and Log out. No icons, no clock (docs/specs/s1-mini-erp-workflow.md, section 7).
- *
- * `mode` is where the menu is: "top" puts it in this bar as one row (a menu with sub-entries opens a list under it); "side" leaves
- * it to the SideNav on the left. On a narrow screen the menu is behind the "Menu" button either way.
+ * The bar at the top of every page after the sign-in (there is no sidebar): the name of the system, the menu in one row (a menu with
+ * sub-entries opens a list under it) and, at the right, the **user menu**: the name of the user opens a list with who they are
+ * (e-mail, role, department), the language and Log out. On a narrow screen the menu is behind the "Menu" button.
+ * (docs/specs/s1-mini-erp-workflow.md, section 7)
  */
-export function AppHeader({ mode, onToggleMode, narrowOpen, setNarrowOpen }) {
-  const { t } = useTranslation(["nav", "auth", "common"]);
+export function AppHeader() {
+  const { t } = useTranslation(["nav", "auth", "common", "master"]);
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
-  const [open, setOpen] = useState(null); // the key of the open menu
+  const [open, setOpen] = useState(null); // the key of the open menu, or "user"
+  const [narrowOpen, setNarrowOpen] = useState(false); // the whole menu on a narrow screen
   const bar = useRef(null);
 
   // opening a page closes the menus
   useEffect(() => {
     setOpen(null);
     setNarrowOpen(false);
-  }, [pathname, setNarrowOpen]);
+  }, [pathname]);
 
   // a click outside the bar or Escape closes an open menu
   useEffect(() => {
@@ -45,6 +45,7 @@ export function AppHeader({ mode, onToggleMode, narrowOpen, setNarrowOpen }) {
   }, []);
 
   const nav = getVisibleNav(user);
+  const toggle = (key) => setOpen((value) => (value === key ? null : key));
   const link = (item) => (
     <NavLink key={item.key} to={item.to} end={item.to === "/"} className={({ isActive }) => cn(ENTRY, isActive && "bg-black/15 font-bold")}>
       <NavIcon name={item.icon} />
@@ -58,56 +59,68 @@ export function AppHeader({ mode, onToggleMode, narrowOpen, setNarrowOpen }) {
         {t("common:app.name")}
       </Link>
 
-      <button type="button" aria-expanded={narrowOpen} onClick={() => setNarrowOpen((value) => !value)} className={cn(ENTRY, "ml-auto md:hidden")}>
-        {t("nav:menu")}
-      </button>
+      <nav aria-label={t("nav:mainMenu")} className={cn("order-3 w-full flex-col md:order-none md:flex md:w-auto md:flex-row md:items-stretch", narrowOpen ? "flex" : "hidden")}>
+        {nav.map((entry) =>
+          entry.type === "link" ? (
+            link(entry.item)
+          ) : (
+            <div key={entry.key} className="relative flex md:items-stretch">
+              <button type="button" aria-expanded={open === entry.key} onClick={() => toggle(entry.key)} className={cn(ENTRY, "w-full md:w-auto", open === entry.key && "bg-black/15")}>
+                <NavIcon name={entry.icon} />
+                {t(`nav:${entry.labelKey}`)}
+                <NavIcon name="down" className="size-3.5" />
+              </button>
+              {open === entry.key ? (
+                <ul className="m-0 min-w-44 list-none border border-slate-300 bg-card p-0 text-slate-700 md:absolute md:top-full md:left-0">
+                  {entry.items.map((item) => (
+                    <li key={item.key}>
+                      <NavLink to={item.to} className="flex items-center gap-2 px-3 py-2 whitespace-nowrap text-slate-700 outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
+                        <NavIcon name={item.icon} />
+                        {t(`nav:${item.labelKey}`)}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ),
+        )}
+      </nav>
 
-      {mode === "top" ? (
-        <nav aria-label={t("nav:mainMenu")} className={cn("w-full flex-col md:flex md:w-auto md:flex-row md:items-stretch", narrowOpen ? "flex" : "hidden")}>
-          {nav.map((entry) =>
-            entry.type === "link" ? (
-              link(entry.item)
-            ) : (
-              <div key={entry.key} className="relative flex md:items-stretch">
-                <button
-                  type="button"
-                  aria-expanded={open === entry.key}
-                  onClick={() => setOpen((value) => (value === entry.key ? null : entry.key))}
-                  className={cn(ENTRY, "w-full md:w-auto", open === entry.key && "bg-black/15")}
-                >
-                  <NavIcon name={entry.icon} />
-                  {t(`nav:${entry.labelKey}`)}
-                  <NavIcon name="down" className="size-3.5" />
-                </button>
-                {open === entry.key ? (
-                  <ul className="m-0 min-w-44 list-none border border-slate-300 bg-card p-0 text-slate-700 md:absolute md:top-full md:left-0">
-                    {entry.items.map((item) => (
-                      <li key={item.key}>
-                        <NavLink to={item.to} className="flex items-center gap-2 px-3 py-2 whitespace-nowrap text-slate-700 outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
-                          <NavIcon name={item.icon} />
-                          {t(`nav:${item.labelKey}`)}
-                        </NavLink>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
+      <div className="ml-auto flex items-stretch">
+        <button type="button" aria-expanded={narrowOpen} onClick={() => setNarrowOpen((value) => !value)} className={cn(ENTRY, "md:hidden")}>
+          {t("nav:menu")}
+        </button>
+
+        <div className="relative flex items-stretch">
+          <button type="button" aria-expanded={open === "user"} aria-haspopup="true" onClick={() => toggle("user")} className={cn(ENTRY, "text-primary-foreground", open === "user" && "bg-black/15")}>
+            {user?.name}
+            <NavIcon name="down" className="size-3.5" />
+          </button>
+          {open === "user" ? (
+            <div role="group" aria-label={t("nav:userMenu")} className="absolute top-full right-0 z-30 w-72 max-w-[calc(100vw-1rem)] border border-slate-300 bg-card p-4 text-foreground">
+              <p className="font-bold">{user?.name}</p>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <dl className="my-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+                <dt className="text-muted-foreground">{t("nav:role")}</dt>
+                <dd className="font-semibold">{t(`nav:roles.${user?.role}`, user?.role)}</dd>
+                <dt className="text-muted-foreground">{t("nav:department")}</dt>
+                <dd>{t(`master:users.departments.${user?.department}`, user?.department)}</dd>
+              </dl>
+              <div className="flex items-center justify-between gap-3 border-t border-border py-3 text-sm">
+                <span className="text-muted-foreground">{t("common:language.label")}</span>
+                <LanguageSwitcher />
               </div>
-            ),
-          )}
-        </nav>
-      ) : null}
-
-      <div className="flex w-full flex-wrap items-center gap-4 px-4 py-1 md:ml-auto md:w-auto">
-        <span>
-          {user?.name} <span className="opacity-80">({t(`nav:roles.${user?.role}`, user?.role)})</span>
-        </span>
-        <LanguageSwitcher />
-        <button type="button" onClick={onToggleMode} className="px-1 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-white">
-          {mode === "top" ? t("nav:toSidebar") : t("nav:toTopBar")}
-        </button>
-        <button type="button" onClick={logout} className="px-1 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-white">
-          {t("auth:logout")}
-        </button>
+              <button
+                type="button"
+                onClick={logout}
+                className="w-full border border-slate-300 bg-secondary px-3 py-2 text-left font-medium text-secondary-foreground outline-none hover:bg-[#e4e4e4] focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {t("auth:logout")}
+              </button>
+            </div>
+          ) : null}
+        </div>
       </div>
     </header>
   );

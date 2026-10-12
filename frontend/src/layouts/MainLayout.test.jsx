@@ -1,16 +1,16 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router";
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { AuthContext } from "@/lib/auth-context";
 import { mockUsers, toPublicUser } from "@/services/mock/users";
 
 import { MainLayout } from "./MainLayout";
 
-const renderLayout = (user = mockUsers[0]) =>
+const renderLayout = (user = mockUsers[0], logout = () => {}) =>
   render(
-    <AuthContext.Provider value={{ user: toPublicUser(user), status: "authenticated", logout: () => {} }}>
+    <AuthContext.Provider value={{ user: toPublicUser(user), status: "authenticated", logout }}>
       <MemoryRouter initialEntries={["/orders"]}>
         <Routes>
           <Route element={<MainLayout />}>
@@ -21,42 +21,68 @@ const renderLayout = (user = mockUsers[0]) =>
     </AuthContext.Provider>,
   );
 
-describe("where the menu is", () => {
-  beforeEach(() => window.localStorage.removeItem("kanou.layout"));
-
-  it("starts as a row in the bar at the top, with the sub-entries behind their menu", async () => {
+describe("the bar at the top", () => {
+  it("has the menu in the bar, with the sub-entries behind their menu, and no sidebar and no button that moves the menu", async () => {
     renderLayout();
     const menu = screen.getByRole("navigation", { name: "Main menu" });
     expect(menu.closest("header")).not.toBeNull();
     expect(within(menu).getByRole("button", { name: /Orders/ })).toBeInTheDocument();
     expect(within(menu).queryByRole("link", { name: "Quotations (QT)" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Menu on the left|Menu on top/ })).not.toBeInTheDocument();
+    expect(document.querySelector("aside")).toBeNull();
   });
 
-  it("moves to a list on the left with one button, shows every entry at once, and remembers the choice", async () => {
+  it("opens a menu with its entries, and shows an Admin every group", async () => {
     const user = userEvent.setup();
-    const first = renderLayout();
-    await user.click(screen.getByRole("button", { name: "Menu on the left" }));
-
-    const menu = screen.getByRole("navigation", { name: "Main menu" });
-    expect(menu.closest("header")).toBeNull(); // no longer in the bar
-    for (const name of ["Dashboard", "Quotations (QT)", "Production orders", "Invoices", "Receipts", "Overview", "Materials and stock", "Movements", "Customers", "Products and BOM", "Users"]) {
-      expect(within(menu).getByRole("link", { name })).toBeInTheDocument();
-    }
-    expect(window.localStorage.getItem("kanou.layout")).toBe("side");
-
-    // a new visit keeps the choice, and the same button brings the menu back
-    first.unmount();
     renderLayout();
-    expect(screen.getByRole("navigation", { name: "Main menu" }).closest("header")).toBeNull();
-    await user.click(screen.getByRole("button", { name: "Menu on top" }));
-    expect(screen.getByRole("navigation", { name: "Main menu" }).closest("header")).not.toBeNull();
-    expect(window.localStorage.getItem("kanou.layout")).toBe("top");
+    const menu = screen.getByRole("navigation", { name: "Main menu" });
+    await user.click(within(menu).getByRole("button", { name: /Accounting/ }));
+    expect(within(menu).getByRole("link", { name: "Invoices" })).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Receipts" })).toBeInTheDocument();
+    for (const group of [/Orders/, /Stock/, /Master data/]) expect(within(menu).getByRole("button", { name: group })).toBeInTheDocument();
   });
 
-  it("shows a Worker only the entries of a Worker in the list on the left", async () => {
-    window.localStorage.setItem("kanou.layout", "side");
+  it("shows a Worker only the entries of a Worker", async () => {
     renderLayout(mockUsers[1]);
     const menu = screen.getByRole("navigation", { name: "Main menu" });
-    expect(within(menu).getAllByRole("link").map((link) => link.textContent)).toEqual(["Dashboard", "Production orders", "Overview", "Materials and stock", "Movements", "Products and BOM"]);
+    expect(within(menu).queryByRole("button", { name: /Accounting/ })).not.toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Dashboard" })).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Production orders" })).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Products and BOM" })).toBeInTheDocument();
+  });
+});
+
+describe("the user menu", () => {
+  it("is the name of the user; it opens a list with who they are, the language and Log out, and Escape closes it", async () => {
+    const user = userEvent.setup();
+    renderLayout(mockUsers[1]);
+    expect(screen.queryByRole("button", { name: "Log out" })).not.toBeInTheDocument(); // closed
+
+    await user.click(screen.getByRole("button", { name: "Worker" }));
+    const panel = screen.getByRole("group", { name: "User menu" });
+    expect(panel).toHaveTextContent("worker@gmail.com");
+    expect(within(panel).getByText("Role").nextSibling).toHaveTextContent("Worker");
+    expect(within(panel).getByText("Department").nextSibling).toHaveTextContent("Factory");
+    expect(within(panel).getByRole("button", { name: "English" })).toHaveAttribute("aria-pressed", "true");
+    expect(within(panel).getByRole("button", { name: "日本語" })).toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "Log out" })).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("group", { name: "User menu" })).not.toBeInTheDocument();
+  });
+
+  it("changes the language of the screen, and Log out calls the sign-out", async () => {
+    const user = userEvent.setup();
+    const logout = vi.fn();
+    renderLayout(mockUsers[0], logout);
+
+    await user.click(screen.getByRole("button", { name: "Admin" }));
+    await user.click(within(screen.getByRole("group", { name: "User menu" })).getByRole("button", { name: "日本語" }));
+    expect(await screen.findByRole("link", { name: "ダッシュボード" })).toBeInTheDocument();
+    await user.click(within(screen.getByRole("group", { name: "ユーザーメニュー" })).getByRole("button", { name: "English" }));
+    expect(await screen.findByRole("link", { name: "Dashboard" })).toBeInTheDocument();
+
+    await user.click(within(screen.getByRole("group", { name: "User menu" })).getByRole("button", { name: "Log out" }));
+    expect(logout).toHaveBeenCalledTimes(1);
   });
 });

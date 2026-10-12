@@ -1,6 +1,6 @@
 # API — Master data: customers, products, materials and stock, users
 
-Pages: `/customers`, `/products`, `/stock`, `/users` · Frontend: `frontend/src/pages/master`, `pages/stock`, `pages/users`, `services/master.service.js` · Mock: `services/mock/master.js`, `services/mock/stock.js`
+Pages: `/customers`, `/products`, `/stock/materials` (in the Stock group of the menu, S4), `/users` · Frontend: `frontend/src/pages/master`, `pages/stock`, `pages/users`, `services/master.service.js` · Mock: `services/mock/master.js`, `services/mock/stock.js`
 Conventions: [README.md](README.md) · Data: [the specification, section 4](../specs/s1-mini-erp-workflow.md)
 
 ## The five calls of every resource

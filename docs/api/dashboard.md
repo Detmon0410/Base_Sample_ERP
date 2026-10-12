@@ -28,7 +28,7 @@ One call gives the numbers of every block of the page. It replaces `GET /summary
 |---|---|
 | `orders` | the number of production orders by their computed status ([orders.md](orders.md)) |
 | `inProgress` | up to 5 orders whose status is `In Progress`, the most recently changed first. `required` is the sum, over every process of every line, of the quantity of the line; `done` is the sum of the completed quantities of those processes; `percent` = `done / required`, rounded (0 when nothing is required) |
-| `leastStock` | up to 5 materials with the lowest **total quantity** (the sum of its lots), lowest first, each with its `stockStatus` (`Normal`, `Low`, `Out`, or `null` when the material has no minimum level: [master-data.md](master-data.md#the-minimum-level-and-the-stock-status-of-a-material)) |
+| `leastStock` | up to 5 materials with the lowest **total quantity** (the sum of its lots), lowest first, each with its `stockStatus` (`Normal`, `Low`, `Out`, or `null` when the material has no minimum level: [master-data.md](stock.md#the-minimum-level-and-the-stock-status-of-a-material)) |
 | `invoicing` | **Admin only; `null` for a Worker**, who does not see invoices |
 | `invoicing.unpaid` | the number and the total of the invoices that are `Unpaid` |
 | `invoicing.paidThisMonth` | the payments whose date is in the current month: their number and their sum |

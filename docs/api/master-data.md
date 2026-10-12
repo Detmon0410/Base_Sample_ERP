@@ -1,6 +1,6 @@
-# API — Master data: customers, products, materials and stock, users
+# API — Master data: customers, products, materials, users
 
-Pages: `/customers`, `/products`, `/stock/materials` (in the Stock group of the menu, S4), `/users` · Frontend: `frontend/src/pages/master`, `pages/stock`, `pages/users`, `services/master.service.js` · Mock: `services/mock/master.js`, `services/mock/stock.js`
+Pages: `/customers`, `/products`, `/users`, and the materials (`/stock/materials`, in the Stock group of the menu, see [stock.md](stock.md)) · Frontend: `frontend/src/pages/master`, `pages/stock`, `pages/users`, `services/master.service.js` · Mock: `services/mock/master.js`, `services/mock/stock.js`
 Conventions: [README.md](README.md) · Data: [the specification, section 4](../specs/s1-mini-erp-workflow.md)
 
 ## The five calls of every resource
@@ -66,62 +66,14 @@ Errors
 
 Changing the password of a user ends their sessions ([auth.md](auth.md)). A user account cannot be disabled in this version.
 
-## Stock changes of a material
+## Stock changes, the overview, the movements and the stock status
 
-The production never changes stock by itself. An Admin changes it by hand, at any time; a Worker may read the history.
-
-| Method | Path | Body | Result |
-|---|---|---|---|
-| `GET` | `/materials/:id/stock-changes` | – | the history, newest first |
-| `POST` | `/materials/:id/stock-changes` | below | `201`, the material with its new lots |
-
-Body: `{ "kind": "Add" | "Deduct" | "Adjust", "lotNumber", "quantity", "changeDate": "YYYY-MM-DD", "note", "orderId"? }`
-
-| Kind | `quantity` | Lot | Note |
-|---|---|---|---|
-| `Add` | more than 0 | an existing lot, or a **new lot number** (the lot is opened) | optional |
-| `Deduct` | more than 0 (the change is minus) | must exist; `orderId` links a production order (optional) | optional |
-| `Adjust` | a plus or a minus number, not 0 (after a count) | must exist | **required** |
-
-Quantities have up to 3 decimals. A change that would make the lot negative is refused: `409 STOCK_NEGATIVE`, `errors: [{ path: ["quantity"], code: "STOCK_NEGATIVE" }]`, and the lot stays as it was. Other codes: `LOT_NOT_FOUND` (Deduct or Adjust on a lot that does not exist), `INVALID_DATE`, `REQUIRED`, `INVALID`.
-
-### The overview of the whole stock: `GET /stock/overview` and `GET /materials`
-
-The page `/stock` is read only, for an Admin and a Worker. Its numbers come from `GET /stock/overview` (any signed-in user): `{ "materials": 12, "lots": 19, "low": 2, "out": 1 }` - how many materials and lots there are, and how many materials are `Low` and `Out` (below). Its table is `GET /materials` (query `q` for the code or the name, `page`, `pageSize` 20): every material comes with its `lots` `[{ lotNumber, quantity }]`, its `total` (the sum of its lots) and its `stockStatus`, so the page shows the total, the status and, under it, each lot, without a call for each material. `GET /materials` also takes `status` (`Normal`, `Low`, `Out`).
-
-### The minimum level and the stock status of a material
-
-The requirements have no minimum level; it is an **optional addition** ([S4](../specs/s4-stock-group.md), Q1). Every view of a material (`GET /materials`, `GET /materials/:id`, the answer of a stock change, `leastStock` of the [Dashboard](dashboard.md)) carries `total` and `stockStatus`, computed by **one rule** on the server:
-
-| `stockStatus` | When |
-|---|---|
-| `null` | the material has no `minLevel` (the system does not guess a status) |
-| `Out` | it has a `minLevel` and the total of its lots is 0 |
-| `Low` | the total is at or below the `minLevel` |
-| `Normal` | the total is above the `minLevel` |
-
-`400 VALIDATION_ERROR` with `INVALID` on `minLevel` when it is negative or not a number.
-
-### The movements of every material: `GET /stock-changes`
-
-The ledger of every stock change of every material together (the page `/stock/movements`); read only, for an Admin and a Worker.
-
-| Query | Meaning |
-|---|---|
-| `q` | contains, case-insensitive, in the material code or name, the lot number, the production order number or the note |
-| `type` | `Add`, `Deduct` or `Adjust` |
-| `from`, `to` | the **date of the change** (`changeDate`), `YYYY-MM-DD`, both ends included |
-| `page`, `pageSize` | the frontend uses 20 |
-
-`data` is a list of the entries below with `materialCode` and `materialName` added, **newest `changeDate` first** (then the last made first); `meta` is `{ page, pageSize, total }`. `400 VALIDATION_ERROR` with `INVALID` (a type that does not exist) or `INVALID_DATE` (a `from` or `to` that is not a real day). The changes of a deleted material are gone with it.
-
-A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, change (+ or -), balance (of the lot after it), changeDate, note, orderId, orderNumber, userId, userName, at }`. Creating a material with lots writes one `Add` entry (note `Initial stock`) per lot.
+They are in their own document: [stock.md](stock.md). A material has an optional `minLevel` here (a field), and its views carry `total` and `stockStatus` ([stock.md](stock.md#the-minimum-level-and-the-stock-status-of-a-material)).
 
 ## Data needed
 
 ```text
 Customer(id, name, address, email, telephone)
 Product(id, code UNIQUE, name, price)         ProductBom(product_id, material_id, quantity)
-Material(id, code UNIQUE, name)               MaterialLot(material_id, lot_number, quantity)   UNIQUE(material_id, lot_number)
-StockChange(id, material_id, lot_number, kind, change, balance, change_date, note, order_id NULL, user_id, at)
+Material(id, code UNIQUE, name, min_level NULL)  MaterialLot(material_id, lot_number, quantity)   UNIQUE(material_id, lot_number)   (stock changes: stock.md)
 ```

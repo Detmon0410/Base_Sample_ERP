@@ -36,13 +36,39 @@ const log = (material, lotNumber, kind, change, balance, extra, user) => {
   return entry;
 };
 
-const view = (entry) => ({ ...entry, orderNumber: orders.find((order) => order.id === entry.orderId)?.orderNumber ?? "" });
+const view = (entry) => {
+  const material = materials.find((item) => item.id === entry.materialId);
+  return { ...entry, materialCode: material?.code ?? "", materialName: material?.name ?? "", orderNumber: orders.find((order) => order.id === entry.orderId)?.orderNumber ?? "" };
+};
 const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
 export const stockRoutes = {
+  // the ledger of every stock change of every material (docs/specs/s4-stock-group.md, section 3.2); read only, any signed-in user
+  "GET /stock-changes": ({ authorization, query }) => {
+    userFromAuthorization(authorization);
+    const q = text(query.q).toLowerCase();
+    const type = text(query.type);
+    const from = text(query.from);
+    const to = text(query.to);
+    const issues = [];
+    if (type && !KINDS.includes(type)) issues.push(issue("type", "INVALID"));
+    if (from && !isDay(from)) issues.push(issue("from", "INVALID_DATE"));
+    if (to && !isDay(to)) issues.push(issue("to", "INVALID_DATE"));
+    if (issues.length) invalid(issues);
+
+    const rows = stockChanges
+      .map(view)
+      .filter((row) => (!type || row.kind === type) && (!from || row.changeDate >= from) && (!to || row.changeDate <= to))
+      .filter((row) => !q || [row.materialCode, row.materialName, row.orderNumber, row.note, row.lotNumber].some((value) => String(value).toLowerCase().includes(q)))
+      .sort((a, b) => b.changeDate.localeCompare(a.changeDate) || b.id - a.id);
+    const pageSize = Math.max(1, Number(query.pageSize) || 20);
+    const page = Math.max(1, Number(query.page) || 1);
+    return new MockResponse({ data: rows.slice((page - 1) * pageSize, page * pageSize), meta: { page, pageSize, total: rows.length } });
+  },
+
   // a new material with lots: each lot starts with an "Add" in the history
   "POST /materials": (request) => {
     const response = masterRoutes["POST /materials"](request);

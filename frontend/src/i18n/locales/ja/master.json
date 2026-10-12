@@ -136,7 +136,14 @@
     "colBalance": "ロット残",
     "colOrder": "製造指示書",
     "colNote": "備考",
-    "colBy": "入力者"
+    "colBy": "入力者",
+    "movementsTitle": "入出庫履歴",
+    "searchLabel": "検索（材料・ロット・指示書・備考）",
+    "from": "開始日（YYYY-MM-DD）",
+    "to": "終了日（YYYY-MM-DD）",
+    "colMaterial": "材料",
+    "noMovements": "在庫の変更はまだありません。",
+    "noMatch": "該当する在庫の変更がありません。"
   },
   "delete": {
     "button": "削除",

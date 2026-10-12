@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 
 import { NativeSelect } from "@/components/common/FormFields";
+import { Pagination } from "@/components/common/Pagination";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,8 +30,6 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
   const { data, error, loading } = useLoad(() => api.list({ q: q.trim() || undefined, status: withStatus ? status || undefined : undefined, page, pageSize: PAGE_SIZE }), [q, status, page]);
   const rows = data?.items ?? [];
   const total = data?.meta?.total ?? 0;
-  const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const to = Math.min(page * PAGE_SIZE, total);
 
   return (
     <>
@@ -118,17 +117,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
         </div>
       )}
 
-      <nav aria-label={t("common:pagination.label")} className="mt-4 flex flex-wrap items-center gap-4">
-        <span className="text-muted-foreground">{total === 0 ? t("common:pagination.none") : t("common:pagination.showing", { from, to, total })}</span>
-        <span className="ml-auto flex gap-3">
-          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-            {t("common:pagination.previous")}
-          </Button>
-          <Button variant="outline" size="sm" disabled={to >= total} onClick={() => setPage(page + 1)}>
-            {t("common:pagination.next")}
-          </Button>
-        </span>
-      </nav>
+      <Pagination page={page} setPage={setPage} total={total} pageSize={PAGE_SIZE} />
     </>
   );
 }

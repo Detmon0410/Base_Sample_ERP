@@ -136,7 +136,14 @@
     "colBalance": "Lot balance",
     "colOrder": "Production order",
     "colNote": "Note",
-    "colBy": "By"
+    "colBy": "By",
+    "movementsTitle": "Stock movements",
+    "searchLabel": "Search (material, lot, order, note)",
+    "from": "From (YYYY-MM-DD)",
+    "to": "To (YYYY-MM-DD)",
+    "colMaterial": "Material",
+    "noMovements": "No stock change yet.",
+    "noMatch": "No stock change matches."
   },
   "delete": {
     "button": "Delete",

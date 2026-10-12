@@ -39,7 +39,7 @@ describe("invoices, payments and receipts of the mock", () => {
     call("PUT /customers/:id", admin, { params: { id: customer.id }, body: { name: "Renamed", address: "Elsewhere" } });
     call("PUT /products/:id", admin, { params: { id: product.id }, body: { code: "INV-P", name: "Renamed", price: 5 } });
     expect(call("GET /invoices/:id", admin, { params: { id: invoice.id } })).toMatchObject({ customerName: "Invoice Customer", total: 9000 });
-    expect(call("GET /orders/:id", admin, { params: { id: made.id } }).invoice).toEqual({ id: invoice.id, invoiceNumber: invoice.invoiceNumber, status: "Unpaid", receiptNumber: null });
+    expect(call("GET /orders/:id", admin, { params: { id: made.id } }).invoice).toEqual({ id: invoice.id, invoiceNumber: invoice.invoiceNumber, status: "Unpaid", receiptNumber: null, receiptId: null });
   });
 
   it("refuses an order that is not Completed, a second invoice for an order, and a Worker", () => {
@@ -78,5 +78,39 @@ describe("invoices, payments and receipts of the mock", () => {
     expect(call("GET /invoices", admin, { query: { status: "Paid" } }).data.every((row) => row.status === "Paid")).toBe(true);
     expect(mockRoutes["DELETE /invoices/:id"]).toBeUndefined();
     expect(mockRoutes["PUT /invoices/:id"]).toBeUndefined();
+  });
+});
+
+describe("receipts of the mock", () => {
+  const paid = () => {
+    const made = order(true);
+    const invoice = issue(made).data;
+    call("POST /invoices/:id/payment", admin, { params: { id: invoice.id }, body: { paymentDate: "2026-10-12", amount: invoice.total, method: "Cash" } });
+    return { made, invoice };
+  };
+
+  it("lists every receipt newest first, finds one by its number, the customer or the invoice, and opens one", () => {
+    const first = paid();
+    const second = paid();
+    const { data, meta } = call("GET /receipts", admin);
+    expect(meta.total).toBeGreaterThanOrEqual(2);
+    expect(data[0].invoiceNumber).toBe(second.invoice.invoiceNumber);
+    expect(data[1].invoiceNumber).toBe(first.invoice.invoiceNumber);
+    expect(data[0]).toMatchObject({ invoiceId: second.invoice.id, amount: second.invoice.total, method: "Cash", receiptDate: "2026-10-12" });
+
+    expect(call("GET /receipts", admin, { query: { q: first.invoice.invoiceNumber } }).data.map((row) => row.id)).toEqual([data[1].id]);
+    expect(call("GET /receipts", admin, { query: { q: data[0].receiptNumber } }).data).toHaveLength(1);
+    expect(call("GET /receipts", admin, { query: { q: "nobody of this name" } }).meta.total).toBe(0);
+    expect(call("GET /receipts/:id", admin, { params: { id: data[0].id } })).toEqual(data[0]);
+    expect(call("GET /orders/:id", admin, { params: { id: second.made.id } }).invoice.receiptId).toBe(data[0].id);
+  });
+
+  it("is for the Admin only, an unpaid invoice has no receipt, and a receipt is never changed or deleted", () => {
+    const unpaid = issue(order(true)).data;
+    expect(unpaid.receipt).toBeNull();
+    expect(fails(() => call("GET /receipts", worker)).status).toBe(403);
+    expect(fails(() => call("GET /receipts/:id", worker, { params: { id: 1 } })).status).toBe(403);
+    expect(fails(() => call("GET /receipts/:id", admin, { params: { id: 99999 } })).status).toBe(404);
+    for (const route of ["PUT /receipts/:id", "DELETE /receipts/:id", "POST /receipts"]) expect(mockRoutes[route]).toBeUndefined();
   });
 });

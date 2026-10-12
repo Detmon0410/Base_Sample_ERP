@@ -2,7 +2,7 @@
 //
 // An invoice: { id, invoiceNumber, invoiceDate, orderId, customerName, customerAddress, lines, total, status: "Unpaid" | "Paid",
 //               payment: { date, amount, method, reference } | null,
-//               receipt: { receiptNumber, receiptDate, customerName, customerAddress, invoiceNumber, amount, method } | null }
+//               receipt: { id, invoiceId, receiptNumber, receiptDate, customerName, customerAddress, invoiceNumber, amount, method } | null }
 // It is a snapshot: later changes of the customer or the products do not change it. An issued invoice and its receipt are never
 // changed or deleted. One invoice for a Completed order; one full payment (= the total) per invoice, with its method and an optional
 // reference or notes, which makes the invoice Paid and issues one receipt.
@@ -43,8 +43,33 @@ const orderNumber = (invoice) => orders.find((order) => order.id === invoice.ord
 const view = (invoice) => ({ ...invoice, orderNumber: orderNumber(invoice) });
 
 let nextId = 1;
+let nextReceiptId = 1;
+
+/** A receipt as the app sees it: the receipt with the day of its invoice. */
+const receiptView = (invoice) => ({ ...invoice.receipt });
 
 export const invoiceRoutes = {
+  // the receipts: one list of all of them, and one receipt (the page /receipts, docs/specs/s5-accounting-group.md); Admin only
+  "GET /receipts": ({ authorization, query }) => {
+    admin(authorization);
+    const q = text(query.q).toLowerCase();
+    const rows = invoices
+      .filter((invoice) => invoice.receipt)
+      .map(receiptView)
+      .filter((row) => !q || [row.receiptNumber, row.customerName, row.invoiceNumber].some((value) => String(value).toLowerCase().includes(q)))
+      .sort((a, b) => b.id - a.id);
+    const pageSize = Math.max(1, Number(query.pageSize) || 20);
+    const page = Math.max(1, Number(query.page) || 1);
+    return new MockResponse({ data: rows.slice((page - 1) * pageSize, page * pageSize), meta: { page, pageSize, total: rows.length } });
+  },
+
+  "GET /receipts/:id": ({ authorization, params }) => {
+    admin(authorization);
+    const invoice = invoices.find((item) => item.receipt && item.receipt.id === Number(params.id));
+    if (!invoice) throw new MockHttpError(404, "NOT_FOUND", "Receipt not found");
+    return receiptView(invoice);
+  },
+
   "GET /invoices": ({ authorization, query }) => {
     admin(authorization);
     const q = text(query.q).toLowerCase();
@@ -114,6 +139,8 @@ export const invoiceRoutes = {
     invoice.payment = { date, amount, method, reference };
     invoice.status = "Paid";
     invoice.receipt = {
+      id: nextReceiptId++,
+      invoiceId: invoice.id,
       receiptNumber: next("RC", invoices.filter((item) => item.receipt).map((item) => item.receipt.receiptNumber)),
       receiptDate: date,
       customerName: invoice.customerName,

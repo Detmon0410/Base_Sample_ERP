@@ -52,7 +52,7 @@ function toView(order) {
     customerName: customers.find((customer) => customer.id === order.customerId)?.name ?? "",
     invoice: (() => {
       const invoice = invoices.find((item) => item.orderId === order.id);
-      return invoice ? { id: invoice.id, invoiceNumber: invoice.invoiceNumber, status: invoice.status, receiptNumber: invoice.receipt?.receiptNumber ?? null } : null;
+      return invoice ? { id: invoice.id, invoiceNumber: invoice.invoiceNumber, status: invoice.status, receiptNumber: invoice.receipt?.receiptNumber ?? null, receiptId: invoice.receipt?.id ?? null } : null;
     })(),
     lines,
     history: [...order.history].reverse().map((entry) => ({ ...entry, processName: names.get(entry.processId) ?? "" })),

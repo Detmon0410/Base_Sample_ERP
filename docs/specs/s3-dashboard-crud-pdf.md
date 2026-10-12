@@ -1,6 +1,6 @@
 # S3 - Dashboard, full CRUD, readable menu, PDF download
 
-Status: **ACCEPTED by the user.** S3-A to S3-E are done (menu names, no status, delete, PDF, Dashboard); S3-F (the closing tests and docs) is next.
+Status: **DONE.** S3-A to S3-F are built and tested (menu names, no status, delete, PDF, Dashboard, the closing tests and docs).
 Base: S1 ([s1-mini-erp-workflow.md](s1-mini-erp-workflow.md)) and S2 (the look). The main reference stays
 [simplified_factory_system_requirements.md](../../BaseRequirement_md/simplified_factory_system_requirements.md).
 
@@ -93,8 +93,10 @@ Status removed: no `status` on any record, no `PATCH .../status`, no "Make inact
 | S3-E | Dashboard (section 4): `GET /dashboard`, the tiles, the charts, the lists | the first page |
 | S3-F | Docs (`docs/api`, READMEs, the tracker) and the acceptance test: delete a used customer is refused, delete an unused one works, the PDF files are downloaded, the Dashboard counts | the plan is closed |
 
-## 8. Tests that will be added
+## 8. Tests (all written)
 
 * Mock: the delete rules of each record (can and cannot, the list of the places that use it), `GET /dashboard` per role and the numbers.
 * Pages: the delete confirmation and the "used by" message; the Dashboard for an Admin and a Worker.
 * Playwright: in the acceptance case the PDF files are downloaded (the download event and the file name, the file starts with `%PDF`); a used customer cannot be deleted and the message names the order; the Dashboard shows the new order in the right place.
+
+Where they are: the delete rules in `services/mock/deletes.test.js` and `pages/master/DeleteFlow.test.jsx`; the Dashboard in `services/mock/dashboard.test.js` and `pages/dashboard/DashboardPage.test.jsx`; the PDF call in `pages/invoices/InvoicesFlow.test.jsx`. In `e2e/acceptance.spec.js`: the Worker's Dashboard shows the order in progress (20%, 4 of 20); both PDF files are downloaded (name = the number, the file starts with `%PDF-`); a customer, a product and a material that are used are refused with the places that use them; a customer nobody uses is deleted; the Dashboard counts at the end.

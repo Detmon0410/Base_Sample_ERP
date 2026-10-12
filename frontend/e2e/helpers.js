@@ -8,20 +8,20 @@ export const USERS = {
 
 /** Every page of the menu (src/config/navigation.js) and who may open it. */
 export const PAGES = [
-  { path: "/", name: "Summary", roles: ["admin", "worker"] },
-  { path: "/qt", name: "QT references", roles: ["admin"] },
+  { path: "/", name: "Dashboard", roles: ["admin", "worker"] },
+  { path: "/qt", name: "Quotations (QT)", roles: ["admin"] },
   { path: "/orders", name: "Production orders", roles: ["admin", "worker"] },
-  { path: "/invoices", name: "Invoices", roles: ["admin"] },
-  { path: "/stock", name: "Stock", roles: ["admin", "worker"] },
+  { path: "/invoices", name: "Invoices and receipts", roles: ["admin"] },
+  { path: "/stock", name: "Materials and stock", roles: ["admin", "worker"] },
   { path: "/customers", name: "Customers", roles: ["admin"] },
-  { path: "/products", name: "Products", roles: ["admin", "worker"] },
+  { path: "/products", name: "Products and BOM", roles: ["admin", "worker"] },
   { path: "/users", name: "Users", roles: ["admin"] },
 ];
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */
 export const MENU_OF = {
-  admin: ["Summary", "Orders", "Invoices", "Master"],
-  worker: ["Summary", "Production orders", "Master"],
+  admin: ["Dashboard", "Orders", "Invoices and receipts", "Master data"],
+  worker: ["Dashboard", "Production orders", "Master data"],
 };
 
 /**

@@ -62,9 +62,9 @@ test("the language buttons are words, and the text follows the language", async 
   };
   await page.getByRole("button", { name: "日本語" }).first().click();
   await openMenu("メニュー");
-  await expect(page.getByRole("link", { name: "サマリー" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "ダッシュボード" }).first()).toBeVisible();
   await page.getByRole("button", { name: "English" }).click();
-  await expect(page.getByRole("button", { name: "Menu", exact: true }).or(page.getByRole("link", { name: "Summary" })).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Menu", exact: true }).or(page.getByRole("link", { name: "Dashboard" })).first()).toBeVisible();
 });
 
 test("the menu moves from the top bar to a list on the left and back, and every entry still opens", async ({ page }) => {
@@ -74,7 +74,7 @@ test("the menu moves from the top bar to a list on the left and back, and every 
   if (narrow) await page.getByRole("button", { name: "Menu", exact: true }).click();
   const menu = page.getByRole("navigation", { name: "Main menu" });
   await expect(menu.locator("xpath=ancestor::header")).toHaveCount(0); // not in the bar any more
-  for (const word of ["QT references", "Production orders", "Invoices", "Customers", "Products", "Stock", "Users"]) {
+  for (const word of ["Quotations (QT)", "Production orders", "Invoices and receipts", "Customers", "Products and BOM", "Materials and stock", "Users"]) {
     await expect(menu.getByRole("link", { name: word, exact: true })).toBeVisible();
   }
   await menu.getByRole("link", { name: "Customers", exact: true }).click();

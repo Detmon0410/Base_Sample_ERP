@@ -29,7 +29,7 @@
     "total": "Total",
     "noTax": "No tax is charged."
   },
-  "print": "Print / save as PDF",
+  "print": "Print",
   "payment": {
     "title": "Payment",
     "date": "Payment date",
@@ -66,5 +66,8 @@
     "ALREADY_PAID": "This invoice is paid already.",
     "MUST_EQUAL_TOTAL": "The payment must be equal to the total of the invoice.",
     "INVALID_DATE": "Enter a real date as YYYY-MM-DD."
-  }
+  },
+  "downloadPdf": "Download PDF",
+  "makingPdf": "Making the PDF...",
+  "pdfFailed": "The PDF could not be made. You can still print the document."
 }

@@ -29,7 +29,7 @@
     "total": "合計",
     "noTax": "消費税は計上していません。"
   },
-  "print": "印刷 / PDFで保存",
+  "print": "印刷",
   "payment": {
     "title": "入金",
     "date": "入金日",
@@ -66,5 +66,8 @@
     "ALREADY_PAID": "この請求書は、すでに入金済です。",
     "MUST_EQUAL_TOTAL": "入金額は、請求書の合計と同じにしてください。",
     "INVALID_DATE": "YYYY-MM-DD の形式で実在する日付を入力してください。"
-  }
+  },
+  "downloadPdf": "PDFをダウンロード",
+  "makingPdf": "PDFを作成中...",
+  "pdfFailed": "PDFを作成できませんでした。印刷は引き続き使えます。"
 }

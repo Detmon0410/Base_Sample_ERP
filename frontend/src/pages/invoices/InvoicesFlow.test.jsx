@@ -3,11 +3,14 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
+vi.mock("@/utils/pdf", () => ({ downloadPdf: vi.fn(async () => {}) }));
+
 import { AuthContext } from "@/lib/auth-context";
 import { customersApi, productsApi } from "@/services/master.service";
 import { mockUsers, toPublicUser, tokenOf } from "@/services/mock/users";
 import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
+import { downloadPdf } from "@/utils/pdf";
 import { setToken } from "@/utils/session";
 
 import { InvoicesPage } from "./InvoicesPage";
@@ -91,7 +94,17 @@ describe("invoices, page by page", () => {
     expect(screen.queryByLabelText("Amount paid")).not.toBeInTheDocument(); // one payment only
 
     // print: only the chosen document is marked for the paper
-    await user.click(screen.getAllByRole("button", { name: "Print / save as PDF" })[1]);
+    // the PDF files: the invoice, then the receipt, each under its number
+    await user.click(screen.getAllByRole("button", { name: "Download PDF" })[1]);
+    expect(downloadPdf).toHaveBeenCalledTimes(1);
+    const [element, fileName] = downloadPdf.mock.calls[0];
+    expect(element).toHaveAttribute("data-print-doc", "receipt");
+    expect(fileName).toMatch(/^RC-\d{4}-\d{4}\.pdf$/);
+    await user.click(screen.getAllByRole("button", { name: "Download PDF" })[0]);
+    expect(downloadPdf.mock.calls[1][0]).toHaveAttribute("data-print-doc", "invoice");
+    expect(downloadPdf.mock.calls[1][1]).toMatch(/^INV-\d{4}-\d{4}\.pdf$/);
+
+    await user.click(screen.getAllByRole("button", { name: "Print" })[1]);
     expect(window.print).toHaveBeenCalledTimes(1);
     expect(document.body.dataset.printing).toBe("receipt");
     window.dispatchEvent(new Event("afterprint"));

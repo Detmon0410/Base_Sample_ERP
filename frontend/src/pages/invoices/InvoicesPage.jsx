@@ -16,6 +16,7 @@ import { invoicesApi } from "@/services/invoices.service";
 import { ordersApi } from "@/services/orders.service";
 import { todayIso } from "@/utils/dates";
 import { formatCurrency, formatNumber } from "@/utils/format";
+import { downloadPdf } from "@/utils/pdf";
 import { printDocument } from "@/utils/print";
 import { applyServerErrors } from "@/utils/serverErrors";
 
@@ -218,7 +219,35 @@ function PaymentForm({ invoice, onDone }) {
   );
 }
 
-/** One invoice: the document, the payment (or the payment made) and the receipt; each document can be printed or saved as a PDF. */
+/** Download as a PDF file, and print, for one document of the page (`name` is its `data-print-doc`, `number` gives the file name). */
+function DocumentActions({ name, number }) {
+  const { t } = useTranslation("invoices");
+  const [busy, setBusy] = useState(false);
+
+  const download = async () => {
+    setBusy(true);
+    try {
+      await downloadPdf(document.querySelector(`[data-print-doc="${name}"]`), `${number}.pdf`);
+    } catch {
+      toast.error(t("pdfFailed"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Button type="button" disabled={busy} onClick={download}>
+        {busy ? t("makingPdf") : t("downloadPdf")}
+      </Button>
+      <Button type="button" variant="outline" onClick={() => printDocument(name, number)}>
+        {t("print")}
+      </Button>
+    </div>
+  );
+}
+
+/** One invoice: the document, the payment (or the payment made) and the receipt; each document can be downloaded as a PDF file or printed. */
 function InvoicePage() {
   const { id } = useParams();
   const { t, i18n } = useTranslation(["invoices", "master", "common"]);
@@ -233,9 +262,7 @@ function InvoicePage() {
       <PageHeader title={invoice.invoiceNumber} status={t(`invoices:status.${invoice.status}`)} />
       <div className="flex max-w-3xl flex-col gap-5">
         <div className="flex flex-wrap gap-3">
-          <Button type="button" onClick={() => printDocument("invoice", invoice.invoiceNumber)}>
-            {t("invoices:print")}
-          </Button>
+          <DocumentActions name="invoice" number={invoice.invoiceNumber} />
           <Button asChild variant="outline">
             <Link to="/invoices">{t("master:form.back")}</Link>
           </Button>
@@ -256,11 +283,7 @@ function InvoicePage() {
 
         {invoice.receipt ? (
           <>
-            <div>
-              <Button type="button" onClick={() => printDocument("receipt", invoice.receipt.receiptNumber)}>
-                {t("invoices:print")}
-              </Button>
-            </div>
+            <DocumentActions name="receipt" number={invoice.receipt.receiptNumber} />
             <ReceiptDocument receipt={invoice.receipt} language={language} />
           </>
         ) : null}

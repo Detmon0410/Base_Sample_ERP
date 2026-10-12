@@ -12,7 +12,9 @@ export const PAGES = [
   { path: "/qt", name: "Quotations (QT)", roles: ["admin"] },
   { path: "/orders", name: "Production orders", roles: ["admin", "worker"] },
   { path: "/invoices", name: "Invoices and receipts", roles: ["admin"] },
-  { path: "/stock", name: "Materials and stock", roles: ["admin", "worker"] },
+  { path: "/stock", name: "Overview", roles: ["admin", "worker"] },
+  { path: "/stock/materials", name: "Materials and stock", roles: ["admin", "worker"] },
+  { path: "/stock/movements", name: "Movements", roles: ["admin", "worker"] },
   { path: "/customers", name: "Customers", roles: ["admin"] },
   { path: "/products", name: "Products and BOM", roles: ["admin", "worker"] },
   { path: "/users", name: "Users", roles: ["admin"] },
@@ -20,8 +22,8 @@ export const PAGES = [
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */
 export const MENU_OF = {
-  admin: ["Dashboard", "Orders", "Invoices and receipts", "Master data"],
-  worker: ["Dashboard", "Production orders", "Master data"],
+  admin: ["Dashboard", "Orders", "Invoices and receipts", "Stock", "Master data"],
+  worker: ["Dashboard", "Production orders", "Stock", "Products and BOM"],
 };
 
 /**

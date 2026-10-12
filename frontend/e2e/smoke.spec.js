@@ -86,3 +86,12 @@ test("the menu moves from the top bar to a list on the left and back, and every 
   await page.getByRole("button", { name: "Menu on top" }).click();
   await expect(page.getByRole("button", { name: "Menu on the left" })).toBeVisible();
 });
+
+test("an old address of a material, /stock/<id>, opens the material where it is now", async ({ page }) => {
+  await signIn(page, USERS.admin);
+  await page.goto("/stock/999");
+  await expect(page).toHaveURL(/\/stock\/materials\/999$/);
+  await expect(page.getByText("Record not found")).toBeVisible(); // there is no material 999: the page of a material answered
+  await page.goto("/stock/abc");
+  await expect(page.getByText("Page not found")).toBeVisible();
+});

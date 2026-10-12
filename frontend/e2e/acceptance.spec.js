@@ -54,7 +54,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("link", { name: "Tokyo Cold Chain" })).toBeVisible();
 
-  await open(page, "/stock", "New material");
+  await open(page, "/stock/materials", "New material");
   await page.getByLabel("Code").fill("STEEL-01");
   await page.getByLabel("Name", { exact: true }).fill("Steel sheet");
   await page.getByRole("button", { name: "Add a lot" }).click();
@@ -145,7 +145,7 @@ test("the example of the requirements, from the customer to the receipt", async 
 
   // 7. the Admin deducts material stock by hand and reads the history
   await signIn(page, USERS.admin);
-  await open(page, "/stock", "STEEL-01");
+  await open(page, "/stock/materials", "STEEL-01");
   await page.getByLabel("Type").selectOption("Deduct");
   await page.getByLabel("Lot", { exact: true }).selectOption({ label: "LOT-A (100)" });
   await page.getByLabel("Quantity").fill("25");
@@ -212,7 +212,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByText(`Production orders: ${orderNumber}`)).toBeVisible();
 
-  await open(page, "/stock", "STEEL-01");
+  await open(page, "/stock/materials", "STEEL-01");
   await page.getByRole("button", { name: "Delete" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByText("Products: FR-100")).toBeVisible(); // its BOM line
@@ -240,7 +240,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("img", { name: /Invoiced and paid, last 6 months/ })).toBeVisible();
 
   // the pages that now hold real data show no untranslated key
-  for (const path of ["/orders", "/stock", "/invoices", "/qt", "/products", "/customers", "/users"]) {
+  for (const path of ["/orders", "/stock", "/stock/materials", "/invoices", "/qt", "/products", "/customers", "/users"]) {
     await open(page, path);
     expect(await rawKeys(page), `${path}: text that looks like an untranslated key`).toEqual([]);
   }

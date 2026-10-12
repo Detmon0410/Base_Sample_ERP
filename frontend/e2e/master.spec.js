@@ -31,14 +31,14 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
   await expect(page.getByRole("link", { name: "Tokyo Cold Chain" })).toBeVisible();
 
   // material with a lot
-  await newRecord(page, "/stock", "New material");
+  await newRecord(page, "/stock/materials", "New material");
   await page.getByLabel("Code").fill("STEEL-01");
   await page.getByLabel("Name").fill("Steel sheet");
   await page.getByRole("button", { name: "Add a lot" }).click();
   await page.getByLabel("Lot number").fill("LOT-A");
   await page.getByLabel("Quantity").fill("100");
   await page.getByRole("button", { name: "Save" }).click();
-  await expect(page).toHaveURL(/\/stock$/);
+  await expect(page).toHaveURL(/\/stock\/materials$/);
   await expect(page.getByRole("row", { name: /STEEL-01/ })).toContainText("100");
 
   // product with a BOM
@@ -93,11 +93,11 @@ test("Worker reads the products and the materials but cannot change them", async
   await settle(page);
   await expect(page.getByRole("link", { name: "New product" })).toHaveCount(0);
 
-  await page.goto("/stock");
+  await page.goto("/stock/materials");
   await settle(page);
   await expect(page.getByRole("link", { name: "New material" })).toHaveCount(0);
 
-  await page.goto("/stock/new");
+  await page.goto("/stock/materials/new");
   await expect(page.getByRole("button", { name: "Save" })).toHaveCount(0);
 
   await page.goto("/customers");

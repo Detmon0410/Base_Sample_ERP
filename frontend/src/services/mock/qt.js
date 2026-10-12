@@ -1,6 +1,6 @@
 // QT references (docs/specs/s1-mini-erp-workflow.md, section 2 step 1): the quotation is made outside the system; here only its
 // reference is kept - QT number, QT date, customer, notes and the file of the quotation (a data URL in the mock, Q8).
-// A QT reference: { id, qtNumber, qtDate, customerId, notes, file: { name, type, dataUrl } }.
+// A QT reference: { id, qtNumber, qtDate, customerId, notes, file: { name, type, dataUrl } | null }. The file is optional (changed by the user).
 
 import { customers, invalid, issue, resource, text } from "./master.js";
 
@@ -20,6 +20,7 @@ const isDay = (value) => {
 const customerName = (record) => customers.find((customer) => customer.id === record.customerId)?.name ?? "";
 const withCustomer = (record) => ({ ...record, customerName: customerName(record) });
 const withoutFileData = (record) => {
+  if (!record.file) return withCustomer(record);
   const { dataUrl: _dataUrl, ...file } = record.file;
   return { ...withCustomer(record), file };
 };
@@ -41,8 +42,7 @@ export const qtRoutes = resource({
     if (!customers.some((customer) => customer.id === data.customerId)) issues.push(issue("customerId", "REQUIRED"));
 
     const file = body.file;
-    if (!file?.dataUrl) issues.push(issue("file", "REQUIRED"));
-    else {
+    if (file?.dataUrl) {
       const type = /^data:([^;,]+)[;,]/.exec(file.dataUrl)?.[1];
       const bytes = Math.floor((file.dataUrl.length * 3) / 4);
       if (!FILE_TYPES.includes(type)) issues.push(issue("file", "FILE_TYPE"));

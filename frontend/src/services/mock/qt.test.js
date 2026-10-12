@@ -37,10 +37,22 @@ describe("QT references of the mock", () => {
     expect(fails(() => call("POST /qt", admin, { body: body({ qtNumber: "qt-001" }) })).status).toBe(409);
     expect(fails(() => call("POST /qt", admin, { body: body({ qtNumber: "QT-2", qtDate: "2026-02-30" }) })).details).toEqual([{ path: ["qtDate"], code: "INVALID_DATE" }]);
     expect(fails(() => call("POST /qt", admin, { body: body({ qtNumber: "QT-3", customerId: 999 }) })).details).toEqual([{ path: ["customerId"], code: "REQUIRED" }]);
-    expect(fails(() => call("POST /qt", admin, { body: body({ qtNumber: "QT-4", file: null }) })).details).toEqual([{ path: ["file"], code: "REQUIRED" }]);
     expect(fails(() => call("POST /qt", admin, { body: body({ qtNumber: "QT-5", file: { name: "a.exe", dataUrl: "data:application/octet-stream;base64,AA==" } }) })).details).toEqual([{ path: ["file"], code: "FILE_TYPE" }]);
     const big = `data:image/png;base64,${"A".repeat(14 * 1024 * 1024)}`;
     expect(fails(() => call("POST /qt", admin, { body: body({ qtNumber: "QT-6", file: { name: "big.png", dataUrl: big } }) })).details).toEqual([{ path: ["file"], code: "FILE_TOO_BIG" }]);
+  });
+
+  it("saves a reference without a file, lists it, and lets a file be added and removed later", () => {
+    const made = call("POST /qt", admin, { body: body({ qtNumber: "QT-NOFILE", file: null }) }).data;
+    expect(made.file).toBeNull();
+    expect(call("GET /qt", admin, { query: { q: "QT-NOFILE" } }).data[0].file).toBeNull(); // the list copes with no file
+
+    const added = call("PUT /qt/:id", admin, { params: { id: made.id }, body: body({ qtNumber: "QT-NOFILE" }) });
+    expect(added.file).toMatchObject({ name: "qt-001.pdf", type: "application/pdf" });
+    const removed = call("PUT /qt/:id", admin, { params: { id: made.id }, body: body({ qtNumber: "QT-NOFILE", file: null }) });
+    expect(removed.file).toBeNull();
+    // a file that is sent is still checked
+    expect(fails(() => call("PUT /qt/:id", admin, { params: { id: made.id }, body: body({ qtNumber: "QT-NOFILE", file: { name: "a.exe", dataUrl: "data:application/octet-stream;base64,AA==" } }) })).details).toEqual([{ path: ["file"], code: "FILE_TYPE" }]);
   });
 
   it("is for the Admin only", () => {

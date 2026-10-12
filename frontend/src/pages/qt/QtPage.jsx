@@ -22,7 +22,7 @@ const readFile = (file) =>
     reader.readAsDataURL(file);
   });
 
-/** The file of the quotation: choose a PDF, PNG or JPG (up to 10 MB; the check is made on Save). */
+/** The file of the quotation, optional: choose a PDF, PNG or JPG (up to 10 MB; the check is made on Save). An attached file can be removed. */
 function FileField({ form }) {
   const { t } = useTranslation("master");
   const id = useId();
@@ -34,6 +34,7 @@ function FileField({ form }) {
         {t("qt.file")}
       </FieldLabel>
       <input
+        key={file ? "chosen" : "none"} // a new input after the file is removed, so the same file can be chosen again
         id={id}
         type="file"
         accept="application/pdf,image/png,image/jpeg"
@@ -47,7 +48,10 @@ function FileField({ form }) {
       />
       {file ? (
         <p className="text-sm">
-          {t("qt.attached")}: {file.dataUrl ? <a href={file.dataUrl} download={file.name}>{file.name}</a> : file.name}
+          {t("qt.attached")}: {file.dataUrl ? <a href={file.dataUrl} download={file.name}>{file.name}</a> : file.name}{" "}
+          <button type="button" className="text-link underline" onClick={() => form.setValue("file", null, { shouldDirty: true })}>
+            {t("qt.removeFile")}
+          </button>
         </p>
       ) : null}
       <p className="text-sm text-muted-foreground">{t("qt.fileHint")}</p>
@@ -113,7 +117,7 @@ export function QtPage() {
               { key: "qtNumber", header: t("qt.qtNumber") },
               { key: "qtDate", header: t("qt.qtDate") },
               { key: "customerName", header: t("qt.customer") },
-              { key: "file", header: t("qt.file"), cell: (row) => row.file?.name },
+              { key: "file", header: t("qt.fileColumn"), cell: (row) => row.file?.name },
             ]}
           />
         }

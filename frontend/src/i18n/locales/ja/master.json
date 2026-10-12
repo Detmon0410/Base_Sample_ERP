@@ -99,9 +99,11 @@
     "customer": "顧客",
     "chooseCustomer": "顧客を選択",
     "notes": "備考",
-    "file": "見積書ファイル",
+    "file": "見積書ファイル（任意）",
     "attached": "添付ファイル",
-    "fileHint": "PDF、PNG、JPG（10 MB まで）。見積書そのものは、このシステムの外で作成します。"
+    "fileHint": "PDF、PNG、JPG（10 MB まで）。見積書そのものは、このシステムの外で作成します。",
+    "removeFile": "ファイルを外す",
+    "fileColumn": "見積書ファイル"
   },
   "stock": {
     "lotsTitle": "ロットと数量",

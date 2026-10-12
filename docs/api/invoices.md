@@ -34,7 +34,7 @@ Issuing the invoice locks the order: a progress update of the order answers `409
 
 ## Print and PDF
 
-The frontend prints the invoice and the receipt with the print dialog of the browser (the user can choose "Save as PDF"), so no PDF endpoint is needed. A real backend may add `GET /invoices/:id/pdf` and `GET /invoices/:id/receipt/pdf` later.
+The frontend makes the PDF files itself, so no PDF endpoint is needed: **Download PDF** draws the document of the page in the browser (`html2canvas-pro` and `jsPDF`, loaded only when the button is used) onto A4 pages and saves it as `INV-2026-0001.pdf` or `RC-2026-0001.pdf`. Japanese text is drawn by the browser, so the file needs no font; the text inside the PDF is a picture (it cannot be selected or searched). **Print** opens the print dialog of the browser for the same document. A real backend may later answer `GET /invoices/:id/pdf` and `GET /invoices/:id/receipt/pdf` with a PDF that has real text.
 
 ```text
 Invoice(id, invoice_number UNIQUE, invoice_date, order_id UNIQUE, customer_name, customer_address, total, status)

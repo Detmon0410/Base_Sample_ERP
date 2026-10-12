@@ -1,6 +1,6 @@
 # S4 - The Stock group: overview, materials, movements
 
-Status: **ACCEPTED by the user** (the proposals Q1-Q3 too). S4-A to S4-D are done (the menu, the movements, the overview, the minimum level and the status); S4-E (the closing tests and docs) is next.
+Status: **ACCEPTED by the user** (the proposals Q1-Q3 too). **DONE.** S4-A to S4-E are built and tested (the menu, the movements, the overview, the minimum level and the status, the closing tests and docs).
 Base: S1, S3 and the requirements ([simplified_factory_system_requirements.md](../../BaseRequirement_md/simplified_factory_system_requirements.md), 4.3 and 5.4).
 The old system's Stock (branch `jay`, [f8-stock.md](https://github.com/Detmon0410/Kanou_Sample_ERP/blob/jay/docs/specs/f8-stock.md)) was the example: an overview of the balances, a ledger of the movements, the status of a balance.
 
@@ -85,3 +85,5 @@ Unchanged in what it does; only the address (`/stock/materials...`) and the plac
 * Mock: `GET /stock-changes` (all materials together, newest first, each filter, paging, a Worker may read), the status function (if Q1 is accepted).
 * Pages: the movements page (filters and the click on a row), the overview (the lots under the material, the search), the menu of an Admin and of a Worker.
 * Playwright: in the acceptance case, after the stock change of step 7, the overview shows the new quantity of the lot and the movements page shows the deduction with the production order.
+
+Where they are: `services/mock/movements.test.js` and `pages/stock/StockMovementsPage.test.jsx` (the movements), `pages/stock/StockOverviewPage.test.jsx` (the overview and its status filter), `services/mock/stockStatus.test.js` (the status rule, the minimum level, the filter, the numbers of the overview and of the Dashboard), `config/navigation.test.js` and `layouts/MainLayout.test.jsx` (the menu of an Admin and of a Worker), `e2e/smoke.spec.js` (every page of the Stock group and the old address). In `e2e/acceptance.spec.js` after the stock change of step 7: the deduction on the movements page with its order and a click on the row; the overview with the lot at 75 and the status Low (a minimum level of 80 set when the material was made), its status filter and the Low tile; the Dashboard row of the steel with Low.

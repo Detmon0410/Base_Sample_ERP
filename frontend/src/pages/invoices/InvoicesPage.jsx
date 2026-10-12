@@ -17,7 +17,8 @@ import { todayIso } from "@/utils/dates";
 import { formatCurrency } from "@/utils/format";
 import { applyServerErrors } from "@/utils/serverErrors";
 
-import { DocumentActions, InvoiceDocument, methodKey } from "./Documents";
+import { methodKey } from "@/utils/format";
+import { DocumentActions, InvoiceDocument } from "./Documents";
 
 const STATUSES = ["Unpaid", "Paid"];
 const METHODS = ["Cash", "Bank transfer", "Cheque", "Credit card", "Other"];

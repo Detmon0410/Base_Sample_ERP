@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useLoad } from "@/hooks/useLoad";
 import { receiptsApi } from "@/services/invoices.service";
 import { formatCurrency } from "@/utils/format";
-import { DocumentActions, ReceiptDocument, methodKey } from "@/pages/invoices/Documents";
+import { methodKey } from "@/utils/format";
+import { DocumentActions, ReceiptDocument } from "@/pages/invoices/Documents";
 
 /** One receipt: the paper, the PDF and the print, and the link to its invoice. */
 function ReceiptPage() {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -26,8 +26,8 @@ function ChangeForm({ material, onDone }) {
   const orders = useLoad(() => ordersApi.list({ pageSize: 200 }), []);
   const form = useForm({ defaultValues: { kind: "Add", lot: "", newLot: "", quantity: "", changeDate: todayIso(), orderId: "", note: "" } });
   const errors = form.formState.errors;
-  const kind = form.watch("kind");
-  const lot = form.watch("lot");
+  const kind = useWatch({ control: form.control, name: "kind" });
+  const lot = useWatch({ control: form.control, name: "lot" });
 
   const lotOptions = [
     { value: "", label: t("master:stock.chooseLot") },

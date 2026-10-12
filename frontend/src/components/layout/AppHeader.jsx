@@ -20,22 +20,22 @@ export function AppHeader() {
   const { t } = useTranslation(["nav", "auth", "common", "master"]);
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
-  const [open, setOpen] = useState(null); // the key of the open menu, or "user"
-  const [narrowOpen, setNarrowOpen] = useState(false); // the whole menu on a narrow screen
+  // What is open, with the page it was opened on: opening another page closes the menus without an effect.
+  const [state, setState] = useState({ open: null, narrow: false, path: pathname }); // open: the key of the open menu, or "user"; narrow: the whole menu on a narrow screen
+  const current = state.path === pathname ? state : { open: null, narrow: false, path: pathname };
+  const open = current.open;
+  const narrowOpen = current.narrow;
+  const setOpen = (value) => setState((old) => ({ ...(old.path === pathname ? old : { narrow: false }), open: typeof value === "function" ? value(old.path === pathname ? old.open : null) : value, path: pathname }));
+  const setNarrowOpen = (value) => setState((old) => ({ ...(old.path === pathname ? old : { open: null }), narrow: typeof value === "function" ? value(old.path === pathname ? old.narrow : false) : value, path: pathname }));
   const bar = useRef(null);
-
-  // opening a page closes the menus
-  useEffect(() => {
-    setOpen(null);
-    setNarrowOpen(false);
-  }, [pathname]);
 
   // a click outside the bar or Escape closes an open menu
   useEffect(() => {
+    const closeMenu = () => setState((old) => ({ ...old, open: null }));
     const onDown = (event) => {
-      if (bar.current && !bar.current.contains(event.target)) setOpen(null);
+      if (bar.current && !bar.current.contains(event.target)) closeMenu();
     };
-    const onKey = (event) => event.key === "Escape" && setOpen(null);
+    const onKey = (event) => event.key === "Escape" && closeMenu();
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
     return () => {

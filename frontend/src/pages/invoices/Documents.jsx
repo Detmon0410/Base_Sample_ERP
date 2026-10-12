@@ -5,13 +5,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatNumber } from "@/utils/format";
+import { methodKey } from "@/utils/format";
 import { downloadPdf } from "@/utils/pdf";
 import { printDocument } from "@/utils/print";
 
 // The papers of the Accounting group: the invoice and the receipt, and the two buttons that save or print a paper.
-
-/** "Bank transfer" -> "BankTransfer", the key of its text. */
-export const methodKey = (method) => String(method).split(" ").map((word) => word[0].toUpperCase() + word.slice(1)).join("");
 
 /** The paper of the invoice (printed when `data-print-doc="invoice"` is the chosen document). */
 export function InvoiceDocument({ invoice, language }) {

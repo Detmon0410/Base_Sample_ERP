@@ -124,6 +124,14 @@ test("the example of the requirements, from the customer to the receipt", async 
     await page.getByRole("button", { name: "Save progress" }).click();
     await expect(processRow(page, name)).toContainText("In progress");
 
+    if (name === "Cutting") {
+      // the Dashboard of the Worker shows the order in progress: 4 of the 20 pieces (two processes of 10) are done
+      await open(page, "/");
+      await expect(page.getByRole("link", { name: orderNumber })).toBeVisible();
+      await expect(page.getByText("20% (4 of 20)")).toBeVisible();
+      await open(page, "/orders", orderNumber);
+    }
+
     await processRow(page, name).getByRole("button", { name: "Record progress" }).click();
     await page.getByLabel("Status").selectOption("Completed");
     await page.getByLabel("Completed quantity (total so far)").fill("10");
@@ -190,6 +198,35 @@ test("the example of the requirements, from the customer to the receipt", async 
   const progress = page.getByRole("heading", { name: "Progress history" }).locator("xpath=ancestor::section");
   await expect(progress.getByRole("row")).toHaveCount(5); // the header and the four updates
   await expect(progress.getByText("Mika Sato").first()).toBeVisible();
+
+  // deleting: a record that is still used is refused and the message says where it is used
+  await open(page, "/customers", "Tokyo Cold Chain");
+  await page.getByRole("button", { name: "Delete" }).click();
+  await page.getByRole("button", { name: "Confirm" }).click();
+  await expect(page.getByText("This record cannot be deleted because it is still used:")).toBeVisible();
+  await expect(page.getByText("QT references: QT-001")).toBeVisible();
+  await expect(page.getByText(`Production orders: ${orderNumber}`)).toBeVisible();
+
+  await open(page, "/products", "FR-100");
+  await page.getByRole("button", { name: "Delete" }).click();
+  await page.getByRole("button", { name: "Confirm" }).click();
+  await expect(page.getByText(`Production orders: ${orderNumber}`)).toBeVisible();
+
+  await open(page, "/stock", "STEEL-01");
+  await page.getByRole("button", { name: "Delete" }).click();
+  await page.getByRole("button", { name: "Confirm" }).click();
+  await expect(page.getByText("Products: FR-100")).toBeVisible(); // its BOM line
+  await expect(page.getByText("Stock changes after the first stock: 1")).toBeVisible(); // the deduction of step 7
+
+  // a record that nobody uses is deleted, and the list opens without it
+  await open(page, "/customers", "New customer");
+  await page.getByLabel("Name", { exact: true }).fill("Free Customer");
+  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole("link", { name: "Free Customer" }).click();
+  await page.getByRole("button", { name: "Delete" }).click();
+  await page.getByRole("button", { name: "Confirm" }).click();
+  await expect(page.getByRole("link", { name: "Tokyo Cold Chain" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Free Customer" })).toHaveCount(0);
 
   // the Dashboard: no order is New or in progress, one is Completed, nothing is unpaid, the payment of this month is in the money tile
   await open(page, "/");

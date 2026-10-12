@@ -1,3 +1,4 @@
+import { Banknote, Boxes, ChartColumn, CircleCheck, Factory, FilePlus2, ReceiptText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -10,10 +11,13 @@ import { useLoad } from "@/hooks/useLoad";
 import { getDashboard } from "@/services/dashboard.service";
 import { formatCompact, formatCurrency, formatNumber } from "@/utils/format";
 
-function Tile({ to, label, value }) {
+function Tile({ to, label, value, icon: Icon }) {
   return (
     <Link to={to} className="flex flex-col gap-1 bg-primary p-5 text-primary-foreground hover:bg-[#6c6b9c]">
-      <span className="text-sm">{label}</span>
+      <span className="flex items-center gap-2 text-sm">
+        {Icon ? <Icon aria-hidden="true" className="size-5 shrink-0" /> : null}
+        {label}
+      </span>
       <span className="text-3xl font-bold">{value}</span>
     </Link>
   );
@@ -55,21 +59,22 @@ export function DashboardPage() {
               {t("dashboard:numbers")}
             </h2>
             <div className="grid gap-4 sm:grid-cols-3">
-              <Tile to="/sale/orders" label={t("dashboard:new")} value={number(data.orders.New)} />
-              <Tile to="/sale/orders" label={t("dashboard:inProgress")} value={number(data.orders.InProgress)} />
-              <Tile to="/sale/orders" label={t("dashboard:completed")} value={number(data.orders.Completed)} />
+              <Tile to="/sale/orders" icon={FilePlus2} label={t("dashboard:new")} value={number(data.orders.New)} />
+              <Tile to="/sale/orders" icon={Factory} label={t("dashboard:inProgress")} value={number(data.orders.InProgress)} />
+              <Tile to="/sale/orders" icon={CircleCheck} label={t("dashboard:completed")} value={number(data.orders.Completed)} />
             </div>
             {data.invoicing ? (
               <div className="grid gap-4 sm:grid-cols-3">
-                <Tile to="/accounting/invoices" label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
-                <Tile to="/accounting/invoices" label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
-                <Tile to="/accounting/invoices" label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
+                <Tile to="/accounting/invoices" icon={ReceiptText} label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
+                <Tile to="/accounting/invoices" icon={Banknote} label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
+                <Tile to="/accounting/invoices" icon={CircleCheck} label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
               </div>
             ) : null}
           </section>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Section title={t("dashboard:ordersChart")}>
+          {data.invoicing ? (
+          <div className="grid gap-6 lg:grid-cols-2"> {/* the charts are for an Admin; a Worker has no charts */}
+            <Section icon={ChartColumn} title={t("dashboard:ordersChart")}>
               <BarList
                 label={t("dashboard:ordersChart")}
                 rows={[
@@ -80,8 +85,8 @@ export function DashboardPage() {
                 format={number}
               />
             </Section>
-            {data.invoicing ? (
-              <Section title={t("dashboard:moneyChart")}>
+            {(
+              <Section icon={Banknote} title={t("dashboard:moneyChart")}>
                 <GroupedBars
                   label={t("dashboard:moneyChart")}
                   series={[{ label: t("dashboard:invoiced") }, { label: t("dashboard:paid") }]}
@@ -89,10 +94,11 @@ export function DashboardPage() {
                   format={(value) => (value >= 10000 ? formatCompact(value, language) : yen(value))}
                 />
               </Section>
-            ) : null}
+            )}
           </div>
+          ) : null}
 
-          <Section title={t("dashboard:inProgressTitle")}>
+          <Section icon={Factory} title={t("dashboard:inProgressTitle")}>
             {data.inProgress.length === 0 ? (
               <p className="text-muted-foreground">{t("dashboard:noneInProgress")}</p>
             ) : (
@@ -122,7 +128,7 @@ export function DashboardPage() {
           </Section>
 
           {data.invoicing ? (
-            <Section title={t("dashboard:unpaidTitle")}>
+            <Section icon={ReceiptText} title={t("dashboard:unpaidTitle")}>
               {data.invoicing.unpaidList.length === 0 ? (
                 <p className="text-muted-foreground">{t("dashboard:noneUnpaid")}</p>
               ) : (
@@ -154,7 +160,7 @@ export function DashboardPage() {
             </Section>
           ) : null}
 
-          <Section title={t("dashboard:stockTitle")}>
+          <Section icon={Boxes} title={t("dashboard:stockTitle")}>
             <p className="mb-3 text-sm text-muted-foreground">{t("dashboard:stockHint")}</p>
             {data.leastStock.length === 0 ? (
               <p className="text-muted-foreground">{t("dashboard:noMaterials")}</p>

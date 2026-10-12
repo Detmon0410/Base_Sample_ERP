@@ -55,7 +55,7 @@ export function AppHeader() {
 
   return (
     <header ref={bar} className="relative z-20 flex min-h-12 flex-wrap items-stretch bg-primary text-primary-foreground">
-      <Link to="/" className="inline-flex items-center px-4 text-xl font-bold text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-white">
+      <Link to="/" className="inline-flex items-center px-4 text-base font-bold text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-white">
         {t("common:app.name")}
       </Link>
 

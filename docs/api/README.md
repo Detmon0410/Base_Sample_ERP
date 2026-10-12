@@ -35,7 +35,8 @@ What the frontend expects from the backend, module by module. The frontend calls
 | Stock: overview, lots and stock changes, movements, the minimum level and the status | [stock.md](stock.md) | Frontend done (mock), backend not implemented |
 | QT references | [qt.md](qt.md) | Frontend done (mock), backend not implemented |
 | Production orders, processes, progress | [orders.md](orders.md) | Frontend done (mock), backend not implemented |
-| Invoices, payment, receipts | [invoices.md](invoices.md) | Frontend done (mock), backend not implemented |
+| Accounting: invoices and payment | [invoices.md](invoices.md) | Frontend done (mock), backend not implemented |
+| Accounting: receipts | [receipts.md](receipts.md) | Frontend done (mock), backend not implemented |
 | Dashboard | [dashboard.md](dashboard.md) | Frontend done (mock), backend not implemented |
 
 The contract of the big system (sale, factory, stock, purchase, accounting, serial numbers, dashboard) is on branch `jay`.

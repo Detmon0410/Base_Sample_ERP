@@ -31,7 +31,7 @@ src/
   hooks/         useAuth, useLoad
   i18n/locales/  en and ja, one file per namespace
   layouts/       MainLayout (the frame) and AuthLayout (the sign-in)
-  pages/         one folder per module: auth, dashboard, qt, orders, invoices, stock (overview, materials, movements), master (customers, products), users, system
+  pages/         one folder per module: auth, dashboard, qt, orders, invoices, receipts, stock (overview, materials, movements), master (customers, products), users, system
   routes/        the route table and its guards
   services/      one *.service.js per module; api.js is the Axios client
     mock/        the mock API (adapter, one file per module, the persistence log); each has a test

@@ -105,7 +105,8 @@ There is no Manager role, no approval, no menu per department and no permission 
 | Production orders (list, search, status filter) | `/orders` | yes | yes |
 | New order | `/orders/new` | yes | no |
 | Order details and progress (a page) | `/orders/:id` | yes | yes (records progress) |
-| Invoices and receipts (the payment is recorded on the invoice) | `/invoices` | yes | no |
+| Invoices (the payment is recorded on the invoice) | `/invoices` (the group Accounting, see S5) | yes | no |
+| Receipts (a list, and one receipt) | `/receipts` (the group Accounting, see S5) | yes | no |
 | Materials and stock (lots, manual changes, history) | `/stock/materials` (the Stock group, see S4) | yes | read only |
 | Customers | `/customers` | yes | no |
 | Products and BOM | `/products` | yes | read only |

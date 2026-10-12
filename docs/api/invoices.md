@@ -1,6 +1,6 @@
-# API — Invoices, payment and receipts
+# API — Invoices and payment
 
-Pages: `/invoices`, `/invoices/new`, `/invoices/:id` · Frontend: `frontend/src/pages/invoices`, `services/invoices.service.js`, `utils/print.js` · Mock: `services/mock/invoices.js`
+Pages: `/invoices`, `/invoices/new`, `/invoices/:id` (the group Accounting of the menu; the receipts have their own pages: [receipts.md](receipts.md)) · Frontend: `frontend/src/pages/invoices`, `services/invoices.service.js`, `utils/print.js` · Mock: `services/mock/invoices.js`
 Conventions: [README.md](README.md) · Admin only (others: `403 FORBIDDEN`) · No tax anywhere · JPY, whole yen
 
 | Method | Path | Notes |
@@ -19,7 +19,7 @@ There is no `PUT` and no `DELETE`: an issued invoice, its payment and its receip
 * `invoiceNumber` is `INV-yyyy-0001`, unique, given by the server.
 * It is a **snapshot** made when it is issued: `lines[]` = `{ productCode, productName, quantity, unitPrice, amount }` and the customer name and address are copied, so later changes of the customer or the products do not change it. `total` = the sum of the `amount`s.
 * `status` is `Unpaid` until the payment, then `Paid`. `payment` is `null` or `{ date, amount, method, reference }`.
-* `receipt` is `null` until the payment, then `{ receiptNumber, receiptDate, customerName, customerAddress, invoiceNumber, amount, method }`, with `receiptNumber` = `RC-yyyy-0001` (unique) and `receiptDate` = the payment date.
+* `receipt` is `null` until the payment, then (the same object as `GET /receipts/:id`, see [receipts.md](receipts.md)) `{ id, invoiceId, receiptNumber, receiptDate, customerName, customerAddress, invoiceNumber, amount, method }`, with `receiptNumber` = `RC-yyyy-0001` (unique) and `receiptDate` = the payment date.
 
 ## Rules and errors
 

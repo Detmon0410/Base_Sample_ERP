@@ -10,19 +10,17 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { RecordList } from "@/components/common/RecordList";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLoad } from "@/hooks/useLoad";
 import { invoicesApi } from "@/services/invoices.service";
 import { ordersApi } from "@/services/orders.service";
 import { todayIso } from "@/utils/dates";
-import { formatCurrency, formatNumber } from "@/utils/format";
-import { downloadPdf } from "@/utils/pdf";
-import { printDocument } from "@/utils/print";
+import { formatCurrency } from "@/utils/format";
 import { applyServerErrors } from "@/utils/serverErrors";
+
+import { DocumentActions, InvoiceDocument, methodKey } from "./Documents";
 
 const STATUSES = ["Unpaid", "Paid"];
 const METHODS = ["Cash", "Bank transfer", "Cheque", "Credit card", "Other"];
-const methodKey = (method) => String(method).split(" ").map((word) => word[0].toUpperCase() + word.slice(1)).join(""); // "Bank transfer" -> "BankTransfer", the key of its text
 
 /** A new invoice: choose a Completed order that has none, and the date. The invoice copies the order as it is now. */
 function InvoiceNew() {
@@ -79,95 +77,6 @@ function InvoiceNew() {
   );
 }
 
-/** The paper of the invoice (printed when `data-print-doc="invoice"` is the chosen document). */
-function InvoiceDocument({ invoice, language }) {
-  const { t } = useTranslation("invoices");
-  return (
-    <article data-print-doc="invoice" className="max-w-3xl border border-border bg-white p-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <h2 className="text-2xl font-bold">{t("doc.invoice")}</h2>
-        <dl className="text-right">
-          <dt className="sr-only">{t("number")}</dt>
-          <dd className="text-lg font-bold">{invoice.invoiceNumber}</dd>
-          <dt className="sr-only">{t("date")}</dt>
-          <dd>{invoice.invoiceDate}</dd>
-          <dt className="sr-only">{t("doc.orderRef")}</dt>
-          <dd>
-            {t("doc.orderRef")}: {invoice.orderNumber}
-          </dd>
-        </dl>
-      </header>
-      <p className="mt-6 text-sm font-semibold text-muted-foreground">{t("doc.to")}</p>
-      <p className="font-bold">{invoice.customerName}</p>
-      <p className="whitespace-pre-line">{invoice.customerAddress}</p>
-
-      <Table className="mt-6" data-stack>
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t("doc.product")}</TableHead>
-            <TableHead className="text-right">{t("doc.quantity")}</TableHead>
-            <TableHead className="text-right">{t("doc.unitPrice")}</TableHead>
-            <TableHead className="text-right">{t("doc.amount")}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {invoice.lines.map((line, index) => (
-            <TableRow key={index}>
-              <TableCell data-label={t("doc.product")}>
-                {line.productCode} {line.productName}
-              </TableCell>
-              <TableCell data-label={t("doc.quantity")} className="text-right">
-                {formatNumber(line.quantity, language)}
-              </TableCell>
-              <TableCell data-label={t("doc.unitPrice")} className="text-right">
-                {formatCurrency(line.unitPrice, language)}
-              </TableCell>
-              <TableCell data-label={t("doc.amount")} className="text-right">
-                {formatCurrency(line.amount, language)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <p className="mt-4 text-right text-xl font-bold">
-        {t("doc.total")}: {formatCurrency(invoice.total, language)}
-      </p>
-      <p className="mt-2 text-right text-sm text-muted-foreground">{t("doc.noTax")}</p>
-    </article>
-  );
-}
-
-/** The paper of the receipt. */
-function ReceiptDocument({ receipt, language }) {
-  const { t } = useTranslation("invoices");
-  return (
-    <article data-print-doc="receipt" className="max-w-3xl border border-border bg-white p-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <h2 className="text-2xl font-bold">{t("doc.receipt")}</h2>
-        <dl className="text-right">
-          <dt className="sr-only">{t("receipt.number")}</dt>
-          <dd className="text-lg font-bold">{receipt.receiptNumber}</dd>
-          <dt className="sr-only">{t("receipt.date")}</dt>
-          <dd>{receipt.receiptDate}</dd>
-        </dl>
-      </header>
-      <p className="mt-6 text-sm font-semibold text-muted-foreground">{t("doc.to")}</p>
-      <p className="font-bold">{receipt.customerName}</p>
-      <p className="whitespace-pre-line">{receipt.customerAddress}</p>
-      <p className="mt-6">
-        {t("receipt.forInvoice")}: {receipt.invoiceNumber}
-      </p>
-      <p>
-        {t("receipt.method")}: {t(`payment.methods.${methodKey(receipt.method)}`)}
-      </p>
-      <p className="mt-4 text-right text-xl font-bold">
-        {t("receipt.received")}: {formatCurrency(receipt.amount, language)}
-      </p>
-      <p className="mt-2 text-right text-sm text-muted-foreground">{t("doc.noTax")}</p>
-    </article>
-  );
-}
-
 /** The full payment of an unpaid invoice: date and amount only. It makes the invoice Paid and issues the receipt. */
 function PaymentForm({ invoice, onDone }) {
   const { t, i18n } = useTranslation(["invoices", "common"]);
@@ -219,35 +128,7 @@ function PaymentForm({ invoice, onDone }) {
   );
 }
 
-/** Download as a PDF file, and print, for one document of the page (`name` is its `data-print-doc`, `number` gives the file name). */
-function DocumentActions({ name, number }) {
-  const { t } = useTranslation("invoices");
-  const [busy, setBusy] = useState(false);
-
-  const download = async () => {
-    setBusy(true);
-    try {
-      await downloadPdf(document.querySelector(`[data-print-doc="${name}"]`), `${number}.pdf`);
-    } catch {
-      toast.error(t("pdfFailed"));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <div className="flex flex-wrap gap-3">
-      <Button type="button" disabled={busy} onClick={download}>
-        {busy ? t("makingPdf") : t("downloadPdf")}
-      </Button>
-      <Button type="button" variant="outline" onClick={() => printDocument(name, number)}>
-        {t("print")}
-      </Button>
-    </div>
-  );
-}
-
-/** One invoice: the document, the payment (or the payment made) and the receipt; each document can be downloaded as a PDF file or printed. */
+/** One invoice: the document, the payment (or the payment made) and a link to its receipt (the receipt has its own page, /receipts). The invoice can be downloaded as a PDF file or printed. */
 function InvoicePage() {
   const { id } = useParams();
   const { t, i18n } = useTranslation(["invoices", "master", "common"]);
@@ -282,17 +163,16 @@ function InvoicePage() {
         </Section>
 
         {invoice.receipt ? (
-          <>
-            <DocumentActions name="receipt" number={invoice.receipt.receiptNumber} />
-            <ReceiptDocument receipt={invoice.receipt} language={language} />
-          </>
+          <p>
+            {t("invoices:receipt.title")}: <Link to={`/receipts/${invoice.receipt.id}`}>{invoice.receipt.receiptNumber}</Link>
+          </p>
         ) : null}
       </div>
     </>
   );
 }
 
-/** Invoices (Admin): the list, a new invoice, one invoice with its payment and receipt. */
+/** Invoices (Admin, the group Accounting): the list, a new invoice, one invoice with its payment. */
 export function InvoicesPage() {
   const { t, i18n } = useTranslation(["invoices", "master"]);
   return (

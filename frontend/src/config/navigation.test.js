@@ -11,7 +11,7 @@ const shape = (user) =>
 
 describe("the menu of the header", () => {
   it("shows an Admin everything: the two menus with their entries, the others as links", () => {
-    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "invoices", "stock > stockOverview, materialsStock, movements", "master > customers, products, users"]);
+    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "accounting > invoices, receipts", "stock > stockOverview, materialsStock, movements", "master > customers, products, users"]);
   });
 
   it("shows a Worker the production orders and the Stock menu, and the products as a link (a menu with one entry is that entry)", () => {
@@ -27,6 +27,8 @@ describe("the menu of the header", () => {
     expect(findActive("/orders/12")?.key).toBe("productionOrders");
     expect(findActive("/orders/new")?.key).toBe("productionOrders");
     expect(findActive("/stock")?.key).toBe("stockOverview");
+    expect(findActive("/invoices/4")?.key).toBe("invoices");
+    expect(findActive("/receipts/2")?.key).toBe("receipts");
     expect(findActive("/stock/materials/3")?.key).toBe("materials");
     expect(findActive("/stock/movements")?.key).toBe("movements");
     expect(findActive("/nothing")).toBeNull();

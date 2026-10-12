@@ -3,7 +3,7 @@
   "orders": "Orders",
   "qt": "Quotations (QT)",
   "productionOrders": "Production orders",
-  "invoices": "Invoices and receipts",
+  "invoices": "Invoices",
   "stock": "Stock",
   "master": "Master data",
   "customers": "Customers",
@@ -24,5 +24,7 @@
   "toTopBar": "Menu on top",
   "materialsStock": "Materials and stock",
   "stockOverview": "Overview",
-  "movements": "Movements"
+  "movements": "Movements",
+  "accounting": "Accounting",
+  "receipts": "Receipts"
 }

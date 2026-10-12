@@ -39,7 +39,7 @@ describe("where the menu is", () => {
 
     const menu = screen.getByRole("navigation", { name: "Main menu" });
     expect(menu.closest("header")).toBeNull(); // no longer in the bar
-    for (const name of ["Dashboard", "Quotations (QT)", "Production orders", "Invoices and receipts", "Overview", "Materials and stock", "Movements", "Customers", "Products and BOM", "Users"]) {
+    for (const name of ["Dashboard", "Quotations (QT)", "Production orders", "Invoices", "Receipts", "Overview", "Materials and stock", "Movements", "Customers", "Products and BOM", "Users"]) {
       expect(within(menu).getByRole("link", { name })).toBeInTheDocument();
     }
     expect(window.localStorage.getItem("kanou.layout")).toBe("side");

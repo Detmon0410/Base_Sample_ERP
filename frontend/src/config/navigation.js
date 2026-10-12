@@ -19,7 +19,15 @@ export const NAV = [
       { key: "productionOrders", to: "/orders", labelKey: "productionOrders", icon: "productionOrders", roles: ["Admin", "Worker"] },
     ],
   },
-  { key: "invoices", to: "/invoices", labelKey: "invoices", icon: "invoices", roles: ["Admin"] },
+  {
+    key: "accounting",
+    labelKey: "accounting",
+    icon: "accounting",
+    items: [
+      { key: "invoices", to: "/invoices", labelKey: "invoices", icon: "invoices", roles: ["Admin"] },
+      { key: "receipts", to: "/receipts", labelKey: "receipts", icon: "receipts", roles: ["Admin"] },
+    ],
+  },
   {
     key: "stockGroup",
     labelKey: "stock",

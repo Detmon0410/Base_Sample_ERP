@@ -1,5 +1,5 @@
 {
-  "title": "Invoices and receipts",
+  "title": "Invoices",
   "new": "New invoice",
   "section": "Invoice",
   "number": "Invoice number",
@@ -69,5 +69,6 @@
   },
   "downloadPdf": "Download PDF",
   "makingPdf": "Making the PDF...",
-  "pdfFailed": "The PDF could not be made. You can still print the document."
+  "pdfFailed": "The PDF could not be made. You can still print the document.",
+  "receiptsTitle": "Receipts"
 }

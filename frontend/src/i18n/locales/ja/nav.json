@@ -3,7 +3,7 @@
   "orders": "受注・製造",
   "qt": "見積書（QT）",
   "productionOrders": "製造指示書",
-  "invoices": "請求書・領収書",
+  "invoices": "請求書",
   "stock": "在庫",
   "master": "マスターデータ",
   "customers": "顧客",
@@ -24,5 +24,7 @@
   "toTopBar": "メニューを上へ",
   "materialsStock": "材料・在庫",
   "stockOverview": "在庫一覧",
-  "movements": "入出庫履歴"
+  "movements": "入出庫履歴",
+  "accounting": "経理",
+  "receipts": "領収書"
 }

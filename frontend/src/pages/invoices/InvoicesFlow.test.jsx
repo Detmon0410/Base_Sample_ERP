@@ -13,6 +13,8 @@ import { qtApi } from "@/services/qt.service";
 import { downloadPdf } from "@/utils/pdf";
 import { setToken } from "@/utils/session";
 
+import { ReceiptsPage } from "@/pages/receipts/ReceiptsPage";
+
 import { InvoicesPage } from "./InvoicesPage";
 
 // Steps 6-7 of the workflow, driven like a person would, on the mock: issue the invoice, pay it in full, get the receipt, print.
@@ -40,6 +42,7 @@ describe("invoices, page by page", () => {
         <MemoryRouter initialEntries={["/invoices/new"]}>
           <Routes>
             <Route path="/invoices/*" element={<InvoicesPage />} />
+            <Route path="/receipts/*" element={<ReceiptsPage />} />
           </Routes>
         </MemoryRouter>
       </AuthContext.Provider>,
@@ -86,28 +89,31 @@ describe("invoices, page by page", () => {
     await user.type(amount, "750");
     await user.click(screen.getByRole("button", { name: "Record the payment" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
-    expect(await screen.findByRole("heading", { level: 2, name: "Receipt" })).toBeInTheDocument();
+    // Paid: the invoice shows the payment made and a link to its receipt, which is on its own page
+    expect(await screen.findByRole("link", { name: /^RC-\d{4}-\d{4}$/ })).toHaveAttribute("href", expect.stringMatching(/^\/receipts\/\d+$/));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Paid");
-    expect(screen.getByText(/^Amount received: ¥750$/)).toBeInTheDocument();
-    expect(screen.getByText("Payment method: Bank transfer")).toBeInTheDocument(); // on the receipt
     expect(screen.getByText(/Bank transfer - Slip 555$/)).toBeInTheDocument(); // the payment made
     expect(screen.queryByLabelText("Amount paid")).not.toBeInTheDocument(); // one payment only
+    expect(screen.queryByRole("heading", { level: 2, name: "Receipt" })).not.toBeInTheDocument(); // the paper of the receipt is not here
 
-    // print: only the chosen document is marked for the paper
-    // the PDF files: the invoice, then the receipt, each under its number
-    await user.click(screen.getAllByRole("button", { name: "Download PDF" })[1]);
-    expect(downloadPdf).toHaveBeenCalledTimes(1);
-    const [element, fileName] = downloadPdf.mock.calls[0];
-    expect(element).toHaveAttribute("data-print-doc", "receipt");
-    expect(fileName).toMatch(/^RC-\d{4}-\d{4}\.pdf$/);
-    await user.click(screen.getAllByRole("button", { name: "Download PDF" })[0]);
-    expect(downloadPdf.mock.calls[1][0]).toHaveAttribute("data-print-doc", "invoice");
-    expect(downloadPdf.mock.calls[1][1]).toMatch(/^INV-\d{4}-\d{4}\.pdf$/);
+    // the PDF of the invoice, and its print
+    await user.click(screen.getByRole("button", { name: "Download PDF" }));
+    expect(downloadPdf.mock.calls[0][0]).toHaveAttribute("data-print-doc", "invoice");
+    expect(downloadPdf.mock.calls[0][1]).toMatch(/^INV-\d{4}-\d{4}\.pdf$/);
 
-    await user.click(screen.getAllByRole("button", { name: "Print" })[1]);
+    // the receipt page: the paper, the method, the PDF, the print, and the way back to the invoice
+    await user.click(screen.getByRole("link", { name: /^RC-\d{4}-\d{4}$/ }));
+    expect(await screen.findByRole("heading", { level: 2, name: "Receipt" })).toBeInTheDocument();
+    expect(screen.getByText(/^Amount received: ¥750$/)).toBeInTheDocument();
+    expect(screen.getByText("Payment method: Bank transfer")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Download PDF" }));
+    expect(downloadPdf.mock.calls[1][0]).toHaveAttribute("data-print-doc", "receipt");
+    expect(downloadPdf.mock.calls[1][1]).toMatch(/^RC-\d{4}-\d{4}\.pdf$/);
+    await user.click(screen.getByRole("button", { name: "Print" }));
     expect(window.print).toHaveBeenCalledTimes(1);
     expect(document.body.dataset.printing).toBe("receipt");
     window.dispatchEvent(new Event("afterprint"));
     expect(document.body.dataset.printing).toBeUndefined();
+    expect(screen.getByRole("link", { name: /^INV-\d{4}-\d{4}$/ })).toBeInTheDocument();
   });
 });

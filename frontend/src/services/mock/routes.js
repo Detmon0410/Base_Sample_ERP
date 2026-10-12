@@ -5,6 +5,8 @@ import { orderRoutes } from "./orders.js";
 import { stockRoutes } from "./stock.js";
 import { deleteRoutes } from "./deletes.js";
 import { dashboardRoutes } from "./dashboard.js";
+import { PERSIST } from "./persist.js";
+import { seedMock } from "./seed.js";
 import { login, toPublicUser, userFromAuthorization } from "./users.js";
 
 // Local stand-in for the backend while it does not exist yet (VITE_USE_MOCK=true).
@@ -25,3 +27,5 @@ export const mockRoutes = {
   ...deleteRoutes,
   ...stockRoutes, // after masterRoutes: it wraps POST and PUT of /materials
 };
+
+if (PERSIST) seedMock(mockRoutes); // the browser starts with some data; the tests start empty

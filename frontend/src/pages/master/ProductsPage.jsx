@@ -1,3 +1,4 @@
+import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Route, Routes } from "react-router";
@@ -46,8 +47,8 @@ function BomLines({ form, readOnly }) {
               {...form.register(`bom.${index}.quantity`)}
             />
             {readOnly ? null : (
-              <Button type="button" variant="outline" size="sm" className="sm:mt-6" onClick={() => remove(index)}>
-                {t("products.removeLine")}
+              <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("products.removeLine")} title={t("products.removeLine")} onClick={() => remove(index)}>
+                <Trash2 aria-hidden="true" />
               </Button>
             )}
           </div>
@@ -56,6 +57,7 @@ function BomLines({ form, readOnly }) {
       {errors?.message ? <FieldError className="mt-2">{errors.message}</FieldError> : null}
       {readOnly ? null : (
         <Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => append({ materialId: "", quantity: "" })}>
+          <Plus aria-hidden="true" />
           {t("products.addLine")}
         </Button>
       )}

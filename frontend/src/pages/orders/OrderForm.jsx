@@ -1,3 +1,4 @@
+import { Plus, Trash2 } from "lucide-react";
 import { useId, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -127,26 +128,20 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
             </span>
             <TextField label={t("processes.name")} error={errors?.processes?.[step]?.name?.message} {...form.register(`lines.${index}.processes.${step}.name`)} />
             <TextField label={t("processes.instructions")} {...form.register(`lines.${index}.processes.${step}.instructions`)} />
-            <span className="flex flex-wrap gap-2 sm:mt-6">
-              <Button type="button" variant="outline" size="xs" disabled={step === 0} onClick={() => processes.move(step, step - 1)}>
-                {t("processes.up")}
-              </Button>
-              <Button type="button" variant="outline" size="xs" disabled={step === processes.fields.length - 1} onClick={() => processes.move(step, step + 1)}>
-                {t("processes.down")}
-              </Button>
-              <Button type="button" variant="outline" size="xs" onClick={() => processes.remove(step)}>
-                {t("processes.remove")}
-              </Button>
-            </span>
+            <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("processes.remove")} title={t("processes.remove")} onClick={() => processes.remove(step)}>
+              <Trash2 aria-hidden="true" />
+            </Button>
           </li>
         ))}
       </ol>
       <div className="mt-4 flex flex-wrap gap-3">
         <Button type="button" variant="outline" size="sm" onClick={() => processes.append({ name: "", instructions: "" })}>
+          <Plus aria-hidden="true" />
           {t("processes.add")}
         </Button>
         {canRemove ? (
           <Button type="button" variant="outline" size="sm" className="ml-auto" onClick={onRemove}>
+            <Trash2 aria-hidden="true" />
             {t("lines.remove")}
           </Button>
         ) : null}
@@ -247,7 +242,8 @@ export function OrderForm({ order, onChanged }) {
           <LineEditor key={field.id} form={form} index={index} products={products} materials={materials} canRemove={lines.fields.length > 1} onRemove={() => lines.remove(index)} />
         ))}
         <div>
-          <Button type="button" variant="outline" onClick={() => lines.append(emptyLine())}>
+          <Button type="button" variant="outline" size="sm" onClick={() => lines.append(emptyLine())}>
+            <Plus aria-hidden="true" />
             {t("orders:lines.add")}
           </Button>
         </div>

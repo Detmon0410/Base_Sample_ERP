@@ -35,8 +35,6 @@
     "step": "Step",
     "add": "Add a process",
     "remove": "Remove",
-    "up": "Move up",
-    "down": "Move down",
     "none": "No processes yet.",
     "required": "Required",
     "completed": "Completed",
@@ -69,6 +67,7 @@
     "button": "Start production",
     "title": "Start the production?",
     "text": "After the start the products and the processes cannot be changed. The workers can then record progress.",
+    "hint": "Save your changes first: the start uses the saved order.",
     "done": "The production has started."
   },
   "errors": {

@@ -85,6 +85,19 @@ Body: `{ "kind": "Add" | "Deduct" | "Adjust", "lotNumber", "quantity", "changeDa
 
 Quantities have up to 3 decimals. A change that would make the lot negative is refused: `409 STOCK_NEGATIVE`, `errors: [{ path: ["quantity"], code: "STOCK_NEGATIVE" }]`, and the lot stays as it was. Other codes: `LOT_NOT_FOUND` (Deduct or Adjust on a lot that does not exist), `INVALID_DATE`, `REQUIRED`, `INVALID`.
 
+### The movements of every material: `GET /stock-changes`
+
+The ledger of every stock change of every material together (the page `/stock/movements`); read only, for an Admin and a Worker.
+
+| Query | Meaning |
+|---|---|
+| `q` | contains, case-insensitive, in the material code or name, the lot number, the production order number or the note |
+| `type` | `Add`, `Deduct` or `Adjust` |
+| `from`, `to` | the **date of the change** (`changeDate`), `YYYY-MM-DD`, both ends included |
+| `page`, `pageSize` | the frontend uses 20 |
+
+`data` is a list of the entries below with `materialCode` and `materialName` added, **newest `changeDate` first** (then the last made first); `meta` is `{ page, pageSize, total }`. `400 VALIDATION_ERROR` with `INVALID` (a type that does not exist) or `INVALID_DATE` (a `from` or `to` that is not a real day). The changes of a deleted material are gone with it.
+
 A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, change (+ or -), balance (of the lot after it), changeDate, note, orderId, orderNumber, userId, userName, at }`. Creating a material with lots writes one `Add` entry (note `Initial stock`) per lot.
 
 ## Data needed

@@ -6,10 +6,10 @@ import { canUse } from "@/utils/permissions";
  * its sub-entries is, and a menu with one visible sub-entry is shown as that sub-entry alone.
  * `labelKey` is an i18n key of the namespace `nav`.
  */
-export const SUMMARY_ITEM = { key: "summary", to: "/", labelKey: "summary", icon: "summary", roles: ["Admin", "Worker"] };
+export const DASHBOARD_ITEM = { key: "dashboard", to: "/", labelKey: "dashboard", icon: "dashboard", roles: ["Admin", "Worker"] };
 
 export const NAV = [
-  SUMMARY_ITEM,
+  DASHBOARD_ITEM,
   {
     key: "orders",
     labelKey: "orders",

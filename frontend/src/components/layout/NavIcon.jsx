@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 // The icon of each entry of the menu (the `icon` of config/navigation.js). Always next to the words, so it is only decoration.
 const ICONS = {
-  summary: LayoutDashboard,
+  dashboard: LayoutDashboard,
   orders: ClipboardList,
   qt: FileText,
   productionOrders: Factory,

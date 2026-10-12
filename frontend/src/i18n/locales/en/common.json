@@ -10,7 +10,7 @@
     "cancel": "Cancel",
     "saving": "Saving…",
     "confirm": "Confirm",
-    "backToSummary": "Back to the Dashboard"
+    "backToDashboard": "Back to the Dashboard"
   },
   "pages": {
     "notFound": {

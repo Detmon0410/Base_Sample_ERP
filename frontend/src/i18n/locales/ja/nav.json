@@ -1,5 +1,5 @@
 {
-  "summary": "ダッシュボード",
+  "dashboard": "ダッシュボード",
   "orders": "受注・製造",
   "qt": "見積書（QT）",
   "productionOrders": "製造指示書",

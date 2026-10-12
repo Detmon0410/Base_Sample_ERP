@@ -11,11 +11,11 @@ const shape = (user) =>
 
 describe("the menu of the header", () => {
   it("shows an Admin everything: the two menus with their entries, the others as links", () => {
-    expect(shape(admin)).toEqual(["summary", "orders > qt, productionOrders", "invoices", "master > customers, products, materialsStock, users"]);
+    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "invoices", "master > customers, products, materialsStock, users"]);
   });
 
   it("shows a Worker the production orders as a link and, under Master, only the products and the materials and stock (a menu with one entry is that entry)", () => {
-    expect(shape(worker)).toEqual(["summary", "productionOrders", "master > products, materialsStock"]);
+    expect(shape(worker)).toEqual(["dashboard", "productionOrders", "master > products, materialsStock"]);
   });
 
   it("shows nothing to somebody who is not signed in", () => {
@@ -23,7 +23,7 @@ describe("the menu of the header", () => {
   });
 
   it("finds the entry of a path, also for a page under it", () => {
-    expect(findActive("/")?.key).toBe("summary");
+    expect(findActive("/")?.key).toBe("dashboard");
     expect(findActive("/orders/12")?.key).toBe("productionOrders");
     expect(findActive("/orders/new")?.key).toBe("productionOrders");
     expect(findActive("/nothing")).toBeNull();

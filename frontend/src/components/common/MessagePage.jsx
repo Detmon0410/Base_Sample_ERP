@@ -16,7 +16,7 @@ export function MessagePage({ code, title, description, actionTo = "/" }) {
           <h1 className="text-2xl font-bold">{title}</h1>
           <p className="text-muted-foreground">{description}</p>
           <Button asChild size="lg" className="mt-2">
-            <Link to={actionTo}>{t("actions.backToSummary")}</Link>
+            <Link to={actionTo}>{t("actions.backToDashboard")}</Link>
           </Button>
         </CardContent>
       </Card>

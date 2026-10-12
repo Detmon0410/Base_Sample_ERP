@@ -10,7 +10,7 @@
     "cancel": "キャンセル",
     "saving": "保存中…",
     "confirm": "確認",
-    "backToSummary": "ダッシュボードへ戻る"
+    "backToDashboard": "ダッシュボードへ戻る"
   },
   "pages": {
     "notFound": {

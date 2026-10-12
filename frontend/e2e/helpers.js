@@ -9,16 +9,16 @@ export const USERS = {
 /** Every page of the menu (src/config/navigation.js) and who may open it. */
 export const PAGES = [
   { path: "/", name: "Dashboard", roles: ["admin", "worker"] },
-  { path: "/qt", name: "Quotations (QT)", roles: ["admin"] },
-  { path: "/orders", name: "Production orders", roles: ["admin", "worker"] },
-  { path: "/invoices", name: "Invoices", roles: ["admin"] },
-  { path: "/receipts", name: "Receipts", roles: ["admin"] },
+  { path: "/sale/quotations", name: "Quotations", roles: ["admin"] },
+  { path: "/sale/orders", name: "Production orders", roles: ["admin", "worker"] },
+  { path: "/accounting/invoices", name: "Invoices", roles: ["admin"] },
+  { path: "/accounting/receipts", name: "Receipts", roles: ["admin"] },
   { path: "/stock", name: "Overview", roles: ["admin", "worker"] },
   { path: "/stock/materials", name: "Materials and stock", roles: ["admin", "worker"] },
   { path: "/stock/movements", name: "Movements", roles: ["admin", "worker"] },
-  { path: "/customers", name: "Customers", roles: ["admin"] },
-  { path: "/products", name: "Products and BOM", roles: ["admin", "worker"] },
-  { path: "/users", name: "Users", roles: ["admin"] },
+  { path: "/master/customers", name: "Customers", roles: ["admin"] },
+  { path: "/master/products", name: "Products and BOM", roles: ["admin", "worker"] },
+  { path: "/master/users", name: "Users", roles: ["admin"] },
 ];
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */

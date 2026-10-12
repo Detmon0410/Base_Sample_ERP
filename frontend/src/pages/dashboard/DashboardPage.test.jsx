@@ -47,10 +47,10 @@ describe("the Dashboard", () => {
     await materialsApi.create({ code: "DASH-HIGH", name: "Plenty", lots: [{ lotNumber: "L1", quantity: 900 }] });
 
     const admin = renderAs(mockUsers[0]);
-    expect(await tile(/^New\s*1$/)).toHaveAttribute("href", "/orders");
+    expect(await tile(/^New\s*1$/)).toHaveAttribute("href", "/sale/orders");
     expect(await tile(/^In progress\s*1$/)).toBeInTheDocument();
     expect(await tile(/^Completed\s*1$/)).toBeInTheDocument();
-    expect(await tile(/^Unpaid invoices\s*1$/)).toHaveAttribute("href", "/invoices");
+    expect(await tile(/^Unpaid invoices\s*1$/)).toHaveAttribute("href", "/accounting/invoices");
     expect(await tile(/^Unpaid total\s*¥1,600$/)).toBeInTheDocument();
     expect(await tile(/^Paid this month\s*¥0$/)).toBeInTheDocument();
 
@@ -60,7 +60,7 @@ describe("the Dashboard", () => {
 
     // the order in progress: its progress over all its processes, and a link to it
     const inProgress = await sectionOf("Orders in progress");
-    expect(within(inProgress).getByRole("link", { name: running.orderNumber })).toHaveAttribute("href", `/orders/${running.id}`);
+    expect(within(inProgress).getByRole("link", { name: running.orderNumber })).toHaveAttribute("href", `/sale/orders/${running.id}`);
     expect(inProgress).toHaveTextContent("25% (1 of 4)");
 
     // the unpaid invoice, and the material with the least stock first

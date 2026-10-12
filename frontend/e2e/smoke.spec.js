@@ -50,7 +50,7 @@ test("a wrong password is refused and nobody is signed in", async ({ page }) => 
 });
 
 test("a page opened without signing in goes to the sign-in page", async ({ page }) => {
-  await page.goto("/orders");
+  await page.goto("/sale/orders");
   await expect(page).toHaveURL(/\/login/);
 });
 
@@ -90,4 +90,12 @@ test("an old address of a material, /stock/<id>, opens the material where it is 
   await expect(page.getByText("Record not found")).toBeVisible(); // there is no material 999: the page of a material answered
   await page.goto("/stock/abc");
   await expect(page.getByText("Page not found")).toBeVisible();
+});
+
+test("an old address (/qt, /orders/5, /users) opens the page where it is now", async ({ page }) => {
+  await signIn(page, USERS.admin);
+  await page.goto("/qt");
+  await expect(page).toHaveURL(/\/sale\/quotations$/);
+  await page.goto("/orders/new");
+  await expect(page).toHaveURL(/\/sale\/orders\/new$/);
 });

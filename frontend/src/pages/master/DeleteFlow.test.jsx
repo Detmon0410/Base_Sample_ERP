@@ -21,7 +21,7 @@ const renderAs = (user, path) => {
     <AuthContext.Provider value={{ user: toPublicUser(user), status: "authenticated" }}>
       <MemoryRouter initialEntries={[path]}>
         <Routes>
-          <Route path="/customers/*" element={<CustomersPage />} />
+          <Route path="/master/customers/*" element={<CustomersPage />} />
         </Routes>
       </MemoryRouter>
     </AuthContext.Provider>,
@@ -39,7 +39,7 @@ describe("deleting a customer", () => {
     const order = await ordersApi.create({ qtId: qt.id, customerId: used.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] });
 
     // the used customer: the confirmation names it, then the refusal lists the QT reference and the order
-    const first = renderAs(mockUsers[0], `/customers/${used.id}`);
+    const first = renderAs(mockUsers[0], `/master/customers/${used.id}`);
     await user.click(await screen.findByRole("button", { name: "Delete" }));
     expect(await screen.findByText('"Used Customer" will be deleted for good. This cannot be undone.')).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Confirm" }));
@@ -50,7 +50,7 @@ describe("deleting a customer", () => {
     first.unmount();
 
     // the free customer: deleted, and the list opens without it
-    renderAs(mockUsers[0], `/customers/${free.id}`);
+    renderAs(mockUsers[0], `/master/customers/${free.id}`);
     await user.click(await screen.findByRole("button", { name: "Delete" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
     await waitFor(() => expect(screen.getByRole("link", { name: "Used Customer" })).toBeInTheDocument());
@@ -58,7 +58,7 @@ describe("deleting a customer", () => {
   });
 
   it("has no Delete on a new record", async () => {
-    renderAs(mockUsers[0], "/customers/new");
+    renderAs(mockUsers[0], "/master/customers/new");
     await screen.findByLabelText("Name");
     expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument();
   });

@@ -24,11 +24,11 @@ describe("the menu of the header", () => {
 
   it("finds the entry of a path, also for a page under it", () => {
     expect(findActive("/")?.key).toBe("dashboard");
-    expect(findActive("/orders/12")?.key).toBe("productionOrders");
-    expect(findActive("/orders/new")?.key).toBe("productionOrders");
+    expect(findActive("/sale/orders/12")?.key).toBe("productionOrders");
+    expect(findActive("/sale/orders/new")?.key).toBe("productionOrders");
     expect(findActive("/stock")?.key).toBe("stockOverview");
-    expect(findActive("/invoices/4")?.key).toBe("invoices");
-    expect(findActive("/receipts/2")?.key).toBe("receipts");
+    expect(findActive("/accounting/invoices/4")?.key).toBe("invoices");
+    expect(findActive("/accounting/receipts/2")?.key).toBe("receipts");
     expect(findActive("/stock/materials/3")?.key).toBe("materials");
     expect(findActive("/stock/movements")?.key).toBe("movements");
     expect(findActive("/nothing")).toBeNull();

@@ -19,7 +19,7 @@ const renderAs = (user, path) => {
     <AuthContext.Provider value={{ user: toPublicUser(user), status: "authenticated" }}>
       <MemoryRouter initialEntries={[path]}>
         <Routes>
-          <Route path="/orders/*" element={<OrdersPage />} />
+          <Route path="/sale/orders/*" element={<OrdersPage />} />
           <Route path="/403" element={<p>forbidden</p>} />
         </Routes>
       </MemoryRouter>
@@ -37,7 +37,7 @@ describe("production orders, page by page", () => {
 
   it("an Admin makes an order with a process, starts it, and a Worker completes it", async () => {
     const user = userEvent.setup();
-    const view = renderAs(mockUsers[0], "/orders/new");
+    const view = renderAs(mockUsers[0], "/sale/orders/new");
 
     await screen.findByText("New production order");
     // saving the empty form shows the errors only now
@@ -65,7 +65,7 @@ describe("production orders, page by page", () => {
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
     expect(await screen.findByText("Not started")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("New"); // no process has started yet
-    const orderPath = `/orders/${link.getAttribute("href").split("/").pop()}`;
+    const orderPath = `/sale/orders/${link.getAttribute("href").split("/").pop()}`;
     view.unmount();
 
     // a Worker records progress, 4 then all 10
@@ -97,7 +97,7 @@ describe("production orders, page by page", () => {
   });
 
   it("keeps a Worker out of the page of a new order", async () => {
-    renderAs(mockUsers[1], "/orders/new");
+    renderAs(mockUsers[1], "/sale/orders/new");
     expect(await screen.findByText("forbidden")).toBeInTheDocument();
   });
 });

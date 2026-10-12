@@ -39,10 +39,10 @@ describe("invoices, page by page", () => {
 
     render(
       <AuthContext.Provider value={{ user: toPublicUser(mockUsers[0]), status: "authenticated" }}>
-        <MemoryRouter initialEntries={["/invoices/new"]}>
+        <MemoryRouter initialEntries={["/accounting/invoices/new"]}>
           <Routes>
-            <Route path="/invoices/*" element={<InvoicesPage />} />
-            <Route path="/receipts/*" element={<ReceiptsPage />} />
+            <Route path="/accounting/invoices/*" element={<InvoicesPage />} />
+            <Route path="/accounting/receipts/*" element={<ReceiptsPage />} />
           </Routes>
         </MemoryRouter>
       </AuthContext.Provider>,
@@ -90,7 +90,7 @@ describe("invoices, page by page", () => {
     await user.click(screen.getByRole("button", { name: "Record the payment" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
     // Paid: the invoice shows the payment made and a link to its receipt, which is on its own page
-    expect(await screen.findByRole("link", { name: /^RC-\d{4}-\d{4}$/ })).toHaveAttribute("href", expect.stringMatching(/^\/receipts\/\d+$/));
+    expect(await screen.findByRole("link", { name: /^RC-\d{4}-\d{4}$/ })).toHaveAttribute("href", expect.stringMatching(/^\/accounting\/receipts\/\d+$/));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Paid");
     expect(screen.getByText(/Bank transfer - Slip 555$/)).toBeInTheDocument(); // the payment made
     expect(screen.queryByLabelText("Amount paid")).not.toBeInTheDocument(); // one payment only

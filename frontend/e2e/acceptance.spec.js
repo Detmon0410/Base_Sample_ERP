@@ -48,7 +48,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await signIn(page, USERS.admin);
 
   // 1. a customer, a product, a material lot, the BOM reference and the staff accounts
-  await open(page, "/customers", "New customer");
+  await open(page, "/master/customers", "New customer");
   await page.getByLabel("Name", { exact: true }).fill("Tokyo Cold Chain");
   await page.getByLabel("Address").fill("1-2-3 Koto, Tokyo");
   await page.getByLabel("Email").fill("buyer@tokyocold.jp");
@@ -66,7 +66,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("link", { name: "STEEL-01" })).toBeVisible();
 
-  await open(page, "/products", "New product");
+  await open(page, "/master/products", "New product");
   await page.getByLabel("Code").fill("FR-100");
   await page.getByLabel("Name", { exact: true }).fill("Refrigerator 100L");
   await page.getByLabel("Price").fill("45000");
@@ -76,7 +76,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("link", { name: "FR-100" })).toBeVisible();
 
-  await open(page, "/users", "New user");
+  await open(page, "/master/users", "New user");
   await page.getByLabel("Name", { exact: true }).fill(WORKER.name);
   await page.getByLabel("Email").fill(WORKER.email);
   await page.getByLabel("Department").selectOption("Factory");
@@ -86,7 +86,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("link", { name: WORKER.name })).toBeVisible();
 
   // 2. a QT reference with its file
-  await open(page, "/qt", "New QT reference");
+  await open(page, "/sale/quotations", "New QT reference");
   await page.getByLabel("QT number").fill("QT-001");
   await page.getByLabel("Customer").selectOption({ label: "Tokyo Cold Chain" });
   await page.getByLabel("Notes").fill("Ten refrigerators");
@@ -96,7 +96,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("row", { name: /QT-001/ })).toContainText("qt-001.pdf");
 
   // 3 and 4. an order of 10 units linked to the QT, and its processes added by hand
-  await open(page, "/orders", "New production order");
+  await open(page, "/sale/orders", "New production order");
   await page.getByLabel("QT reference").selectOption({ label: "QT-001 Tokyo Cold Chain" });
   await expect(page.getByLabel("Customer")).toHaveValue(/\d+/); // the customer of the QT
   await page.getByLabel("Product", { exact: true }).selectOption({ label: "FR-100 Refrigerator 100L" });
@@ -119,7 +119,7 @@ test("the example of the requirements, from the customer to the receipt", async 
 
   // 5. a Worker records progress and completes 10 units on every process
   await signIn(page, WORKER);
-  await open(page, "/orders", orderNumber);
+  await open(page, "/sale/orders", orderNumber);
   for (const name of ["Cutting", "Welding"]) {
     await page.getByRole("button", { name: "Record progress" }).first().click();
     await page.getByLabel("Status").selectOption("In Progress");
@@ -132,7 +132,7 @@ test("the example of the requirements, from the customer to the receipt", async 
       await open(page, "/");
       await expect(page.getByRole("link", { name: orderNumber })).toBeVisible();
       await expect(page.getByText("20% (4 of 20)")).toBeVisible();
-      await open(page, "/orders", orderNumber);
+      await open(page, "/sale/orders", orderNumber);
     }
 
     await processRow(page, name).getByRole("button", { name: "Record progress" }).click();
@@ -183,7 +183,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("link", { name: "STEEL-01" })).toHaveCount(0);
 
   // 8. an invoice for the completed order, and its document sent to print / PDF
-  await open(page, "/invoices", "New invoice");
+  await open(page, "/accounting/invoices", "New invoice");
   await page.getByLabel("Production order").selectOption({ label: `${orderNumber} Tokyo Cold Chain` });
   await page.getByRole("button", { name: "Save" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
@@ -221,14 +221,14 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("link", { name: invoiceNumber })).toBeVisible(); // the way back to the invoice
 
   // the list of the receipts: this one, with its customer and amount; a click on the row opens it
-  await open(page, "/receipts");
+  await open(page, "/accounting/receipts");
   await expect(page.getByRole("row", { name: new RegExp(receiptNumber) })).toContainText("Tokyo Cold Chain");
   await expect(page.getByRole("row", { name: new RegExp(receiptNumber) })).toContainText("¥450,000");
   await page.getByRole("row", { name: new RegExp(receiptNumber) }).getByText("Tokyo Cold Chain").click();
   await expect(page).toHaveURL(/\/receipts\/\d+$/);
 
   // 10. the order shows its QT reference, the progress, the invoice and the receipt
-  await open(page, "/orders", orderNumber);
+  await open(page, "/sale/orders", orderNumber);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Completed");
   await expect(page.getByRole("link", { name: "QT-001" })).toBeVisible();
   await expect(page.getByRole("link", { name: invoiceNumber })).toBeVisible();
@@ -238,14 +238,14 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(progress.getByText("Mika Sato").first()).toBeVisible();
 
   // deleting: a record that is still used is refused and the message says where it is used
-  await open(page, "/customers", "Tokyo Cold Chain");
+  await open(page, "/master/customers", "Tokyo Cold Chain");
   await page.getByRole("button", { name: "Delete" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByText("This record cannot be deleted because it is still used:")).toBeVisible();
   await expect(page.getByText("QT references: QT-001")).toBeVisible();
   await expect(page.getByText(`Production orders: ${orderNumber}`)).toBeVisible();
 
-  await open(page, "/products", "FR-100");
+  await open(page, "/master/products", "FR-100");
   await page.getByRole("button", { name: "Delete" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByText(`Production orders: ${orderNumber}`)).toBeVisible();
@@ -257,7 +257,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByText("Stock changes after the first stock: 1")).toBeVisible(); // the deduction of step 7
 
   // a record that nobody uses is deleted, and the list opens without it
-  await open(page, "/customers", "New customer");
+  await open(page, "/master/customers", "New customer");
   await page.getByLabel("Name", { exact: true }).fill("Free Customer");
   await page.getByRole("button", { name: "Save" }).click();
   await page.getByRole("link", { name: "Free Customer" }).click();
@@ -278,7 +278,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("img", { name: /Invoiced and paid, last 6 months/ })).toBeVisible();
 
   // the pages that now hold real data show no untranslated key
-  for (const path of ["/orders", "/stock", "/stock/materials", "/invoices", "/qt", "/products", "/customers", "/users"]) {
+  for (const path of ["/sale/orders", "/stock", "/stock/materials", "/accounting/invoices", "/sale/quotations", "/master/products", "/master/customers", "/master/users"]) {
     await open(page, path);
     expect(await rawKeys(page), `${path}: text that looks like an untranslated key`).toEqual([]);
   }

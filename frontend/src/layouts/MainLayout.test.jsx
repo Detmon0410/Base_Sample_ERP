@@ -8,13 +8,13 @@ import { mockUsers, toPublicUser } from "@/services/mock/users";
 
 import { MainLayout } from "./MainLayout";
 
-const renderLayout = (user = mockUsers[0], logout = () => {}) =>
+const renderLayout = (user = mockUsers[0], logout = () => { }) =>
   render(
     <AuthContext.Provider value={{ user: toPublicUser(user), status: "authenticated", logout }}>
-      <MemoryRouter initialEntries={["/orders"]}>
+      <MemoryRouter initialEntries={["/sale/orders"]}>
         <Routes>
           <Route element={<MainLayout />}>
-            <Route path="orders" element={<p>the page</p>} />
+            <Route path="sale/orders" element={<p>the page</p>} />
           </Route>
         </Routes>
       </MemoryRouter>
@@ -27,7 +27,7 @@ describe("the bar at the top", () => {
     const menu = screen.getByRole("navigation", { name: "Main menu" });
     expect(menu.closest("header")).not.toBeNull();
     expect(within(menu).getByRole("button", { name: /Orders/ })).toBeInTheDocument();
-    expect(within(menu).queryByRole("link", { name: "Quotations (QT)" })).not.toBeInTheDocument();
+    expect(within(menu).queryByRole("link", { name: "Quotations" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Menu on the left|Menu on top/ })).not.toBeInTheDocument();
     expect(document.querySelector("aside")).toBeNull();
   });

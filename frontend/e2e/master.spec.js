@@ -18,7 +18,7 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
   await signIn(page, USERS.admin);
 
   // customer
-  await newRecord(page, "/customers", "New customer");
+  await newRecord(page, "/master/customers", "New customer");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Some fields need your attention")).toBeVisible();
   await expect(page.getByText("Enter or choose a value.")).toBeVisible();
@@ -42,7 +42,7 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
   await expect(page.getByRole("row", { name: /STEEL-01/ })).toContainText("100");
 
   // product with a BOM
-  await newRecord(page, "/products", "New product");
+  await newRecord(page, "/master/products", "New product");
   await page.getByLabel("Code").fill("FR-100");
   await page.getByLabel("Name").fill("Refrigerator 100L");
   await page.getByLabel("Price").fill("45000");
@@ -54,7 +54,7 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
   await expect(page.getByRole("row", { name: /FR-100/ })).toContainText("¥45,000");
 
   // the same code twice is refused
-  await newRecord(page, "/products", "New product");
+  await newRecord(page, "/master/products", "New product");
   await page.getByLabel("Code").fill("fr-100");
   await page.getByLabel("Name").fill("Copy");
   await page.getByLabel("Price").fill("1");
@@ -62,7 +62,7 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
   await expect(page.getByText("This value is already used.")).toBeVisible();
 
   // a user
-  await newRecord(page, "/users", "New user");
+  await newRecord(page, "/master/users", "New user");
   await page.getByLabel("Name").fill("Mika Sato");
   await page.getByLabel("Email").fill("mika@factory.jp");
   await page.getByLabel("Department").selectOption("Factory");
@@ -89,7 +89,7 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
 test("Worker reads the products and the materials but cannot change them", async ({ page }) => {
   await signIn(page, USERS.worker);
 
-  await page.goto("/products");
+  await page.goto("/master/products");
   await settle(page);
   await expect(page.getByRole("link", { name: "New product" })).toHaveCount(0);
 
@@ -100,6 +100,6 @@ test("Worker reads the products and the materials but cannot change them", async
   await page.goto("/stock/materials/new");
   await expect(page.getByRole("button", { name: "Save" })).toHaveCount(0);
 
-  await page.goto("/customers");
+  await page.goto("/master/customers");
   await expect(page.getByText("You do not have permission")).toBeVisible();
 });

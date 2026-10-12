@@ -35,9 +35,9 @@ describe("the receipts pages", () => {
 
     render(
       <AuthContext.Provider value={{ user: toPublicUser(mockUsers[0]), status: "authenticated" }}>
-        <MemoryRouter initialEntries={["/receipts"]}>
+        <MemoryRouter initialEntries={["/accounting/receipts"]}>
           <Routes>
-            <Route path="/receipts/*" element={<ReceiptsPage />} />
+            <Route path="/accounting/receipts/*" element={<ReceiptsPage />} />
           </Routes>
         </MemoryRouter>
       </AuthContext.Provider>,

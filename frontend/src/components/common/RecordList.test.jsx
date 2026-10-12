@@ -15,9 +15,9 @@ const renderList = () => {
   setToken(tokenOf(mockUsers[0]));
   return render(
     <AuthContext.Provider value={{ user: toPublicUser(mockUsers[0]), status: "authenticated" }}>
-      <MemoryRouter initialEntries={["/customers"]}>
+      <MemoryRouter initialEntries={["/master/customers"]}>
         <Routes>
-          <Route path="/customers/*" element={<CustomersPage />} />
+          <Route path="/master/customers/*" element={<CustomersPage />} />
         </Routes>
       </MemoryRouter>
     </AuthContext.Provider>,

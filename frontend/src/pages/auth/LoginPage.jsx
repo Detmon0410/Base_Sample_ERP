@@ -1,4 +1,4 @@
-import { LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -124,13 +124,13 @@ export function LoginPage() {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 px-2 text-sm text-link outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+                className="absolute inset-y-0 right-0 flex items-center px-2 text-link outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
                 aria-pressed={showPassword}
                 title={showPassword ? t("login.hidePassword") : t("login.showPassword")}
                 onClick={() => setShowPassword((visible) => !visible)}
               >
-                {showPassword ? t("login.hidePassword") : t("login.showPassword")}
+                {showPassword ? <EyeOff aria-hidden="true" className="size-5" /> : <Eye aria-hidden="true" className="size-5" />}
               </button>
             </div>
             {errors.password ? (

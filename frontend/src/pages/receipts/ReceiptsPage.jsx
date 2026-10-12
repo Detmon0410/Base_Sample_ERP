@@ -25,12 +25,12 @@ function ReceiptPage() {
         <div className="flex flex-wrap gap-3">
           <DocumentActions name="receipt" number={receipt.receiptNumber} />
           <Button asChild variant="outline">
-            <Link to="/receipts">{t("master:form.back")}</Link>
+            <Link to="/accounting/receipts">{t("master:form.back")}</Link>
           </Button>
         </div>
         <ReceiptDocument receipt={receipt} language={i18n.language} />
         <p>
-          {t("invoices:receipt.forInvoice")}: <Link to={`/invoices/${receipt.invoiceId}`}>{receipt.invoiceNumber}</Link>
+          {t("invoices:receipt.forInvoice")}: <Link to={`/accounting/invoices/${receipt.invoiceId}`}>{receipt.invoiceNumber}</Link>
         </p>
       </div>
     </>
@@ -50,7 +50,7 @@ export function ReceiptsPage() {
         element={
           <RecordList
             api={receiptsApi}
-            base="/receipts"
+            base="/accounting/receipts"
             title={t("receiptsTitle")}
             canCreate={false}
             columns={[

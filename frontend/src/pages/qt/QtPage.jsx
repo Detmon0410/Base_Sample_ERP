@@ -69,7 +69,7 @@ function QtForm() {
   return (
     <RecordFormPage
       api={qtApi}
-      listPath="/qt"
+      listPath="/sale/quotations"
       newTitle={t("qt.new")}
       titleOf={(record) => record.qtNumber}
       defaults={empty()}
@@ -109,7 +109,7 @@ export function QtPage() {
         element={
           <RecordList
             api={qtApi}
-            base="/qt"
+            base="/sale/quotations"
             title={t("qt.title")}
             canCreate
             newLabel={t("qt.new")}

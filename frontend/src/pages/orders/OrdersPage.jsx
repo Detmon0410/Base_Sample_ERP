@@ -38,7 +38,7 @@ export function OrdersPage() {
         element={
           <RecordList
             api={ordersApi}
-            base="/orders"
+            base="/sale/orders"
             title={t("title")}
             canCreate={isAdmin(user)}
             newLabel={t("new")}

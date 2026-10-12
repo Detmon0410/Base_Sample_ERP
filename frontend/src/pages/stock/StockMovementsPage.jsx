@@ -115,7 +115,7 @@ export function StockMovementsPage() {
                     {formatNumber(row.balance, language)}
                   </TableCell>
                   <TableCell data-label={t("master:stock.colOrder")} className="px-4 py-3">
-                    {row.orderId ? <Link to={`/orders/${row.orderId}`}>{row.orderNumber}</Link> : null}
+                    {row.orderId ? <Link to={`/sale/orders/${row.orderId}`}>{row.orderNumber}</Link> : null}
                   </TableCell>
                   <TableCell data-label={t("master:stock.colNote")} className="px-4 py-3 whitespace-normal">
                     {row.note}

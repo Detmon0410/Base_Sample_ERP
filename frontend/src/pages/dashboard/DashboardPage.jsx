@@ -55,15 +55,15 @@ export function DashboardPage() {
               {t("dashboard:numbers")}
             </h2>
             <div className="grid gap-4 sm:grid-cols-3">
-              <Tile to="/orders" label={t("dashboard:new")} value={number(data.orders.New)} />
-              <Tile to="/orders" label={t("dashboard:inProgress")} value={number(data.orders.InProgress)} />
-              <Tile to="/orders" label={t("dashboard:completed")} value={number(data.orders.Completed)} />
+              <Tile to="/sale/orders" label={t("dashboard:new")} value={number(data.orders.New)} />
+              <Tile to="/sale/orders" label={t("dashboard:inProgress")} value={number(data.orders.InProgress)} />
+              <Tile to="/sale/orders" label={t("dashboard:completed")} value={number(data.orders.Completed)} />
             </div>
             {data.invoicing ? (
               <div className="grid gap-4 sm:grid-cols-3">
-                <Tile to="/invoices" label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
-                <Tile to="/invoices" label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
-                <Tile to="/invoices" label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
+                <Tile to="/accounting/invoices" label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
+                <Tile to="/accounting/invoices" label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
+                <Tile to="/accounting/invoices" label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
               </div>
             ) : null}
           </section>
@@ -108,7 +108,7 @@ export function DashboardPage() {
                   {data.inProgress.map((order) => (
                     <TableRow key={order.id}>
                       <TableCell data-label={t("dashboard:order")}>
-                        <Link to={`/orders/${order.id}`}>{order.orderNumber}</Link>
+                        <Link to={`/sale/orders/${order.id}`}>{order.orderNumber}</Link>
                       </TableCell>
                       <TableCell data-label={t("dashboard:customer")}>{order.customerName}</TableCell>
                       <TableCell data-label={t("dashboard:progress")}>
@@ -139,7 +139,7 @@ export function DashboardPage() {
                     {data.invoicing.unpaidList.map((invoice) => (
                       <TableRow key={invoice.id}>
                         <TableCell data-label={t("dashboard:invoice")}>
-                          <Link to={`/invoices/${invoice.id}`}>{invoice.invoiceNumber}</Link>
+                          <Link to={`/accounting/invoices/${invoice.id}`}>{invoice.invoiceNumber}</Link>
                         </TableCell>
                         <TableCell data-label={t("dashboard:customer")}>{invoice.customerName}</TableCell>
                         <TableCell data-label={t("dashboard:invoiceDate")}>{invoice.invoiceDate}</TableCell>

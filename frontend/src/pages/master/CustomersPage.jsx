@@ -13,7 +13,7 @@ function CustomerForm() {
   return (
     <RecordFormPage
       api={customersApi}
-      listPath="/customers"
+      listPath="/master/customers"
       newTitle={t("customers.new")}
       titleOf={(record) => record.name}
       defaults={EMPTY}
@@ -47,7 +47,7 @@ export function CustomersPage() {
         element={
           <RecordList
                   api={customersApi}
-            base="/customers"
+            base="/master/customers"
             title={t("customers.title")}
             canCreate
             newLabel={t("customers.new")}

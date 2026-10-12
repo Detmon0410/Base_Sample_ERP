@@ -70,7 +70,7 @@ function ProductForm() {
   return (
     <RecordFormPage
       api={productsApi}
-      listPath="/products"
+      listPath="/master/products"
       newTitle={t("products.new")}
       titleOf={(record) => `${record.code} ${record.name}`}
       defaults={EMPTY}
@@ -108,7 +108,7 @@ export function ProductsPage() {
         element={
           <RecordList
                   api={productsApi}
-            base="/products"
+            base="/master/products"
             title={t("products.title")}
             canCreate={isAdmin(user)}
             newLabel={t("products.new")}

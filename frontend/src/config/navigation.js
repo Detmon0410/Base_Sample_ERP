@@ -15,8 +15,8 @@ export const NAV = [
     labelKey: "orders",
     icon: "orders",
     items: [
-      { key: "qt", to: "/qt", labelKey: "qt", icon: "qt", roles: ["Admin"] },
-      { key: "productionOrders", to: "/orders", labelKey: "productionOrders", icon: "productionOrders", roles: ["Admin", "Worker"] },
+      { key: "qt", to: "/sale/quotations", labelKey: "qt", icon: "qt", roles: ["Admin"] },
+      { key: "productionOrders", to: "/sale/orders", labelKey: "productionOrders", icon: "productionOrders", roles: ["Admin", "Worker"] },
     ],
   },
   {
@@ -24,8 +24,8 @@ export const NAV = [
     labelKey: "accounting",
     icon: "accounting",
     items: [
-      { key: "invoices", to: "/invoices", labelKey: "invoices", icon: "invoices", roles: ["Admin"] },
-      { key: "receipts", to: "/receipts", labelKey: "receipts", icon: "receipts", roles: ["Admin"] },
+      { key: "invoices", to: "/accounting/invoices", labelKey: "invoices", icon: "invoices", roles: ["Admin"] },
+      { key: "receipts", to: "/accounting/receipts", labelKey: "receipts", icon: "receipts", roles: ["Admin"] },
     ],
   },
   {
@@ -43,9 +43,9 @@ export const NAV = [
     labelKey: "master",
     icon: "master",
     items: [
-      { key: "customers", to: "/customers", labelKey: "customers", icon: "customers", roles: ["Admin"] },
-      { key: "products", to: "/products", labelKey: "products", icon: "products", roles: ["Admin", "Worker"] },
-      { key: "users", to: "/users", labelKey: "users", icon: "users", roles: ["Admin"] },
+      { key: "customers", to: "/master/customers", labelKey: "customers", icon: "customers", roles: ["Admin"] },
+      { key: "products", to: "/master/products", labelKey: "products", icon: "products", roles: ["Admin", "Worker"] },
+      { key: "users", to: "/master/users", labelKey: "users", icon: "users", roles: ["Admin"] },
     ],
   },
 ];

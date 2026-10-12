@@ -16,7 +16,7 @@ function UserForm() {
   return (
     <RecordFormPage
       api={usersApi}
-      listPath="/users"
+      listPath="/master/users"
       newTitle={t("master:users.new")}
       titleOf={(record) => record.name}
       defaults={EMPTY}
@@ -59,7 +59,7 @@ export function UsersPage() {
         element={
           <RecordList
                   api={usersApi}
-            base="/users"
+            base="/master/users"
             title={t("master:users.title")}
             canCreate
             newLabel={t("master:users.new")}

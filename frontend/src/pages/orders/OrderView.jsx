@@ -113,12 +113,12 @@ export function OrderView({ order, onChanged }) {
         <Section title={t("orders:section")}>
           <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
             {[
-              [t("orders:qt"), admin ? <Link key="qt" to={`/qt/${order.qtId}`}>{order.qtNumber}</Link> : order.qtNumber],
+              [t("orders:qt"), admin ? <Link key="qt" to={`/sale/quotations/${order.qtId}`}>{order.qtNumber}</Link> : order.qtNumber],
               [t("orders:customer"), order.customerName],
               [t("orders:orderDate"), order.orderDate],
               [t("orders:startedAt"), order.started ? formatDateTime(order.startedAt, language) : t("orders:notStarted")],
-              [t("orders:invoice"), order.invoice ? <Link key="invoice" to={`/invoices/${order.invoice.id}`}>{order.invoice.invoiceNumber}</Link> : null],
-              [t("orders:receipt"), order.invoice?.receiptNumber ? <Link key="receipt" to={`/receipts/${order.invoice.receiptId}`}>{order.invoice.receiptNumber}</Link> : null],
+              [t("orders:invoice"), order.invoice ? <Link key="invoice" to={`/accounting/invoices/${order.invoice.id}`}>{order.invoice.invoiceNumber}</Link> : null],
+              [t("orders:receipt"), order.invoice?.receiptNumber ? <Link key="receipt" to={`/accounting/receipts/${order.invoice.receiptId}`}>{order.invoice.receiptNumber}</Link> : null],
               [t("orders:notes"), order.notes],
             ].map(([label, value], index) => (
               <div key={index}>
@@ -217,7 +217,7 @@ export function OrderView({ order, onChanged }) {
 
         <div>
           <Button asChild variant="outline">
-            <Link to="/orders">{t("master:form.back")}</Link>
+            <Link to="/sale/orders">{t("master:form.back")}</Link>
           </Button>
         </div>
       </div>

@@ -42,7 +42,7 @@ function InvoiceNew() {
     try {
       await invoicesApi.create(values);
       toast.success(t("invoices:issued"));
-      navigate("/invoices");
+      navigate("/accounting/invoices");
     } catch (error) {
       setSummary(applyServerErrors(form, error, t));
     }
@@ -68,7 +68,7 @@ function InvoiceNew() {
         <div className="flex gap-3">
           <Button type="submit">{t("common:actions.save")}</Button>
           <Button asChild variant="outline">
-            <Link to="/invoices">{t("common:actions.cancel")}</Link>
+            <Link to="/accounting/invoices">{t("common:actions.cancel")}</Link>
           </Button>
         </div>
       </form>
@@ -145,7 +145,7 @@ function InvoicePage() {
         <div className="flex flex-wrap gap-3">
           <DocumentActions name="invoice" number={invoice.invoiceNumber} />
           <Button asChild variant="outline">
-            <Link to="/invoices">{t("master:form.back")}</Link>
+            <Link to="/accounting/invoices">{t("master:form.back")}</Link>
           </Button>
         </div>
 
@@ -164,7 +164,7 @@ function InvoicePage() {
 
         {invoice.receipt ? (
           <p>
-            {t("invoices:receipt.title")}: <Link to={`/receipts/${invoice.receipt.id}`}>{invoice.receipt.receiptNumber}</Link>
+            {t("invoices:receipt.title")}: <Link to={`/accounting/receipts/${invoice.receipt.id}`}>{invoice.receipt.receiptNumber}</Link>
           </p>
         ) : null}
       </div>
@@ -182,7 +182,7 @@ export function InvoicesPage() {
         element={
           <RecordList
             api={invoicesApi}
-            base="/invoices"
+            base="/accounting/invoices"
             title={t("title")}
             canCreate
             newLabel={t("new")}

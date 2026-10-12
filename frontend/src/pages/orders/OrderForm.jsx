@@ -138,7 +138,7 @@ export function OrderForm({ order, onChanged }) {
       if (order) await ordersApi.update(order.id, values);
       else await ordersApi.create(values);
       toast.success(t("master:form.saved"));
-      navigate("/orders");
+      navigate("/sale/orders");
     } catch (error) {
       setSummary(applyServerErrors(form, error, t));
     }
@@ -208,7 +208,7 @@ export function OrderForm({ order, onChanged }) {
             {form.formState.isSubmitting ? t("common:actions.saving") : t("common:actions.save")}
           </Button>
           <Button asChild variant="outline">
-            <Link to="/orders">{t("common:actions.cancel")}</Link>
+            <Link to="/sale/orders">{t("common:actions.cancel")}</Link>
           </Button>
           {order ? (
             <span className="ml-auto flex flex-col items-end gap-1">

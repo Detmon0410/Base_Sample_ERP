@@ -33,6 +33,14 @@ function LegacyMaterialRedirect() {
   return /^\d+$/.test(id) ? <Navigate to={`/stock/materials/${id}`} replace /> : <NotFoundPage />;
 }
 
+// The addresses of before the pages were grouped by area (/qt, /orders, ...): a saved link opens the page where it is now.
+const MOVED = { qt: "sale/quotations", orders: "sale/orders", invoices: "accounting/invoices", receipts: "accounting/receipts", customers: "master/customers", products: "master/products", users: "master/users" };
+
+function MovedRedirect({ to }) {
+  const { "*": rest } = useParams();
+  return <Navigate to={`/${to}${rest ? `/${rest}` : ""}`} replace />;
+}
+
 /**
  * Route table. Every menu entry in config/navigation.js gets a route (and a wildcard for its /new and /:id pages) guarded by
  * the roles of the entry. Until a page is built it renders the "not built yet" placeholder.
@@ -62,6 +70,10 @@ export function AppRoutes() {
           <Route element={<RequirePermission roles={["Admin", "Worker"]} />}>
             <Route path="stock/:id" element={<LegacyMaterialRedirect />} />
           </Route>
+
+          {Object.entries(MOVED).map(([from, to]) => (
+            <Route key={from} path={`${from}/*`} element={<MovedRedirect to={to} />} />
+          ))}
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>

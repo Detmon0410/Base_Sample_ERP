@@ -168,6 +168,13 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("row", { name: /Deduct/ }).getByText("Used for the order").click();
   await expect(page).toHaveURL(/\/stock\/materials\/\d+$/);
 
+  // the overview of the whole stock: the material with its lot and the quantity after the deduction
+  await open(page, "/stock");
+  const steelBlock = page.getByRole("link", { name: "STEEL-01" }).locator("xpath=ancestor::tbody");
+  await expect(steelBlock).toContainText("Steel sheet");
+  await expect(steelBlock).toContainText("LOT-A");
+  await expect(steelBlock).toContainText("75");
+
   // 8. an invoice for the completed order, and its document sent to print / PDF
   await open(page, "/invoices", "New invoice");
   await page.getByLabel("Production order").selectOption({ label: `${orderNumber} Tokyo Cold Chain` });

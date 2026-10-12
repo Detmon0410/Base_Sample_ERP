@@ -10,19 +10,12 @@ describe("the users of the mock", () => {
   it("signs in with the e-mail (any case) and the password, and never gives the password back", () => {
     const { token, user } = login({ email: " Admin@Gmail.com ", password: "admin" });
     expect(token).toBe("mock-token-1");
-    expect(user).toEqual({ id: 1, name: "Admin", department: "Administration", email: "admin@gmail.com", role: "Admin", status: "active" });
+    expect(user).toEqual({ id: 1, name: "Admin", department: "Administration", email: "admin@gmail.com", role: "Admin" });
     expect(user.password).toBeUndefined();
   });
 
-  it("refuses a wrong password and a user that is inactive", () => {
+  it("refuses a wrong password", () => {
     expect(() => login({ email: "admin@gmail.com", password: "nope" })).toThrow(/Invalid/);
-    const worker = mockUsers.find((user) => user.role === "Worker");
-    worker.status = "inactive";
-    try {
-      expect(() => login({ email: worker.email, password: worker.password })).toThrow(/inactive/);
-    } finally {
-      worker.status = "active";
-    }
   });
 
   it("knows the user of a token, and refuses a missing, a wrong or an old token", () => {

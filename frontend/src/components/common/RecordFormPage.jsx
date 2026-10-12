@@ -6,42 +6,29 @@ import { toast } from "sonner";
 
 import { PageHeader } from "@/components/common/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useLoad } from "@/hooks/useLoad";
 import { applyServerErrors } from "@/utils/serverErrors";
 
 /**
- * The page of one record (a new one, or `/:id`): the title band with the status word, the fields (`children`), and Save / Cancel
+ * The page of one record (a new one, or `/:id`): the title band, the fields (`children`), and Save / Cancel
  * at the bottom (docs/specs/s1-mini-erp-workflow.md, section 7b). Errors are shown only after Save; after Save the list opens.
- * With `withStatus` (a QT reference) an Admin makes the record inactive (after a confirmation) or active again; master data has no status.
  *
  *   api        the calls of the resource (services/crud.js)
  *   listPath   where Cancel and a successful Save go
  *   newTitle   title of a new record;  titleOf(record) the title of an existing one
  *   defaults   the empty form;  toForm(record) -> form values;  toBody(values) -> what is sent
- *   withStatus the status word, and the button that makes the record inactive or active (default true)
- *   readOnly   no Save and no status button (a Worker looking at products or materials)
+ *   readOnly   no Save (a Worker looking at products or materials)
  *   children   ({ form, record, readOnly }) => the fields
  */
-export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, withStatus = true, children }) {
+export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, children }) {
   const { id } = useParams();
   const isNew = !id;
   const navigate = useNavigate();
   const { t } = useTranslation(["master", "common"]);
   const [summary, setSummary] = useState(null);
-  const [asking, setAsking] = useState(false);
 
-  const { data: record, error: loadError, loading, reload } = useLoad(() => (isNew ? Promise.resolve(null) : api.get(id)), [id]);
+  const { data: record, error: loadError, loading } = useLoad(() => (isNew ? Promise.resolve(null) : api.get(id)), [id]);
   const form = useForm({ defaultValues: defaults, values: record ? toForm(record) : undefined });
 
   const show = (error) => setSummary(applyServerErrors(form, error, t));
@@ -58,18 +45,6 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
     }
   });
 
-  const changeStatus = async () => {
-    setAsking(false);
-    setSummary(null);
-    try {
-      await api.setStatus(id, record.status === "active" ? "inactive" : "active");
-      toast.success(t("master:form.statusChanged"));
-      reload();
-    } catch (error) {
-      show(error);
-    }
-  };
-
   if (loadError) {
     return (
       <>
@@ -82,11 +57,9 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
   }
   if (loading) return <PageHeader title={t("common:loading")} />;
 
-  const active = record?.status === "active";
-
   return (
     <>
-      <PageHeader title={isNew ? newTitle : titleOf(record)} status={withStatus && record ? t(`master:status.${record.status}`) : null} />
+      <PageHeader title={isNew ? newTitle : titleOf(record)} />
 
       <form noValidate onSubmit={onSubmit} className="flex max-w-3xl flex-col gap-5">
         {summary ? (
@@ -106,26 +79,8 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
           <Button asChild variant="outline">
             <Link to={listPath}>{readOnly ? t("master:form.back") : t("common:actions.cancel")}</Link>
           </Button>
-          {readOnly || isNew || !withStatus ? null : (
-            <Button type="button" variant={active ? "destructive" : "outline"} className="ml-auto" onClick={() => setAsking(true)}>
-              {active ? t("master:form.makeInactive") : t("master:form.makeActive")}
-            </Button>
-          )}
         </div>
       </form>
-
-      <AlertDialog open={asking} onOpenChange={setAsking}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{active ? t("master:form.inactiveTitle") : t("master:form.activeTitle")}</AlertDialogTitle>
-            <AlertDialogDescription>{active ? t("master:form.inactiveText") : t("master:form.activeText")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common:actions.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={changeStatus}>{t("common:actions.confirm")}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }

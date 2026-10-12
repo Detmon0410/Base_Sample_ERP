@@ -14,13 +14,15 @@ const PAGE_SIZE = 20;
 /**
  * A list page: the title band, a search box, a status filter, a table with a bold header and thin lines, 20 rows a page
  * with Previous / Next (docs/specs/s2-mini-erp-look.md). The first column of a row is the link to its page (`${base}/${id}`).
- * `columns` is [{ key, header, cell?(row) }]; the status column is added at the end.
+ * `columns` is [{ key, header, cell?(row) }]. A page with its own statuses (orders, invoices) gives `statusOptions` and `statusOf` and
+ * gets the status filter and the status column at the end; master data has no status.
  */
-export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf, withStatus = true }) {
+export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf }) {
   const { t } = useTranslation(["master", "common"]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
+  const withStatus = Boolean(statusOptions); // only the lists of orders and invoices have a status (their step in the workflow)
 
   const { data, error, loading } = useLoad(() => api.list({ q: q.trim() || undefined, status: withStatus ? status || undefined : undefined, page, pageSize: PAGE_SIZE }), [q, status, page]);
   const rows = data?.items ?? [];
@@ -62,11 +64,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
                 setStatus(event.target.value);
                 setPage(1);
               }}
-              options={statusOptions ?? [
-                { value: "", label: t("master:list.all") },
-                { value: "active", label: t("master:status.active") },
-                { value: "inactive", label: t("master:status.inactive") },
-              ]}
+              options={statusOptions}
             />
           </label>
         ) : null}
@@ -102,7 +100,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
                   })}
                   {withStatus ? (
                     <TableCell data-label={t("master:list.statusColumn")} className="px-4 py-3">
-                      {statusOf ? statusOf(row) : t(`master:status.${row.status}`)}
+                      {statusOf(row)}
                     </TableCell>
                   ) : null}
                 </TableRow>

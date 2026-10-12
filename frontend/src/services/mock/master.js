@@ -1,8 +1,7 @@
 // The master data of the mock: customers, products (with the BOM), materials (with the lots) and users
 // (docs/specs/s1-mini-erp-workflow.md, section 4). The four calls of every resource:
-//   GET list, GET :id, POST, PUT :id          (master data has no status and is never deleted)
+//   GET list, GET :id, POST, PUT :id          (no status; the delete comes in step S3-C)
 // List params: { q, page, pageSize }  ->  data: [...], meta: { page, pageSize, total }
-// `withStatus` (a QT reference) adds PATCH :id/status and the status filter: the record is made inactive or active again.
 
 import { MockHttpError, MockResponse } from "./errors.js";
 import { mockUsers, toPublicUser, userFromAuthorization } from "./users.js";
@@ -19,7 +18,7 @@ export const invalid = (issues) => {
 export const issue = (field, code) => ({ path: field.split("."), code });
 
 /** Builds the routes of one resource. `normalize(body, record)` returns the clean fields or throws through `invalid`. */
-export function resource({ path, store, readRoles, normalize, unique = [], searchIn, toView = (record) => record, toListView = toView, withStatus = false }) {
+export function resource({ path, store, readRoles, normalize, unique = [], searchIn, toView = (record) => record, toListView = toView }) {
   let nextId = store.reduce((max, record) => Math.max(max, record.id), 0) + 1;
 
   const access = (authorization, write) => {
@@ -45,7 +44,7 @@ export function resource({ path, store, readRoles, normalize, unique = [], searc
     [`GET ${path}`]: ({ authorization, query }) => {
       access(authorization, false);
       const q = text(query.q).toLowerCase();
-      let rows = store.filter((record) => (!withStatus || !query.status || record.status === query.status) && (!q || searchIn.some((field) => String((typeof field === "function" ? field(record) : record[field]) ?? "").toLowerCase().includes(q))));
+      let rows = store.filter((record) => (!q || searchIn.some((field) => String((typeof field === "function" ? field(record) : record[field]) ?? "").toLowerCase().includes(q))));
       rows = [...rows].sort((a, b) => b.id - a.id);
       const pageSize = Math.max(1, Number(query.pageSize) || 20);
       const page = Math.max(1, Number(query.page) || 1);
@@ -59,7 +58,7 @@ export function resource({ path, store, readRoles, normalize, unique = [], searc
       access(authorization, true);
       const data = normalize(body, null);
       checkUnique(data, null);
-      const record = { id: nextId++, status: "active", createdAt: stamp(), updatedAt: stamp(), ...data };
+      const record = { id: nextId++, createdAt: stamp(), updatedAt: stamp(), ...data };
       store.push(record);
       return new MockResponse({ data: toView(record), status: 201 });
     },
@@ -71,18 +70,6 @@ export function resource({ path, store, readRoles, normalize, unique = [], searc
       Object.assign(record, data, { updatedAt: stamp() });
       return toView(record);
     },
-    ...(withStatus
-      ? {
-          [`PATCH ${path}/:id/status`]: ({ authorization, params, body }) => {
-            access(authorization, true);
-            const record = find(params.id);
-            if (!["active", "inactive"].includes(body.status)) invalid([issue("status", "INVALID")]);
-            record.status = body.status;
-            record.updatedAt = stamp();
-            return toView(record);
-          },
-        }
-      : {}),
   };
 }
 

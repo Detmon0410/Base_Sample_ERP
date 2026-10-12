@@ -23,7 +23,9 @@ describe("QT references of the mock", () => {
 
   it("saves a reference with its file, lists it without the file data, and opens it with the file", () => {
     const made = call("POST /qt", admin, { body: body() }).data;
-    expect(made).toMatchObject({ qtNumber: "QT-001", customerName: "QT Customer", status: "active" });
+    expect(made).toMatchObject({ qtNumber: "QT-001", customerName: "QT Customer" });
+    expect(made.status).toBeUndefined();
+    expect(mockRoutes["PATCH /qt/:id/status"]).toBeUndefined();
 
     const row = call("GET /qt", admin, { query: { q: "qt customer" } }).data[0];
     expect(row.file).toEqual({ name: "qt-001.pdf", type: "application/pdf" });

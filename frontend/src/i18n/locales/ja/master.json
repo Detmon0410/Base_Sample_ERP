@@ -1,8 +1,4 @@
 {
-  "status": {
-    "active": "有効",
-    "inactive": "無効"
-  },
   "list": {
     "search": "検索",
     "status": "状態",
@@ -15,14 +11,7 @@
     "back": "一覧へ戻る",
     "notFound": "データが見つかりません",
     "saved": "保存しました。",
-    "statusChanged": "状態を変更しました。",
-    "checkFields": "入力内容を確認してください。印のある項目をご確認ください。",
-    "makeInactive": "無効にする",
-    "makeActive": "有効にする",
-    "inactiveTitle": "このデータを無効にしますか？",
-    "inactiveText": "データは残りますが、新しい作業では選べなくなります。あとで有効に戻せます。",
-    "activeTitle": "このデータを有効にしますか？",
-    "activeText": "新しい作業で選べるようになります。"
+    "checkFields": "入力内容を確認してください。印のある項目をご確認ください。"
   },
   "errors": {
     "REQUIRED": "入力または選択してください。",

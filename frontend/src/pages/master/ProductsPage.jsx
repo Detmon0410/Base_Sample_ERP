@@ -69,7 +69,6 @@ function ProductForm() {
   const readOnly = !isAdmin(user);
   return (
     <RecordFormPage
-      withStatus={false}
       api={productsApi}
       listPath="/products"
       newTitle={t("products.new")}
@@ -108,8 +107,7 @@ export function ProductsPage() {
         index
         element={
           <RecordList
-            withStatus={false}
-            api={productsApi}
+                  api={productsApi}
             base="/products"
             title={t("products.title")}
             canCreate={isAdmin(user)}

@@ -15,7 +15,6 @@ function UserForm() {
   const roles = ROLES.map((value) => ({ value, label: t(`nav:roles.${value}`) }));
   return (
     <RecordFormPage
-      withStatus={false}
       api={usersApi}
       listPath="/users"
       newTitle={t("master:users.new")}
@@ -59,8 +58,7 @@ export function UsersPage() {
         index
         element={
           <RecordList
-            withStatus={false}
-            api={usersApi}
+                  api={usersApi}
             base="/users"
             title={t("master:users.title")}
             canCreate

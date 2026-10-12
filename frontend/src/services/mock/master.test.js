@@ -19,7 +19,8 @@ const fails = (fn) => {
 describe("master data of the mock", () => {
   it("makes a customer, finds it by search, and checks the fields", () => {
     const made = call("POST /customers", admin, { body: { name: " Tokyo Cold ", address: "Tokyo", email: "a@b.jp", telephone: "03" } }).data;
-    expect(made).toMatchObject({ name: "Tokyo Cold", status: "active" });
+    expect(made).toMatchObject({ name: "Tokyo Cold" });
+    expect(made.status).toBeUndefined();
 
     const found = call("GET /customers", admin, { query: { q: "tokyo" } });
     expect(found.meta.total).toBe(1);

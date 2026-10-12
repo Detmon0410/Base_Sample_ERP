@@ -1,6 +1,6 @@
 // QT references (docs/specs/s1-mini-erp-workflow.md, section 2 step 1): the quotation is made outside the system; here only its
 // reference is kept - QT number, QT date, customer, notes and the file of the quotation (a data URL in the mock, Q8).
-// A QT reference: { id, qtNumber, qtDate, customerId, notes, file: { name, type, dataUrl }, status }.
+// A QT reference: { id, qtNumber, qtDate, customerId, notes, file: { name, type, dataUrl } }.
 
 import { customers, invalid, issue, resource, text } from "./master.js";
 
@@ -29,7 +29,6 @@ export const qtRoutes = resource({
   store: qtReferences,
   readRoles: ["Admin"],
   unique: ["qtNumber"],
-  withStatus: true,
   searchIn: ["qtNumber", "notes", customerName],
   toView: withCustomer,
   toListView: withoutFileData,

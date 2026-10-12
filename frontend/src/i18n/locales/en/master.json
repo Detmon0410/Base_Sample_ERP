@@ -1,8 +1,4 @@
 {
-  "status": {
-    "active": "Active",
-    "inactive": "Inactive"
-  },
   "list": {
     "search": "Search",
     "status": "Status",
@@ -15,14 +11,7 @@
     "back": "Back to the list",
     "notFound": "Record not found",
     "saved": "Saved.",
-    "statusChanged": "The status was changed.",
-    "checkFields": "Some fields need your attention. Please check the marked fields.",
-    "makeInactive": "Make inactive",
-    "makeActive": "Make active",
-    "inactiveTitle": "Make this record inactive?",
-    "inactiveText": "It stays in the system but cannot be chosen for new work. You can make it active again.",
-    "activeTitle": "Make this record active?",
-    "activeText": "It can be chosen for new work again."
+    "checkFields": "Some fields need your attention. Please check the marked fields."
   },
   "errors": {
     "REQUIRED": "Enter or choose a value.",

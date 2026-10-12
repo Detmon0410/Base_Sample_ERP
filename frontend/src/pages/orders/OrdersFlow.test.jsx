@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { AuthContext } from "@/lib/auth-context";
-import { customersApi, productsApi } from "@/services/master.service";
+import { customersApi, materialsApi, productsApi } from "@/services/master.service";
 import { mockUsers, tokenOf, toPublicUser } from "@/services/mock/users";
 import { qtApi } from "@/services/qt.service";
 import { setToken } from "@/utils/session";
@@ -33,6 +33,23 @@ describe("production orders, page by page", () => {
     const customer = await customersApi.create({ name: "Flow Customer" });
     await productsApi.create({ code: "FLOW-P", name: "Flow fridge", price: 5000 });
     await qtApi.create({ qtNumber: "QT-FLOW", qtDate: "2026-10-01", customerId: customer.id, file: { name: "q.pdf", dataUrl: "data:application/pdf;base64,AA==" } });
+  });
+
+  it("shows the BOM of the product beside the processes, for the quantity, without a warning when the material is out and with nothing to add", async () => {
+    const user = userEvent.setup();
+    const material = await materialsApi.create({ code: "MAT-OUT", name: "Steel sheet" }); // no lot: nothing in stock
+    await productsApi.create({ code: "BOM-P", name: "Bom fridge", price: 100, bom: [{ materialId: material.id, quantity: 2 }] });
+    renderAs(mockUsers[0], "/sale/orders/new");
+
+    await waitFor(() => expect(screen.getByRole("option", { name: "BOM-P Bom fridge" })).toBeInTheDocument());
+    await user.selectOptions(screen.getByLabelText("Product"), "BOM-P Bom fridge");
+    await user.type(screen.getByLabelText("Quantity"), "10");
+
+    expect(screen.getByRole("heading", { name: "Materials (BOM)" })).toBeInTheDocument();
+    const row = await screen.findByRole("row", { name: /MAT-OUT Steel sheet/ });
+    expect(row).toHaveTextContent("20"); // 2 for one product x 10
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument(); // the material is out of stock, and nothing is said
+    expect(screen.queryByRole("button", { name: /material/i })).not.toBeInTheDocument(); // nothing to add to the BOM here
   });
 
   it("an Admin makes an order with a process, starts it, and a Worker completes it", async () => {

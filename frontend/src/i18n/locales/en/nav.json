@@ -26,5 +26,8 @@
   "receipts": "Receipts",
   "userMenu": "User menu",
   "role": "Role",
-  "department": "Department"
+  "department": "Department",
+  "resetData": "Reset all data (for testing)",
+  "resetTitle": "Reset all data?",
+  "resetText": "Everything made in this browser is deleted and the first data comes back. This is for testing and cannot be undone."
 }

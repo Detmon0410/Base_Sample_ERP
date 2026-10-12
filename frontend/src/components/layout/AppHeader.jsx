@@ -1,12 +1,15 @@
+import { RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, useLocation } from "react-router";
 
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { NavIcon } from "@/components/layout/NavIcon";
 import { getVisibleNav } from "@/config/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { PERSIST, resetTestData } from "@/services/mock/persist";
 
 const ENTRY = "inline-flex h-full items-center gap-2 px-3 text-primary-foreground/90 outline-none hover:bg-black/10 focus-visible:ring-2 focus-visible:ring-white";
 
@@ -27,6 +30,7 @@ export function AppHeader() {
   const narrowOpen = current.narrow;
   const setOpen = (value) => setState((old) => ({ ...(old.path === pathname ? old : { narrow: false }), open: typeof value === "function" ? value(old.path === pathname ? old.open : null) : value, path: pathname }));
   const setNarrowOpen = (value) => setState((old) => ({ ...(old.path === pathname ? old : { open: null }), narrow: typeof value === "function" ? value(old.path === pathname ? old.narrow : false) : value, path: pathname }));
+  const [resetAsk, setResetAsk] = useState(false); // the question before the reset of the test data
   const bar = useRef(null);
 
   // a click outside the bar or Escape closes an open menu
@@ -111,6 +115,16 @@ export function AppHeader() {
                 <span className="text-muted-foreground">{t("common:language.label")}</span>
                 <LanguageSwitcher />
               </div>
+              {PERSIST ? (
+                <button
+                  type="button"
+                  onClick={() => setResetAsk(true)}
+                  className="mb-2 flex w-full items-center gap-2 border border-slate-300 bg-card px-3 py-2 text-left text-destructive outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <RotateCcw aria-hidden="true" className="size-4" />
+                  {t("nav:resetData")}
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={logout}
@@ -122,6 +136,7 @@ export function AppHeader() {
           ) : null}
         </div>
       </div>
+      <ConfirmDialog open={resetAsk} onOpenChange={setResetAsk} title={t("nav:resetTitle")} text={t("nav:resetText")} onConfirm={resetTestData} />
     </header>
   );
 }

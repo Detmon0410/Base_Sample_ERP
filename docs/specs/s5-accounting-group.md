@@ -18,7 +18,7 @@ The access does not change: Accounting is for the **Admin** only (the requiremen
 | Page | Route | What it is |
 |---|---|---|
 | Invoices | `/accounting/invoices`, `/accounting/invoices/new`, `/accounting/invoices/:id` | as before, but the page of an invoice no longer holds the receipt: after the full payment it shows the payment made and a **link to the receipt** |
-| Receipts (new) | `/accounting/receipts` | the list of every receipt, newest first, 20 a page: number, date, customer, invoice, amount, payment method. Search by receipt number, customer name or invoice number. A click on any cell of a row opens it. No "New": a receipt is made by the payment of an invoice |
+| Receipts (new) | `/accounting/receipts` | the list of every receipt, newest first, 20 a page: number, date, customer, invoice, amount. Search by receipt number, customer name or invoice number. A click on any cell of a row opens it. No "New": a receipt is made by the payment of an invoice |
 | One receipt (new) | `/accounting/receipts/:id` | the paper of the receipt, **Download PDF**, **Print**, and the link back to its invoice |
 
 `GET /receipts` and `GET /receipts/:id` (Admin) are new; a receipt now has an `id` and an `invoiceId`. A receipt is never changed or deleted (there is no `POST`, `PUT` or `DELETE`). See [receipts.md](../api/receipts.md).

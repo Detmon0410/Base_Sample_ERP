@@ -13,7 +13,7 @@ This is the first step of the new direction: the workflow and the data first, th
 | 3 | The master data that the new requirements do not list is **cut** (see 5) | user |
 | 4 | **Every progress update is kept** as its own history entry (who, when, quantity, date, note) | user |
 | 5 | **Traceability is cut** together with the serial numbers | user |
-| 6 | ~~The payment method is cut~~ **Restored to follow the requirements (5.6)**: a payment is a date, an amount, a payment method and an optional reference or notes; the receipt shows the method | user, then the requirements |
+| 6 | **No payment method and no reference or notes** (2026-10-12; the requirements 5.6 list the method, this is a change the user asked for): a payment is only a date and an amount; the receipt does not show a method | user |
 | 7 | The **sidebar moves to the header**: a menu in the top bar, links in one row, the sub-menus as dropdowns | user |
 | 8 | There is **one simple summary page** (numbers only, no charts, no tabs) as the first page | user |
 | 9 | "Not for real use": **keep the business rules of the requirements, but do not polish** (no extra edge-case care: long explanations, many messages, second confirmations) | user |
@@ -36,7 +36,7 @@ This is the first step of the new direction: the workflow and the data first, th
 | 4 | Worker | Production order | Records progress of each process: status, completed quantity, work date, note. A process is Completed only when its completed quantity equals the required quantity |
 | 5 | system | Production order | The order becomes **Completed** when every process of every line is Completed |
 | 6 | Admin | Invoices | Issues **one invoice** for a Completed order (a snapshot of the lines, no tax). Status Unpaid |
-| 7 | Admin | Invoice | Records the **full payment**: date, amount (= the invoice total), payment method and an optional reference or notes. The invoice becomes **Paid** and **one receipt** is issued. Invoice and receipt can be printed / saved as PDF |
+| 7 | Admin | Invoice | Records the **full payment**: date, amount (= the invoice total). There is no payment method and no reference or notes. The invoice becomes **Paid** and **one receipt** is issued. Invoice and receipt can be printed / saved as PDF |
 | 8 | Admin | Stock | At any time and by hand: add material stock (material, lot, quantity), deduct it when used, adjust after a count. The production never changes the stock by itself |
 
 An order can be Completed with its invoice still Unpaid: the two statuses are separate.

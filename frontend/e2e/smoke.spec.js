@@ -74,7 +74,7 @@ test("the menu moves from the top bar to a list on the left and back, and every 
   if (narrow) await page.getByRole("button", { name: "Menu", exact: true }).click();
   const menu = page.getByRole("navigation", { name: "Main menu" });
   await expect(menu.locator("xpath=ancestor::header")).toHaveCount(0); // not in the bar any more
-  for (const word of ["Quotations (QT)", "Production orders", "Invoices and receipts", "Customers", "Products and BOM", "Materials and stock", "Users"]) {
+  for (const word of ["Quotations (QT)", "Production orders", "Invoices", "Receipts", "Customers", "Products and BOM", "Materials and stock", "Users"]) {
     await expect(menu.getByRole("link", { name: word, exact: true })).toBeVisible();
   }
   await menu.getByRole("link", { name: "Customers", exact: true }).click();

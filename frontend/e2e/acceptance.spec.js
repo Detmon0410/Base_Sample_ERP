@@ -205,12 +205,25 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Record the payment" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Paid");
+  await expect(page.getByText(/Bank transfer - Slip 20261010$/)).toBeVisible(); // the payment made
+
+  // the receipt has its own page (the group Accounting), reached from the invoice
+  await page.getByRole("link", { name: /^RC-\d{4}-0001$/ }).click();
+  await expect(page).toHaveURL(/\/receipts\/\d+$/);
   await expect(page.getByRole("heading", { level: 2, name: "Receipt" })).toBeVisible();
   await expect(page.getByText("Payment method: Bank transfer")).toBeVisible();
   const receiptNumber = (await page.locator("[data-print-doc=receipt] dd").first().textContent()).trim();
-  await downloadPdf(page, 1, `${receiptNumber}.pdf`); // the receipt as a PDF file
-  await page.getByRole("button", { name: "Print", exact: true }).nth(1).click();
+  await downloadPdf(page, 0, `${receiptNumber}.pdf`); // the receipt as a PDF file
+  await page.getByRole("button", { name: "Print", exact: true }).click();
   expect(await page.evaluate(() => window.__printed)).toBe("receipt");
+  await expect(page.getByRole("link", { name: invoiceNumber })).toBeVisible(); // the way back to the invoice
+
+  // the list of the receipts: this one, with its customer and amount; a click on the row opens it
+  await open(page, "/receipts");
+  await expect(page.getByRole("row", { name: new RegExp(receiptNumber) })).toContainText("Tokyo Cold Chain");
+  await expect(page.getByRole("row", { name: new RegExp(receiptNumber) })).toContainText("¥450,000");
+  await page.getByRole("row", { name: new RegExp(receiptNumber) }).getByText("Tokyo Cold Chain").click();
+  await expect(page).toHaveURL(/\/receipts\/\d+$/);
 
   // 10. the order shows its QT reference, the progress, the invoice and the receipt
   await open(page, "/orders", orderNumber);

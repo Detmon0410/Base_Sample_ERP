@@ -11,7 +11,8 @@ export const PAGES = [
   { path: "/", name: "Dashboard", roles: ["admin", "worker"] },
   { path: "/qt", name: "Quotations (QT)", roles: ["admin"] },
   { path: "/orders", name: "Production orders", roles: ["admin", "worker"] },
-  { path: "/invoices", name: "Invoices and receipts", roles: ["admin"] },
+  { path: "/invoices", name: "Invoices", roles: ["admin"] },
+  { path: "/receipts", name: "Receipts", roles: ["admin"] },
   { path: "/stock", name: "Overview", roles: ["admin", "worker"] },
   { path: "/stock/materials", name: "Materials and stock", roles: ["admin", "worker"] },
   { path: "/stock/movements", name: "Movements", roles: ["admin", "worker"] },
@@ -22,7 +23,7 @@ export const PAGES = [
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */
 export const MENU_OF = {
-  admin: ["Dashboard", "Orders", "Invoices and receipts", "Stock", "Master data"],
+  admin: ["Dashboard", "Orders", "Accounting", "Stock", "Master data"],
   worker: ["Dashboard", "Production orders", "Stock", "Products and BOM"],
 };
 

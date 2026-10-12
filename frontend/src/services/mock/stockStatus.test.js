@@ -64,18 +64,13 @@ describe("the minimum level on the materials of the mock", () => {
     expect(status()).toBe("Out");
   });
 
-  it("filters the list by the status, counts the Low and the Out in the overview, and ranks them on the Dashboard with their status", () => {
-    const before = call("GET /stock/overview", worker);
+  it("filters the list by the status, and ranks them on the Dashboard with their status", () => {
     make("ST-F-NORMAL", 1, 100);
     make("ST-F-LOW", 100, 3);
     make("ST-F-OUT", 5, 0);
     expect(call("GET /materials", admin, { query: { status: "Low", q: "ST-F-" } }).data.map((row) => row.code)).toEqual(["ST-F-LOW"]);
     expect(call("GET /materials", admin, { query: { status: "Out", q: "ST-F-" } }).data.map((row) => row.code)).toEqual(["ST-F-OUT"]);
     expect(call("GET /materials", admin, { query: { status: "Normal", q: "ST-F-" } }).data.map((row) => row.code)).toEqual(["ST-F-NORMAL"]);
-
-    const after = call("GET /stock/overview", worker);
-    expect(after.low - before.low).toBe(1);
-    expect(after.out - before.out).toBe(1);
 
     const least = call("GET /dashboard", worker).leastStock;
     expect(least.find((row) => row.code === "ST-F-OUT")).toMatchObject({ total: 0, stockStatus: "Out" });

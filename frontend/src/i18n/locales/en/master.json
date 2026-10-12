@@ -148,12 +148,6 @@
     "colMaterial": "Material",
     "noMovements": "No stock change yet.",
     "noMatch": "No stock change matches.",
-    "overviewTitle": "Stock overview",
-    "materialsCount": "Materials",
-    "lotsCount": "Lots",
-    "searchMaterial": "Search (material code or name)",
-    "lotsOf": "Lots: {{count}}",
-    "noMaterialsYet": "No material yet.",
     "status": {
       "Normal": "Normal",
       "Low": "Low",

@@ -33,7 +33,6 @@ export const NAV = [
     labelKey: "stock",
     icon: "stockGroup",
     items: [
-      { key: "stockOverview", to: "/stock", labelKey: "stockOverview", icon: "overview", roles: ["Admin", "Worker"] },
       { key: "materials", to: "/stock/materials", labelKey: "materialsStock", icon: "stock", roles: ["Admin", "Worker"] },
       { key: "movements", to: "/stock/movements", labelKey: "movements", icon: "movements", roles: ["Admin", "Worker"] },
     ],

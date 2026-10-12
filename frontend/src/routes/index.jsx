@@ -12,7 +12,6 @@ import { QtPage } from "@/pages/qt/QtPage";
 import { ProductsPage } from "@/pages/master/ProductsPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { StockMovementsPage } from "@/pages/stock/StockMovementsPage";
-import { StockOverviewPage } from "@/pages/stock/StockOverviewPage";
 import { StockPage } from "@/pages/stock/StockPage";
 import { UsersPage } from "@/pages/users/UsersPage";
 import { ForbiddenPage } from "@/pages/system/ForbiddenPage";
@@ -25,7 +24,7 @@ import { RequirePermission } from "./RequirePermission";
 
 // Menu entries whose page is built (the key of config/navigation.js). Everything else opens the "not built yet" placeholder.
 // Each module of docs/specs/s1-mini-erp-workflow.md adds its pages here.
-const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, receipts: ReceiptsPage, productionOrders: OrdersPage, stockOverview: StockOverviewPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage };
+const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, receipts: ReceiptsPage, productionOrders: OrdersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage };
 
 /** An old address of a material, /stock/<id> (a saved link, the Dashboard of before): it opens the material where it is now. */
 function LegacyMaterialRedirect() {
@@ -68,6 +67,7 @@ export function AppRoutes() {
           })}
 
           <Route element={<RequirePermission roles={["Admin", "Worker"]} />}>
+            <Route path="stock" element={<Navigate to="/stock/materials" replace />} />
             <Route path="stock/:id" element={<LegacyMaterialRedirect />} />
           </Route>
 

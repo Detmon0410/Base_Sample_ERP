@@ -48,7 +48,7 @@ describe("master data of the mock", () => {
     expect(fails(() => call("GET /users", worker)).status).toBe(403);
   });
 
-  it("has no status and no delete for master data, and a user can sign in at once", () => {
+  it("has no status for master data, a delete (see deletes.test.js), and a user can sign in at once", () => {
     const made = call("POST /users", admin, { body: { name: "Mika", department: "Factory", email: "Mika@Factory.jp", role: "Worker", password: "secret1" } }).data;
     expect(made).toMatchObject({ email: "mika@factory.jp", role: "Worker" });
     expect(made.password).toBeUndefined();
@@ -56,7 +56,7 @@ describe("master data of the mock", () => {
 
     for (const resource of ["customers", "products", "materials", "users"]) {
       expect(mockRoutes[`PATCH /${resource}/:id/status`]).toBeUndefined();
-      expect(mockRoutes[`DELETE /${resource}/:id`]).toBeUndefined();
+      expect(mockRoutes[`DELETE /${resource}/:id`]).toBeTypeOf("function");
     }
   });
 

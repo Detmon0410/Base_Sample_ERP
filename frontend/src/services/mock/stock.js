@@ -2,7 +2,7 @@
 // deducts it when it is used, or adjusts it after a count. The production never changes the stock by itself.
 //
 // A stock change: { id, materialId, lotNumber, kind: "Add" | "Deduct" | "Adjust", change (+ or -), balance (of the lot after it),
-//                   changeDate, note, orderId, userId, userName, at }   - never changed or deleted.
+//                   changeDate, note, initial (the first stock of a new material), orderId, userId, userName, at }   - never changed or deleted.
 // The quantity of a lot changes only through a stock change (a material made with lots starts with an "Add" for each lot).
 
 import { MockHttpError, MockResponse } from "./errors.js";
@@ -31,7 +31,7 @@ const findMaterial = (id) => {
 };
 
 const log = (material, lotNumber, kind, change, balance, extra, user) => {
-  const entry = { id: nextId++, materialId: material.id, lotNumber, kind, change, balance, changeDate: extra.changeDate, note: extra.note ?? "", orderId: extra.orderId ?? null, userId: user.id, userName: user.name, at: new Date().toISOString() };
+  const entry = { id: nextId++, materialId: material.id, lotNumber, kind, change, balance, changeDate: extra.changeDate, note: extra.note ?? "", initial: extra.initial ?? false, orderId: extra.orderId ?? null, userId: user.id, userName: user.name, at: new Date().toISOString() };
   stockChanges.push(entry);
   return entry;
 };
@@ -48,7 +48,7 @@ export const stockRoutes = {
     const response = masterRoutes["POST /materials"](request);
     const user = userFromAuthorization(request.authorization);
     const material = materials.find((item) => item.id === response.data.id);
-    for (const lot of material.lots) log(material, lot.lotNumber, "Add", lot.quantity, lot.quantity, { changeDate: today(), note: "Initial stock" }, user);
+    for (const lot of material.lots) log(material, lot.lotNumber, "Add", lot.quantity, lot.quantity, { changeDate: today(), note: "Initial stock", initial: true }, user);
     return response;
   },
 

@@ -3,6 +3,7 @@ import { qtRoutes } from "./qt.js";
 import { invoiceRoutes } from "./invoices.js";
 import { orderRoutes } from "./orders.js";
 import { stockRoutes } from "./stock.js";
+import { deleteRoutes } from "./deletes.js";
 import { summaryRoutes } from "./summary.js";
 import { login, toPublicUser, userFromAuthorization } from "./users.js";
 
@@ -21,5 +22,6 @@ export const mockRoutes = {
   ...orderRoutes,
   ...invoiceRoutes,
   ...summaryRoutes,
+  ...deleteRoutes,
   ...stockRoutes, // after masterRoutes: it wraps POST and PUT of /materials
 };

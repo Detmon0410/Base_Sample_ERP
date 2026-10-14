@@ -146,19 +146,14 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("button", { name: "Record progress" })).toHaveCount(0); // a Worker cannot reopen
   await logOut(page, WORKER.name);
 
-  // 7. the Admin deducts material stock by hand and reads the history
+  // 7. Start production deducted the BOM by itself (2.5 x 10 = 25 of the lot); the Admin reads the history
   await signIn(page, USERS.admin);
   await open(page, "/stock/materials", "STEEL-01");
-  await page.getByLabel("Type").selectOption("Deduct");
-  await page.getByLabel("Lot", { exact: true }).selectOption({ label: "LOT-A (100)" });
-  await page.getByLabel("Quantity").fill("25");
-  await page.getByLabel("Production order (optional)").selectOption({ label: `${orderNumber} Tokyo Cold Chain` });
-  await page.getByLabel("Note").fill("Used for the order");
-  await page.getByRole("button", { name: "Save the change" }).click();
   await expect(page.getByRole("row", { name: /LOT-A/ }).first()).toContainText("75");
   const history = page.getByRole("heading", { name: "Stock history" }).locator("xpath=ancestor::section");
   await expect(history.getByRole("row", { name: /Deduct/ })).toContainText("-25");
   await expect(history.getByRole("row", { name: /Deduct/ })).toContainText(orderNumber);
+  await expect(history.getByRole("row", { name: /Deduct/ })).toContainText("Production started");
 
   // the movements page: the same deduction among the changes of every material; a click on the row opens the material
   await open(page, "/stock/movements");
@@ -168,7 +163,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByLabel("Type").selectOption("Add");
   await expect(page.getByRole("row", { name: /Deduct/ })).toHaveCount(0);
   await page.getByLabel("Type").selectOption("Deduct");
-  await page.getByRole("row", { name: /Deduct/ }).getByText("Used for the order").click();
+  await page.getByRole("row", { name: /Deduct/ }).getByText("Production started").click();
   await expect(page).toHaveURL(/\/stock\/materials\/\d+$/);
 
   // the list of the materials: the quantity after the deduction and the status

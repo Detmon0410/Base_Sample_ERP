@@ -6,6 +6,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { AuthContext } from "@/lib/auth-context";
 import { customersApi, materialsApi, productsApi } from "@/services/master.service";
 import { mockUsers, tokenOf, toPublicUser } from "@/services/mock/users";
+import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
 import { setToken } from "@/utils/session";
 
@@ -116,5 +117,22 @@ describe("production orders, page by page", () => {
   it("keeps a Worker out of the page of a new order", async () => {
     renderAs(mockUsers[1], "/sale/orders/new");
     expect(await screen.findByText("forbidden")).toBeInTheDocument();
+  });
+
+  it("says which material is short when the start is refused, with a button that opens it ready to add the missing quantity", async () => {
+    const user = userEvent.setup();
+    setToken(tokenOf(mockUsers[0])); // the tests before this one signed in as a Worker
+    const material = await materialsApi.create({ code: "MAT-SHORT", name: "Short steel", lots: [{ lotNumber: "S1", quantity: 5 }] });
+    const product = await productsApi.create({ code: "SHORT-P", name: "Short fridge", price: 100, bom: [{ materialId: material.id, quantity: 2 }] });
+    const customer = await customersApi.create({ name: "Short Customer" });
+    const qt = await qtApi.create({ qtNumber: "QT-SHORT", qtDate: "2026-10-01", customerId: customer.id });
+    const order = await ordersApi.create({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 10, unitPrice: 100, processes: [{ name: "Cut", instructions: "" }] }] });
+    renderAs(mockUsers[0], `/sale/orders/${order.id}`);
+
+    await user.click(await screen.findByRole("button", { name: "Start production" }));
+    await user.click(await screen.findByRole("button", { name: "Confirm" }));
+    expect(await screen.findByText(/MAT-SHORT Short steel: needs 20, in stock 5\./)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Add stock" })).toHaveAttribute("href", `/stock/materials/${material.id}?add=15&order=${order.id}`);
+    expect(screen.getByRole("button", { name: "Start production" })).toBeInTheDocument(); // it did not start
   });
 });

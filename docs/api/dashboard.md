@@ -1,7 +1,7 @@
 # API - Dashboard
 
 Page: `/` (the first page) · Frontend: `frontend/src/pages/dashboard`, `components/common/Charts.jsx`, `services/dashboard.service.js` · Mock: `services/mock/dashboard.js`
-Conventions: [README.md](README.md) · The plan: [S3, section 4](../specs/s3-dashboard-crud-pdf.md)
+Conventions: [README.md](README.md)
 
 One call gives the numbers of every block of the page. It replaces `GET /summary`.
 
@@ -35,4 +35,4 @@ One call gives the numbers of every block of the page. It replaces `GET /summary
 | `invoicing.months` | the last 6 months, oldest first, `month` = `YYYY-MM`: `invoiced` is the sum of the totals of the invoices dated in that month, `paid` the sum of the payments dated in that month |
 | `invoicing.unpaidList` | up to 5 unpaid invoices with the oldest invoice date first |
 
-Money is whole yen. The page links a tile or a row to the page that explains it (`/orders`, `/invoices`, `/orders/:id`, `/invoices/:id`, `/stock/:id`).
+Money is whole yen. The page links a tile or a row to the page that explains it (`/sale/orders`, `/accounting/invoices`, `/sale/orders/:id`, `/accounting/invoices/:id`, `/stock/materials/:id`).

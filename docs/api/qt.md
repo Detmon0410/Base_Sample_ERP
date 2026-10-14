@@ -1,6 +1,6 @@
 # API — QT references
 
-Page: `/qt` · Frontend: `frontend/src/pages/qt`, `services/qt.service.js` · Mock: `services/mock/qt.js`
+Page: `/sale/quotations` · Frontend: `frontend/src/pages/qt`, `services/qt.service.js` · Mock: `services/mock/qt.js`
 Conventions: [README.md](README.md) · The five calls of a resource: [master-data.md](master-data.md) · Admin only (others: `403 FORBIDDEN`)
 
 The quotation is made outside the system; only its reference is kept.

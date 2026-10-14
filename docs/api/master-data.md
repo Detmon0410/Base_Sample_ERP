@@ -1,11 +1,11 @@
 # API — Master data: customers, products, materials, users
 
-Pages: `/customers`, `/products`, `/users`, and the materials (`/stock/materials`, in the Stock group of the menu, see [stock.md](stock.md)) · Frontend: `frontend/src/pages/master`, `pages/stock`, `pages/users`, `services/master.service.js` · Mock: `services/mock/master.js`, `services/mock/stock.js`
-Conventions: [README.md](README.md) · Data: [the specification, section 4](../specs/s1-mini-erp-workflow.md)
+Pages: `/master/customers`, `/master/products`, `/master/users`, and the materials (`/stock/materials`, in the Stock group of the menu, see [stock.md](stock.md)) · Frontend: `frontend/src/pages/master`, `pages/stock`, `pages/users`, `services/master.service.js` · Mock: `services/mock/master.js`, `services/mock/stock.js`
+Conventions: [README.md](README.md)
 
 ## The five calls of every resource
 
-`{resource}` is `customers`, `products`, `materials` or `users`. Master data has **no status** (no active / inactive): a record that is not used is deleted, and a record that is used is **kept** by refusing the delete ([plan S3](../specs/s3-dashboard-crud-pdf.md), section 5).
+`{resource}` is `customers`, `products`, `materials` or `users`. Master data has **no status** (no active / inactive): a record that is not used is deleted, and a record that is used is **kept** by refusing the delete.
 
 | Method | Path | Body | Result |
 |---|---|---|---|

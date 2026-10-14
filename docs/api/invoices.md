@@ -1,6 +1,6 @@
 # API — Invoices and payment
 
-Pages: `/invoices`, `/invoices/new`, `/invoices/:id` (the group Accounting of the menu; the receipts have their own pages: [receipts.md](receipts.md)) · Frontend: `frontend/src/pages/invoices`, `services/invoices.service.js`, `utils/print.js` · Mock: `services/mock/invoices.js`
+Pages: `/accounting/invoices`, `/accounting/invoices/new`, `/accounting/invoices/:id` (the group Accounting of the menu; the receipts have their own pages: [receipts.md](receipts.md)) · Frontend: `frontend/src/pages/invoices`, `services/invoices.service.js`, `utils/print.js` · Mock: `services/mock/invoices.js`
 Conventions: [README.md](README.md) · Admin only (others: `403 FORBIDDEN`) · No tax anywhere · JPY, whole yen
 
 | Method | Path | Notes |

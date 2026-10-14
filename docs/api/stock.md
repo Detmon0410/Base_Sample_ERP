@@ -1,6 +1,6 @@
 # API - Stock: materials, movements
 
-Pages (the Stock group of the menu, [S4](../specs/s4-stock-group.md)): `/stock/materials` (the materials, their lots and the stock changes), `/stock/movements` (every movement) · Frontend: `frontend/src/pages/stock`, `services/master.service.js` (`stockApi`) · Mock: `services/mock/stock.js`, `services/mock/stockStatus.js`
+Pages (the Stock group of the menu): `/stock/materials` (the materials, their lots and the stock changes), `/stock/movements` (every movement) · Frontend: `frontend/src/pages/stock`, `services/master.service.js` (`stockApi`) · Mock: `services/mock/stock.js`, `services/mock/stockStatus.js`
 Conventions: [README.md](README.md) · The five calls of a material (`GET`, `POST`, `PUT`, `DELETE`), its fields and the delete rules: [master-data.md](master-data.md)
 
 Who may call: an Admin and a Worker read everything on this page; only an Admin makes a stock change (`403 FORBIDDEN` for a Worker).
@@ -30,7 +30,7 @@ There is **no overview page and no `GET /stock/overview`** (removed 2026-10-12, 
 
 ## The minimum level and the stock status of a material
 
-The requirements have no minimum level; it is an **optional addition** ([S4](../specs/s4-stock-group.md), Q1). Every view of a material (`GET /materials`, `GET /materials/:id`, the answer of a stock change, `leastStock` of the [Dashboard](dashboard.md)) carries `total` and `stockStatus`, computed by **one rule** on the server:
+The requirements have no minimum level; it is an **optional addition**. Every view of a material (`GET /materials`, `GET /materials/:id`, the answer of a stock change, `leastStock` of the [Dashboard](dashboard.md)) carries `total` and `stockStatus`, computed by **one rule** on the server:
 
 | `stockStatus` | When |
 |---|---|
@@ -54,7 +54,7 @@ The ledger of every stock change of every material together (the page `/stock/mo
 
 `data` is a list of the entries below with `materialCode` and `materialName` added, **newest `changeDate` first** (then the last made first); `meta` is `{ page, pageSize, total }`. `400 VALIDATION_ERROR` with `INVALID` (a type that does not exist) or `INVALID_DATE` (a `from` or `to` that is not a real day). The changes of a deleted material are gone with it.
 
-A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, change (+ or -), balance (of the lot after it), changeDate, note, orderId, orderNumber, userId, userName, at }`. Creating a material with lots writes one `Add` entry (note `Initial stock`) per lot.
+A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, change (+ or -), balance (of the lot after it), changeDate, note, initial (true for the first stock of a new material), orderId, orderNumber, userId, userName, at }`; both `GET /stock-changes` and `GET /materials/:id/stock-changes` also carry `materialCode` and `materialName`. Creating a material with lots writes one `Add` entry (note `Initial stock`) per lot.
 
 ## Data needed
 

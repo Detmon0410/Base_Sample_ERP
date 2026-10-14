@@ -1,6 +1,6 @@
 # API — Production orders
 
-Pages: `/orders`, `/orders/new`, `/orders/:id` · Frontend: `frontend/src/pages/orders`, `services/orders.service.js` · Mock: `services/mock/orders.js`
+Pages: `/sale/orders`, `/sale/orders/new`, `/sale/orders/:id` · Frontend: `frontend/src/pages/orders`, `services/orders.service.js` · Mock: `services/mock/orders.js`
 Conventions: [README.md](README.md)
 
 ## Who may call

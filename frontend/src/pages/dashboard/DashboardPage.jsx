@@ -1,15 +1,13 @@
-import { Banknote, Boxes, ChartColumn, CircleCheck, Factory, FilePlus2, ReceiptText } from "lucide-react";
+import { Banknote, ChartColumn, CircleCheck, Factory, FilePlus2, ReceiptText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-import { BarList, GroupedBars } from "@/components/common/Charts";
+import { BarList } from "@/components/common/Charts";
 import { Section } from "@/components/common/FormFields";
-import { StockStatus } from "@/components/common/StockStatus";
 import { PageHeader } from "@/components/common/PageHeader";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLoad } from "@/hooks/useLoad";
 import { getDashboard } from "@/services/dashboard.service";
-import { formatCompact, formatCurrency, formatNumber } from "@/utils/format";
+import { formatCurrency, formatNumber } from "@/utils/format";
 
 function Tile({ to, label, value, icon: Icon }) {
   return (
@@ -23,18 +21,9 @@ function Tile({ to, label, value, icon: Icon }) {
   );
 }
 
-/** A thin bar with the share that is done (the percent is also written next to it). */
-function Progress({ percent }) {
-  return (
-    <span className="inline-block h-3 w-24 bg-muted align-middle" aria-hidden="true">
-      <span className="block h-full bg-primary" style={{ width: `${percent}%` }} />
-    </span>
-  );
-}
-
 /**
- * The first page: number tiles, two charts and three short lists, all from one call.
- * An Admin sees everything; a Worker sees the orders and the materials only. A tile and a row link to the page that explains the number.
+ * The first page: number tiles (orders for everyone, invoices for an Admin) and, for an Admin, one chart of the orders by status,
+ * all from one call. A tile links to the page that explains the number.
  */
 export function DashboardPage() {
   const { t, i18n } = useTranslation(["dashboard", "nav", "common", "master"]);
@@ -72,8 +61,8 @@ export function DashboardPage() {
             ) : null}
           </section>
 
+          {/* the chart is for an Admin (a Worker has none); it takes the whole width */}
           {data.invoicing ? (
-          <div className="grid gap-6 lg:grid-cols-2"> {/* the charts are for an Admin; a Worker has no charts */}
             <Section icon={ChartColumn} title={t("dashboard:ordersChart")}>
               <BarList
                 label={t("dashboard:ordersChart")}
@@ -85,114 +74,7 @@ export function DashboardPage() {
                 format={number}
               />
             </Section>
-            {(
-              <Section icon={Banknote} title={t("dashboard:moneyChart")}>
-                <GroupedBars
-                  label={t("dashboard:moneyChart")}
-                  series={[{ label: t("dashboard:invoiced") }, { label: t("dashboard:paid") }]}
-                  groups={data.invoicing.months.map((month) => ({ label: month.month.slice(5), values: [month.invoiced, month.paid] }))}
-                  format={(value) => (value >= 10000 ? formatCompact(value, language) : yen(value))}
-                />
-              </Section>
-            )}
-          </div>
           ) : null}
-
-          <Section icon={Factory} title={t("dashboard:inProgressTitle")}>
-            {data.inProgress.length === 0 ? (
-              <p className="text-muted-foreground">{t("dashboard:noneInProgress")}</p>
-            ) : (
-              <Table data-stack>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("dashboard:order")}</TableHead>
-                    <TableHead>{t("dashboard:customer")}</TableHead>
-                    <TableHead>{t("dashboard:progress")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.inProgress.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell data-label={t("dashboard:order")}>
-                        <Link to={`/sale/orders/${order.id}`}>{order.orderNumber}</Link>
-                      </TableCell>
-                      <TableCell data-label={t("dashboard:customer")}>{order.customerName}</TableCell>
-                      <TableCell data-label={t("dashboard:progress")}>
-                        <Progress percent={order.percent} /> {order.percent}% ({t("dashboard:ofRequired", { done: number(order.done), required: number(order.required) })})
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </Section>
-
-          {data.invoicing ? (
-            <Section icon={ReceiptText} title={t("dashboard:unpaidTitle")}>
-              {data.invoicing.unpaidList.length === 0 ? (
-                <p className="text-muted-foreground">{t("dashboard:noneUnpaid")}</p>
-              ) : (
-                <Table data-stack>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("dashboard:invoice")}</TableHead>
-                      <TableHead>{t("dashboard:customer")}</TableHead>
-                      <TableHead>{t("dashboard:invoiceDate")}</TableHead>
-                      <TableHead className="text-right">{t("dashboard:total")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.invoicing.unpaidList.map((invoice) => (
-                      <TableRow key={invoice.id}>
-                        <TableCell data-label={t("dashboard:invoice")}>
-                          <Link to={`/accounting/invoices/${invoice.id}`}>{invoice.invoiceNumber}</Link>
-                        </TableCell>
-                        <TableCell data-label={t("dashboard:customer")}>{invoice.customerName}</TableCell>
-                        <TableCell data-label={t("dashboard:invoiceDate")}>{invoice.invoiceDate}</TableCell>
-                        <TableCell data-label={t("dashboard:total")} className="text-right">
-                          {yen(invoice.total)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </Section>
-          ) : null}
-
-          <Section icon={Boxes} title={t("dashboard:stockTitle")}>
-            <p className="mb-3 text-sm text-muted-foreground">{t("dashboard:stockHint")}</p>
-            {data.leastStock.length === 0 ? (
-              <p className="text-muted-foreground">{t("dashboard:noMaterials")}</p>
-            ) : (
-              <Table data-stack>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("dashboard:code")}</TableHead>
-                    <TableHead>{t("dashboard:name")}</TableHead>
-                    <TableHead className="text-right">{t("dashboard:quantity")}</TableHead>
-                    <TableHead>{t("dashboard:status")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.leastStock.map((material) => (
-                    <TableRow key={material.id}>
-                      <TableCell data-label={t("dashboard:code")}>
-                        <Link to={`/stock/materials/${material.id}`}>{material.code}</Link>
-                      </TableCell>
-                      <TableCell data-label={t("dashboard:name")}>{material.name}</TableCell>
-                      <TableCell data-label={t("dashboard:quantity")} className="text-right">
-                        {number(material.total)}
-                      </TableCell>
-                      <TableCell data-label={t("dashboard:status")}>
-                        <StockStatus status={material.stockStatus} />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </Section>
         </div>
       )}
     </>

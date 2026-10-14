@@ -1,13 +1,14 @@
 // Stock changes (docs/specs/s1-mini-erp-workflow.md, section 2 step 8): by hand and at any time, an Admin adds material stock,
-// deducts it when it is used, or adjusts it after a count. The production never changes the stock by itself.
+// deducts it when it is used, or adjusts it after a count. One thing is automatic (2026-10-14, the user): "Start production" deducts the
+// materials of the BOM of every line (the oldest lot first) and is refused with 409 STOCK_SHORT when a material is not enough.
 //
 // A stock change: { id, materialId, lotNumber, kind: "Add" | "Deduct" | "Adjust", change (+ or -), balance (of the lot after it),
 //                   changeDate, note, initial (the first stock of a new material), orderId, userId, userName, at }   - never changed or deleted.
 // The quantity of a lot changes only through a stock change (a material made with lots starts with an "Add" for each lot).
 
 import { MockHttpError, MockResponse } from "./errors.js";
-import { invalid, issue, materials, masterRoutes, number, text } from "./master.js";
-import { orders } from "./orders.js";
+import { invalid, issue, materials, masterRoutes, number, products, text } from "./master.js";
+import { orderRoutes, orders } from "./orders.js";
 import { materialView } from "./stockStatus.js";
 import { userFromAuthorization } from "./users.js";
 
@@ -46,7 +47,45 @@ const today = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
+/** What the lines of an order need of every material: BOM quantity of a product x the quantity of its line. [{ material, need }] */
+function materialsNeeded(order) {
+  const need = new Map();
+  for (const line of order.lines) {
+    const product = products.find((item) => item.id === line.productId);
+    for (const bom of product?.bom ?? []) need.set(bom.materialId, round((need.get(bom.materialId) ?? 0) + bom.quantity * line.quantity));
+  }
+  return [...need].map(([materialId, amount]) => ({ material: materials.find((item) => item.id === materialId), need: amount })).filter((row) => row.material && row.need > 0);
+}
+
 export const stockRoutes = {
+  // Start production: the stock is checked first (nothing starts and nothing is deducted when a material is short), then the order
+  // starts and every material is deducted from its lots, the oldest lot first, as a "Deduct" tied to the order.
+  "POST /orders/:id/start": (request) => {
+    const user = userFromAuthorization(request.authorization);
+    const order = orders.find((item) => item.id === Number(request.params.id));
+    const ready = order && !order.started && user.role === "Admin" && order.lines.length > 0 && order.lines.every((line) => line.processes.length > 0);
+    const needed = ready ? materialsNeeded(order) : [];
+    const short = needed
+      .map(({ material, need }) => ({ materialId: material.id, materialCode: material.code, materialName: material.name, need, have: round(material.lots.reduce((sum, lot) => sum + lot.quantity, 0)) }))
+      .filter((row) => row.have < row.need);
+    if (short.length) throw new MockHttpError(409, "STOCK_SHORT", "There is not enough stock to start the production", short);
+
+    const response = orderRoutes["POST /orders/:id/start"](request);
+    for (const { material, need } of needed) {
+      let left = need;
+      for (const lot of material.lots) {
+        if (left <= 0) break;
+        const take = round(Math.min(lot.quantity, left));
+        if (take <= 0) continue;
+        lot.quantity = round(lot.quantity - take);
+        left = round(left - take);
+        log(material, lot.lotNumber, "Deduct", -take, lot.quantity, { changeDate: today(), note: "Production started", orderId: order.id }, user);
+      }
+      material.updatedAt = new Date().toISOString();
+    }
+    return response;
+  },
+
   // the ledger of every stock change of every material (docs/specs/s4-stock-group.md, section 3.2); read only, any signed-in user
   "GET /stock-changes": ({ authorization, query }) => {
     userFromAuthorization(authorization);

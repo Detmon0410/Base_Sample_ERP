@@ -25,7 +25,7 @@ export const mockRoutes = {
   ...invoiceRoutes,
   ...dashboardRoutes,
   ...deleteRoutes,
-  ...stockRoutes, // after masterRoutes: it wraps POST and PUT of /materials
+  ...stockRoutes, // after masterRoutes and orderRoutes: it wraps POST of /materials and the start of an order
 };
 
 if (PERSIST) seedMock(mockRoutes); // the browser starts with some data; the tests start empty

@@ -1,12 +1,12 @@
-// The workflow test keeps what the tester makes (docs/specs/f13-workflow-test.md). The mock stores live in the page, so instead
+// The workflow test keeps what the tester makes. The mock stores live in the page, so instead
 // of copying every store the browser keeps a LOG of every change a person made (each successful POST / PUT / PATCH / DELETE
 // with who made it and when). When the page opens, the log is played again on empty stores, with the clock set to the time of
 // each entry, so the numbers, the history and the times come out exactly as they were. A change made in another tab (another
 // user in the same browser) is played here too, so the tabs see the same data.
 //
-// Active in the browser (not in the tests).
+// Active in the browser when the mock is on (VITE_USE_MOCK=true), not in the tests.
 
-export const PERSIST = import.meta.env.MODE !== "test";
+export const PERSIST = import.meta.env.MODE !== "test" && import.meta.env.VITE_USE_MOCK === "true";
 const KEY = "kanou.testlog.v1";
 const TOKEN = /mock-token-(\d+)/;
 
@@ -85,16 +85,4 @@ export function onForeignChange(onChange) {
   };
   window.addEventListener("storage", handler);
   return () => window.removeEventListener("storage", handler);
-}
-
-/** Forgets everything the tester made: the next load starts empty again. */
-export function resetTestData() {
-  try {
-    window.localStorage.removeItem(KEY);
-    for (const key of Object.keys(window.localStorage)) if (key.startsWith("kanou.rowseen") || key.startsWith("kanou.seen")) window.localStorage.removeItem(key);
-    window.sessionStorage.clear();
-  } catch {
-    /* ignore */
-  }
-  window.location.reload();
 }

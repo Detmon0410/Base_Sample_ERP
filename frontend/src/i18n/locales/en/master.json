@@ -153,7 +153,6 @@
       "Low": "Low",
       "Out": "Out"
     },
-    "colStatus": "Status",
     "backToOrder": "Back to the production order",
     "refillNote": "Added to start a production order"
   },

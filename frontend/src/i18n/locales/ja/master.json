@@ -153,7 +153,6 @@
       "Low": "在庫少",
       "Out": "在庫切れ"
     },
-    "colStatus": "状態",
     "backToOrder": "生産オーダーに戻る",
     "refillNote": "生産開始のために追加"
   },

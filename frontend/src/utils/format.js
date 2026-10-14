@@ -28,7 +28,7 @@ export function formatDate(value, language) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-export function formatTime(value, language) {
+function formatTime(value, language) {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";

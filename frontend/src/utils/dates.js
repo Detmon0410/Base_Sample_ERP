@@ -6,8 +6,3 @@ export function todayIso() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
-export function addDaysIso(iso, days) {
-  const [y, m, d] = iso.split("-").map(Number);
-  const date = new Date(y, m - 1, d + days);
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-}

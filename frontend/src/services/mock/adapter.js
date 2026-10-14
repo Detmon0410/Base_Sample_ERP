@@ -4,7 +4,6 @@ import { MockHttpError, MockResponse } from "./errors.js";
 import { PERSIST, onForeignChange, record, replayNew, userIdOf } from "./persist.js";
 import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
-import { requestRefresh } from "@/utils/masterEvents";
 
 // no waiting in tests (vitest sets MODE to "test")
 const LATENCY_MS = import.meta.env.MODE === "test" ? 0 : 150;
@@ -55,9 +54,7 @@ function playEntry(entry) {
 }
 if (PERSIST) {
   replayNew(playEntry);
-  onForeignChange(() => {
-    if (replayNew(playEntry) > 0) requestRefresh(); // lists, the dashboard and the badges load again
-  });
+  onForeignChange(() => replayNew(playEntry)); // another tab made a change: this page plays it too (the next load shows it)
 }
 
 /**

@@ -64,7 +64,7 @@ describe("the minimum level on the materials of the mock", () => {
     expect(status()).toBe("Out");
   });
 
-  it("filters the list by the status, and ranks them on the Dashboard with their status", () => {
+  it("filters the list by the status", () => {
     make("ST-F-NORMAL", 1, 100);
     make("ST-F-LOW", 100, 3);
     make("ST-F-OUT", 5, 0);
@@ -72,7 +72,5 @@ describe("the minimum level on the materials of the mock", () => {
     expect(call("GET /materials", admin, { query: { status: "Out", q: "ST-F-" } }).data.map((row) => row.code)).toEqual(["ST-F-OUT"]);
     expect(call("GET /materials", admin, { query: { status: "Normal", q: "ST-F-" } }).data.map((row) => row.code)).toEqual(["ST-F-NORMAL"]);
 
-    const least = call("GET /dashboard", worker).leastStock;
-    expect(least.find((row) => row.code === "ST-F-OUT")).toMatchObject({ total: 0, stockStatus: "Out" });
   });
 });

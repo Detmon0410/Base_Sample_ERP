@@ -127,14 +127,6 @@ test("the example of the requirements, from the customer to the receipt", async 
     await page.getByRole("button", { name: "Save progress" }).click();
     await expect(processRow(page, name)).toContainText("In progress");
 
-    if (name === "Cutting") {
-      // the Dashboard of the Worker shows the order in progress: 4 of the 20 pieces (two processes of 10) are done
-      await open(page, "/");
-      await expect(page.getByRole("link", { name: orderNumber })).toBeVisible();
-      await expect(page.getByText("20% (4 of 20)")).toBeVisible();
-      await open(page, "/sale/orders", orderNumber);
-    }
-
     await processRow(page, name).getByRole("button", { name: "Record progress" }).click();
     await page.getByLabel("Status").selectOption("Completed");
     await page.getByLabel("Completed quantity (total so far)").fill("10");
@@ -263,10 +255,6 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("link", { name: /^New\s*0$/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /^Unpaid invoices\s*0$/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /^Paid this month\s*¥450,000$/ })).toBeVisible();
-  await expect(page.getByText("No order is in progress.")).toBeVisible();
-  await expect(page.getByText("No unpaid invoice.")).toBeVisible();
-  await expect(page.getByRole("row", { name: /STEEL-01/ })).toContainText("Low"); // the material with the least stock, with its status
-  await expect(page.getByRole("img", { name: /Invoiced and paid, last 6 months/ })).toBeVisible();
 
   // the pages that now hold real data show no untranslated key
   for (const path of ["/sale/orders", "/stock", "/stock/materials", "/accounting/invoices", "/sale/quotations", "/master/products", "/master/customers", "/master/users"]) {

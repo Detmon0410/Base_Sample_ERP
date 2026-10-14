@@ -1,10 +1,10 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
 
 import { AuthContext } from "@/lib/auth-context";
 import { invoicesApi } from "@/services/invoices.service";
-import { customersApi, materialsApi, productsApi } from "@/services/master.service";
+import { customersApi, productsApi } from "@/services/master.service";
 import { mockUsers, toPublicUser, tokenOf } from "@/services/mock/users";
 import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
@@ -25,10 +25,9 @@ const renderAs = (user) => {
 };
 
 const tile = (name) => screen.findByRole("link", { name });
-const sectionOf = async (title) => (await screen.findByRole("heading", { name: title })).closest("section");
 
 describe("the Dashboard", () => {
-  it("shows an Admin the numbers, the two charts and the three lists, and a Worker the orders and the materials only", async () => {
+  it("shows an Admin the numbers and the chart of the orders, and a Worker the numbers of the orders only", async () => {
     setToken(tokenOf(mockUsers[0]));
     const customer = await customersApi.create({ name: "Dashboard Customer" });
     const product = await productsApi.create({ code: "DASH-P", name: "Fridge", price: 1 });
@@ -42,9 +41,7 @@ describe("the Dashboard", () => {
     const done = await make();
     await ordersApi.start(done.id);
     await ordersApi.recordProgress(done.id, { processId: done.lines[0].processes[0].id, status: "Completed", completedQuantity: 4, workDate: "2026-10-03", note: "" });
-    const invoice = await invoicesApi.create({ orderId: done.id, invoiceDate: "2026-10-04" }); // Unpaid, 4 x 400
-    await materialsApi.create({ code: "DASH-LOW", name: "Almost none", lots: [{ lotNumber: "L1", quantity: 2 }] });
-    await materialsApi.create({ code: "DASH-HIGH", name: "Plenty", lots: [{ lotNumber: "L1", quantity: 900 }] });
+    await invoicesApi.create({ orderId: done.id, invoiceDate: "2026-10-04" }); // Unpaid, 4 x 400
 
     const admin = renderAs(mockUsers[0]);
     expect(await tile(/^New\s*1$/)).toHaveAttribute("href", "/sale/orders");
@@ -54,36 +51,20 @@ describe("the Dashboard", () => {
     expect(await tile(/^Unpaid total\s*¥1,600$/)).toBeInTheDocument();
     expect(await tile(/^Paid this month\s*¥0$/)).toBeInTheDocument();
 
-    // the charts have their numbers as text
+    // the chart has its numbers as text
     expect(screen.getByRole("list", { name: "Production orders by status" })).toHaveTextContent("In progress1");
-    expect(screen.getByRole("img", { name: /Invoiced and paid, last 6 months/ })).toBeInTheDocument();
 
-    // the order in progress: its progress over all its processes, and a link to it
-    const inProgress = await sectionOf("Orders in progress");
-    expect(within(inProgress).getByRole("link", { name: running.orderNumber })).toHaveAttribute("href", `/sale/orders/${running.id}`);
-    expect(inProgress).toHaveTextContent("25% (1 of 4)");
-
-    // the unpaid invoice, and the material with the least stock first
-    const unpaid = await sectionOf("Unpaid invoices, oldest first");
-    expect(within(unpaid).getByRole("link", { name: invoice.invoiceNumber })).toBeInTheDocument();
-    expect(unpaid).toHaveTextContent("¥1,600");
-    const stock = await sectionOf("Materials with the least stock");
-    const rows = within(stock).getAllByRole("row");
-    expect(rows[1]).toHaveTextContent("DASH-LOW");
-    expect(stock).not.toHaveTextContent("minimum level is");
     admin.unmount();
 
-    // a Worker: the orders and the materials, no money
+    // a Worker: the orders, no money and no chart
     renderAs(mockUsers[1]);
     expect(await tile(/^New\s*1$/)).toBeInTheDocument();
     expect(screen.queryByText("Unpaid invoices")).not.toBeInTheDocument();
     expect(screen.queryByText("Paid this month")).not.toBeInTheDocument();
-    expect(screen.queryByRole("img", { name: /Invoiced and paid/ })).not.toBeInTheDocument();
-    expect(await sectionOf("Orders in progress")).toBeInTheDocument();
-    expect(await sectionOf("Materials with the least stock")).toBeInTheDocument();
+    expect(screen.queryByRole("list", { name: "Production orders by status" })).not.toBeInTheDocument();
   });
 
-  it("counts a payment of this month in the tile and in the last bar of the chart", async () => {
+  it("counts a payment of this month in the tile", async () => {
     setToken(tokenOf(mockUsers[0]));
     const customer = await customersApi.create({ name: "Paid Customer" });
     const product = await productsApi.create({ code: "DASH-P2", name: "Fridge", price: 1 });
@@ -96,7 +77,5 @@ describe("the Dashboard", () => {
 
     renderAs(mockUsers[0]);
     expect(await tile(/^Paid this month\s*¥5,000$/)).toBeInTheDocument();
-    const chart = screen.getByRole("img", { name: /Invoiced and paid, last 6 months/ });
-    expect(chart.getAttribute("aria-label")).toMatch(/Invoiced ¥6,600, Paid ¥5,000$/); // the current month is the last group; the invoice of the first test (¥1,600) is in it too
   });
 });

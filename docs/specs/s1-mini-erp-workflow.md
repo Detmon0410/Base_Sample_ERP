@@ -37,7 +37,7 @@ This is the first step of the new direction: the workflow and the data first, th
 | 5 | system | Production order | The order becomes **Completed** when every process of every line is Completed |
 | 6 | Admin | Invoices | Issues **one invoice** for a Completed order (a snapshot of the lines, no tax). Status Unpaid |
 | 7 | Admin | Invoice | Records the **full payment**: date, amount (= the invoice total). There is no payment method and no reference or notes. The invoice becomes **Paid** and **one receipt** is issued. Invoice and receipt can be printed / saved as PDF |
-| 8 | Admin | Stock | At any time and by hand: add material stock (material, lot, quantity), deduct it when used, adjust after a count. The production never changes the stock by itself |
+| 8 | Admin | Stock | At any time and by hand: add material stock (material, lot, quantity), deduct it when used, adjust after a count. Start production (step 4) also deducts the BOM of the lines by itself, the oldest lot first, and is refused when a material is short (a change the user asked for, 2026-10-14; the requirements say the BOM does not deduct). Otherwise the production never changes the stock by itself |
 
 An order can be Completed with its invoice still Unpaid: the two statuses are separate.
 

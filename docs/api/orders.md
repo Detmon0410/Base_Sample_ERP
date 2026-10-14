@@ -47,7 +47,7 @@ Body of `progress`: `{ "processId": 12, "status": "Not Started" | "In Progress" 
 
 ## Rules
 
-* **Start** needs at least one line and one process on every line (`409 ORDER_NOT_READY`); after it the products and processes cannot change (`409 ORDER_LOCKED` on `PUT`); a second start is `409 ALREADY_STARTED`.
+* **Start** needs at least one line and one process on every line (`409 ORDER_NOT_READY`) **and enough stock**: it adds up the BOM of every line (BOM quantity x quantity of the line) and, if a material is short, answers `409 STOCK_SHORT` with `errors: [{ materialId, materialCode, materialName, need, have }]` and changes nothing; if the stock is enough, the order starts and every material is deducted from its lots, **the oldest lot first**, as `Deduct` movements (note `Production started`, tied to the order) ([stock.md](stock.md)); after it the products and processes cannot change (`409 ORDER_LOCKED` on `PUT`); a second start is `409 ALREADY_STARTED`.
 * **Progress** only on a started order (`409 ORDER_NOT_STARTED`) that has no invoice (`409 ORDER_INVOICED`).
 * `completedQuantity` is the **latest total**, not an amount to add: a whole number from 0 to the required quantity (`TOO_HIGH` above it).
 * `Completed` only with the full quantity (`MUST_EQUAL_REQUIRED`), and the full quantity needs the status `Completed` (`MUST_BE_COMPLETED`); `Not Started` has quantity 0 (`MUST_BE_ZERO`).

@@ -7,7 +7,7 @@ Who may call: an Admin and a Worker read everything on this page; only an Admin 
 
 ## Stock changes of a material
 
-The production never changes stock by itself. An Admin changes it by hand, at any time; a Worker may read the history.
+The only automatic change is the **start of a production order**, which deducts the BOM of its lines, the oldest lot first, and is refused with `409 STOCK_SHORT` when a material is short ([orders.md](orders.md)). Otherwise an Admin changes it by hand, at any time; a Worker may read the history.
 
 | Method | Path | Body | Result |
 |---|---|---|---|

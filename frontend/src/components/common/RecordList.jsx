@@ -15,7 +15,7 @@ const PAGE_SIZE = 20;
 
 /**
  * A list page: the title band, a search box, a status filter, a table with a bold header and thin lines, 20 rows a page
- * with Previous / Next (docs/specs/s2-mini-erp-look.md). A click anywhere in a row opens its page (`${base}/${id}`); the first column
+ * with Previous / Next. A click anywhere in a row opens its page (`${base}/${id}`); the first column
  * is also a link to it, for the keyboard. The rows alternate in colour.
  * `columns` is [{ key, header, cell?(row) }]. A page with its own statuses (orders, invoices) gives `statusOptions` and `statusOf` and
  * gets the status filter and the status column at the end; master data has no status.

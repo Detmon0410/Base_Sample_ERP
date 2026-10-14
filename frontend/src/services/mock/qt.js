@@ -1,4 +1,4 @@
-// QT references (docs/specs/s1-mini-erp-workflow.md, section 2 step 1): the quotation is made outside the system; here only its
+// QT references: the quotation is made outside the system; here only its
 // reference is kept - QT number, QT date, customer, notes and the file of the quotation (a data URL in the mock, Q8).
 // A QT reference: { id, qtNumber, qtDate, customerId, notes, file: { name, type, dataUrl } | null }. The file is optional (changed by the user).
 

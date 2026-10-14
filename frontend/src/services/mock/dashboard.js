@@ -1,4 +1,4 @@
-// The Dashboard, the first page (docs/specs/s3-dashboard-crud-pdf.md, section 4). One call, the numbers of every block:
+// The Dashboard, the first page. One call, the numbers of every block:
 //
 //   orders       how many production orders are New / InProgress / Completed (every signed-in user)
 //   inProgress   the orders in progress, with their progress over all processes: { id, orderNumber, customerName, done, required, percent }

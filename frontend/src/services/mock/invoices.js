@@ -1,4 +1,4 @@
-// Invoices, payments and receipts (docs/specs/s1-mini-erp-workflow.md, section 2 steps 6-7). No tax anywhere.
+// Invoices, payments and receipts. No tax anywhere.
 //
 // An invoice: { id, invoiceNumber, invoiceDate, orderId, customerName, customerAddress, lines, total, status: "Unpaid" | "Paid",
 //               payment: { date, amount } | null,
@@ -48,7 +48,7 @@ let nextReceiptId = 1;
 const receiptView = (invoice) => ({ ...invoice.receipt });
 
 export const invoiceRoutes = {
-  // the receipts: one list of all of them, and one receipt (the page /receipts, docs/specs/s5-accounting-group.md); Admin only
+  // the receipts: one list of all of them, and one receipt (the page /accounting/receipts); Admin only
   "GET /receipts": ({ authorization, query }) => {
     admin(authorization);
     const q = text(query.q).toLowerCase();

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Toaster as Sonner } from "sonner";
 
-// Messages without icons (docs/specs/s2-mini-erp-look.md).
+// Messages without icons.
 const Toaster = ({
   ...props
 }) => {

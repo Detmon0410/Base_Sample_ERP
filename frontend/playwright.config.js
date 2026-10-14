@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// End-to-end tests (docs/specs/t1-playwright-test-plan.md). They run the app on its mock API with no business records
+// End-to-end tests. They run the app on its mock API (VITE_USE_MOCK=true) with no business records
 // (a browser context starts with an empty browser, so every test starts from the same state).
 const PORT = 5310;
 

@@ -1,4 +1,4 @@
-// Production orders (docs/specs/s1-mini-erp-workflow.md, section 2 steps 2-5).
+// Production orders.
 //
 // An order: { id, orderNumber, qtId, customerId, orderDate, notes, started, startedAt, lines, history, createdAt, updatedAt }
 //   line:    { id, productId, quantity, unitPrice, processes }

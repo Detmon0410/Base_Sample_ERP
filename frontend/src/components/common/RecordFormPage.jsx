@@ -14,9 +14,9 @@ import { applyServerErrors } from "@/utils/serverErrors";
 
 /**
  * The page of one record (a new one, or `/:id`): the title band, the fields (`children`), and Save / Cancel
- * at the bottom (docs/specs/s1-mini-erp-workflow.md, section 7b). Errors are shown only after Save; after Save the list opens.
+ * at the bottom. Errors are shown only after Save; after Save the list opens.
  * An existing record has a Delete (after a confirmation that names it). A record that is still used is not deleted: the page says
- * where it is used (`409 IN_USE`, docs/specs/s3-dashboard-crud-pdf.md, section 5).
+ * where it is used (`409 IN_USE`, docs/api/master-data.md).
  *
  *   api        the calls of the resource (services/crud.js)
  *   listPath   where Cancel and a successful Save go

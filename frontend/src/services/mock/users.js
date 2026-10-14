@@ -1,4 +1,4 @@
-// The users of the mock: the store behind the login, GET /auth/me and the token check (docs/specs/s1-mini-erp-workflow.md).
+// The users of the mock: the store behind the login, GET /auth/me and the token check.
 // Passwords are kept in plain text here because this is only a stand-in for the backend.
 // A user: { id, name, department, email, password, role: "Admin" | "Worker" }. The department is only a field.
 

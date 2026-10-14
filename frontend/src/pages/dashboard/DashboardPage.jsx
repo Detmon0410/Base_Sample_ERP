@@ -33,7 +33,7 @@ function Progress({ percent }) {
 }
 
 /**
- * The first page (docs/specs/s3-dashboard-crud-pdf.md, section 4): number tiles, two charts and three short lists, all from one call.
+ * The first page: number tiles, two charts and three short lists, all from one call.
  * An Admin sees everything; a Worker sees the orders and the materials only. A tile and a row link to the page that explains the number.
  */
 export function DashboardPage() {

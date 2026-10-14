@@ -16,7 +16,7 @@ const KINDS = ["Add", "Deduct", "Adjust"];
 const DAY = /^\d{4}-\d{2}-\d{2}$/; // a typed date is sent only when it has the shape of a date
 
 /**
- * The ledger of every stock change of every material, newest first (docs/specs/s4-stock-group.md, section 3.2). Read only, for an Admin
+ * The ledger of every stock change of every material, newest first. Read only, for an Admin
  * and a Worker. Search by material, lot, production order or note; filter by type and by the date of the change. A click on a row
  * opens the material, where an Admin changes the stock.
  */

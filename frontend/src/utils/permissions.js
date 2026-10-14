@@ -1,4 +1,4 @@
-// Client-side mirror of the access rules (docs/specs/s1-mini-erp-workflow.md, section 3). This only decides what the UI shows;
+// Client-side mirror of the access rules. This only decides what the UI shows;
 // the backend must enforce the same rules on every request.
 //
 // A user: { id, name, department, email, role }. There are two roles: "Admin" (everything) and "Worker" (production orders,

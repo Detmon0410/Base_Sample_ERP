@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
 
 import { USERS, rawKeys, settle, signIn, watchErrors } from "./helpers.js";
 
-// The acceptance case of the requirements (BaseRequirement_md/simplified_factory_system_requirements.md, section 10): the ten steps
+// The acceptance case of the requirements (docs/BaseRequirement_md/simplified_factory_system_requirements.md, section 10): the ten steps
 // of the example, in one run, with the Admin and a Worker whose account is made in step 1. Desktop only.
 
 test.skip(({ viewport }) => (viewport?.width ?? 1280) < 1000, "one flow, on the desktop");

@@ -4,7 +4,7 @@ import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 /**
- * The two languages as plain words ("EN", "日本語"), no flags (docs/specs/s1-mini-erp-workflow.md, decision 14).
+ * The two languages as plain words ("EN", "日本語"), no flags.
  * The current language is bold. The full language name is the accessible name; names are never translated.
  */
 export function LanguageSwitcher({ className }) {

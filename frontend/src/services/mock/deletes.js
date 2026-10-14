@@ -1,4 +1,4 @@
-// The delete of the master data and of the QT references (docs/specs/s3-dashboard-crud-pdf.md, step S3-C).
+// The delete of the master data and of the QT references.
 //
 // DELETE /{resource}/:id  (Admin). A record that is still used is NOT deleted: the answer is `409 IN_USE` and `errors` says where it
 // is used, as a list of { kind, count, items }. Nothing is made inactive instead.

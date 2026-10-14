@@ -1,4 +1,4 @@
-// Stock changes (docs/specs/s1-mini-erp-workflow.md, section 2 step 8): by hand and at any time, an Admin adds material stock,
+// Stock changes: by hand and at any time, an Admin adds material stock,
 // deducts it when it is used, or adjusts it after a count. One thing is automatic (2026-10-14, the user): "Start production" deducts the
 // materials of the BOM of every line (the oldest lot first) and is refused with 409 STOCK_SHORT when a material is not enough.
 //
@@ -86,7 +86,7 @@ export const stockRoutes = {
     return response;
   },
 
-  // the ledger of every stock change of every material (docs/specs/s4-stock-group.md, section 3.2); read only, any signed-in user
+  // the ledger of every stock change of every material; read only, any signed-in user
   "GET /stock-changes": ({ authorization, query }) => {
     userFromAuthorization(authorization);
     const q = text(query.q).toLowerCase();

@@ -7,7 +7,7 @@ import { AppHeader } from "@/components/layout/AppHeader";
 
 /**
  * The frame of every page after the sign-in: the bar at the top with the menu and the user menu, and the page below it. There is no
- * sidebar (docs/specs/s1-mini-erp-workflow.md section 7).
+ * sidebar.
  */
 export function MainLayout() {
   const { t } = useTranslation("nav");

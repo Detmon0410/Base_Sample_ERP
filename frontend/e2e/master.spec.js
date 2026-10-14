@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { USERS, settle, signIn, watchErrors } from "./helpers.js";
 
-// P1: the master data (docs/specs/s1-mini-erp-workflow.md): customers, products with the BOM, materials with lots, users.
+// P1: the master data: customers, products with the BOM, materials with lots, users.
 // Desktop only: the narrow screens are covered by the smoke test (every page, no sideways scroll).
 
 test.skip(({ viewport }) => (viewport?.width ?? 1280) < 1000, "desktop flow");

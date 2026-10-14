@@ -1,5 +1,5 @@
 /**
- * Saves one document of the page as a PDF file (docs/specs/s3-dashboard-crud-pdf.md, section 6): the browser draws the element, the
+ * Saves one document of the page as a PDF file: the browser draws the element, the
  * picture is put on A4 pages (more pages when it is long) and the file is downloaded under `fileName`. Japanese text is drawn by the
  * browser, so it needs no font in the file; the price is that the text of the PDF is a picture. The two libraries are loaded only
  * when this is called, so the first load of the app does not carry them.

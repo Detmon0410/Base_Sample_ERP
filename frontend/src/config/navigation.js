@@ -1,7 +1,7 @@
 import { canUse } from "@/utils/permissions";
 
 /**
- * Single source of truth for the menu in the header and for the route table (docs/specs/s1-mini-erp-workflow.md, section 7).
+ * Single source of truth for the menu in the header and for the route table.
  * An entry is a link (`to`) or a menu with sub-entries (`items`); `icon` is the name of its icon (components/layout/NavIcon.jsx). `roles` says who sees it; a menu is shown when at least one of
  * its sub-entries is, and a menu with one visible sub-entry is shown as that sub-entry alone.
  * `labelKey` is an i18n key of the namespace `nav`.

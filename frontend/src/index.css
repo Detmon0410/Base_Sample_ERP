@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-  Design tokens - Refrigerator Factory, Mini ERP look (docs/specs/s2-mini-erp-look.md).
+  Design tokens - Refrigerator Factory, Mini ERP look.
   Theme colour #7C7BAD, square corners (radius 0), flat: no shadows, no rings, no icons.
   The root size stays 18px, so every rem-based Tailwind size scales with it.
 */

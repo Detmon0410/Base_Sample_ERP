@@ -1,6 +1,6 @@
 # Refrigerator Factory — Frontend
 
-React + Vite + Tailwind v4 (JavaScript, no TypeScript). It runs on a mock API until the backend exists. Project overview: [../README.md](../README.md). The plan: [../docs/specs](../docs/specs).
+React + Vite + Tailwind v4 (JavaScript, no TypeScript). It runs on a mock API until the backend exists. Project overview: [../README.md](../README.md).
 
 ## Commands
 

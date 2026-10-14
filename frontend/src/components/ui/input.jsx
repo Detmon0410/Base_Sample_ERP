@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cn } from "cn"
 
-// Only an underline, no box (docs/specs/s2-mini-erp-look.md).
+// Only an underline, no box.
 function Input({
   className,
   type,

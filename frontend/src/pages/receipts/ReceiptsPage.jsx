@@ -40,7 +40,7 @@ function ReceiptPage() {
 
 /**
  * Receipts (Admin, the group Accounting): the list of every receipt and one receipt. A receipt is made by the full payment of an invoice
- * (on the page of the invoice), so there is no "new receipt" here and nothing to edit or delete (docs/specs/s5-accounting-group.md).
+ * (on the page of the invoice), so there is no "new receipt" here and nothing to edit or delete.
  */
 export function ReceiptsPage() {
   const { t, i18n } = useTranslation(["invoices", "master"]);

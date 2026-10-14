@@ -1,5 +1,5 @@
 // The master data of the mock: customers, products (with the BOM), materials (with the lots) and users
-// (docs/specs/s1-mini-erp-workflow.md, section 4). The four calls of every resource:
+//. The four calls of every resource:
 //   GET list, GET :id, POST, PUT :id          (no status), and DELETE :id in deletes.js
 // List params: { q, page, pageSize }  ->  data: [...], meta: { page, pageSize, total }
 

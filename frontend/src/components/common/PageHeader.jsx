@@ -1,6 +1,6 @@
 /**
  * The title band at the top of every page: light grey, the title on the left (with a status word in a square box
- * next to it when the page has one), the page actions on the right (docs/specs/s2-mini-erp-look.md).
+ * next to it when the page has one), the page actions on the right.
  */
 export function PageHeader({ title, status, description, actions }) {
   return (

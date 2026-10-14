@@ -1,4 +1,4 @@
-// The status of the stock of a material, in ONE place (docs/specs/s4-stock-group.md, section 5 Q1). The requirements have no minimum
+// The status of the stock of a material, in ONE place. The requirements have no minimum
 // level; it is an optional addition: a material may have a `minLevel`. Then, by the total of all its lots:
 //   Out     the total is 0
 //   Low     the total is at or below the minimum level

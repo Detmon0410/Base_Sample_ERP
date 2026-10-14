@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 
-/** "Showing 1-20 of 45" with Previous / Next (docs/specs/s2-mini-erp-look.md). */
+/** "Showing 1-20 of 45" with Previous / Next. */
 export function Pagination({ page, setPage, total, pageSize }) {
   const { t } = useTranslation("common");
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;

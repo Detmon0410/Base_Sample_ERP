@@ -26,7 +26,7 @@ describe("the bar at the top", () => {
     renderLayout();
     const menu = screen.getByRole("navigation", { name: "Main menu" });
     expect(menu.closest("header")).not.toBeNull();
-    expect(within(menu).getByRole("button", { name: /Orders/ })).toBeInTheDocument();
+    expect(within(menu).getByRole("button", { name: /Sales/ })).toBeInTheDocument();
     expect(within(menu).queryByRole("link", { name: "Quotations" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Menu on the left|Menu on top/ })).not.toBeInTheDocument();
     expect(document.querySelector("aside")).toBeNull();
@@ -39,7 +39,7 @@ describe("the bar at the top", () => {
     await user.click(within(menu).getByRole("button", { name: /Accounting/ }));
     expect(within(menu).getByRole("link", { name: "Invoices" })).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: "Receipts" })).toBeInTheDocument();
-    for (const group of [/Orders/, /Stock/, /Master data/]) expect(within(menu).getByRole("button", { name: group })).toBeInTheDocument();
+    for (const group of [/Sales/, /Stock/, /Master data/]) expect(within(menu).getByRole("button", { name: group })).toBeInTheDocument();
   });
 
   it("shows a Worker only the entries of a Worker", async () => {

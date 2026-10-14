@@ -66,9 +66,11 @@
   "start": {
     "button": "Start production",
     "title": "Start the production?",
-    "text": "After the start the products and the processes cannot be changed. The workers can then record progress.",
+    "text": "After the start the products and the processes cannot be changed. The stock of the materials is deducted by the BOM, the oldest lot first. The workers can then record progress.",
     "hint": "Save your changes first: the start uses the saved order.",
-    "done": "The production has started."
+    "done": "The production has started.",
+    "short": "{{name}}: needs {{need}}, in stock {{have}}.",
+    "addStock": "Add stock"
   },
   "errors": {
     "ORDER_NOT_READY": "The order needs at least one product, and every product needs at least one process.",
@@ -82,7 +84,8 @@
     "MUST_BE_ZERO": "A process that is not started has no completed quantity.",
     "REOPEN_NOTE": "Write a note to reopen a completed process.",
     "INVALID_DATE": "Enter a real date as YYYY-MM-DD.",
-    "ORDER_INVOICED": "The order is invoiced; its progress cannot change."
+    "ORDER_INVOICED": "The order is invoiced; its progress cannot change.",
+    "STOCK_SHORT": "There is not enough stock, so the production did not start. Add stock first."
   },
   "invoice": "Invoice",
   "receipt": "Receipt",

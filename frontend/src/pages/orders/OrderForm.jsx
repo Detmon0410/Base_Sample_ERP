@@ -1,4 +1,4 @@
-import { ClipboardList, Layers, ListOrdered, Package, Play, Plus, Save, Trash2, X } from "lucide-react";
+import { ClipboardList, Layers, ListOrdered, Package, PackagePlus, Play, Plus, Save, Trash2, X } from "lucide-react";
 import { useId, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -161,11 +161,12 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
  * the ordered processes. Save returns to the list. "Start production" (after a confirmation) locks the products and processes.
  */
 export function OrderForm({ order, onChanged }) {
-  const { t } = useTranslation(["orders", "master", "common"]);
+  const { t, i18n } = useTranslation(["orders", "master", "common"]);
   const navigate = useNavigate();
   const notesId = useId();
   const [summary, setSummary] = useState(null);
   const [asking, setAsking] = useState(false);
+  const [short, setShort] = useState([]); // the materials that stopped the start: [{ materialId, materialCode, materialName, need, have }]
 
   const form = useForm({ defaultValues: order ? toForm(order) : empty() });
   const lines = useFieldArray({ control: form.control, name: "lines" });
@@ -197,12 +198,19 @@ export function OrderForm({ order, onChanged }) {
   const start = async () => {
     setAsking(false);
     setSummary(null);
+    setShort([]);
     try {
       await ordersApi.start(order.id);
       toast.success(t("orders:start.done"));
       onChanged();
     } catch (error) {
-      setSummary(applyServerErrors(form, error, t));
+      if (error?.code === "STOCK_SHORT" && Array.isArray(error.details)) {
+        // nothing started and nothing was deducted: the page says which material is short and where to add it
+        setShort(error.details);
+        setSummary(t("orders:errors.STOCK_SHORT"));
+      } else {
+        setSummary(applyServerErrors(form, error, t));
+      }
     }
   };
 
@@ -213,7 +221,24 @@ export function OrderForm({ order, onChanged }) {
       <form noValidate onSubmit={onSubmit} className="flex max-w-4xl flex-col gap-5">
         {summary ? (
           <Alert variant="destructive">
-            <AlertDescription className="text-base">{summary}</AlertDescription>
+            <AlertDescription className="text-base">
+              {summary}
+              {short.length ? (
+                <ul className="mt-3 flex list-none flex-col gap-2 p-0">
+                  {short.map((row) => (
+                    <li key={row.materialId} className="flex flex-wrap items-center gap-3">
+                      <span>{t("orders:start.short", { name: `${row.materialCode} ${row.materialName}`, need: formatNumber(row.need, i18n.language), have: formatNumber(row.have, i18n.language) })}</span>
+                      <Button asChild size="sm">
+                        <Link to={`/stock/materials/${row.materialId}?add=${Math.round((row.need - row.have) * 1000) / 1000}&order=${order.id}`}>
+                          <PackagePlus aria-hidden="true" />
+                          {t("orders:start.addStock")}
+                        </Link>
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </AlertDescription>
           </Alert>
         ) : null}
 

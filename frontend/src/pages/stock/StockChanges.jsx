@@ -1,7 +1,8 @@
-import { ArrowLeftRight, Boxes, History, Save } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, ArrowLeftRight, Boxes, History, Save } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { Link, useSearchParams } from "react-router";
 import { toast } from "sonner";
 
 import { NativeSelect, Section, SelectField, TextField } from "@/components/common/FormFields";
@@ -25,7 +26,17 @@ function ChangeForm({ material, onDone }) {
   const { t } = useTranslation(["master", "common"]);
   const [summary, setSummary] = useState(null);
   const orders = useLoad(() => ordersApi.list({ pageSize: 200 }), []);
-  const form = useForm({ defaultValues: { kind: "Add", lot: "", newLot: "", quantity: "", changeDate: todayIso(), orderId: "", note: "" } });
+  // "Add stock" of a production order that could not start: ?add=<what is missing>&order=<the order> opens this form ready to add it
+  const [params] = useSearchParams();
+  const missing = Number(params.get("add"));
+  const fromOrder = params.get("order");
+  const refill = Number.isFinite(missing) && missing > 0;
+  const lastLot = material.lots.at(-1)?.lotNumber ?? NEW_LOT;
+  const form = useForm({ defaultValues: { kind: "Add", lot: refill ? lastLot : "", newLot: refill && material.lots.length === 0 ? `LOT-${todayIso().replaceAll("-", "")}` : "", quantity: refill ? String(missing) : "", changeDate: todayIso(), orderId: "", note: refill ? t("master:stock.refillNote") : "" } });
+  const section = useRef(null);
+  useEffect(() => {
+    if (refill) section.current?.scrollIntoView?.({ block: "start" });
+  }, [refill]);
   const errors = form.formState.errors;
   const kind = useWatch({ control: form.control, name: "kind" });
   const lot = useWatch({ control: form.control, name: "lot" });
@@ -55,8 +66,17 @@ function ChangeForm({ material, onDone }) {
   });
 
   return (
+    <div ref={section}>
     <Section icon={ArrowLeftRight} title={t("master:stock.changeTitle")}>
-      <form noValidate onSubmit={onSubmit} className="flex flex-col gap-5">
+      {fromOrder ? (
+        <p className="mb-4">
+          <Link to={`/sale/orders/${fromOrder}`} className="inline-flex items-center gap-2">
+            <ArrowLeft aria-hidden="true" className="size-4" />
+            {t("master:stock.backToOrder")}
+          </Link>
+        </p>
+      ) : null}
+      <form noValidate onSubmit={onSubmit} onChange={() => setSummary(null)} className="flex flex-col gap-5">
         {summary ? (
           <Alert variant="destructive">
             <AlertDescription className="text-base">{summary}</AlertDescription>
@@ -83,6 +103,7 @@ function ChangeForm({ material, onDone }) {
         </div>
       </form>
     </Section>
+    </div>
   );
 }
 

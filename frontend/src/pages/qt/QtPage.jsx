@@ -1,8 +1,8 @@
-import { ClipboardCheck, FileText, Package, Plus, Trash2, UserCheck } from "lucide-react";
+import { ClipboardCheck, Factory, FileText, Package, Plus, Trash2, UserCheck } from "lucide-react";
 import { useId, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link, Route, Routes, useNavigate } from "react-router";
+import { Link, Route, Routes } from "react-router";
 import { toast } from "sonner";
 
 import { Attachments } from "@/components/common/Attachments";
@@ -12,6 +12,7 @@ import { Section, SelectField, TextField } from "@/components/common/FormFields"
 import { RecordFormPage } from "@/components/common/RecordFormPage";
 import { RecordList } from "@/components/common/RecordList";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { StepChain } from "@/components/common/StepChain";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -19,18 +20,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLoad } from "@/hooks/useLoad";
 import { attachmentsApi } from "@/services/attachments.service";
 import { customersApi, productsApi } from "@/services/master.service";
+import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
 import { todayIso } from "@/utils/dates";
 import { formatCurrency } from "@/utils/format";
 
+import { OrderForm } from "@/pages/orders/OrderForm";
+import { OrderView } from "@/pages/orders/OrderView";
+import { useAuth } from "@/hooks/useAuth";
+import { can } from "@/utils/permissions";
+
 import { QtDocument } from "./QtDocument";
 
-const STATUSES = ["Draft", "Confirmed"];
+const STEPS = ["Draft", "Confirmed", "InProduction", "Done"]; // where a job is: the QT, then its production order
+const STEP_TONE = { Draft: "neutral", Confirmed: "warn", InProduction: "progress", Done: "good" };
 const empty = () => ({ qtNumber: "", qtDate: todayIso(), customerId: "", notes: "", customerPoNumber: "", customerPoDate: "", lines: [] });
 
 /** The lines of the QT: product, quantity, unit price (it starts from the price of the product), the amount of each and the total. */
 function QtLines({ form, readOnly }) {
-  const { t, i18n } = useTranslation("master");
+  const { t, i18n } = useTranslation(["master", "common"]);
   const { data } = useLoad(() => productsApi.list({ pageSize: 200 }), []);
   const products = data?.items ?? [];
   const { fields, append, remove } = useFieldArray({ control: form.control, name: "lines" });
@@ -40,6 +48,8 @@ function QtLines({ form, readOnly }) {
   const amountOf = (line) => (Number(line?.quantity) || 0) * (Number(line?.unitPrice) || 0);
   const total = lines.reduce((sum, line) => sum + amountOf(line), 0);
 
+  // the products are the options of the selects: wait for them, or a select of a saved line would start empty
+  if (!data) return <Section icon={Package} title={t("qt.lines.title")}><p role="status">{t("common:loading")}</p></Section>;
   return (
     <Section icon={Package} title={t("qt.lines.title")}>
       {fields.length === 0 ? <p className="mb-3 text-muted-foreground">{t("qt.lines.none")}</p> : null}
@@ -89,10 +99,9 @@ function QtLines({ form, readOnly }) {
   );
 }
 
-/** Confirm QT: a question (with a warning when the customer's PO file is missing), then the order is made and its page opens. */
-function ConfirmQt({ qt }) {
+/** Confirm QT: a question (with a warning when the customer's PO file is missing), then the order is made and the same page shows it. */
+function ConfirmQt({ qt, onDone }) {
   const { t } = useTranslation(["master", "common"]);
-  const navigate = useNavigate();
   const [asking, setAsking] = useState(false);
   const [noPo, setNoPo] = useState(false);
   const [error, setError] = useState(null);
@@ -109,7 +118,7 @@ function ConfirmQt({ qt }) {
     try {
       const { order, alreadyConfirmed } = await qtApi.confirm(qt.id);
       toast.success(alreadyConfirmed ? t("master:qt.confirm.already") : t("master:qt.confirm.done"));
-      navigate(`/sale/orders/${order.id}`);
+      onDone(order);
     } catch (failure) {
       const code = failure?.details?.[0]?.code ?? failure?.code;
       setError(failure?.details?.[0]?.path?.[0] === "lines" ? t("master:qt.confirm.noLines") : t(`master:errors.${code}`, { defaultValue: t("master:errors.UNKNOWN_ERROR") }));
@@ -129,6 +138,31 @@ function ConfirmQt({ qt }) {
       ) : null}
       <ConfirmDialog open={asking} onOpenChange={setAsking} title={t("master:qt.confirm.title")} text={noPo ? t("master:qt.confirm.textNoPo") : t("master:qt.confirm.text")} onConfirm={confirm} />
     </>
+  );
+}
+
+/** The production order of a confirmed QT, on the same page: its processes before the start, its progress after. */
+function QtProduction({ qt, onChanged }) {
+  const { t } = useTranslation("master");
+  const { user } = useAuth();
+  const { data: order, error, reload } = useLoad(() => ordersApi.get(qt.productionOrderId), [qt.productionOrderId]);
+  if (error) return <p role="alert" className="text-destructive">{t("qt.production.failed")}</p>;
+  if (!order) return null;
+  const changed = () => {
+    reload();
+    onChanged();
+  };
+  return (
+    <section aria-labelledby="qt-production" className="flex flex-col gap-5">
+      <h2 id="qt-production" className="flex flex-wrap items-center gap-x-3 text-lg font-bold">
+        <Factory aria-hidden="true" className="size-5 text-primary" />
+        {t("qt.production.title", { number: order.orderNumber })}
+        <Link to={`/sale/orders/${order.id}`} className="text-sm font-normal">
+          {t("qt.production.open")}
+        </Link>
+      </h2>
+      {can(user, "orders.edit") && !order.started ? <OrderForm key={order.updatedAt} order={order} onChanged={changed} embedded /> : <OrderView order={order} onChanged={changed} embedded />}
+    </section>
   );
 }
 
@@ -156,13 +190,15 @@ function QtForm() {
         lines: record.lines.map((line) => ({ productId: String(line.productId), quantity: line.quantity, unitPrice: line.unitPrice })),
       })}
       toBody={(values) => values}
-      actions={({ record }) => (record.status === "Draft" ? <ConfirmQt qt={record} /> : null)}
+      actions={({ record, reload }) => (record.status === "Draft" ? <ConfirmQt qt={record} onDone={reload} /> : null)}
+      after={({ record, reload }) => (record.productionOrderId ? <QtProduction qt={record} onChanged={reload} /> : null)}
     >
       {({ form, record }) => {
         const errors = form.formState.errors;
         const confirmed = record?.status === "Confirmed";
         return (
           <>
+            {record ? <StepChain label={t("qt.steps.label")} current={record.step} steps={STEPS.map((key) => ({ key, label: t(`qt.step.${key}`) }))} /> : null}
             {confirmed ? (
               <Alert>
                 <AlertDescription className="text-base">
@@ -223,8 +259,9 @@ export function QtPage() {
             title={t("qt.title")}
             canCreate
             newLabel={t("qt.new")}
-            statusOptions={[{ value: "", label: t("list.all") }, ...STATUSES.map((value) => ({ value, label: t(`qt.status.${value}`) }))]}
-            statusOf={(row) => <StatusBadge tone={row.status === "Confirmed" ? "good" : "neutral"}>{t(`qt.status.${row.status}`)}</StatusBadge>}
+            statusParam="step"
+            statusOptions={[{ value: "", label: t("list.all") }, ...STEPS.map((value) => ({ value, label: t(`qt.step.${value}`) }))]}
+            statusOf={(row) => <StatusBadge tone={STEP_TONE[row.step]}>{t(`qt.step.${row.step}`)}</StatusBadge>}
             columns={[
               { key: "qtNumber", header: t("qt.qtNumber") },
               { key: "qtDate", header: t("qt.qtDate") },

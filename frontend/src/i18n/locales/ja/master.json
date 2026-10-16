@@ -152,6 +152,20 @@
       "approvedBy": "承認者",
       "customerSign": "顧客",
       "dateLine": "日付"
+    },
+    "step": {
+      "Draft": "下書き",
+      "Confirmed": "確定済み",
+      "InProduction": "製造中",
+      "Done": "完了"
+    },
+    "steps": {
+      "label": "この案件の進み具合"
+    },
+    "production": {
+      "title": "製造指示書 {{number}}",
+      "open": "指示書のページを開く",
+      "failed": "製造指示書を読み込めませんでした。"
     }
   },
   "stock": {

@@ -18,9 +18,9 @@ const PAGE_SIZE = 20;
  * with Previous / Next. A click anywhere in a row opens its page (`${base}/${id}`); the first column
  * is also a link to it, for the keyboard. The rows alternate in colour.
  * `columns` is [{ key, header, cell?(row) }]. A page with its own statuses (orders, invoices) gives `statusOptions` and `statusOf` and
- * gets the status filter and the status column at the end; master data has no status.
+ * gets the status filter and the status column at the end; master data has no status. `statusParam` is the query the filter sets (default `status`).
  */
-export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf, above }) {
+export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf, statusParam = "status", above }) {
   const { t } = useTranslation(["master", "common"]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("");
@@ -28,7 +28,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
   const navigate = useNavigate();
   const withStatus = Boolean(statusOptions); // only the lists of orders and invoices have a status (their step in the workflow)
 
-  const { data, error, loading } = useLoad(() => api.list({ q: q.trim() || undefined, status: withStatus ? status || undefined : undefined, page, pageSize: PAGE_SIZE }), [q, status, page]);
+  const { data, error, loading } = useLoad(() => api.list({ q: q.trim() || undefined, [statusParam]: withStatus ? status || undefined : undefined, page, pageSize: PAGE_SIZE }), [q, status, page]);
   const rows = data?.items ?? [];
   const total = data?.meta?.total ?? 0;
 

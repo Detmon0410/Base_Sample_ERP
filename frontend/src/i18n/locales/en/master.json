@@ -152,6 +152,20 @@
       "approvedBy": "Approved by",
       "customerSign": "Customer",
       "dateLine": "Date"
+    },
+    "step": {
+      "Draft": "Draft",
+      "Confirmed": "Confirmed",
+      "InProduction": "In production",
+      "Done": "Done"
+    },
+    "steps": {
+      "label": "Steps of this job"
+    },
+    "production": {
+      "title": "Production order {{number}}",
+      "open": "Open the order page",
+      "failed": "The production order could not be loaded."
     }
   },
   "stock": {

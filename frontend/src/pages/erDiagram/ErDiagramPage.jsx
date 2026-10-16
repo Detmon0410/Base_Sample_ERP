@@ -1,11 +1,10 @@
-import { Download } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Md, TextTable } from "@/components/common/MdText";
 import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
+import { PdfDownload } from "@/components/common/PdfDownload";
 import { inLanguage } from "@/i18n/mdJa";
 import { todayIso } from "@/utils/dates";
 
@@ -55,12 +54,14 @@ const keyOf = (relationship) => (hasNoKey(relationship) ? "owner_type + owner_id
 /**
  * The ER diagram of the system (Admin), as written in ProjectdocInfo/ER Diagram.md: every table with its columns, keys and notes,
  * the relationships in crow's foot notation (a dashed line has no database key), the notes, and the relationships as a table.
- * "Download PDF" saves the same content as a PDF (A3 landscape) in the language of the page: page 1 the drawing, page 2 the rest.
+ * "Download PDF" saves the same content as a PDF in the language of the page, on landscape A3 (the default: the drawing is large)
+ * or A4: the drawing on page 1, then the notes and the relationships.
  * The model is in erModel.js; the drawing comes from erLayout.js and is the same on the page and in the PDF.
  */
 export function ErDiagramPage() {
   const { t, i18n } = useTranslation("erDiagram");
   const [busy, setBusy] = useState(false);
+  const [paper, setPaper] = useState("a3");
   const language = i18n.language;
   // the words of the .md in the language of the page (i18n/mdJa.js); the names of the tables and columns stay as they are
   const tr = (text) => inLanguage(text, language);
@@ -73,9 +74,18 @@ export function ErDiagramPage() {
     try {
       await downloadErDiagramPdf({
         language,
+        paper,
         diagram,
         fileName: `er-diagram-${todayIso()}.pdf`,
-        texts: { title: t("pdfTitle"), subtitle: t("pdfSubtitle", { ...counts, date: todayIso() }), relationshipsTitle: t("relationships"), columns: heads, notesTitle: t("notesTitle") },
+        texts: {
+          system: t("common:pdf.system"),
+          title: t("title"),
+          subtitle: t("pdfSubtitle", counts),
+          footer: t("common:pdf.madeOn", { date: todayIso() }),
+          notesTitle: t("notesTitle"),
+          relationshipsTitle: t("relationships"),
+          columns: heads,
+        },
         relationshipRows: RELATIONSHIPS.map((relationship) => [
           relationship.parent,
           relationship.child,
@@ -97,12 +107,7 @@ export function ErDiagramPage() {
       <PageHeader
         title={t("title")}
         description={t("description")}
-        actions={
-          <Button type="button" disabled={busy} onClick={download}>
-            <Download aria-hidden="true" />
-            {busy ? t("makingPdf") : t("downloadPdf")}
-          </Button>
-        }
+        actions={<PdfDownload paper={paper} onPaperChange={setPaper} busy={busy} onDownload={download} label={t("downloadPdf")} busyLabel={t("makingPdf")} />}
       />
 
       <div className="overflow-x-auto border border-border bg-white">

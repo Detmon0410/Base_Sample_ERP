@@ -22,9 +22,9 @@ export const HEIGHT = 1100;
 const DASH = [6, 4];
 
 export const COLORS = {
-  header: "#7c7bad",
+  header: "#6a69a0", // the main purple of the app
   headerText: "#ffffff",
-  border: "#5b5a86",
+  border: "#4f4e80",
   rowLine: "#e3e4e8",
   text: "#1f2328",
   muted: "#5b6168",

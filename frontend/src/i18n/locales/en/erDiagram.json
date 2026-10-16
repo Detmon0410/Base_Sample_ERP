@@ -1,8 +1,7 @@
 {
   "title": "ER diagram",
   "description": "The tables of the system, their keys and how they are tied together.",
-  "pdfTitle": "Refrigerator Factory Mini ERP - ER diagram",
-  "pdfSubtitle": "{{tables}} tables, {{relationships}} relationships. Crow's foot notation. Made on {{date}}.",
+  "pdfSubtitle": "{{tables}} tables, {{relationships}} relationships, crow's foot notation",
   "downloadPdf": "Download PDF",
   "makingPdf": "Making the PDF...",
   "pdfFailed": "The PDF could not be made. Please try again.",

@@ -24,7 +24,7 @@ test("the Admin opens the ER diagram and downloads it as a PDF", async ({ page }
   const pdf = fs.readFileSync(file, "latin1");
   expect(pdf.startsWith("%PDF-")).toBe(true);
   expect(pdf.match(/\/Type \/Page\b/g).length).toBeGreaterThanOrEqual(2); // the drawing, then the notes and the relationships
-  for (const word of ["PRODUCTION_ORDER", "PURCHASE_ORDER", "confirm creates", "Draft | Sent | Received", "owner_type + owner_id", "Relationships"]) expect(pdf).toContain(`(${word}`);
+  for (const word of ["PRODUCTION_ORDER", "PURCHASE_ORDER", "confirm creates", "Draft | Sent | Received", "owner_type + owner_id", "2. Relationships", "1. Notes"]) expect(pdf).toContain(`(${word}`);
   expect(errors.take()).toEqual([]);
 });
 

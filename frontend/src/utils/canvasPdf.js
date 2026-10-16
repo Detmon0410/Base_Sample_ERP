@@ -11,8 +11,8 @@ const LINE_HEIGHT = 1.15; // as jsPDF
 /** A character that may start a new line by itself (Japanese has no spaces between words). */
 const isWide = (char) => char.codePointAt(0) > 0x2e80;
 
-/** `JsPDF` is the class of jsPDF; `pxPerMm` the sharpness of the pictures (10 px/mm is about 250 dpi). */
-export function createCanvasPdf(JsPDF, { format = "a3", orientation = "landscape", pxPerMm = 10 } = {}) {
+/** `JsPDF` is the class of jsPDF; `pxPerMm` the sharpness of the pictures (12 px/mm is about 300 dpi). */
+export function createCanvasPdf(JsPDF, { format = "a4", orientation = "landscape", pxPerMm = 12 } = {}) {
   const pdf = new JsPDF({ unit: "mm", format, orientation });
   const width = pdf.internal.pageSize.getWidth();
   const height = pdf.internal.pageSize.getHeight();
@@ -34,7 +34,9 @@ export function createCanvasPdf(JsPDF, { format = "a3", orientation = "landscape
   };
   const flush = () => {
     if (pages > 0) pdf.addPage(format, orientation);
-    pdf.addImage(canvas, "PNG", 0, 0, width, height, undefined, "FAST");
+    // a JPEG goes into the PDF as it is (a PNG would be decoded and packed again by jsPDF, which takes seconds a page); at this
+    // quality the text on white stays sharp
+    pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), "JPEG", 0, 0, width, height);
     pages += 1;
   };
   const font = () => {
@@ -117,8 +119,20 @@ export function createCanvasPdf(JsPDF, { format = "a3", orientation = "landscape
       flush();
       newPage();
     },
-    save(fileName) {
+    /**
+     * Writes on every page, over its picture, with the vector fonts of jsPDF: `stamp(pdf, page, pages)` (plain ASCII only, such as
+     * "2 / 3"; the total is known only at the end). Called once, after the last page.
+     */
+    stampPages(stamp) {
       flush();
+      canvas = null;
+      for (let page = 1; page <= pages; page += 1) {
+        pdf.setPage(page);
+        stamp(pdf, page, pages);
+      }
+    },
+    save(fileName) {
+      if (canvas) flush();
       pdf.save(fileName);
     },
   };

@@ -1,8 +1,7 @@
 {
   "title": "DBリレーション",
   "description": "データベースのキー・リレーション・削除ルールと、複数のテーブルにまたがるルールです。",
-  "pdfTitle": "冷蔵庫工場 Mini ERP - DBリレーション",
-  "pdfSubtitle": "{{date}} 作成。",
+  "pdfSubtitle": "キー・リレーション・削除ルールと、複数のテーブルにまたがるルール",
   "downloadPdf": "PDFをダウンロード",
   "makingPdf": "PDFを作成中...",
   "pdfFailed": "PDFを作成できませんでした。もう一度お試しください。"

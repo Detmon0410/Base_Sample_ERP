@@ -30,5 +30,10 @@
     "previous": "前へ",
     "next": "次へ"
   },
-  "toasts": "通知"
+  "toasts": "通知",
+  "pdf": {
+    "system": "冷蔵庫工場 Mini ERP",
+    "madeOn": "{{date}} 作成",
+    "paper": "用紙サイズ"
+  }
 }

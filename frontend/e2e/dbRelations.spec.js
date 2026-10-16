@@ -22,7 +22,7 @@ test("the Admin opens the DB relations and downloads them as a PDF", async ({ pa
   if (process.env.DB_PDF) fs.copyFileSync(file, process.env.DB_PDF);
   const pdf = fs.readFileSync(file, "latin1");
   expect(pdf.startsWith("%PDF-")).toBe(true);
-  for (const word of ["Part 1: The base tables", "customer in use -> 409 IN_USE", "Chain of the new flows", "PurchasePayment"]) expect(pdf).toContain(`(${word}`);
+  for (const word of ["Part 1: The base tables", "customer in use -> 409 IN_USE", "2.5 Chain of the new flows", "PurchasePayment", "1 / "]) expect(pdf).toContain(`(${word}`);
   expect(errors.take()).toEqual([]);
 });
 

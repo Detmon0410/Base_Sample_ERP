@@ -30,5 +30,10 @@
     "previous": "Previous",
     "next": "Next"
   },
-  "toasts": "Notifications"
+  "toasts": "Notifications",
+  "pdf": {
+    "system": "Refrigerator Factory Mini ERP",
+    "madeOn": "Made on {{date}}",
+    "paper": "Paper size"
+  }
 }

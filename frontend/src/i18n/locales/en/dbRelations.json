@@ -1,8 +1,7 @@
 {
   "title": "DB relations",
   "description": "The keys, relations and delete rules of the database, and the rules that touch several tables.",
-  "pdfTitle": "Refrigerator Factory Mini ERP - DB relations",
-  "pdfSubtitle": "Made on {{date}}.",
+  "pdfSubtitle": "Keys, relations and delete rules, and the rules that touch several tables",
   "downloadPdf": "Download PDF",
   "makingPdf": "Making the PDF...",
   "pdfFailed": "The PDF could not be made. Please try again."

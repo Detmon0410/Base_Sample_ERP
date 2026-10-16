@@ -59,7 +59,9 @@ describe("the DB relations page", () => {
     const english = downloadDbRelationsPdf.mock.calls[0][0];
     expect(english.language).toBe("en");
     expect(english.fileName).toMatch(/^db-relations-\d{4}-\d{2}-\d{2}\.pdf$/);
-    expect(english.texts.title).toBe("Refrigerator Factory Mini ERP - DB relations");
+    expect(english.paper).toBe("a4");
+    expect(english.texts).toEqual({ system: "Refrigerator Factory Mini ERP", title: "DB relations", subtitle: "Keys, relations and delete rules, and the rules that touch several tables", footer: expect.stringMatching(/^Made on \d{4}-\d{2}-\d{2}$/) });
+    expect(english.parts[0].sections[0].mono).toEqual([0, 1]); // Table and Column hold names
     expect(english.parts.map((part) => part.title)).toEqual(PARTS.map((part) => part.title));
     expect(english.parts[0].sections[0].rows[0]).toEqual(PARTS[0].sections[0].rows[0]);
     expect(english.parts[0].sections[3].chain).toBe(PARTS[0].sections[3].chain);
@@ -73,7 +75,8 @@ describe("the DB relations page", () => {
       await waitFor(() => expect(downloadDbRelationsPdf).toHaveBeenCalledTimes(1));
       const japanese = downloadDbRelationsPdf.mock.calls[0][0];
       expect(japanese.language).toBe("ja");
-      expect(japanese.texts.title).toBe("冷蔵庫工場 Mini ERP - DBリレーション");
+      expect(japanese.texts.system).toBe("冷蔵庫工場 Mini ERP");
+      expect(japanese.texts.title).toBe("DBリレーション");
       expect(japanese.parts[0].title).toBe("パート1：基本のテーブル（バージョン2.0より前の Mini ERP）");
       expect(japanese.parts[0].sections[0].rows[0]).toEqual(["QtReference", "customer_id", "Customer.id", "多対一", "顧客が使用中なら `409 IN_USE`"]);
       const words = japanese.parts.flatMap((part) => [part.title, part.intro, ...part.sections.flatMap((section) => [section.title, ...(section.rows ?? []).flat()])]);
@@ -81,5 +84,15 @@ describe("the DB relations page", () => {
     } finally {
       await i18n.changeLanguage("en");
     }
+  });
+
+  it("makes the PDF on the paper chosen beside the button", async () => {
+    const user = userEvent.setup();
+    downloadDbRelationsPdf.mockClear();
+    render(<DbRelationsPage />);
+    await user.selectOptions(screen.getByLabelText("Paper size"), "a3");
+    await user.click(screen.getByRole("button", { name: "Download PDF" }));
+    await waitFor(() => expect(downloadDbRelationsPdf).toHaveBeenCalledTimes(1));
+    expect(downloadDbRelationsPdf.mock.calls[0][0].paper).toBe("a3");
   });
 });

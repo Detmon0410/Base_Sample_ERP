@@ -58,11 +58,15 @@ describe("the ER diagram page", () => {
     render(<ErDiagramPage />);
     await user.click(screen.getByRole("button", { name: "Download PDF" }));
     await waitFor(() => expect(downloadErDiagramPdf).toHaveBeenCalledTimes(1));
-    const [{ language, diagram, texts, relationshipRows, notes, fileName }] = downloadErDiagramPdf.mock.calls[0];
+    const [{ language, paper, diagram, texts, relationshipRows, notes, fileName }] = downloadErDiagramPdf.mock.calls[0];
     expect(language).toBe("en");
+    expect(paper).toBe("a3"); // the drawing is large: A3 unless A4 is chosen
     expect(diagram).toEqual(buildDiagram("en"));
     expect(fileName).toMatch(/^er-diagram-\d{4}-\d{2}-\d{2}\.pdf$/);
-    expect(texts.title).toBe("Refrigerator Factory Mini ERP - ER diagram");
+    expect(texts.system).toBe("Refrigerator Factory Mini ERP");
+    expect(texts.title).toBe("ER diagram");
+    expect(texts.subtitle).toBe("23 tables, 29 relationships, crow's foot notation");
+    expect(texts.footer).toMatch(/^Made on \d{4}-\d{2}-\d{2}$/);
     expect(texts.columns).toEqual(["Parent", "Child", "Foreign key", "Parent : child", "Meaning"]);
     expect(relationshipRows).toHaveLength(RELATIONSHIPS.length);
     expect(relationshipRows[0]).toEqual(["CUSTOMER", "QT_REFERENCE", "customer_id", "1 : 0..N", "has"]);
@@ -83,8 +87,10 @@ describe("the ER diagram page", () => {
       const [{ language, diagram, texts, relationshipRows, notes }] = downloadErDiagramPdf.mock.calls[0];
       expect(language).toBe("ja");
       expect(diagram).toEqual(buildDiagram("ja"));
-      expect(texts.title).toBe("冷蔵庫工場 Mini ERP - ER図");
-      expect(texts.subtitle).toMatch(/^テーブル23個、リレーション29個。/);
+      expect(texts.system).toBe("冷蔵庫工場 Mini ERP");
+      expect(texts.title).toBe("ER図");
+      expect(texts.subtitle).toBe("テーブル23個、リレーション29個、クロウズフット表記");
+      expect(texts.footer).toMatch(/^\d{4}-\d{2}-\d{2} 作成$/);
       expect(texts.columns).toEqual(["親", "子", "外部キー", "親：子", "意味"]);
       expect(relationshipRows[0]).toEqual(["CUSTOMER", "QT_REFERENCE", "customer_id", "1 : 0..N", "持つ"]);
       expect(notes[1]).toBe("`PurchasePayment` は PO に保存され、経理のテーブルを通りません。");
@@ -92,5 +98,15 @@ describe("the ER diagram page", () => {
     } finally {
       await i18n.changeLanguage("en");
     }
+  });
+
+  it("makes the PDF on the paper chosen beside the button", async () => {
+    const user = userEvent.setup();
+    downloadErDiagramPdf.mockClear();
+    render(<ErDiagramPage />);
+    await user.selectOptions(screen.getByLabelText("Paper size"), "a4");
+    await user.click(screen.getByRole("button", { name: "Download PDF" }));
+    await waitFor(() => expect(downloadErDiagramPdf).toHaveBeenCalledTimes(1));
+    expect(downloadErDiagramPdf.mock.calls[0][0].paper).toBe("a4");
   });
 });

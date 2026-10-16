@@ -1,8 +1,7 @@
 {
   "title": "ER図",
   "description": "システムのテーブル、キー、テーブル同士の関係です。",
-  "pdfTitle": "冷蔵庫工場 Mini ERP - ER図",
-  "pdfSubtitle": "テーブル{{tables}}個、リレーション{{relationships}}個。クロウズフット表記。{{date}} 作成。",
+  "pdfSubtitle": "テーブル{{tables}}個、リレーション{{relationships}}個、クロウズフット表記",
   "downloadPdf": "PDFをダウンロード",
   "makingPdf": "PDFを作成中...",
   "pdfFailed": "PDFを作成できませんでした。もう一度お試しください。",

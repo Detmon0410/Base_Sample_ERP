@@ -20,8 +20,9 @@ This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accou
 4. **Start production** (Admin or Factory Worker): needs enough stock. It deducts the BOM of every line from the oldest lot first (`409 STOCK_SHORT` when a material is short) and locks the products and processes.
 5. **Progress** (Factory Worker or Admin): every process goes Not Started, In Progress, Completed. The status of the order is computed: Draft, In Progress, Completed.
 6. **Stock** (Admin or Factory Worker): adds, deducts or adjusts a lot by hand at any time; the history of every change is kept.
-7. **Invoice** (Admin): only for a Completed order, one per order, a snapshot. It locks the progress of the order.
-8. **Payment and receipt** (Admin): one full payment (date and amount equal to the total) makes the invoice Paid and issues one receipt.
+7. **Purchase** (Admin or Factory Worker): the Purchase page shows the materials that are low or out; a purchase order (supplier, required date, department, the materials that supplier sells, prices that start from the supplier's) is made as a Draft, printed, and moved by hand Draft, Sent, Received. Received adds the stock once, into the lot typed for each line. The payment of the PO is recorded on it; files can be added. Suppliers (with the materials they sell and their prices, and an Active switch) are in Master data.
+8. **Invoice** (Admin): only for a Completed order, one per order, a snapshot. It locks the progress of the order.
+9. **Payment and receipt** (Admin): one full payment (date and amount equal to the total) makes the invoice Paid and issues one receipt.
 
 Where this differs from `simplified_factory_system_requirements.md` (changes the user asked for): no payment method and no payment note, no stock overview page, the quotation is made in the system (QT 2.0) and Confirm QT makes the production order, the order status is called Draft (not New), and Start production deducts the stock. Follow `docs/api` for the contract.
 

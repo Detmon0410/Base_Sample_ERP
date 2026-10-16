@@ -3,7 +3,7 @@
 Where it is used: the **Files** of a QT (`/sale/quotations/:id`) and the **Evidence** section of a production order (`/sale/orders/:id`) · Frontend: `frontend/src/components/common/Attachments.jsx`, `services/attachments.service.js` · Mock: `services/mock/attachments.js`
 Conventions: [README.md](README.md)
 
-Files kept with a record. One feature serves every owner: the customer's PO and the quotation of a QT ([qt.md](qt.md)), the evidence of a production order, and later the files of a purchase order.
+Files kept with a record. One feature serves every owner: the customer's PO and the quotation of a QT ([qt.md](qt.md)), the evidence of a production order, and the files of a purchase order ([purchase.md](purchase.md)).
 
 ## The attachment
 
@@ -11,7 +11,7 @@ Files kept with a record. One feature serves every owner: the customer's PO and 
 
 | Field | Notes |
 |---|---|
-| `ownerType` | `QtReference`, `ProductionOrder` (and `PurchaseOrder` when purchase orders exist) |
+| `ownerType` | `QtReference`, `ProductionOrder`, `PurchaseOrder` |
 | `ownerId` | The id of the record that owns the file |
 | `kind` | `PO_FILE`, `QUOTATION`, `EVIDENCE`, `OTHER` (below) |
 | `fileName`, `fileType` | The name as uploaded; the media type is read from the file (`application/pdf`, `image/png`, `image/jpeg`) |
@@ -22,8 +22,8 @@ Files kept with a record. One feature serves every owner: the customer's PO and 
 
 | `kind` | Meaning | Owners that may have it |
 |---|---|---|
-| `PO_FILE` | The customer's PO on a QT (or the PO file of a purchase order). **One per owner**: a new upload replaces the old one. On a production order it is the **copy** of the PO of its QT, made by the system (below) | `QtReference`; `ProductionOrder` (made by the system only) |
-| `QUOTATION` | A quotation file | `QtReference` |
+| `PO_FILE` | The customer's PO on a QT (or the PO file of a purchase order). **One per owner**: a new upload replaces the old one. On a production order it is the **copy** of the PO of its QT, made by the system (below) | `QtReference`, `PurchaseOrder`; `ProductionOrder` (made by the system only) |
+| `QUOTATION` | A quotation file (the supplier's quotation on a PO) | `QtReference`, `PurchaseOrder` |
 | `EVIDENCE` | Images or documents that show the production | `ProductionOrder` |
 | `OTHER` | Any other printable document | every owner |
 
@@ -60,6 +60,7 @@ The rule depends on the **owner** of the file, so the check uses `ownerType` (fo
 |---|---|---|
 | `QtReference` | Admin, Sale Worker | Admin, Sale Worker |
 | `ProductionOrder` | everybody signed in | Admin, Factory Worker |
+| `PurchaseOrder` | Admin, Factory Worker | Admin, Factory Worker |
 
 Others answer `403 FORBIDDEN` ([auth.md](auth.md#access-by-role-and-department)).
 

@@ -69,6 +69,9 @@ The frontend only hides what a user may not use (`frontend/src/utils/permissions
 | Products: write | yes | `403` | `403` |
 | Customers: read | yes | yes | `403` |
 | Customers: write | yes | `403` | `403` |
+| Suppliers: read | yes | `403` | yes |
+| Suppliers: make, change, delete | yes | `403` | `403` |
+| Purchase orders: make, print, move the status, pay, files ([purchase.md](purchase.md)) | yes | `403` | yes |
 | Invoices, receipts, users | yes | `403` | `403` |
 
 A Worker who calls what the department does not allow gets `403 FORBIDDEN`; the frontend sends them to `/403`. The check for the role and department comes **before** the check that the record exists (a missing record is `403` for a user who may not touch it, not `404`).

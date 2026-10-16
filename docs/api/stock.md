@@ -7,7 +7,7 @@ Who may call: everybody who is signed in reads everything on this page; a stock 
 
 ## Stock changes of a material
 
-The only automatic change is the **start of a production order**, which deducts the BOM of its lines, the oldest lot first, and is refused with `409 STOCK_SHORT` when a material is short ([orders.md](orders.md)). Otherwise an Admin changes it by hand, at any time; a Worker may read the history.
+There are two automatic changes. A purchase order that is **received** adds each of its lines to the lot typed for it, as an `Add` with `purchaseOrderId` ([purchase.md](purchase.md)). The **start of a production order**, which deducts the BOM of its lines, the oldest lot first, and is refused with `409 STOCK_SHORT` when a material is short ([orders.md](orders.md)). Otherwise an Admin changes it by hand, at any time; a Worker may read the history.
 
 | Method | Path | Body | Result |
 |---|---|---|---|
@@ -54,7 +54,7 @@ The ledger of every stock change of every material together (the page `/stock/mo
 
 `data` is a list of the entries below with `materialCode` and `materialName` added, **newest `changeDate` first** (then the last made first); `meta` is `{ page, pageSize, total }`. `400 VALIDATION_ERROR` with `INVALID` (a type that does not exist) or `INVALID_DATE` (a `from` or `to` that is not a real day). The changes of a deleted material are gone with it.
 
-A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, change (+ or -), balance (of the lot after it), changeDate, note, initial (true for the first stock of a new material), orderId, orderNumber, userId, userName, at }`; both `GET /stock-changes` and `GET /materials/:id/stock-changes` also carry `materialCode` and `materialName`. Creating a material with lots writes one `Add` entry (note `Initial stock`) per lot.
+A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, change (+ or -), balance (of the lot after it), changeDate, note, initial (true for the first stock of a new material), orderId, orderNumber, purchaseOrderId, purchaseOrderNumber, userId, userName, at }`; both `GET /stock-changes` and `GET /materials/:id/stock-changes` also carry `materialCode` and `materialName`. Creating a material with lots writes one `Add` entry (note `Initial stock`) per lot.
 
 ## Data needed
 

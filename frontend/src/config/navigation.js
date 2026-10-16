@@ -48,6 +48,7 @@ export const NAV = [
       { key: "suppliers", to: "/master/suppliers", labelKey: "suppliers", icon: "suppliers", action: "suppliers.view" },
       { key: "users", to: "/master/users", labelKey: "users", icon: "users", action: "users.use" },
       { key: "erDiagram", to: "/master/er-diagram", labelKey: "erDiagram", icon: "erDiagram", action: "erDiagram.view" },
+      { key: "dbRelations", to: "/master/db-relations", labelKey: "dbRelations", icon: "dbRelations", action: "dbRelations.view" },
     ],
   },
 ];

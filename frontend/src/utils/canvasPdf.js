@@ -1,10 +1,11 @@
 /**
- * A PDF whose pages are drawn by the browser: the Japanese PDF of the ER diagram. The built-in fonts of a PDF have no Japanese, so
- * the text is drawn on a canvas with the fonts of the browser (as the invoices do, utils/pdf.js), and each page goes into the PDF as
- * a picture. It answers the few jsPDF calls erPdf.js makes (in mm and pt, as jsPDF), so the English and the Japanese PDF share one
- * layout. The price: the text of the Japanese PDF cannot be selected or searched.
+ * A PDF whose pages are drawn by the browser: the Japanese PDF of the ER diagram and of the DB relations. The built-in fonts of a
+ * PDF have no Japanese, so the text is drawn on a canvas with the fonts of the browser (as the invoices do, utils/pdf.js), and each
+ * page goes into the PDF as a picture. It answers the few jsPDF calls textPdf.js makes (in mm and pt, as jsPDF), so the English and
+ * the Japanese PDF share one layout. The price: the text of the Japanese PDF cannot be selected or searched.
  */
 const MM_PER_PT = 25.4 / 72;
+const MONO = '"Courier New", Courier, monospace';
 const FONT = '"Helvetica Neue", Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans JP", sans-serif';
 const LINE_HEIGHT = 1.15; // as jsPDF
 /** A character that may start a new line by itself (Japanese has no spaces between words). */
@@ -15,7 +16,7 @@ export function createCanvasPdf(JsPDF, { format = "a3", orientation = "landscape
   const pdf = new JsPDF({ unit: "mm", format, orientation });
   const width = pdf.internal.pageSize.getWidth();
   const height = pdf.internal.pageSize.getHeight();
-  const state = { fontSize: 16, style: "normal", text: "#000000", draw: "#000000", fill: "#000000", lineWidth: 0.2 };
+  const state = { fontSize: 16, family: "helvetica", style: "normal", text: "#000000", draw: "#000000", fill: "#000000", lineWidth: 0.2, dash: [] };
   let canvas = null;
   let context = null;
   let pages = 0;
@@ -39,11 +40,12 @@ export function createCanvasPdf(JsPDF, { format = "a3", orientation = "landscape
   const font = () => {
     const italic = state.style.includes("italic") ? "italic " : "";
     const bold = state.style.includes("bold") ? "bold " : "";
-    return `${italic}${bold}${state.fontSize * MM_PER_PT}px ${FONT}`;
+    return `${italic}${bold}${state.fontSize * MM_PER_PT}px ${state.family === "courier" ? MONO : FONT}`;
   };
   const stroke = () => {
     context.strokeStyle = state.draw;
     context.lineWidth = state.lineWidth;
+    context.setLineDash(state.dash);
     context.stroke();
   };
   newPage();
@@ -51,12 +53,14 @@ export function createCanvasPdf(JsPDF, { format = "a3", orientation = "landscape
   const doc = {
     internal: { pageSize: { getWidth: () => width, getHeight: () => height } },
     setProperties: (properties) => pdf.setProperties(properties),
-    setFont: (_family, style = "normal") => void (state.style = style),
+    setFont: (family, style = "normal") => void Object.assign(state, { family, style }),
     setFontSize: (size) => void (state.fontSize = size),
     setTextColor: (color) => void (state.text = color),
     setDrawColor: (color) => void (state.draw = color),
     setFillColor: (color) => void (state.fill = color),
     setLineWidth: (lineWidth) => void (state.lineWidth = lineWidth),
+    /** A dashed line, as jsPDF: [dash, gap] in mm; [] is a full line. */
+    setLineDashPattern: (pattern) => void (state.dash = pattern),
 
     rect(x, y, w, h, style = "S") {
       context.beginPath();

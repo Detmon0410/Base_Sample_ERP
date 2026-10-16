@@ -22,6 +22,7 @@ export const PAGES = [
   { path: "/master/suppliers", name: "Suppliers", roles: ["admin", "factory"] },
   { path: "/master/users", name: "Users", roles: ["admin"] },
   { path: "/master/er-diagram", name: "ER diagram", roles: ["admin"] },
+  { path: "/master/db-relations", name: "DB relations", roles: ["admin"] },
 ];
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */

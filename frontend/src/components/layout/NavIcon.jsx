@@ -7,6 +7,7 @@ import {
   Database,
   Factory,
   FileText,
+  KeyRound,
   Landmark,
   LayoutDashboard,
   Network,
@@ -40,6 +41,7 @@ const ICONS = {
   purchase: ShoppingCart,
   suppliers: Truck,
   erDiagram: Network,
+  dbRelations: KeyRound,
   down: ChevronDown,
 };
 

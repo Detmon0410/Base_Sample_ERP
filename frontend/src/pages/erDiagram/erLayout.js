@@ -1,22 +1,25 @@
-import { ENTITIES, RELATIONSHIPS } from "./erModel";
-import { inLanguage } from "./mdJa";
+import { ENTITIES, hasNoKey, RELATIONSHIPS } from "./erModel";
+import { inLanguage } from "@/i18n/mdJa";
 
 /**
  * Turns the model of erModel.js into a list of plain shapes (rect, line, circle, text) in one coordinate space. The page draws the
  * shapes as SVG and the PDF draws the same shapes with jsPDF, so the two are always the same drawing.
  *
  * Text `y` is the middle of the line of text (SVG dominant-baseline "central", jsPDF baseline "middle"). The words of the .md (labels,
- * notes of the columns, the key of the notation) follow the language of the page (mdJa.js); the names stay as they are. The PDF
- * is always drawn in English.
+ * notes of the columns, the key of the notation) follow the language of the page (mdJa.js); the names stay as they are.
+ * A line with no database key (to ATTACHMENT) is dashed.
  */
-export const BOX_WIDTH = 250;
+export const BOX_WIDTH = 260;
 export const HEADER = 28;
 export const ROW = 20;
-/** A column with a note of the .md takes two lines: the column, then the note in small italics. */
-export const NOTE_ROW = 32;
+/** A note of the .md goes under its column in small italics, on as many lines of NOTE_LINE as it needs (wrapped in English). */
+const NOTE_LINE = 12;
+const NOTE_FONT = 9;
+const NOTE_WIDTH = BOX_WIDTH - 58;
 const PAD = 4;
-export const WIDTH = 1720;
-export const HEIGHT = 1000;
+export const WIDTH = 2090;
+export const HEIGHT = 1100;
+const DASH = [6, 4];
 
 export const COLORS = {
   header: "#7c7bad",
@@ -36,7 +39,26 @@ const LABEL_FONT = 10;
 /** An estimate of the width of a text (Helvetica; a Japanese character is about as wide as it is high): the white box behind a label. */
 const textWidth = (text, size) => [...text].reduce((width, char) => width + size * (char.codePointAt(0) > 0x2e80 ? 1 : 0.56), 0);
 
-const rowHeight = (column) => (column[3] ? NOTE_ROW : ROW);
+/** A text broken into lines no wider than `width`, at the spaces (Japanese also between characters). */
+export function wrap(text, size, width) {
+  const tokens = text.match(/[⺀-￿]|[^\s⺀-￿]+|\s+/g) ?? [];
+  const lines = [];
+  let line = "";
+  for (const token of tokens) {
+    const next = line + token;
+    if (line.trim() && /\S/.test(token) && textWidth(next.trimEnd(), size) > width) {
+      lines.push(line.trimEnd());
+      line = token;
+    } else {
+      line = next;
+    }
+  }
+  if (line.trim()) lines.push(line.trimEnd());
+  return lines;
+}
+/** The lines of the note of a column; the height of a row comes from the English note, so the drawing is the same in both languages. */
+export const noteLines = (note) => (note ? wrap(note, NOTE_FONT, NOTE_WIDTH) : []);
+const rowHeight = (column) => ROW + noteLines(column[3]).length * NOTE_LINE;
 /** The top of every row of a table, and the bottom of the last one. */
 const rowTops = (entity) => {
   const tops = [entity.y + HEADER];
@@ -83,6 +105,15 @@ export function routeOf(relationship) {
   let middle = [];
   if (route.via) middle = route.via;
   else if (route.lane !== undefined) middle = [[route.lane, start.point[1]], [route.lane, end.point[1]]];
+  // the part next to a table leaves it straight: add the corner that lines `via` up with an end that sits on a row
+  const corner = (side, point, next) => {
+    if (point[0] === next[0] || point[1] === next[1]) return [];
+    return side === "left" || side === "right" ? [[next[0], point[1]]] : [[point[0], next[1]]];
+  };
+  if (middle.length) {
+    middle = [...corner(route.from, start.point, middle[0]), ...middle];
+    middle = [...middle, ...corner(route.to, end.point, middle.at(-1)).reverse()];
+  }
   return { start, end, points: [start.point, ...middle, end.point] };
 }
 
@@ -127,8 +158,8 @@ function labelOf(points, text, at) {
 }
 
 function entityShapes(entity, tr) {
-  const box = entityBox(entity);
   const tops = rowTops(entity);
+  const box = entityBox(entity);
   const shapes = [
     { kind: "rect", x: box.x, y: box.y, w: box.w, h: box.h, fill: COLORS.paper, stroke: COLORS.border, width: 1.2 },
     { kind: "rect", x: box.x, y: box.y, w: box.w, h: HEADER, fill: COLORS.header },
@@ -141,17 +172,18 @@ function entityShapes(entity, tr) {
     if (keys) shapes.push({ kind: "text", x: box.x + 8, y: middle, text: keys, size: 9, bold: true, color: COLORS.key });
     shapes.push({ kind: "text", x: box.x + 50, y: middle, text: name, size: FONT, bold: keys.includes("PK"), color: COLORS.text });
     shapes.push({ kind: "text", x: box.x + box.w - 8, y: middle, text: type, size: 10, color: COLORS.muted, anchor: "end" });
-    if (note) shapes.push({ kind: "text", x: box.x + 50, y: top + ROW + 3, text: tr(note), size: 9, italic: true, color: COLORS.muted });
+    // the note in the language of the page, on the lines the English note takes (a Japanese note is shorter)
+    wrap(tr(note ?? ""), NOTE_FONT, NOTE_WIDTH).forEach((line, index) => shapes.push({ kind: "text", x: box.x + 50, y: top + ROW + 3 + index * NOTE_LINE, text: line, size: NOTE_FONT, italic: true, color: COLORS.muted }));
   });
   // the border again, over the header and the rows
   shapes.push({ kind: "rect", x: box.x, y: box.y, w: box.w, h: box.h, stroke: COLORS.border, width: 1.2 });
   return shapes;
 }
 
-/** The key of the notation, in the empty corner at the bottom left. */
+/** The key of the notation, in the empty space under CUSTOMER. */
 function legendShapes(x, y, tr) {
   const shapes = [
-    { kind: "rect", x, y, w: BOX_WIDTH, h: 176, fill: COLORS.paper, stroke: COLORS.rowLine, width: 1 },
+    { kind: "rect", x, y, w: BOX_WIDTH, h: 200, fill: COLORS.paper, stroke: COLORS.rowLine, width: 1 },
     { kind: "text", x: x + 10, y: y + 15, text: tr("Notation (crow's foot)"), size: 11, bold: true, color: COLORS.text },
   ];
   const ends = [
@@ -168,6 +200,9 @@ function legendShapes(x, y, tr) {
     shapes.push({ kind: "rect", x: x + 70, y: lineY - 5, w: 6, h: 10, fill: COLORS.header });
     shapes.push({ kind: "text", x: x + 88, y: lineY, text: tr(text), size: 10, color: COLORS.text });
   });
+  const dashedY = y + 38 + 4 * 22;
+  shapes.push({ kind: "line", points: [[x + 14, dashedY], [x + 76, dashedY]], stroke: COLORS.line, width: 1.3, dash: DASH });
+  shapes.push({ kind: "text", x: x + 88, y: dashedY, text: tr("no database key"), size: 10, color: COLORS.text });
   const keys = [
     ["PK", "primary key"],
     ["FK", "foreign key"],
@@ -178,7 +213,7 @@ function legendShapes(x, y, tr) {
     const column = index % 2;
     const row = Math.floor(index / 2);
     const keyX = x + 14 + column * 100;
-    const keyY = y + 132 + row * 20;
+    const keyY = y + 156 + row * 20;
     shapes.push(italic ? { kind: "text", x: keyX, y: keyY, text: tr(key), size: 9, italic: true, color: COLORS.muted } : { kind: "text", x: keyX, y: keyY, text: key, size: 9, bold: true, color: COLORS.key });
     shapes.push({ kind: "text", x: keyX + 26, y: keyY, text: tr(text), size: 10, color: COLORS.text });
   });
@@ -192,13 +227,13 @@ export function buildDiagram(language = "en") {
   const labels = [];
   for (const relationship of RELATIONSHIPS) {
     const { start, end, points } = routeOf(relationship);
-    lines.push({ kind: "line", points, stroke: COLORS.line, width: 1.3 });
+    lines.push({ kind: "line", points, stroke: COLORS.line, width: 1.3, ...(hasNoKey(relationship) ? { dash: DASH } : {}) });
     lines.push(...endMarks(start.point, start.out, relationship.parentEnd), ...endMarks(end.point, end.out, relationship.childEnd));
     labels.push(...labelOf(points, tr(relationship.label), relationship.labelAt));
   }
   return {
     width: WIDTH,
     height: HEIGHT,
-    shapes: [...lines, ...ENTITIES.flatMap((entity) => entityShapes(entity, tr)), ...labels, ...legendShapes(40, 720, tr)],
+    shapes: [...lines, ...ENTITIES.flatMap((entity) => entityShapes(entity, tr)), ...labels, ...legendShapes(40, 220, tr)],
   };
 }

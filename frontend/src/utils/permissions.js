@@ -43,6 +43,7 @@ export const ACTIONS = {
   "receipts.use": ADMIN,
   "users.use": ADMIN,
   "erDiagram.view": ADMIN, // the ER diagram page
+  "dbRelations.view": ADMIN, // the DB relations page
 };
 
 const isAdmin = (user) => user?.role === "Admin";

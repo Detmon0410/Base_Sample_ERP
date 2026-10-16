@@ -14,6 +14,7 @@ import { SuppliersPage } from "@/pages/suppliers/SuppliersPage";
 import { ProductsPage } from "@/pages/master/ProductsPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { ErDiagramPage } from "@/pages/erDiagram/ErDiagramPage";
+import { DbRelationsPage } from "@/pages/dbRelations/DbRelationsPage";
 import { StockMovementsPage } from "@/pages/stock/StockMovementsPage";
 import { StockPage } from "@/pages/stock/StockPage";
 import { UsersPage } from "@/pages/users/UsersPage";
@@ -26,7 +27,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { RequirePermission } from "./RequirePermission";
 
 // Menu entries whose page is built (the key of config/navigation.js). Everything else opens the "not built yet" placeholder.
-const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, receipts: ReceiptsPage, productionOrders: OrdersPage, purchase: PurchasePage, suppliers: SuppliersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage, erDiagram: ErDiagramPage };
+const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, receipts: ReceiptsPage, productionOrders: OrdersPage, purchase: PurchasePage, suppliers: SuppliersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage, erDiagram: ErDiagramPage, dbRelations: DbRelationsPage };
 
 /** An old address of a material, /stock/<id> (a saved link, the Dashboard of before): it opens the material where it is now. */
 function LegacyMaterialRedirect() {

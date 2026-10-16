@@ -3,10 +3,9 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import en from "@/i18n/locales/en/erDiagram.json";
-
-import { buildDiagram, entityBox, entityOf, HEIGHT, routeOf, WIDTH } from "./erLayout";
-import { ENTITIES, NOTE_KEYS, RELATIONSHIPS } from "./erModel";
+import { buildDiagram, entityBox, entityOf, HEIGHT, noteLines, routeOf, WIDTH, wrap } from "./erLayout";
+import { ENTITIES, hasNoKey, NOTES, RELATIONSHIPS } from "./erModel";
+import { inLanguage } from "@/i18n/mdJa";
 
 // The ER diagram of the app is ProjectdocInfo/ER Diagram.md: the same tables, columns, notes, relationships and labels. And it must
 // be readable, in English and in Japanese: no line through a table, no two lines crossing, no label on a table or on another label,
@@ -34,7 +33,7 @@ function readMd() {
     .split("## Notes")[1]
     .split(/\r?\n/)
     .filter((line) => line.startsWith("- "))
-    .map((line) => line.slice(2).replace(/[`*]/g, "").trim());
+    .map((line) => line.slice(2).trim());
   return { entities, relationships, notes };
 }
 
@@ -45,10 +44,10 @@ const inside = ([x, y], box) => x > box.x && x < box.x + box.w && y > box.y && y
 describe("the ER model is ER Diagram.md", () => {
   const source = readMd();
 
-  it("reads the .md (16 tables, 18 relationships, 4 notes)", () => {
-    expect(source.entities).toHaveLength(16);
-    expect(source.relationships).toHaveLength(18);
-    expect(source.notes).toHaveLength(4);
+  it("reads the .md (23 tables, 29 relationships, 7 notes)", () => {
+    expect(source.entities).toHaveLength(23);
+    expect(source.relationships).toHaveLength(29);
+    expect(source.notes).toHaveLength(7);
   });
 
   it("has the tables of the .md, in its order, with the same columns, types, keys and notes", () => {
@@ -62,16 +61,25 @@ describe("the ER model is ER Diagram.md", () => {
   });
 
   it("writes the notes of the .md, word for word", () => {
-    expect(NOTE_KEYS.map((key) => en.notes[key])).toEqual(source.notes);
+    expect(NOTES).toEqual(source.notes);
   });
 
-  it("draws each relationship to a foreign key of the child, and every foreign key has its line", () => {
+  it("draws each relationship to a column of the child: a foreign key, or owner_id of ATTACHMENT (no database key, dashed)", () => {
     for (const relationship of RELATIONSHIPS) {
       const column = entityOf(relationship.child).columns.find(([name]) => name === relationship.fk);
-      expect(column && keysOf(column).includes("FK"), `${relationship.child}.${relationship.fk}`).toBe(true);
+      expect(column, `${relationship.child}.${relationship.fk}`).toBeDefined();
+      if (relationship.child === "ATTACHMENT") expect(relationship.fk).toBe("owner_id");
+      expect(hasNoKey(relationship), `${relationship.child}.${relationship.fk}`).toBe(!keysOf(column).includes("FK"));
     }
-    const fromColumns = ENTITIES.flatMap((entity) => entity.columns.filter((column) => keysOf(column).includes("FK")).map(([name]) => `${entity.name}.${name}`)).sort();
-    expect(RELATIONSHIPS.map((relationship) => `${relationship.child}.${relationship.fk}`).sort()).toEqual(fromColumns);
+    expect(RELATIONSHIPS.filter(hasNoKey).map((relationship) => relationship.child)).toEqual(["ATTACHMENT", "ATTACHMENT", "ATTACHMENT"]);
+  });
+
+  it("fits every Japanese note on the lines of the English note", () => {
+    for (const entity of ENTITIES) {
+      for (const [name, , , note] of entity.columns) {
+        if (note) expect(wrap(inLanguage(note, "ja"), 9, 202).length, `${entity.name}.${name}`).toBeLessThanOrEqual(noteLines(note).length);
+      }
+    }
   });
 });
 
@@ -119,14 +127,15 @@ describe("the drawing", () => {
     }
   });
 
-  it("has no two lines that cross or run on each other", () => {
-    const all = RELATIONSHIPS.map((relationship) => ({ name: `${relationship.parent} -> ${relationship.child}`, parts: segments(routeOf(relationship).points) }));
+  it("has no two lines that cross or run on each other (a dashed line, with no database key, may cross but not run on another)", () => {
+    const all = RELATIONSHIPS.map((relationship) => ({ name: `${relationship.parent} -> ${relationship.child}`, dashed: hasNoKey(relationship), parts: segments(routeOf(relationship).points) }));
     const between = (value, a, b) => value > Math.min(a, b) && value < Math.max(a, b);
     const overlapRange = (a1, a2, b1, b2) => Math.max(Math.min(a1, a2), Math.min(b1, b2)) < Math.min(Math.max(a1, a2), Math.max(b1, b2));
-    const meet = ([a1, a2], [b1, b2]) => {
+    const meet = ([a1, a2], [b1, b2], mayCross) => {
       const aVertical = a1[0] === a2[0];
       const bVertical = b1[0] === b2[0];
       if (aVertical !== bVertical) {
+        if (mayCross) return false;
         const [v1, v2, h1, h2] = aVertical ? [a1, a2, b1, b2] : [b1, b2, a1, a2];
         return between(v1[0], h1[0], h2[0]) && between(h1[1], v1[1], v2[1]);
       }
@@ -136,7 +145,8 @@ describe("the drawing", () => {
     const problems = [];
     for (let i = 0; i < all.length; i += 1) {
       for (let j = i + 1; j < all.length; j += 1) {
-        if (all[i].parts.some((a) => all[j].parts.some((b) => meet(a, b)))) problems.push(`${all[i].name} x ${all[j].name}`);
+        const mayCross = all[i].dashed || all[j].dashed;
+        if (all[i].parts.some((a) => all[j].parts.some((b) => meet(a, b, mayCross)))) problems.push(`${all[i].name} x ${all[j].name}`);
       }
     }
     expect(problems).toEqual([]);

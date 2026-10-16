@@ -29,5 +29,6 @@
   "role": "Role",
   "department": "Department",
   "purchase": "Purchase",
-  "suppliers": "Suppliers"
+  "suppliers": "Suppliers",
+  "dbRelations": "DB relations"
 }

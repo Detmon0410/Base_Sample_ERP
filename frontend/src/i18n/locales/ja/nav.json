@@ -29,5 +29,6 @@
   "role": "権限",
   "department": "部署",
   "purchase": "発注",
-  "suppliers": "仕入先"
+  "suppliers": "仕入先",
+  "dbRelations": "DBリレーション"
 }

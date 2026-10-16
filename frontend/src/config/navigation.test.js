@@ -12,7 +12,7 @@ const shape = (user) =>
 
 describe("the menu of the header", () => {
   it("shows an Admin everything: the two menus with their entries, the others as links", () => {
-    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "purchase", "accounting > invoices, receipts", "stock > materialsStock, movements", "master > customers, products, suppliers, users, erDiagram"]);
+    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "purchase", "accounting > invoices, receipts", "stock > materialsStock, movements", "master > customers, products, suppliers, users, erDiagram, dbRelations"]);
   });
 
   it("shows a Factory Worker the production orders, Purchase, the Stock menu and the products and suppliers to look at", () => {

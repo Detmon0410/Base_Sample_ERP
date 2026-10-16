@@ -17,7 +17,7 @@ export function AuthLayout() {
       <AuthBackground />
 
       <header className="relative flex h-12 shrink-0 items-center justify-between bg-primary px-4 text-primary-foreground">
-        <AppLogo label={t("app.name")} className="size-9 rounded-md bg-white p-0.5" />
+        <AppLogo light label={t("app.name")} className="size-10" />
         <LanguageSwitcher />
       </header>
 

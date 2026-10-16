@@ -251,7 +251,7 @@
     "actions": "操作",
     "download": "ダウンロード",
     "delete": "削除",
-    "chooseFile": "ファイルを選択（PDF・PNG・JPG、10 MBまで）",
+    "chooseFile": "ファイルを選択",
     "upload": "アップロード",
     "uploading": "アップロード中...",
     "uploaded": "ファイルを追加しました。",
@@ -263,6 +263,7 @@
       "QUOTATION": "見積書",
       "EVIDENCE": "証拠資料",
       "OTHER": "その他"
-    }
+    },
+    "fileHint": "PDF、PNG、JPG（10 MBまで）"
   }
 }

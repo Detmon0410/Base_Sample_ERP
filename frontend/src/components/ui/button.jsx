@@ -3,9 +3,9 @@ import { cva } from "class-variance-authority";
 import { cn } from "cn"
 import { Slot } from "radix-ui"
 
-// Flat, square, no icons.
+// Flat, with small rounded corners.
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center border border-transparent text-base font-medium whitespace-nowrap outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex shrink-0 items-center justify-center rounded-md border border-transparent text-base font-medium whitespace-nowrap outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {

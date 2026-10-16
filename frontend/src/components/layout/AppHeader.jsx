@@ -89,7 +89,7 @@ export function AppHeader() {
                 <NavIcon name="down" className="size-3.5" />
               </button>
               {open === entry.key ? (
-                <ul className="m-0 min-w-56 list-none border border-border bg-card py-1 text-foreground md:absolute md:top-full md:left-0 md:shadow-md">
+                <ul className="m-0 min-w-56 list-none overflow-hidden rounded-b-md border border-border bg-card py-1 text-foreground md:absolute md:top-full md:left-0 md:shadow-md">
                   {entry.items.map((item) => (
                     <li key={item.key}>
                       <NavLink
@@ -128,7 +128,7 @@ export function AppHeader() {
             <NavIcon name="down" className="size-3.5" />
           </button>
           {open === "user" ? (
-            <div role="group" aria-label={t("nav:userMenu")} className="absolute top-full right-0 z-30 w-80 max-w-[calc(100vw-1rem)] border border-border bg-card text-foreground shadow-md">
+            <div role="group" aria-label={t("nav:userMenu")} className="absolute top-full right-0 z-30 w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-b-md border border-border bg-card text-foreground shadow-md">
               <div className="flex items-center gap-3 bg-accent p-4">
                 <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-full bg-primary text-xl font-bold text-primary-foreground">
                   {(user?.name ?? "?").trim().charAt(0).toUpperCase()}
@@ -152,7 +152,7 @@ export function AppHeader() {
                 <button
                   type="button"
                   onClick={logout}
-                  className="flex w-full items-center justify-center gap-2 border border-border bg-secondary px-3 py-2 font-medium text-secondary-foreground outline-none hover:bg-[#e4e4e4] focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex w-full items-center justify-center gap-2 rounded-md border border-border bg-secondary px-3 py-2 font-medium text-secondary-foreground outline-none hover:bg-[#e4e4e4] focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <LogOut aria-hidden="true" className="size-4" />
                   {t("auth:logout")}

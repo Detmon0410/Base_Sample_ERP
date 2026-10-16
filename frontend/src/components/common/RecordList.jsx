@@ -82,7 +82,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
           {t("master:errors.LOAD_FAILED")}
         </p>
       ) : (
-        <div className="border border-border bg-card" aria-busy={loading}>
+        <div className="overflow-hidden rounded-md border border-border bg-card" aria-busy={loading}>
           <Table data-stack>
             <TableHeader>
               <TableRow>

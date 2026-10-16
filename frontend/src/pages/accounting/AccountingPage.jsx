@@ -98,7 +98,7 @@ function PayDialog({ invoice, onClose, onDone }) {
 }
 
 function Empty({ children }) {
-  return <p className="border border-border bg-card p-4 text-muted-foreground">{children}</p>;
+  return <p className="rounded-md border border-border bg-card p-4 text-muted-foreground">{children}</p>;
 }
 
 /** The invoices of one tab: unpaid ones have Record payment, paid ones open their receipt. */

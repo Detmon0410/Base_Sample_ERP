@@ -26,7 +26,7 @@ import { useStartProduction } from "./StartProduction";
 const PROCESS_STATUSES = ["Not Started", "In Progress", "Completed"];
 
 /** The form to record one progress update of a process (an entry of the history). */
-function ProgressForm({ order, line, process, onDone, onCancel }) {
+export function ProgressForm({ order, line, process, onDone, onCancel }) {
   const { t } = useTranslation(["orders", "master", "common"]);
   const [summary, setSummary] = useState(null);
   const completed = process.status === "Completed";

@@ -7,5 +7,20 @@
   "unpaidTotal": "Unpaid total",
   "paidThisMonth": "Paid this month",
   "failed": "The numbers could not be loaded. Please try again.",
-  "ordersChart": "Production orders by status"
+  "ordersChart": "Production orders by status",
+  "today": {
+    "failed": "Today's work could not be loaded. Please try again.",
+    "toStart": "To start",
+    "running": "In production",
+    "toReceive": "To receive",
+    "noneToStart": "No order is waiting to start.",
+    "noneRunning": "No order is in production.",
+    "noneToReceive": "No purchase order is waiting to be received.",
+    "noProcesses": "This order has no process yet. Ask Sales to add them.",
+    "record": "Record progress",
+    "receive": "Receive",
+    "low_one": "{{count}} material is low or out",
+    "low_other": "{{count}} materials are low or out",
+    "buy": "Buy"
+  }
 }

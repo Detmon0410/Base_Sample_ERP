@@ -58,7 +58,7 @@ function IssueDialog({ order, onClose, onDone }) {
           <AlertDescription className="text-base">{summary}</AlertDescription>
         </Alert>
       ) : null}
-      <TextField label={t("invoices:date")} placeholder="YYYY-MM-DD" inputMode="numeric" error={form.formState.errors.invoiceDate?.message} {...form.register("invoiceDate")} />
+      <TextField label={t("invoices:date")} placeholder={t("examples:date")} inputMode="numeric" error={form.formState.errors.invoiceDate?.message} {...form.register("invoiceDate")} />
     </FormDialog>
   );
 }
@@ -94,8 +94,8 @@ function PayDialog({ invoice, onClose, onDone }) {
           <AlertDescription className="text-base">{summary}</AlertDescription>
         </Alert>
       ) : null}
-      <TextField label={t("invoices:payment.date")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
-      <TextField label={t("invoices:payment.amount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
+      <TextField label={t("invoices:payment.date")} placeholder={t("examples:date")} inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
+      <TextField label={t("invoices:payment.amount")} placeholder={t("examples:paymentAmount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
     </FormDialog>
   );
 }

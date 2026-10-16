@@ -49,8 +49,8 @@ function PaymentForm({ invoice, onDone }) {
           </Alert>
         ) : null}
         <div className="grid gap-5 sm:grid-cols-2">
-          <TextField label={t("invoices:payment.date")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
-          <TextField label={t("invoices:payment.amount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
+          <TextField label={t("invoices:payment.date")} placeholder={t("examples:date")} inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
+          <TextField label={t("invoices:payment.amount")} placeholder={t("examples:paymentAmount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
           <p className="text-sm text-muted-foreground sm:col-span-2">{t("invoices:payment.hint", { total: formatCurrency(invoice.total, i18n.language) })}</p>
         </div>
         <div>

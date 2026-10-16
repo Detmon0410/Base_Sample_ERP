@@ -32,9 +32,9 @@ function LotLines({ form, readOnly }) {
       <div className="flex flex-col gap-4">
         {fields.map((field, index) => (
           <div key={field.id} className="grid items-start gap-4 sm:grid-cols-[1fr_9rem_auto]">
-            <TextField label={t("materials.lotNumber")} disabled={readOnly} error={errors?.[index]?.lotNumber?.message} {...form.register(`lots.${index}.lotNumber`)} />
+            <TextField label={t("materials.lotNumber")} placeholder={t("examples:lotNumber")} disabled={readOnly} error={errors?.[index]?.lotNumber?.message} {...form.register(`lots.${index}.lotNumber`)} />
             <TextField
-              label={t("materials.quantity")}
+              label={t("materials.quantity")} placeholder={t("examples:lotQuantity")}
               type="number"
               min="0"
               step="0.001"
@@ -81,11 +81,11 @@ function MaterialForm() {
           <>
             <Section icon={Boxes} title={t("materials.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("materials.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
-                <TextField label={t("materials.name")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />
-                <TextField label={t("materials.unit")} disabled={readOnly} error={errors.unit?.message} {...form.register("unit")} />
+                <TextField label={t("materials.code")} placeholder={t("examples:materialCode")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
+                <TextField label={t("materials.name")} placeholder={t("examples:materialName")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />
+                <TextField label={t("materials.unit")} placeholder={t("examples:unit")} disabled={readOnly} error={errors.unit?.message} {...form.register("unit")} />
                 <p className="self-end pb-2 text-sm text-muted-foreground">{t("materials.unitHint")}</p>
-                <TextField label={t("materials.minLevel")} type="number" min="0" step="0.001" disabled={readOnly} error={errors.minLevel?.message} className="sm:col-span-2" {...form.register("minLevel")} />
+                <TextField label={t("materials.minLevel")} placeholder={t("examples:minLevel")} type="number" min="0" step="0.001" disabled={readOnly} error={errors.minLevel?.message} className="sm:col-span-2" {...form.register("minLevel")} />
                 <p className="text-sm text-muted-foreground sm:col-span-2">{t("materials.minLevelHint")}</p>
               </div>
             </Section>

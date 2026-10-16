@@ -53,8 +53,8 @@ describe("the stock movements page", () => {
 
     // the dates: only a typed date that has the shape of a date is used
     await user.clear(screen.getByLabelText("Search (material, lot, order, note)"));
-    await user.type(screen.getByLabelText("From (YYYY-MM-DD)"), "2026-10-04");
-    await user.type(screen.getByLabelText("To (YYYY-MM-DD)"), "2026-10-04");
+    await user.type(screen.getByLabelText("From"), "2026-10-04");
+    await user.type(screen.getByLabelText("To"), "2026-10-04");
     await waitFor(() => expect(within(table).getAllByRole("row")).toHaveLength(2)); // the deduction of that day only
 
     // a click on a cell that is not a link opens the material

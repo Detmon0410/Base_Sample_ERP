@@ -104,8 +104,8 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
             },
           })}
         />
-        <TextField label={t("lines.quantity")} type="number" min="1" step="1" error={errors?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
-        <TextField label={t("lines.unitPrice")} type="number" min="0" step="1" error={errors?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
+        <TextField label={t("lines.quantity")} placeholder={t("examples:quantity")} type="number" min="1" step="1" error={errors?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
+        <TextField label={t("lines.unitPrice")} placeholder={t("examples:unitPrice")} type="number" min="0" step="1" error={errors?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
       </div>
 
       <BomBlock form={form} index={index} products={products} materials={materials} />
@@ -121,8 +121,8 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
             <span className="pt-7 font-bold">
               {t("processes.step")} {step + 1}
             </span>
-            <TextField label={t("processes.name")} error={errors?.processes?.[step]?.name?.message} {...form.register(`lines.${index}.processes.${step}.name`)} />
-            <TextField label={t("processes.instructions")} {...form.register(`lines.${index}.processes.${step}.instructions`)} />
+            <TextField label={t("processes.name")} placeholder={t("examples:processName")} error={errors?.processes?.[step]?.name?.message} {...form.register(`lines.${index}.processes.${step}.name`)} />
+            <TextField label={t("processes.instructions")} placeholder={t("examples:processInstructions")} {...form.register(`lines.${index}.processes.${step}.instructions`)} />
             <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("processes.remove")} title={t("processes.remove")} onClick={() => processes.remove(step)}>
               <Trash2 aria-hidden="true" />
             </Button>
@@ -203,7 +203,7 @@ export function OrderForm({ order, onChanged, embedded = false }) {
               <p className="text-sm font-semibold text-muted-foreground">{t("orders:customer")}</p>
               <p>{order.customerName}</p>
             </div>
-            <TextField label={t("orders:orderDate")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.orderDate?.message} {...form.register("orderDate")} />
+            <TextField label={t("orders:orderDate")} placeholder={t("examples:date")} inputMode="numeric" error={errors.orderDate?.message} {...form.register("orderDate")} />
             <div>
               <p className="text-sm font-semibold text-muted-foreground">{t("orders:customerPo")}</p>
               <p>{order.customerPoNumber || "-"}</p>
@@ -212,7 +212,7 @@ export function OrderForm({ order, onChanged, embedded = false }) {
               <FieldLabel htmlFor={notesId} className="text-sm font-semibold">
                 {t("orders:notes")}
               </FieldLabel>
-              <Textarea id={notesId} {...form.register("notes")} />
+              <Textarea id={notesId} placeholder={t("examples:notes")} {...form.register("notes")} />
             </Field>
           </div>
         </Section>}

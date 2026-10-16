@@ -68,6 +68,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
           <Search aria-hidden="true" className="pointer-events-none absolute bottom-2.5 left-1 size-4 text-muted-foreground" />
           <Input
             type="search"
+            placeholder={t("examples:search")}
             className="pl-7"
             value={q}
             onChange={(event) => {

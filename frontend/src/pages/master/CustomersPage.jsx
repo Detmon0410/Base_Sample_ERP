@@ -32,10 +32,10 @@ function CustomerForm() {
         return (
           <Section icon={Users} title={t("customers.section")}>
             <div className="grid gap-5 sm:grid-cols-2">
-              <TextField label={t("customers.name")} error={errors.name?.message} disabled={readOnly} className="sm:col-span-2" {...form.register("name")} />
-              <TextField label={t("customers.address")} error={errors.address?.message} disabled={readOnly} className="sm:col-span-2" {...form.register("address")} />
-              <TextField label={t("customers.email")} type="email" error={errors.email?.message} disabled={readOnly} {...form.register("email")} />
-              <TextField label={t("customers.telephone")} type="tel" error={errors.telephone?.message} disabled={readOnly} {...form.register("telephone")} />
+              <TextField label={t("customers.name")} placeholder={t("examples:customerName")} error={errors.name?.message} disabled={readOnly} className="sm:col-span-2" {...form.register("name")} />
+              <TextField label={t("customers.address")} placeholder={t("examples:customerAddress")} error={errors.address?.message} disabled={readOnly} className="sm:col-span-2" {...form.register("address")} />
+              <TextField label={t("customers.email")} placeholder={t("examples:customerEmail")} type="email" error={errors.email?.message} disabled={readOnly} {...form.register("email")} />
+              <TextField label={t("customers.telephone")} placeholder={t("examples:telephone")} type="tel" error={errors.telephone?.message} disabled={readOnly} {...form.register("telephone")} />
             </div>
           </Section>
         );

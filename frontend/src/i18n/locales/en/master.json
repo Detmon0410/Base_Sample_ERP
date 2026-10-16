@@ -130,9 +130,9 @@
     "po": {
       "title": "Customer PO",
       "number": "Customer PO number",
-      "date": "Customer PO date (YYYY-MM-DD)",
+      "date": "Customer PO date",
       "hint": "Upload the file of the customer PO in Files below (kind: PO file). A new PO file replaces the old one.",
-      "saveFirst": "Save the QT first: then the files, the printed form and Confirm QT are here."
+      "saveFirst": "Save the QT first: then the files, Download PDF and Confirm QT are here."
     },
     "confirm": {
       "button": "Confirm QT",
@@ -207,8 +207,8 @@
     "colBy": "By",
     "movementsTitle": "Stock movements",
     "searchLabel": "Search (material, lot, order, note)",
-    "from": "From (YYYY-MM-DD)",
-    "to": "To (YYYY-MM-DD)",
+    "from": "From",
+    "to": "To",
     "colMaterial": "Material",
     "noMovements": "No stock change yet.",
     "noMatch": "No stock change matches.",

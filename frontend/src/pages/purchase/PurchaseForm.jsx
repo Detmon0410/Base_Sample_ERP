@@ -55,12 +55,12 @@ function PoLines({ form }) {
                   },
                 })}
               />
-              <TextField label={t("lines.quantity")} type="number" min="0" step="0.001" error={errors?.[index]?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
+              <TextField label={t("lines.quantity")} placeholder={t("examples:quantity")} type="number" min="0" step="0.001" error={errors?.[index]?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-semibold">{t("lines.unit")}</span>
                 <span className="pt-2">{item?.unit ?? "-"}</span>
               </div>
-              <TextField label={t("lines.unitPrice")} type="number" min="0" step="1" error={errors?.[index]?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
+              <TextField label={t("lines.unitPrice")} placeholder={t("examples:smallPrice")} type="number" min="0" step="1" error={errors?.[index]?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-semibold">{t("lines.amount")}</span>
                 <span className="pt-2 font-bold">{formatCurrency(amountOf(lines[index]), i18n.language)}</span>
@@ -111,14 +111,14 @@ function PoFields({ form }) {
               onChange: () => form.setValue("lines", []),
             })}
           />
-          <TextField label={t("purchase:requiredDate")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.requiredDate?.message} {...form.register("requiredDate")} />
+          <TextField label={t("purchase:requiredDate")} placeholder={t("examples:date")} inputMode="numeric" error={errors.requiredDate?.message} {...form.register("requiredDate")} />
           <SelectField label={t("purchase:department")} options={departments} error={errors.department?.message} {...form.register("department")} />
           <p className="self-end pb-2 text-sm text-muted-foreground">{t("purchase:form.supplierHint")}</p>
           <Field className="sm:col-span-2">
             <FieldLabel htmlFor={notesId} className="text-sm font-semibold">
               {t("purchase:notes")}
             </FieldLabel>
-            <Textarea id={notesId} {...form.register("notes")} />
+            <Textarea id={notesId} placeholder={t("examples:notes")} {...form.register("notes")} />
           </Field>
         </div>
       </Section>

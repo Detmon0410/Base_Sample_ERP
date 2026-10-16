@@ -5,7 +5,7 @@
   "search": "検索（発注番号・仕入先・備考）",
   "poNumber": "発注番号",
   "supplier": "仕入先",
-  "requiredDate": "希望納期（YYYY-MM-DD）",
+  "requiredDate": "希望納期",
   "requiredShort": "希望納期",
   "department": "部門",
   "chooseDepartment": "部門を選択",
@@ -80,7 +80,7 @@
   "payment": {
     "title": "支払",
     "none": "受領済になると支払を記録できます。",
-    "date": "支払日（YYYY-MM-DD）",
+    "date": "支払日",
     "amount": "支払金額",
     "method": "支払方法",
     "chooseMethod": "支払方法を選択",

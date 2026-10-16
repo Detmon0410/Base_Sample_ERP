@@ -39,7 +39,7 @@ function BomLines({ form, readOnly }) {
               {...form.register(`bom.${index}.materialId`)}
             />
             <TextField
-              label={t("products.quantity")}
+              label={t("products.quantity")} placeholder={t("examples:bomQuantity")}
               type="number"
               min="0"
               step="0.001"
@@ -87,9 +87,9 @@ function ProductForm() {
           <>
             <Section icon={Package} title={t("products.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("products.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
-                <TextField label={t("products.price")} type="number" min="0" step="1" disabled={readOnly} error={errors.price?.message} {...form.register("price")} />
-                <TextField label={t("products.name")} disabled={readOnly} error={errors.name?.message} className="sm:col-span-2" {...form.register("name")} />
+                <TextField label={t("products.code")} placeholder={t("examples:productCode")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
+                <TextField label={t("products.price")} placeholder={t("examples:price")} type="number" min="0" step="1" disabled={readOnly} error={errors.price?.message} {...form.register("price")} />
+                <TextField label={t("products.name")} placeholder={t("examples:productName")} disabled={readOnly} error={errors.name?.message} className="sm:col-span-2" {...form.register("name")} />
               </div>
             </Section>
             <BomLines form={form} readOnly={readOnly} />

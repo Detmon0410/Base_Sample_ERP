@@ -134,8 +134,8 @@ function PaymentSection({ po, onDone }) {
             </Alert>
           ) : null}
           <div className="grid gap-5 sm:grid-cols-2">
-            <TextField label={t("purchase:payment.date")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
-            <TextField label={t("purchase:payment.amount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
+            <TextField label={t("purchase:payment.date")} placeholder={t("examples:date")} inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
+            <TextField label={t("purchase:payment.amount")} placeholder={t("examples:paymentAmount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
             <Field data-invalid={errors.method ? true : undefined}>
               <FieldLabel className="text-sm font-semibold">{t("purchase:payment.method")}</FieldLabel>
               <NativeSelect
@@ -145,8 +145,8 @@ function PaymentSection({ po, onDone }) {
               />
               {errors.method ? <FieldError>{errors.method.message}</FieldError> : null}
             </Field>
-            <TextField label={t("purchase:payment.reference")} error={errors.referenceNo?.message} {...form.register("referenceNo")} />
-            <TextField label={t("purchase:payment.note")} className="sm:col-span-2" error={errors.note?.message} {...form.register("note")} />
+            <TextField label={t("purchase:payment.reference")} placeholder={t("examples:reference")} error={errors.referenceNo?.message} {...form.register("referenceNo")} />
+            <TextField label={t("purchase:payment.note")} placeholder={t("examples:paymentNote")} className="sm:col-span-2" error={errors.note?.message} {...form.register("note")} />
             <p className="text-sm text-muted-foreground sm:col-span-2">{t("purchase:payment.hint", { total: formatCurrency(po.total, language) })}</p>
           </div>
           <div>

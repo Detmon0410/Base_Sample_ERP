@@ -69,14 +69,15 @@ export function ProgressForm({ order, line, process, onDone, onCancel }) {
           />
           {errors.status ? <FieldError>{errors.status.message}</FieldError> : null}
         </Field>
-        <TextField label={t("orders:progress.completedQuantity")} type="number" min="0" step="1" error={errors.completedQuantity?.message} {...form.register("completedQuantity")} />
-        <TextField label={t("orders:progress.workDate")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.workDate?.message} {...form.register("workDate")} />
+        <TextField label={t("orders:progress.completedQuantity")} placeholder={t("examples:progressQuantity")} type="number" min="0" step="1" error={errors.completedQuantity?.message} {...form.register("completedQuantity")} />
+        <TextField label={t("orders:progress.workDate")} placeholder={t("examples:date")} inputMode="numeric" error={errors.workDate?.message} {...form.register("workDate")} />
         <Field data-invalid={errors.note ? true : undefined} className="sm:col-span-3">
           <FieldLabel htmlFor={noteId} className="text-sm font-semibold">
             {t("orders:progress.note")}
           </FieldLabel>
           <input
             id={noteId}
+            placeholder={t("examples:progressNote")}
             className="h-10 w-full border-0 border-b border-input bg-transparent px-1 text-base outline-none focus-visible:border-b-2 focus-visible:border-primary aria-invalid:border-destructive"
             aria-invalid={errors.note ? true : undefined}
             {...form.register("note")}

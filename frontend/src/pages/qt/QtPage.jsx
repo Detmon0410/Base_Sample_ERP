@@ -69,8 +69,8 @@ function QtLines({ form, readOnly }) {
                 },
               })}
             />
-            <TextField label={t("qt.lines.quantity")} type="number" min="1" step="1" disabled={readOnly} error={errors?.[index]?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
-            <TextField label={t("qt.lines.unitPrice")} type="number" min="0" step="1" disabled={readOnly} error={errors?.[index]?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
+            <TextField label={t("qt.lines.quantity")} placeholder={t("examples:quantity")} type="number" min="1" step="1" disabled={readOnly} error={errors?.[index]?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
+            <TextField label={t("qt.lines.unitPrice")} placeholder={t("examples:unitPrice")} type="number" min="0" step="1" disabled={readOnly} error={errors?.[index]?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
             <div className="flex flex-col gap-1">
               <span className="text-sm font-semibold">{t("qt.lines.amount")}</span>
               <span className="pt-2 font-bold">{formatCurrency(amountOf(lines[index]), i18n.language)}</span>
@@ -215,14 +215,14 @@ function QtForm() {
             <div className="flex flex-col gap-5">
             <Section icon={FileText} title={t("qt.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("qt.qtNumber")} disabled={confirmed} error={errors.qtNumber?.message} {...form.register("qtNumber")} />
-                <TextField label={t("qt.qtDate")} placeholder="YYYY-MM-DD" inputMode="numeric" disabled={confirmed} error={errors.qtDate?.message} {...form.register("qtDate")} />
+                <TextField label={t("qt.qtNumber")} placeholder={t("examples:qtNumber")} disabled={confirmed} error={errors.qtNumber?.message} {...form.register("qtNumber")} />
+                <TextField label={t("qt.qtDate")} placeholder={t("examples:date")} inputMode="numeric" disabled={confirmed} error={errors.qtDate?.message} {...form.register("qtDate")} />
                 <SelectField label={t("qt.customer")} options={customers} disabled={confirmed} error={errors.customerId?.message} className="sm:col-span-2" {...form.register("customerId")} />
                 <Field className="sm:col-span-2">
                   <FieldLabel htmlFor={notesId} className="text-sm font-semibold">
                     {t("qt.notes")}
                   </FieldLabel>
-                  <Textarea id={notesId} {...form.register("notes")} />
+                  <Textarea id={notesId} placeholder={t("examples:notes")} {...form.register("notes")} />
                 </Field>
               </div>
             </Section>
@@ -233,8 +233,8 @@ function QtForm() {
             <div className="flex flex-col gap-5">
             <Section icon={UserCheck} title={t("qt.po.title")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("qt.po.number")} error={errors.customerPoNumber?.message} {...form.register("customerPoNumber")} />
-                <TextField label={t("qt.po.date")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.customerPoDate?.message} {...form.register("customerPoDate")} />
+                <TextField label={t("qt.po.number")} placeholder={t("examples:customerPo")} error={errors.customerPoNumber?.message} {...form.register("customerPoNumber")} />
+                <TextField label={t("qt.po.date")} placeholder={t("examples:date")} inputMode="numeric" error={errors.customerPoDate?.message} {...form.register("customerPoDate")} />
               </div>
               <p className="mt-3 text-sm text-muted-foreground">{record ? t("qt.po.hint") : t("qt.po.saveFirst")}</p>
             </Section>

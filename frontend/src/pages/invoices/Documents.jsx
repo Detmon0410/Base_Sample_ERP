@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Paper, PaperFooter, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
+import { Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
 import { formatCurrency, formatNumber } from "@/utils/format";
 import { downloadPdf } from "@/utils/pdf";
 import { printDocument } from "@/utils/print";
@@ -41,7 +41,6 @@ export function InvoiceDocument({ invoice, language }) {
       <PaperTotal text={`${t("invoices:doc.total")}: ${formatCurrency(invoice.total, language)}`} note={t("invoices:doc.noTax")} />
       <PaperNotes title={t("common:paper.terms")}>{t("invoices:doc.terms")}</PaperNotes>
       <Signatures labels={[t("invoices:doc.issuedBy"), t("invoices:doc.customerSign")]} />
-      <PaperFooter>{t("common:paper.computer")}</PaperFooter>
     </Paper>
   );
 }
@@ -72,7 +71,6 @@ export function ReceiptDocument({ receipt, language }) {
       />
       <PaperTotal text={`${t("invoices:receipt.received")}: ${formatCurrency(receipt.amount, language)}`} note={t("invoices:doc.noTax")} />
       <Signatures labels={[t("invoices:doc.receivedBy"), t("invoices:doc.customerSign")]} />
-      <PaperFooter>{t("common:paper.computer")}</PaperFooter>
     </Paper>
   );
 }

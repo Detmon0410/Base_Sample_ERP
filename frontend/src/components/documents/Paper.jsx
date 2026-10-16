@@ -148,11 +148,6 @@ export function Signatures({ labels }) {
   );
 }
 
-/** The last line of a paper. */
-export function PaperFooter({ children }) {
-  return <p className="mt-8 border-t border-border pt-3 text-center text-xs text-muted-foreground">{children}</p>;
-}
-
 /** The sheet itself: white, with the thin frame on the screen; `name` is its `data-print-doc`. */
 export function Paper({ name, children }) {
   return (

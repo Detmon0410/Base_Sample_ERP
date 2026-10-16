@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { Section } from "@/components/common/FormFields";
 import { DocumentActions } from "@/pages/invoices/Documents";
-import { Paper, PaperFooter, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
+import { Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
 import { formatCurrency, formatNumber } from "@/utils/format";
 
 /** The paper of the QT: the company, number, date, customer, the lines with the total, the notes and blank spaces for the names and the signatures. */
@@ -35,7 +35,6 @@ function QtPaper({ qt, language }) {
       <PaperTotal text={`${t("master:qt.lines.total")}: ${formatCurrency(qt.total, language)}`} note={t("master:qt.doc.noTax")} />
       <PaperNotes title={t("common:paper.notes")}>{qt.notes}</PaperNotes>
       <Signatures labels={[t("master:qt.doc.preparedBy"), t("master:qt.doc.approvedBy"), t("master:qt.doc.customerSign")]} />
-      <PaperFooter>{t("common:paper.computer")}</PaperFooter>
     </Paper>
   );
 }

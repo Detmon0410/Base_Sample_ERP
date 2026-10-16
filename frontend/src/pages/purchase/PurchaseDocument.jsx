@@ -2,7 +2,7 @@ import { Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Section } from "@/components/common/FormFields";
-import { Paper, PaperFooter, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
+import { Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
 import { DocumentActions } from "@/pages/invoices/Documents";
 import { formatCurrency, formatNumber } from "@/utils/format";
 
@@ -35,7 +35,6 @@ function PurchasePaper({ po, language }) {
       <PaperTotal text={`${t("purchase:lines.total")}: ${formatCurrency(po.total, language)}`} />
       <PaperNotes title={t("common:paper.notes")}>{po.notes}</PaperNotes>
       <Signatures labels={[t("purchase:doc.preparedBy"), t("purchase:doc.approvedBy"), t("purchase:doc.receivedBy")]} />
-      <PaperFooter>{t("common:paper.computer")}</PaperFooter>
     </Paper>
   );
 }

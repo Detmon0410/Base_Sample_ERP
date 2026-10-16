@@ -6,6 +6,7 @@ import { Link } from "react-router";
 import { toast } from "sonner";
 
 import { NativeSelect, Section, TextField } from "@/components/common/FormFields";
+import { Attachments } from "@/components/common/Attachments";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -226,6 +227,8 @@ export function OrderView({ order, onChanged }) {
             </Table>
           )}
         </Section>
+
+        <Attachments ownerType="ProductionOrder" ownerId={order.id} kinds={["EVIDENCE", "OTHER"]} canChange={can(user, "orders.evidence")} title={t("master:attachments.evidenceTitle")} />
 
         <div>
           <Button asChild variant="outline">

@@ -178,5 +178,31 @@
       "stock": "このユーザーが入力した在庫変更：{{count}} 件",
       "stockChange": "最初の在庫のあとの在庫変更：{{count}} 件"
     }
+  },
+  "attachments": {
+    "title": "ファイル",
+    "evidenceTitle": "証拠資料",
+    "none": "ファイルはまだありません。",
+    "kind": "種類",
+    "file": "ファイル",
+    "size": "サイズ",
+    "by": "アップロード者",
+    "at": "日時",
+    "actions": "操作",
+    "download": "ダウンロード",
+    "delete": "削除",
+    "chooseFile": "ファイルを選択（PDF・PNG・JPG、10 MBまで）",
+    "upload": "アップロード",
+    "uploading": "アップロード中...",
+    "uploaded": "ファイルを追加しました。",
+    "deleted": "ファイルを削除しました。",
+    "deleteTitle": "このファイルを削除しますか？",
+    "deleteText": "「{{name}}」を完全に削除します。元に戻せません。",
+    "kinds": {
+      "PO_FILE": "PO ファイル",
+      "QUOTATION": "見積書",
+      "EVIDENCE": "証拠資料",
+      "OTHER": "その他"
+    }
   }
 }

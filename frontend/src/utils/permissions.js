@@ -22,6 +22,7 @@ export const ACTIONS = {
   "orders.edit": ["Sales"], // make or change an order before the start
   "orders.start": ["Factory"], // start production (it deducts the stock)
   "orders.progress": ["Factory"], // record progress of a process
+  "orders.evidence": ["Factory"], // upload or delete the evidence files of an order
   "orders.reopen": ADMIN, // change or reopen a Completed process
 
   "stock.view": ANYONE,

@@ -178,5 +178,31 @@
       "stock": "Stock changes recorded by this user: {{count}}",
       "stockChange": "Stock changes after the first stock: {{count}}"
     }
+  },
+  "attachments": {
+    "title": "Files",
+    "evidenceTitle": "Evidence",
+    "none": "No file yet.",
+    "kind": "Kind",
+    "file": "File",
+    "size": "Size",
+    "by": "Uploaded by",
+    "at": "When",
+    "actions": "Actions",
+    "download": "Download",
+    "delete": "Delete",
+    "chooseFile": "Choose a file (PDF, PNG or JPG, up to 10 MB)",
+    "upload": "Upload",
+    "uploading": "Uploading...",
+    "uploaded": "The file was added.",
+    "deleted": "The file was deleted.",
+    "deleteTitle": "Delete this file?",
+    "deleteText": "\"{{name}}\" will be deleted for good. This cannot be undone.",
+    "kinds": {
+      "PO_FILE": "PO file",
+      "QUOTATION": "Quotation",
+      "EVIDENCE": "Evidence",
+      "OTHER": "Other"
+    }
   }
 }

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { NativeSelect, Section, TextField } from "@/components/common/FormFields";
 import { Attachments } from "@/components/common/Attachments";
 import { PageHeader } from "@/components/common/PageHeader";
+import { StatusBadge } from "@/components/common/StatusBadge";
 import { StepChain } from "@/components/common/StepChain";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { applyServerErrors, statusKey } from "@/utils/serverErrors";
 import { useStartProduction } from "./StartProduction";
 
 const PROCESS_STATUSES = ["Not Started", "In Progress", "Completed"];
+const PROCESS_TONE = { NotStarted: "neutral", InProgress: "progress", Completed: "good" }; // the colour of a process status
 
 /** The form to record one progress update of a process (an entry of the history). */
 export function ProgressForm({ order, line, process, onDone, onCancel }) {
@@ -180,17 +182,17 @@ export function OrderView({ order, onChanged, embedded = false }) {
                       <TableCell data-label={t("orders:processes.step")}>{process.sequence}</TableCell>
                       <TableCell data-label={t("orders:processes.name")}>
                         {process.name}
-                        {order.started && process.id === line.processes.find((item) => item.status !== "Completed")?.id ? <span className="ml-2 border border-foreground px-1 text-sm">{t("orders:processes.current")}</span> : null}
+                        {order.started && process.id === line.processes.find((item) => item.status !== "Completed")?.id ? <span className="ml-2"><StatusBadge tone="progress">{t("orders:processes.current")}</StatusBadge></span> : null}
                       </TableCell>
                       <TableCell data-label={t("orders:processes.instructions")} className="whitespace-normal">
                         {process.instructions}
                       </TableCell>
                       <TableCell data-label={t("orders:processes.required")}>{formatNumber(line.quantity, language)}</TableCell>
                       <TableCell data-label={t("orders:processes.completed")}>{formatNumber(process.completedQuantity, language)}</TableCell>
-                      <TableCell data-label={t("orders:processes.status")}>{t(`orders:processStatus.${statusKey(process.status)}`)}</TableCell>
+                      <TableCell data-label={t("orders:processes.status")}><StatusBadge tone={PROCESS_TONE[statusKey(process.status)]}>{t(`orders:processStatus.${statusKey(process.status)}`)}</StatusBadge></TableCell>
                       <TableCell>
                         {canRecord ? (
-                          <Button type="button" variant="outline" size="xs" onClick={() => setEditing(process.id)}>
+                          <Button type="button" variant={process.id === line.processes.find((item) => item.status !== "Completed")?.id ? "default" : "outline"} size="xs" onClick={() => setEditing(process.id)}>
                             <Pencil aria-hidden="true" />{process.status === "Completed" ? t("orders:progress.reopen") : t("orders:progress.record")}
                           </Button>
                         ) : null}
@@ -227,7 +229,7 @@ export function OrderView({ order, onChanged, embedded = false }) {
                   <TableRow key={entry.id}>
                     <TableCell data-label={t("orders:progress.when")}>{formatDateTime(entry.at, language)}</TableCell>
                     <TableCell data-label={t("orders:progress.process")}>{entry.processName}</TableCell>
-                    <TableCell data-label={t("orders:processes.status")}>{t(`orders:processStatus.${statusKey(entry.status)}`)}</TableCell>
+                    <TableCell data-label={t("orders:processes.status")}><StatusBadge tone={PROCESS_TONE[statusKey(entry.status)]}>{t(`orders:processStatus.${statusKey(entry.status)}`)}</StatusBadge></TableCell>
                     <TableCell data-label={t("orders:processes.completed")}>{formatNumber(entry.completedQuantity, language)}</TableCell>
                     <TableCell data-label={t("orders:progress.workDate")}>{entry.workDate}</TableCell>
                     <TableCell data-label={t("orders:progress.note")} className="whitespace-normal">

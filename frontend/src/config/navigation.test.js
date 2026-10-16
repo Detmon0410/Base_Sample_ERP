@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { findActive, getVisibleNav } from "./navigation";
 
 const admin = { id: 1, role: "Admin" };
-const worker = { id: 2, role: "Worker" };
+const factory = { id: 2, role: "Worker", department: "Factory" }; // a Factory Worker
+const sale = { id: 3, role: "Worker", department: "Sales" }; // a Sale Worker
 
 // What the menu of the header shows, as a list of words: a menu is written as "Name > entry, entry".
 const shape = (user) =>
@@ -14,8 +15,16 @@ describe("the menu of the header", () => {
     expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "accounting > invoices, receipts", "stock > materialsStock, movements", "master > customers, products, users"]);
   });
 
-  it("shows a Worker the production orders and the Stock menu, and the products as a link (a menu with one entry is that entry)", () => {
-    expect(shape(worker)).toEqual(["dashboard", "productionOrders", "stock > materialsStock, movements", "products"]);
+  it("shows a Factory Worker the production orders, the Stock menu and the products (a menu with one entry is that entry)", () => {
+    expect(shape(factory)).toEqual(["dashboard", "productionOrders", "stock > materialsStock, movements", "products"]);
+  });
+
+  it("shows a Sale Worker the quotations too, and the customers to look at", () => {
+    expect(shape(sale)).toEqual(["dashboard", "orders > qt, productionOrders", "stock > materialsStock, movements", "master > customers, products"]);
+  });
+
+  it("shows a Worker without a department (never saved so) only what everybody sees", () => {
+    expect(shape({ id: 9, role: "Worker", department: "Accounting" })).toEqual(["dashboard", "productionOrders", "stock > materialsStock, movements", "products"]);
   });
 
   it("shows nothing to somebody who is not signed in", () => {

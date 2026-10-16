@@ -3,27 +3,29 @@ import { expect } from "@playwright/test";
 /** The users of the mock (frontend/src/services/mock/users.js). */
 export const USERS = {
   admin: { email: "admin@gmail.com", password: "admin" },
-  worker: { email: "worker@gmail.com", password: "worker" },
+  factory: { email: "worker@gmail.com", password: "worker" }, // a Factory Worker
+  sale: { email: "sale@gmail.com", password: "sale" }, // a Sale Worker
 };
 
 /** Every page of the menu (src/config/navigation.js) and who may open it. */
 export const PAGES = [
-  { path: "/", name: "Dashboard", roles: ["admin", "worker"] },
-  { path: "/sale/quotations", name: "Quotations", roles: ["admin"] },
-  { path: "/sale/orders", name: "Production orders", roles: ["admin", "worker"] },
+  { path: "/", name: "Dashboard", roles: ["admin", "sale", "factory"] },
+  { path: "/sale/quotations", name: "Quotations", roles: ["admin", "sale"] },
+  { path: "/sale/orders", name: "Production orders", roles: ["admin", "sale", "factory"] },
   { path: "/accounting/invoices", name: "Invoices", roles: ["admin"] },
   { path: "/accounting/receipts", name: "Receipts", roles: ["admin"] },
-  { path: "/stock/materials", name: "Materials and stock", roles: ["admin", "worker"] },
-  { path: "/stock/movements", name: "Movements", roles: ["admin", "worker"] },
-  { path: "/master/customers", name: "Customers", roles: ["admin"] },
-  { path: "/master/products", name: "Products and BOM", roles: ["admin", "worker"] },
+  { path: "/stock/materials", name: "Materials and stock", roles: ["admin", "sale", "factory"] },
+  { path: "/stock/movements", name: "Movements", roles: ["admin", "sale", "factory"] },
+  { path: "/master/customers", name: "Customers", roles: ["admin", "sale"] },
+  { path: "/master/products", name: "Products and BOM", roles: ["admin", "sale", "factory"] },
   { path: "/master/users", name: "Users", roles: ["admin"] },
 ];
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */
 export const MENU_OF = {
   admin: ["Dashboard", "Sales", "Accounting", "Stock", "Master data"],
-  worker: ["Dashboard", "Production orders", "Stock", "Products and BOM"],
+  factory: ["Dashboard", "Production orders", "Stock", "Products and BOM"],
+  sale: ["Dashboard", "Sales", "Stock", "Master data"],
 };
 
 /**

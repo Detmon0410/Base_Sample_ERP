@@ -86,8 +86,8 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
   expect(errors.take().filter((line) => !/HTTP (400|409)/.test(line))).toEqual([]);
 });
 
-test("Worker reads the products and the materials but cannot change them", async ({ page }) => {
-  await signIn(page, USERS.worker);
+test("a Factory Worker reads the products and the materials but cannot change them, and has no access to the customers", async ({ page }) => {
+  await signIn(page, USERS.factory);
 
   await page.goto("/master/products");
   await settle(page);
@@ -98,8 +98,27 @@ test("Worker reads the products and the materials but cannot change them", async
   await expect(page.getByRole("link", { name: "New material" })).toHaveCount(0);
 
   await page.goto("/stock/materials/new");
-  await expect(page.getByRole("button", { name: "Save" })).toHaveCount(0);
+  await expect(page.getByText("You do not have permission")).toBeVisible();
 
   await page.goto("/master/customers");
+  await expect(page.getByText("You do not have permission")).toBeVisible();
+});
+
+test("a Sale Worker looks at the customers and the products but cannot change them, and has no access to the invoices", async ({ page }) => {
+  await signIn(page, USERS.sale);
+
+  await page.goto("/master/customers");
+  await settle(page);
+  await expect(page.getByRole("heading", { name: "Customers" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "New customer" })).toHaveCount(0);
+
+  await page.goto("/master/customers/new");
+  await expect(page.getByText("You do not have permission")).toBeVisible();
+
+  await page.goto("/master/products");
+  await settle(page);
+  await expect(page.getByRole("link", { name: "New product" })).toHaveCount(0);
+
+  await page.goto("/accounting/invoices");
   await expect(page.getByText("You do not have permission")).toBeVisible();
 });

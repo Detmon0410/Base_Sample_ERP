@@ -4,7 +4,8 @@ import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
 
 const admin = mockUsers[0];
-const worker = mockUsers[1];
+const worker = mockUsers[1]; // a Factory Worker
+const sale = mockUsers[2]; // a Sale Worker
 const call = (route, who, { body = {}, params = {}, query = {} } = {}) => mockRoutes[route]({ body, authorization: `Bearer ${tokenOf(who)}`, params, query });
 const fails = (fn) => {
   try {
@@ -58,7 +59,7 @@ describe("production orders of the mock", () => {
     expect(fails(() => call("POST /orders/:id/start", admin, { params: { id: noProcess.id } })).code).toBe("ORDER_NOT_READY");
 
     const order = call("POST /orders", admin, { body: draft() }).data;
-    expect(fails(() => call("POST /orders/:id/start", worker, { params: { id: order.id } })).status).toBe(403);
+    expect(fails(() => call("POST /orders/:id/start", sale, { params: { id: order.id } })).status).toBe(403); // a Sale Worker only prepares the order
     expect(call("POST /orders/:id/start", admin, { params: { id: order.id } }).status).toBe("New"); // no process has started yet
     expect(fails(() => call("PUT /orders/:id", admin, { params: { id: order.id }, body: draft() })).code).toBe("ORDER_LOCKED");
     expect(fails(() => call("POST /orders/:id/start", admin, { params: { id: order.id } })).code).toBe("ALREADY_STARTED");

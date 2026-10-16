@@ -135,4 +135,31 @@ describe("production orders, page by page", () => {
     expect(screen.getByRole("link", { name: "Add stock" })).toHaveAttribute("href", `/stock/materials/${material.id}?add=15&order=${order.id}`);
     expect(screen.getByRole("button", { name: "Start production" })).toBeInTheDocument(); // it did not start
   });
+
+  it("lets a Sale Worker prepare an order and a Factory Worker start it", async () => {
+    const user = userEvent.setup();
+    setToken(tokenOf(mockUsers[0]));
+    const product = await productsApi.create({ code: "ROLE-P", name: "Role fridge", price: 100 }); // no BOM: nothing to deduct
+    const customer = await customersApi.create({ name: "Role Customer" });
+    const qt = await qtApi.create({ qtNumber: "QT-ROLE", qtDate: "2026-10-01", customerId: customer.id });
+    const order = await ordersApi.create({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 2, unitPrice: 100, processes: [{ name: "Cut", instructions: "" }] }] });
+
+    // the Sale Worker: the form of the order (to change it), and no Start
+    const sale = renderAs(mockUsers[2], `/sale/orders/${order.id}`);
+    expect(await screen.findByRole("button", { name: "Save" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Start production" })).not.toBeInTheDocument();
+    sale.unmount();
+
+    // the Factory Worker: the page of the order, with Start (and no way to change the products and the processes)
+    renderAs(mockUsers[1], `/sale/orders/${order.id}`);
+    expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument();
+    await user.click(await screen.findByRole("button", { name: "Start production" }));
+    await user.click(await screen.findByRole("button", { name: "Confirm" }));
+    await waitFor(() => expect(screen.queryByRole("button", { name: "Start production" })).not.toBeInTheDocument()); // it started
+  });
+
+  it("lets a Sale Worker open the page of a new order", async () => {
+    renderAs(mockUsers[2], "/sale/orders/new");
+    expect(await screen.findByText("New production order")).toBeInTheDocument();
+  });
 });

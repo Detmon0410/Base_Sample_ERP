@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { INTERNAL_TOKEN, login, mockUsers, requireAdmin, tokenOf, userFromAuthorization } from "./users.js";
 
 describe("the users of the mock", () => {
-  it("has an Admin and a Worker, and nobody else", () => {
-    expect(mockUsers.map((user) => user.role)).toEqual(["Admin", "Worker"]);
+  it("has an Admin, a Factory Worker and a Sale Worker, and nobody else", () => {
+    expect(mockUsers.map((user) => [user.role, user.department])).toEqual([["Admin", "Administration"], ["Worker", "Factory"], ["Worker", "Sales"]]);
   });
 
   it("signs in with the e-mail (any case) and the password, and never gives the password back", () => {

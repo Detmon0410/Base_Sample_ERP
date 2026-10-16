@@ -77,12 +77,21 @@ describe("stock changes, page by page", () => {
     expect(rows[4]).toHaveTextContent("Initial stock");
   });
 
-  it("shows a Worker the lots and the history, without the form", async () => {
+  it("shows a Sale Worker the lots and the history, without the form", async () => {
     setToken(tokenOf(mockUsers[0]));
-    const material = await materialsApi.create({ code: "FLOW-W", name: "For the Worker", lots: [{ lotNumber: "W1", quantity: 4 }] });
-    renderAs(mockUsers[1], `/stock/materials/${material.id}`);
+    const material = await materialsApi.create({ code: "FLOW-W", name: "For the Sale Worker", lots: [{ lotNumber: "W1", quantity: 4 }] });
+    renderAs(mockUsers[2], `/stock/materials/${material.id}`);
     await screen.findByRole("heading", { name: "Stock history" });
     expect(screen.queryByRole("button", { name: "Save the change" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument();
+  });
+
+  it("gives a Factory Worker the form of a stock change, but not the form of the material", async () => {
+    setToken(tokenOf(mockUsers[0]));
+    const material = await materialsApi.create({ code: "FLOW-F", name: "For the Factory Worker", lots: [{ lotNumber: "F1", quantity: 4 }] });
+    renderAs(mockUsers[1], `/stock/materials/${material.id}`);
+    await screen.findByRole("heading", { name: "Stock history" });
+    expect(screen.getByRole("button", { name: "Save the change" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument(); // the code and the name are the Admin's
   });
 });

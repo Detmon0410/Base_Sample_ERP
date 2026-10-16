@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useLoad } from "@/hooks/useLoad";
 import { ProgressForm } from "@/pages/orders/OrderView";
-import { useStartProduction } from "@/pages/orders/StartProduction";
 import { getDashboard } from "@/services/dashboard.service";
 import { materialsApi } from "@/services/master.service";
 import { ordersApi } from "@/services/orders.service";
@@ -38,34 +37,6 @@ function Bar({ value, max, label }) {
     <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={max} aria-valuenow={value} className="h-2 w-full bg-[#eceef1]">
       <div className="h-full bg-primary" style={{ width: `${percent}%` }} />
     </div>
-  );
-}
-
-/** An order that is ready: what it is for, and one big button to start it (the start deducts the stock; a short material is listed with the way to add it). */
-function StartCard({ order, onChanged }) {
-  const { t, i18n } = useTranslation(["dashboard", "orders"]);
-  const starter = useStartProduction(order, onChanged);
-  const processes = order.lines.reduce((sum, line) => sum + line.processes.length, 0);
-  return (
-    <article className="flex flex-col gap-3 rounded-md border border-border bg-card p-4">
-      <div className="flex flex-wrap items-baseline gap-x-3">
-        <Link to={`/sale/orders/${order.id}`} className="text-lg font-bold">
-          {order.orderNumber}
-        </Link>
-        <span className="text-muted-foreground">{order.customerName}</span>
-      </div>
-      <ul className="m-0 flex list-none flex-col gap-1 p-0">
-        {order.lines.map((line) => (
-          <li key={line.id}>
-            {line.productCode} {line.productName}: <b className="tabular-nums">{formatNumber(line.quantity, i18n.language)}</b>
-          </li>
-        ))}
-      </ul>
-      {processes === 0 ? <p className="text-sm text-warning">{t("dashboard:today.noProcesses")}</p> : null}
-      {starter.alert}
-      <div className="[&_button]:h-12 [&_button]:px-5 [&_button]:text-base">{starter.button}</div>
-      {starter.dialog}
-    </article>
   );
 }
 
@@ -128,7 +99,7 @@ function RunningCard({ order, onChanged }) {
 }
 
 /**
- * The Dashboard of a Factory Worker: the numbers of the orders, then what to do today. Orders waiting to start (one big button), orders in production (the next process
+ * The Dashboard of a Factory Worker: the numbers of the orders, then what to do today. Orders in production (the next process
  * and a big button to record progress), the purchase orders that were sent and wait to be received, and a strip for the materials that are low.
  * It only reads the lists the pages already use and calls the same actions; the detail pages are one click away.
  */
@@ -145,7 +116,6 @@ export function TodayPage() {
     const open = await Promise.all(orders.items.filter((order) => order.status !== "Completed").slice(0, 20).map((order) => ordersApi.get(order.id)));
     return {
       numbers: numbers.orders,
-      toStart: open.filter((order) => !order.started),
       running: open.filter((order) => order.started),
       low: materials.items.filter((material) => material.stockStatus === "Low" || material.stockStatus === "Out"),
       toReceive: purchases.items,
@@ -184,10 +154,6 @@ export function TodayPage() {
               ) : null}
             </div>
           ) : null}
-
-          <Group title={t("dashboard:today.toStart")} count={data.toStart.length}>
-            {data.toStart.length === 0 ? <p className="text-muted-foreground">{t("dashboard:today.noneToStart")}</p> : data.toStart.map((order) => <StartCard key={order.id} order={order} onChanged={reload} />)}
-          </Group>
 
           <Group title={t("dashboard:today.running")} count={data.running.length}>
             {data.running.length === 0 ? <p className="text-muted-foreground">{t("dashboard:today.noneRunning")}</p> : data.running.map((order) => <RunningCard key={order.id} order={order} onChanged={reload} />)}

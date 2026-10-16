@@ -76,11 +76,12 @@ One page, three groups under a small tab bar, each row has its next action.
 - A row opens the **document** (the invoice or the receipt) in the page that exists today, with Download PDF and Print.
 - The rules do not change: one invoice per Completed order, a full payment equal to the total, one receipt.
 
-### 4.3 Factory Worker: today's work (`/`)
+### 4.3 Factory Worker: the Dashboard with the work of today (`/`)
+
+Built without the "To start" group: a Factory Worker starts an order on its own page. The number tiles of the orders come first.
 
 ```text
 Today                                                      [Low stock: 2 -> Buy]
-+ To start (Draft, ready)        order, customer, products;  [Start production]  (a short stock says what is missing, as now)
 + In progress                    one card per order; every process with its progress bar;
                                  [Record progress] opens a small form right on the card (status, quantity, date today)
 + To receive (PO sent)           the purchase orders to receive:  [Receive]

@@ -5,11 +5,14 @@ Conventions: [README.md](README.md)
 
 ## Who may call
 
-| Call | Admin | Worker |
-|---|---|---|
-| `GET /orders`, `GET /orders/:id` | yes | yes |
-| `POST /orders`, `PUT /orders/:id`, `POST /orders/:id/start` | yes | `403 FORBIDDEN` |
-| `POST /orders/:id/progress` | yes | yes (not on a completed process) |
+| Call | Admin | Sale Worker | Factory Worker |
+|---|---|---|---|
+| `GET /orders`, `GET /orders/:id` | yes | yes | yes |
+| `POST /orders`, `PUT /orders/:id` (before the start) | yes | yes | `403 FORBIDDEN` |
+| `POST /orders/:id/start` | yes | `403 FORBIDDEN` | yes |
+| `POST /orders/:id/progress` | yes | `403 FORBIDDEN` | yes (not on a completed process) |
+
+A Sale Worker prepares the order (lines and processes); a Factory Worker starts it and records the progress. See [auth.md](auth.md#access-by-role-and-department).
 
 ## Calls
 
@@ -19,7 +22,7 @@ Conventions: [README.md](README.md)
 | `GET` | `/orders/:id` | the whole order (below) |
 | `POST` | `/orders` | `201`. The number `ORD-yyyy-0001` is given by the server |
 | `PUT` | `/orders/:id` | replaces the header, the lines and the processes. Only before the start |
-| `POST` | `/orders/:id/start` | the Admin starts the production |
+| `POST` | `/orders/:id/start` | the Admin or a Factory Worker starts the production |
 | `POST` | `/orders/:id/progress` | adds one progress entry to a process |
 
 Body of `POST` / `PUT`:
@@ -51,7 +54,7 @@ Body of `progress`: `{ "processId": 12, "status": "Not Started" | "In Progress" 
 * **Progress** only on a started order (`409 ORDER_NOT_STARTED`) that has no invoice (`409 ORDER_INVOICED`).
 * `completedQuantity` is the **latest total**, not an amount to add: a whole number from 0 to the required quantity (`TOO_HIGH` above it).
 * `Completed` only with the full quantity (`MUST_EQUAL_REQUIRED`), and the full quantity needs the status `Completed` (`MUST_BE_COMPLETED`); `Not Started` has quantity 0 (`MUST_BE_ZERO`).
-* A **completed process** can be changed by an Admin only (`403 COMPLETED_LOCKED` for a Worker), and reopening it (a status other than `Completed`) needs a `note` (`REOPEN_NOTE`).
+* A **completed process** can be changed by an Admin only (`403 COMPLETED_LOCKED` for a Worker of any department), and reopening it (a status other than `Completed`) needs a `note` (`REOPEN_NOTE`).
 * `workDate` is required, a real date.
 
 ```text

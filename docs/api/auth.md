@@ -41,11 +41,37 @@ No body. `200`, `data: null`; idempotent (an already invalid token may also answ
 |---|---|---|
 | `id` | number | |
 | `name` | string | Shown in the header |
-| `department` | `"Sales"` \| `"Factory"` \| `"Accounting"` \| `"Administration"` | Only a field of the user; it gives no access |
+| `department` | `"Sales"` \| `"Factory"` \| `"Accounting"` \| `"Administration"` | For a **Worker** it is required and is `Sales` (a Sale Worker) or `Factory` (a Factory Worker), and it **decides what the Worker may do**. An Admin may have any department (it is only a label for an Admin) |
 | `email` | string | Unique |
-| `role` | `"Admin"` \| `"Worker"` | The only thing that decides what the user may do |
+| `role` | `"Admin"` \| `"Worker"` | `Admin` may do everything. A `Worker` may do what the department allows (the table below) |
 
-The frontend only hides what a role may not use (`frontend/src/utils/permissions.js`). **The backend enforces the same rules on every endpoint** (the table in each module document says who may call what).
+The frontend only hides what a user may not use (`frontend/src/utils/permissions.js`, the table `ACTIONS`). **The backend enforces the same rules on every endpoint** (the table in each module document says who may call what).
+
+## Access by role and department
+
+`role` stays `Admin` or `Worker`, so the token and the sign-in do not change. The department of a Worker decides the access:
+
+| Action | Admin | Sale Worker (`Sales`) | Factory Worker (`Factory`) |
+|---|---|---|---|
+| Dashboard | all tiles and the chart | order tiles | order tiles |
+| QT: see, make, change, delete | yes | yes | `403` |
+| Production orders: read | yes | yes | yes |
+| Production orders: make or change before the start | yes | yes | `403` |
+| Start production (it deducts stock) | yes | `403` | yes |
+| Record progress | yes | `403` | yes (not on a Completed process) |
+| Change or reopen a Completed process | yes | `403` | `403` |
+| Stock and its history: read | yes | yes | yes |
+| Stock changes (Add / Deduct / Adjust) | yes | `403` | yes |
+| Materials (make, change, delete) | yes | `403` | `403` |
+| Products: read | yes | yes | yes |
+| Products: write | yes | `403` | `403` |
+| Customers: read | yes | yes | `403` |
+| Customers: write | yes | `403` | `403` |
+| Invoices, receipts, users | yes | `403` | `403` |
+
+A Worker who calls what the department does not allow gets `403 FORBIDDEN`; the frontend sends them to `/403`. The check for the role and department comes **before** the check that the record exists (a missing record is `403` for a user who may not touch it, not `404`).
+
+A Worker with a department other than `Sales` or `Factory` (old data) may only do what everybody may (the rows with "yes" for both Workers). They have to be moved to a department; see [master-data.md](master-data.md), Users.
 
 ## Sessions
 
@@ -58,4 +84,4 @@ The frontend only hides what a role may not use (`frontend/src/utils/permissions
 User(id, name, department, email UNIQUE, password_hash, role, last_login_at, created_at, updated_at)
 ```
 
-Seed: one Admin.
+Seed: one Admin. The mock also has a Factory Worker (`worker@gmail.com`) and a Sale Worker (`sale@gmail.com`).

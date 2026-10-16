@@ -14,12 +14,12 @@ This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accou
 
 ## Workflow
 
-1. **Master data** (Admin): customers, products with a BOM, materials with lots, users (Admin and Worker).
-2. **QT reference** (Admin): the quotation is made outside the system; only its number, date, customer and an optional file are kept.
-3. **Production order** (Admin): from a QT, with product lines (quantity, agreed price) and a manual, ordered list of processes for every line.
-4. **Start production** (Admin): needs enough stock. It deducts the BOM of every line from the oldest lot first (`409 STOCK_SHORT` when a material is short) and locks the products and processes.
-5. **Progress** (Worker or Admin): every process goes Not Started, In Progress, Completed. The status of the order is computed: New, In Progress, Completed.
-6. **Stock** (Admin): adds, deducts or adjusts a lot by hand at any time; the history of every change is kept.
+1. **Master data** (Admin): customers, products with a BOM, materials with lots, users. A user is an Admin, a Sale Worker or a Factory Worker (a Worker has the department `Sales` or `Factory`, and the department decides the access: [docs/api/auth.md](docs/api/auth.md#access-by-role-and-department)).
+2. **QT reference** (Admin or Sale Worker): the quotation is made outside the system; only its number, date, customer and an optional file are kept.
+3. **Production order** (Admin or Sale Worker): from a QT, with product lines (quantity, agreed price) and a manual, ordered list of processes for every line.
+4. **Start production** (Admin or Factory Worker): needs enough stock. It deducts the BOM of every line from the oldest lot first (`409 STOCK_SHORT` when a material is short) and locks the products and processes.
+5. **Progress** (Factory Worker or Admin): every process goes Not Started, In Progress, Completed. The status of the order is computed: New, In Progress, Completed.
+6. **Stock** (Admin or Factory Worker): adds, deducts or adjusts a lot by hand at any time; the history of every change is kept.
 7. **Invoice** (Admin): only for a Completed order, one per order, a snapshot. It locks the progress of the order.
 8. **Payment and receipt** (Admin): one full payment (date and amount equal to the total) makes the invoice Paid and issues one receipt.
 

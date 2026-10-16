@@ -3,7 +3,7 @@
 Pages (the Stock group of the menu): `/stock/materials` (the materials, their lots and the stock changes), `/stock/movements` (every movement) · Frontend: `frontend/src/pages/stock`, `services/master.service.js` (`stockApi`) · Mock: `services/mock/stock.js`, `services/mock/stockStatus.js`
 Conventions: [README.md](README.md) · The five calls of a material (`GET`, `POST`, `PUT`, `DELETE`), its fields and the delete rules: [master-data.md](master-data.md)
 
-Who may call: an Admin and a Worker read everything on this page; only an Admin makes a stock change (`403 FORBIDDEN` for a Worker).
+Who may call: everybody who is signed in reads everything on this page; a stock change by hand (and the start of a production order, which deducts stock) is for the Admin and the Factory Worker (`403 FORBIDDEN` for a Sale Worker).
 
 ## Stock changes of a material
 
@@ -43,7 +43,7 @@ The requirements have no minimum level; it is an **optional addition**. Every vi
 
 ## The movements of every material: `GET /stock-changes`
 
-The ledger of every stock change of every material together (the page `/stock/movements`); read only, for an Admin and a Worker.
+The ledger of every stock change of every material together (the page `/stock/movements`); read only, for every signed-in user.
 
 | Query | Meaning |
 |---|---|

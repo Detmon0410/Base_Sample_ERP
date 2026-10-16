@@ -112,7 +112,7 @@ export function OrderView({ order, onChanged }) {
 
   return (
     <>
-      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} />
+      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} statusTone={{ Draft: "neutral", InProgress: "progress", Completed: "good" }[statusKey(order.status)]} />
 
       <div className="flex max-w-5xl flex-col gap-5">
         {order.started && order.status === "Draft" ? <p className="font-semibold">{t("orders:started")}</p> : null} {/* started, but no process has started yet */}

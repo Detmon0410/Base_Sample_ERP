@@ -206,7 +206,7 @@ export function PurchaseDetail({ id }) {
 
   return (
     <>
-      <PageHeader title={po.poNumber} status={t(`status.${po.status}`)} />
+      <PageHeader title={po.poNumber} status={t(`status.${po.status}`)} statusTone={STATUS_TONE[po.status]} />
 
       <div className="flex max-w-5xl flex-col gap-5">
         {message ? (

@@ -181,7 +181,7 @@ export function OrderForm({ order, onChanged }) {
 
   return (
     <>
-      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} />
+      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} statusTone={{ Draft: "neutral", InProgress: "progress", Completed: "good" }[statusKey(order.status)]} />
 
       <form noValidate onSubmit={onSubmit} className="flex max-w-4xl flex-col gap-5">
         {summary ? (

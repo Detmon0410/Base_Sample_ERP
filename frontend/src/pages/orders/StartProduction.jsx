@@ -1,4 +1,4 @@
-import { PackagePlus, Play, X } from "lucide-react";
+import { PackagePlus, Play, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -16,8 +16,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { ordersApi } from "@/services/orders.service";
 import { formatNumber } from "@/utils/format";
+import { can } from "@/utils/permissions";
 import { applyServerErrors } from "@/utils/serverErrors";
 
 const NO_FORM = { setError: () => {} }; // the start has no fields: only the sentence of the error is wanted
@@ -31,6 +33,7 @@ const NO_FORM = { setError: () => {} }; // the start has no fields: only the sen
  */
 export function useStartProduction(order, onChanged) {
   const { t, i18n } = useTranslation(["orders", "common"]);
+  const { user } = useAuth();
   const [asking, setAsking] = useState(false);
   const [message, setMessage] = useState(null);
   const [short, setShort] = useState([]); // [{ materialId, materialCode, materialName, need, have }]
@@ -93,6 +96,14 @@ export function useStartProduction(order, onChanged) {
                     {t("orders:start.addStock")}
                   </Link>
                 </Button>
+                {can(user, "purchase.use") ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link to={`/purchase/orders/new?material=${row.materialId}`}>
+                      <ShoppingCart aria-hidden="true" />
+                      {t("orders:start.createPo")}
+                    </Link>
+                  </Button>
+                ) : null}
               </li>
             ))}
           </ul>

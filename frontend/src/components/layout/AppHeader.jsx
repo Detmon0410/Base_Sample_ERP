@@ -1,3 +1,4 @@
+import { LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, useLocation } from "react-router";
@@ -120,26 +121,36 @@ export function AppHeader() {
             <NavIcon name="down" className="size-3.5" />
           </button>
           {open === "user" ? (
-            <div role="group" aria-label={t("nav:userMenu")} className="absolute top-full right-0 z-30 w-72 max-w-[calc(100vw-1rem)] border border-border bg-card p-4 text-foreground shadow-md">
-              <p className="font-bold">{user?.name}</p>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
-              <dl className="my-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+            <div role="group" aria-label={t("nav:userMenu")} className="absolute top-full right-0 z-30 w-80 max-w-[calc(100vw-1rem)] border border-border bg-card text-foreground shadow-md">
+              <div className="flex items-center gap-3 bg-accent p-4">
+                <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-full bg-primary text-xl font-bold text-primary-foreground">
+                  {(user?.name ?? "?").trim().charAt(0).toUpperCase()}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-lg font-bold">{user?.name}</p>
+                  <p className="truncate text-sm text-muted-foreground">{user?.email}</p>
+                </div>
+              </div>
+              <dl className="grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-2 px-4 py-3 text-sm">
                 <dt className="text-muted-foreground">{t("nav:role")}</dt>
-                <dd className="font-semibold">{t(`nav:roles.${user?.role}`, user?.role)}</dd>
+                <dd className="justify-self-end font-semibold">{t(`nav:roles.${user?.role}`, user?.role)}</dd>
                 <dt className="text-muted-foreground">{t("nav:department")}</dt>
-                <dd>{t(`master:users.departments.${user?.department}`, user?.department)}</dd>
+                <dd className="justify-self-end">{t(`master:users.departments.${user?.department}`, user?.department)}</dd>
               </dl>
-              <div className="flex items-center justify-between gap-3 border-t border-border py-3 text-sm">
+              <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-3 text-sm">
                 <span className="text-muted-foreground">{t("common:language.label")}</span>
                 <LanguageSwitcher />
               </div>
-              <button
-                type="button"
-                onClick={logout}
-                className="w-full border border-slate-300 bg-secondary px-3 py-2 text-left font-medium text-secondary-foreground outline-none hover:bg-[#e4e4e4] focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                {t("auth:logout")}
-              </button>
+              <div className="border-t border-border p-3">
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="flex w-full items-center justify-center gap-2 border border-border bg-secondary px-3 py-2 font-medium text-secondary-foreground outline-none hover:bg-[#e4e4e4] focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <LogOut aria-hidden="true" className="size-4" />
+                  {t("auth:logout")}
+                </button>
+              </div>
             </div>
           ) : null}
         </div>

@@ -166,7 +166,8 @@
       "title": "Production order {{number}}",
       "open": "Open the order page",
       "failed": "The production order could not be loaded."
-    }
+    },
+    "numberAuto": "Automatic"
   },
   "stock": {
     "lotsTitle": "Lots and quantities",

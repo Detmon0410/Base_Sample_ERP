@@ -32,7 +32,7 @@ Body of `POST` / `PUT`:
 
 | Field | Rules |
 |---|---|
-| `qtNumber` | Required, unique (typed by the user) |
+| `qtNumber` | Unique. On `POST` it may be empty: the server gives the next `QT-YYYY-NNNN`. On `PUT` it is required |
 | `qtDate` | Required, a real date `YYYY-MM-DD` |
 | `customerId` | Required, an existing customer |
 | `notes` | Optional text |

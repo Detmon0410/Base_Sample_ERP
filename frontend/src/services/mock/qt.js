@@ -53,6 +53,13 @@ const toListView = (record) => {
   return rest;
 };
 
+/** The next automatic QT number: QT-YYYY-NNNN, one more than the largest of this year. */
+const nextQtNumber = () => {
+  const prefix = `QT-${new Date().getFullYear()}-`;
+  const used = qtReferences.map((qt) => qt.qtNumber).filter((value) => value.startsWith(prefix)).map((value) => Number(value.slice(prefix.length))).filter(Number.isFinite);
+  return `${prefix}${String(Math.max(0, ...used) + 1).padStart(4, "0")}`;
+};
+
 const sameLines = (a, b) => a.length === b.length && a.every((line, index) => line.productId === b[index].productId && line.quantity === b[index].quantity && line.unitPrice === b[index].unitPrice);
 
 export const qtRoutes = resource({
@@ -67,7 +74,7 @@ export const qtRoutes = resource({
   filter: (record, query) => (!query.status || record.status === query.status) && (!query.step || stepOf(record) === query.step), // by Draft or Confirmed, and by the step of the job
   normalize: (body, record) => {
     const data = {
-      qtNumber: text(body.qtNumber),
+      qtNumber: text(body.qtNumber) || (record ? "" : nextQtNumber()), // a new QT without a number gets the next one
       qtDate: text(body.qtDate),
       customerId: Number(body.customerId),
       notes: text(body.notes),

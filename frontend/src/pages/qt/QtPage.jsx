@@ -34,7 +34,7 @@ import { QtDocument } from "./QtDocument";
 
 const STEPS = ["Draft", "Confirmed", "InProduction", "Done"]; // where a job is: the QT, then its production order
 const STEP_TONE = { Draft: "neutral", Confirmed: "warn", InProduction: "progress", Done: "good" };
-const empty = () => ({ qtNumber: "", qtDate: todayIso(), customerId: "", notes: "", customerPoNumber: "", customerPoDate: "", lines: [] });
+const empty = () => ({ qtNumber: "", qtDate: todayIso(), customerId: "", notes: "", customerPoNumber: "", customerPoDate: "", lines: [{ productId: "", quantity: "", unitPrice: "" }] }); // a new QT starts with one empty product line
 
 /** The lines of the QT: product, quantity, unit price (it starts from the price of the product), the amount of each and the total. */
 function QtLines({ form, readOnly }) {
@@ -76,7 +76,7 @@ function QtLines({ form, readOnly }) {
               <span className="pt-2 font-bold">{formatCurrency(amountOf(lines[index]), i18n.language)}</span>
             </div>
             {readOnly ? null : (
-              <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("qt.lines.remove")} title={t("qt.lines.remove")} onClick={() => remove(index)}>
+              <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("qt.lines.remove")} title={t("qt.lines.remove")} onClick={() => remove(index)}>
                 <Trash2 aria-hidden="true" />
               </Button>
             )}
@@ -210,7 +210,7 @@ function QtForm() {
 
             <Section icon={FileText} title={t("qt.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("qt.qtNumber")} disabled={confirmed} error={errors.qtNumber?.message} {...form.register("qtNumber")} />
+                <TextField label={t("qt.qtNumber")} placeholder={record ? undefined : t("qt.numberAuto")} disabled={confirmed} error={errors.qtNumber?.message} {...form.register("qtNumber")} />
                 <TextField label={t("qt.qtDate")} placeholder="YYYY-MM-DD" inputMode="numeric" disabled={confirmed} error={errors.qtDate?.message} {...form.register("qtDate")} />
                 <SelectField label={t("qt.customer")} options={customers} disabled={confirmed} error={errors.customerId?.message} className="sm:col-span-2" {...form.register("customerId")} />
                 <Field className="sm:col-span-2">

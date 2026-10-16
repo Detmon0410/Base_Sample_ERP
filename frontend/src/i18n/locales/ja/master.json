@@ -166,7 +166,8 @@
       "title": "製造指示書 {{number}}",
       "open": "指示書のページを開く",
       "failed": "製造指示書を読み込めませんでした。"
-    }
+    },
+    "numberAuto": "自動"
   },
   "stock": {
     "lotsTitle": "ロットと数量",

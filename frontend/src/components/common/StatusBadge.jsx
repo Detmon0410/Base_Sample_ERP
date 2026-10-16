@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 // The word always says the status; the colour only makes it quick to see.
 const TONES = {
   neutral: { box: "bg-[#eceef1] text-[#3d434a]" },
-  progress: { box: "bg-[#dbe8ff] text-[#1d4ed8]" },
+  progress: { box: "bg-[#d9eefa] text-[#00689c]" },
   good: { box: "bg-[#e1f2e8] text-success" },
   warn: { box: "bg-[#fbefd2] text-warning" },
   bad: { box: "bg-[#fbe4e1] text-destructive" },

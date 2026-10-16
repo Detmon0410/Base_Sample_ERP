@@ -11,7 +11,7 @@ import { formatCurrency, formatNumber } from "@/utils/format";
 
 function Tile({ to, label, value, icon: Icon }) {
   return (
-    <Link to={to} className="flex flex-col gap-1 bg-primary p-5 text-primary-foreground hover:bg-[#1d4ed8]">
+    <Link to={to} className="flex flex-col gap-1 bg-primary p-5 text-primary-foreground hover:bg-[#006fa8]">
       <span className="flex items-center gap-2 text-sm">
         {Icon ? <Icon aria-hidden="true" className="size-5 shrink-0" /> : null}
         {label}

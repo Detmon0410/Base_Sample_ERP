@@ -69,7 +69,7 @@ function TableRow({
     <tr
       data-slot="table-row"
       className={cn(
-        "transition-colors bg-card hover:bg-[#f4f8ff] has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "transition-colors bg-card hover:bg-[#f1f8fc] has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
         className
       )}
       {...props}
@@ -85,7 +85,7 @@ function TableHead({
     <th
       data-slot="table-head"
       className={cn(
-        "h-11 bg-[#eaf1fb] px-2 text-left align-middle text-sm font-bold whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0",
+        "h-11 bg-[#e6f2f9] px-2 text-left align-middle text-sm font-bold whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}

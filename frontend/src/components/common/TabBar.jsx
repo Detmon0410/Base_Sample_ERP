@@ -22,7 +22,7 @@ export function TabBar({ tabs, value, onChange, label }) {
             )}
           >
             {tab.label}
-            {tab.count != null ? <span className={cn("min-w-6 px-1.5 text-center text-sm font-bold tabular-nums", selected ? "bg-[#dbe8ff] text-primary" : "bg-[#eceef1]")}>{tab.count}</span> : null}
+            {tab.count != null ? <span className={cn("min-w-6 px-1.5 text-center text-sm font-bold tabular-nums", selected ? "bg-[#d9eefa] text-primary" : "bg-[#eceef1]")}>{tab.count}</span> : null}
           </button>
         );
       })}

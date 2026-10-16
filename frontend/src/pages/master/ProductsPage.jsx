@@ -48,7 +48,7 @@ function BomLines({ form, readOnly }) {
               {...form.register(`bom.${index}.quantity`)}
             />
             {readOnly ? null : (
-              <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("products.removeLine")} title={t("products.removeLine")} onClick={() => remove(index)}>
+              <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("products.removeLine")} title={t("products.removeLine")} onClick={() => remove(index)}>
                 <Trash2 aria-hidden="true" />
               </Button>
             )}

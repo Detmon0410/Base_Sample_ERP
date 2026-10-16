@@ -123,7 +123,7 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
             </span>
             <TextField label={t("processes.name")} error={errors?.processes?.[step]?.name?.message} {...form.register(`lines.${index}.processes.${step}.name`)} />
             <TextField label={t("processes.instructions")} {...form.register(`lines.${index}.processes.${step}.instructions`)} />
-            <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("processes.remove")} title={t("processes.remove")} onClick={() => processes.remove(step)}>
+            <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("processes.remove")} title={t("processes.remove")} onClick={() => processes.remove(step)}>
               <Trash2 aria-hidden="true" />
             </Button>
           </li>

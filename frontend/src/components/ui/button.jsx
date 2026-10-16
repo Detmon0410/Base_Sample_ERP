@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-[#006fa8]",
         outline: "border-[#c9ccd1] bg-secondary text-secondary-foreground hover:bg-[#e4e4e4]",
         secondary: "bg-secondary text-secondary-foreground hover:bg-[#e4e4e4]",
-        ghost: "hover:bg-muted",
+        ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
         destructive: "bg-destructive text-white hover:bg-[#9a1d13]",
         link: "text-link underline-offset-4 hover:underline",
       },
@@ -21,6 +21,7 @@ const buttonVariants = cva(
         xs: "h-8 gap-1 px-3 text-sm",
         sm: "h-9 gap-1.5 px-4 text-sm",
         lg: "h-11 gap-2 px-6",
+        icon: "size-9 p-0 [&_svg]:size-5", // an icon alone, no frame (use with variant ghost)
       },
     },
     defaultVariants: {

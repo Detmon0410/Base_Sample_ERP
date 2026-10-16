@@ -36,7 +36,7 @@ function ItemLines({ form, readOnly }) {
             <SelectField label={t("suppliers.items.material")} options={options} disabled={readOnly} error={errors?.[index]?.materialId?.message} {...form.register(`items.${index}.materialId`)} />
             <TextField label={t("suppliers.items.price")} type="number" min="0" step="1" disabled={readOnly} error={errors?.[index]?.unitPrice?.message} {...form.register(`items.${index}.unitPrice`)} />
             {readOnly ? null : (
-              <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("suppliers.items.remove")} title={t("suppliers.items.remove")} onClick={() => remove(index)}>
+              <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("suppliers.items.remove")} title={t("suppliers.items.remove")} onClick={() => remove(index)}>
                 <Trash2 aria-hidden="true" />
               </Button>
             )}

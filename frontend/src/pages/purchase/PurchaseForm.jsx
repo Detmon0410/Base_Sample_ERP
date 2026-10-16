@@ -65,7 +65,7 @@ function PoLines({ form }) {
                 <span className="text-sm font-semibold">{t("lines.amount")}</span>
                 <span className="pt-2 font-bold">{formatCurrency(amountOf(lines[index]), i18n.language)}</span>
               </div>
-              <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("lines.remove")} title={t("lines.remove")} onClick={() => remove(index)}>
+              <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("lines.remove")} title={t("lines.remove")} onClick={() => remove(index)}>
                 <Trash2 aria-hidden="true" />
               </Button>
             </div>

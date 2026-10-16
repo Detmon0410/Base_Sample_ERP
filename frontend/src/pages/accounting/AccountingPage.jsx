@@ -9,6 +9,7 @@ import { FormDialog } from "@/components/common/FormDialog";
 import { TextField } from "@/components/common/FormFields";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard, StatRow } from "@/components/common/StatCard";
+import { STATUS_ICONS } from "@/components/common/statusIcons";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { TabBar } from "@/components/common/TabBar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -238,7 +239,7 @@ function AccountingWork() {
   const unpaidTotal = (data?.unpaid ?? []).reduce((sum, invoice) => sum + invoice.total, 0);
   const toPayTotal = (data?.toPay ?? []).reduce((sum, po) => sum + po.total, 0);
   const tab = tabs[side];
-  const tabList = SIDES[side].map((key) => ({ key, label: t(`invoices:accounting.tabs.${key}`), count: data ? data[key].length : null }));
+  const tabList = SIDES[side].map((key) => ({ key, label: t(`invoices:accounting.tabs.${key}`), icon: STATUS_ICONS[key], count: data ? data[key].length : null }));
 
   return (
     <>

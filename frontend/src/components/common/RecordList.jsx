@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 
+import { STATUS_ICONS } from "@/components/common/statusIcons";
 import { TabBar } from "@/components/common/TabBar";
 import { Pagination } from "@/components/common/Pagination";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -56,7 +57,7 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
               setStatus(value);
               setPage(1);
             }}
-            tabs={statusOptions.map((option) => ({ key: option.value, label: option.label }))}
+            tabs={statusOptions.map((option) => ({ key: option.value, label: option.label, icon: STATUS_ICONS[(option.value || "all").replace(" ", "")] }))}
           />
         </div>
       ) : null}

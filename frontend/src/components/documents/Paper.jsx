@@ -1,19 +1,15 @@
-import { Snowflake } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { AppLogo } from "@/components/common/AppLogo";
 import { COMPANY } from "@/config/company";
 import { cn } from "@/lib/utils";
 
 // The pieces of every paper of the system (QT, invoice, receipt, purchase order): the same header with the logo, the same boxes, the same table,
 // the same signature lines, so the papers look like one set. They are drawn with plain borders so the PDF and the print match the page.
 
-/** The logo: a blue square with a snowflake (a refrigerator factory). It is a drawing, so no image file is needed; replace it with the real logo when there is one. */
+/** The logo of the company (the picture in public/logo.png). */
 export function Logo({ className }) {
-  return (
-    <span aria-hidden="true" className={cn("grid size-12 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground", className)}>
-      <Snowflake className="size-8" strokeWidth={1.75} />
-    </span>
-  );
+  return <AppLogo className={cn("size-16", className)} />;
 }
 
 /** The top of a paper: the logo and the company at the left, the title, the number and the date at the right. `title` is the <h2> of the paper. */

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, useLocation } from "react-router";
 
+import { AppLogo } from "@/components/common/AppLogo";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { NavIcon } from "@/components/layout/NavIcon";
 import { getVisibleNav } from "@/config/navigation";
@@ -68,8 +69,8 @@ export function AppHeader() {
 
   return (
     <header ref={bar} className="relative z-20 flex min-h-14 flex-wrap items-stretch bg-primary text-primary-foreground shadow-sm">
-      <Link to="/" className="mr-1 inline-flex shrink-0 items-center px-4 text-lg font-bold tracking-tight text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white">
-        {t("common:app.name")}
+      <Link to="/" className="mr-1 inline-flex shrink-0 items-center px-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" aria-label={t("common:app.name")} title={t("common:app.name")}>
+        <AppLogo className="size-10 rounded-md bg-white p-0.5" />
       </Link>
 
       <nav aria-label={t("nav:mainMenu")} className={cn("order-3 w-full flex-col md:order-none md:flex md:w-auto md:flex-row md:items-stretch", narrowOpen ? "flex" : "hidden")}>

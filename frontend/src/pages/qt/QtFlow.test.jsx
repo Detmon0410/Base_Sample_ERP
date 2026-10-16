@@ -88,13 +88,9 @@ describe("the QT page", () => {
     expect(order.lines.map((line) => [line.productCode, line.quantity, line.unitPrice])).toEqual([["QTP-FR", 10, 45000]]);
   });
 
-  it("gives a QT without a number the next automatic one, and keeps a number that was typed", async () => {
+  it("needs a QT number: an empty one is refused (REQUIRED)", async () => {
     setToken(tokenOf(mockUsers[2]));
-    const first = await qtApi.create({ qtNumber: "", qtDate: "2026-10-01", customerId: customer.id, lines: [{ productId: door.id, quantity: 1, unitPrice: 9000 }] });
-    const second = await qtApi.create({ qtDate: "2026-10-01", customerId: customer.id, lines: [{ productId: door.id, quantity: 1, unitPrice: 9000 }] });
-    expect(first.qtNumber).toMatch(/^QT-\d{4}-\d{4}$/);
-    expect(Number(second.qtNumber.slice(-4))).toBe(Number(first.qtNumber.slice(-4)) + 1);
-    await expect(qtApi.update(first.id, { qtNumber: "", qtDate: "2026-10-01", customerId: customer.id, lines: first.lines })).rejects.toMatchObject({ status: 400 }); // a saved QT keeps a number
+    await expect(qtApi.create({ qtNumber: "", qtDate: "2026-10-01", customerId: customer.id, lines: [{ productId: door.id, quantity: 1, unitPrice: 9000 }] })).rejects.toMatchObject({ status: 400 });
   });
 
   it("warns when the customer PO file is missing, and still confirms", async () => {

@@ -210,7 +210,7 @@ function QtForm() {
 
             <Section icon={FileText} title={t("qt.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("qt.qtNumber")} placeholder={record ? undefined : t("qt.numberAuto")} disabled={confirmed} error={errors.qtNumber?.message} {...form.register("qtNumber")} />
+                <TextField label={t("qt.qtNumber")} disabled={confirmed} error={errors.qtNumber?.message} {...form.register("qtNumber")} />
                 <TextField label={t("qt.qtDate")} placeholder="YYYY-MM-DD" inputMode="numeric" disabled={confirmed} error={errors.qtDate?.message} {...form.register("qtDate")} />
                 <SelectField label={t("qt.customer")} options={customers} disabled={confirmed} error={errors.customerId?.message} className="sm:col-span-2" {...form.register("customerId")} />
                 <Field className="sm:col-span-2">

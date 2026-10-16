@@ -19,11 +19,13 @@ import { InvoicesPage } from "@/pages/invoices/InvoicesPage";
 import { ReceiptsPage } from "@/pages/receipts/ReceiptsPage";
 import { invoicesApi } from "@/services/invoices.service";
 import { ordersApi } from "@/services/orders.service";
+import { purchaseApi } from "@/services/purchase.service";
 import { todayIso } from "@/utils/dates";
 import { formatCurrency } from "@/utils/format";
 import { applyServerErrors } from "@/utils/serverErrors";
 
-const TABS = ["toInvoice", "unpaid", "paid"];
+// Two sides: the money that comes in (customers pay us) and the money that goes out (we pay the suppliers). Each side has its own tabs.
+const SIDES = { in: ["toInvoice", "unpaid", "paid"], out: ["toPay", "paidOut"] };
 
 /** The invoice of a Completed order: the date, then the same call as ever (the invoice copies the order as it is now). */
 function IssueDialog({ order, onClose, onDone }) {
@@ -155,22 +157,76 @@ function InvoiceTable({ rows, language, paid, empty, onPay }) {
   );
 }
 
+/** The purchase orders of one tab: the ones to pay open the PO page, where the payment (method, reference) is recorded; the paid ones show the payment. */
+function PurchaseTable({ rows, language, paid, empty }) {
+  const { t } = useTranslation(["invoices", "purchase"]);
+  if (rows.length === 0) return <Empty>{empty}</Empty>;
+  return (
+    <Table data-stack>
+      <TableHeader>
+        <TableRow>
+          <TableHead>{t("purchase:poNumber")}</TableHead>
+          <TableHead>{t("purchase:supplier")}</TableHead>
+          <TableHead>{paid ? t("invoices:accounting.paidOn") : t("invoices:accounting.requiredDate")}</TableHead>
+          <TableHead className="text-right">{t("purchase:lines.total")}</TableHead>
+          <TableHead />
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map((po) => (
+          <TableRow key={po.id}>
+            <TableCell data-label={t("purchase:poNumber")}>
+              <Link to={`/purchase/orders/${po.id}`}>{po.poNumber}</Link>
+            </TableCell>
+            <TableCell data-label={t("purchase:supplier")}>{po.supplierName}</TableCell>
+            <TableCell data-label={paid ? t("invoices:accounting.paidOn") : t("invoices:accounting.requiredDate")}>{paid ? po.payment?.paymentDate : po.requiredDate}</TableCell>
+            <TableCell data-label={t("purchase:lines.total")} className="text-right font-bold tabular-nums">
+              {formatCurrency(po.total, language)}
+            </TableCell>
+            <TableCell>
+              {paid ? (
+                <StatusBadge tone="good">{t("invoices:status.Paid")}</StatusBadge>
+              ) : (
+                <Button asChild size="sm">
+                  <Link to={`/purchase/orders/${po.id}`} aria-label={`${t("invoices:accounting.payPo")}: ${po.poNumber}`}>
+                    <Banknote aria-hidden="true" />
+                    {t("invoices:accounting.payPo")}
+                  </Link>
+                </Button>
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
 /**
  * Accounting on one page (Admin): the orders to invoice, the invoices waiting for payment and the invoices that are paid, each row with the
  * one thing to do next. The invoice and the receipt keep their own pages as documents (print, PDF). Same calls and same rules as before.
  */
 function AccountingWork() {
-  const { t, i18n } = useTranslation(["invoices", "nav", "master", "common"]);
-  const [tab, setTab] = useState("toInvoice");
+  const { t, i18n } = useTranslation(["invoices", "nav", "master", "common", "purchase"]);
+  const [side, setSide] = useState("in"); // "in": customers pay us, "out": we pay the suppliers
+  const [tabs, setTabs] = useState({ in: "toInvoice", out: "toPay" }); // the tab that is open on each side
   const [issuing, setIssuing] = useState(null); // the order being invoiced
   const [paying, setPaying] = useState(null); // the invoice being paid
   const { data, error, reload } = useLoad(async () => {
-    const [toInvoice, unpaid, paid] = await Promise.all([
+    const [toInvoice, unpaid, paid, toPay, paidOut] = await Promise.all([
       ordersApi.list({ status: "Completed", invoiced: "false", pageSize: 200 }),
       invoicesApi.list({ status: "Unpaid", pageSize: 200 }),
       invoicesApi.list({ status: "Paid", pageSize: 200 }),
+      purchaseApi.list({ status: "Received", paid: "false", pageSize: 200 }),
+      purchaseApi.list({ status: "Received", paid: "true", pageSize: 200 }),
     ]);
-    return { toInvoice: toInvoice.items, unpaid: [...unpaid.items].sort((a, b) => a.invoiceDate.localeCompare(b.invoiceDate) || a.id - b.id), paid: paid.items }; // unpaid: oldest first
+    return {
+      toInvoice: toInvoice.items,
+      unpaid: [...unpaid.items].sort((a, b) => a.invoiceDate.localeCompare(b.invoiceDate) || a.id - b.id), // oldest first
+      paid: paid.items,
+      toPay: [...toPay.items].sort((a, b) => a.requiredDate.localeCompare(b.requiredDate) || a.id - b.id), // the one needed first
+      paidOut: paidOut.items,
+    };
   }, []);
   const language = i18n.language;
   const done = () => {
@@ -180,7 +236,9 @@ function AccountingWork() {
   };
 
   const unpaidTotal = (data?.unpaid ?? []).reduce((sum, invoice) => sum + invoice.total, 0);
-  const tabs = TABS.map((key) => ({ key, label: t(`invoices:accounting.tabs.${key}`), count: data ? data[key].length : null }));
+  const toPayTotal = (data?.toPay ?? []).reduce((sum, po) => sum + po.total, 0);
+  const tab = tabs[side];
+  const tabList = SIDES[side].map((key) => ({ key, label: t(`invoices:accounting.tabs.${key}`), count: data ? data[key].length : null }));
 
   return (
     <>
@@ -196,8 +254,16 @@ function AccountingWork() {
           <StatRow>
             <StatCard label={t("invoices:accounting.toInvoiceCount")} value={data.toInvoice.length} tone={data.toInvoice.length > 0 ? "warn" : undefined} />
             <StatCard label={t("invoices:accounting.unpaidTotal")} value={formatCurrency(unpaidTotal, language)} tone={unpaidTotal > 0 ? "warn" : undefined} />
+            <StatCard label={t("invoices:accounting.toPayTotal")} value={formatCurrency(toPayTotal, language)} tone={toPayTotal > 0 ? "warn" : undefined} />
           </StatRow>
-          <TabBar label={t("invoices:accounting.tabsLabel")} tabs={tabs} value={tab} onChange={setTab} />
+          <div role="group" aria-label={t("invoices:accounting.sideLabel")} className="flex w-fit gap-1 rounded-md bg-[#eceef1] p-1">
+            {["in", "out"].map((key) => (
+              <Button key={key} type="button" size="sm" variant={side === key ? "default" : "ghost"} aria-pressed={side === key} onClick={() => setSide(key)}>
+                {t(`invoices:accounting.sides.${key}`)}
+              </Button>
+            ))}
+          </div>
+          <TabBar label={t("invoices:accounting.tabsLabel")} tabs={tabList} value={tab} onChange={(key) => setTabs((old) => ({ ...old, [side]: key }))} />
 
           {tab === "toInvoice" ? (
             data.toInvoice.length === 0 ? (
@@ -231,6 +297,8 @@ function AccountingWork() {
                 </TableBody>
               </Table>
             )
+          ) : tab === "toPay" || tab === "paidOut" ? (
+            <PurchaseTable rows={data[tab]} language={language} paid={tab === "paidOut"} empty={t(`invoices:accounting.empty.${tab}`)} />
           ) : (
             <InvoiceTable rows={data[tab]} language={language} paid={tab === "paid"} empty={t(`invoices:accounting.empty.${tab}`)} onPay={setPaying} />
           )}

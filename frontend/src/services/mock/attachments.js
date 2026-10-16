@@ -1,13 +1,14 @@
 // Files kept with a record (docs/api/files.md): the customer's PO and the quotation of a QT, the evidence of a production order.
 //
 // An attachment: { id, ownerType, ownerId, kind, fileName, fileType, size, dataUrl, uploadedBy, uploadedByName, at }
-//   ownerType  "QtReference" | "ProductionOrder"   (a purchase order joins them in the Purchase step)
+//   ownerType  "QtReference" | "ProductionOrder" | "PurchaseOrder"
 //   kind       "PO_FILE" | "QUOTATION" | "EVIDENCE" | "OTHER"; a new PO_FILE replaces the old one of the same owner
 // PDF, PNG or JPG, up to 10 MB. The list never carries the file (dataUrl); one attachment does.
 
 import { MockHttpError, MockResponse } from "./errors.js";
 import { invalid, issue, text } from "./master.js";
 import { orders } from "./orders.js";
+import { purchaseOrders } from "./purchase.js";
 import { qtReferences } from "./qt.js";
 import { requireCan, userFromAuthorization } from "./users.js";
 
@@ -19,6 +20,7 @@ const FILE_TYPES = ["application/pdf", "image/png", "image/jpeg"];
 // who owns files, where to look for the owner, which kinds it may have and which actions read and write its files
 const OWNERS = {
   QtReference: { store: qtReferences, kinds: ["QUOTATION", "PO_FILE", "OTHER"], read: "qt.use", write: "qt.use" },
+  PurchaseOrder: { store: purchaseOrders, kinds: ["PO_FILE", "QUOTATION", "OTHER"], read: "purchase.use", write: "purchase.use" },
   // a PO_FILE of an order is the copy of the PO of its QT: the system makes it (syncOrderPoFile), a user cannot upload or delete it
   ProductionOrder: { store: orders, kinds: ["EVIDENCE", "OTHER"], read: "orders.view", write: "orders.evidence" },
 };

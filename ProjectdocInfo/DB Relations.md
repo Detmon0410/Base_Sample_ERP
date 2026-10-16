@@ -1,10 +1,10 @@
 # DB Relations
 
-One file with both versions: **Part 1** is the system as built on branch `mini-erp`; **Part 2** is Version 2.0 (planned): Purchase ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md)), QT Upgrade 2.0 ([doc](../docs/QT%20Upgrade%202.0.md)) and User Version 2.0 ([doc](../docs/User%20Version%202.0.md)).
+The system as built on branch `mini-erp` (Version 2.0): the base tables first, then what Purchase, QT 2.0 and User 2.0 added or changed. Sources ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)).
 
-## Part 1: Current version (as built)
+## Part 1: The base tables (the Mini ERP before Version 2.0)
 
-Table-by-table list of keys, relations and delete rules. The diagram is in [ER Diagram, Part 1](ER%20Diagram.md#part-1-current-version-as-built). Source: [docs/api](../docs/api/README.md) (`master-data.md`, `stock.md`, `qt.md`, `orders.md`, `invoices.md`, `receipts.md`).
+Table-by-table list of keys, relations and delete rules. The whole model, as built, is in the [ER Diagram](ER%20Diagram.md). The rows of QtReference, Material and User are changed by Part 2 below. Source: [docs/api](../docs/api/README.md) (`master-data.md`, `stock.md`, `qt.md`, `orders.md`, `invoices.md`, `receipts.md`).
 
 ### Foreign keys
 
@@ -67,9 +67,9 @@ Customer -> QtReference -> ProductionOrder -> OrderLine -> OrderProcess -> Progr
 
 ---
 
-## Part 2: Version 2.0 (planned)
+## Part 2: Added or changed in Version 2.0 (as built)
 
-Keys, relations and rules after the Purchase, QT 2.0 and User 2.0 changes. Only the **new or changed** rows are listed; everything else stays as in [Part 1](#part-1-current-version-as-built). The diagram is in [ER Diagram, Part 2](ER%20Diagram.md#part-2-version-20-planned).
+Keys, relations and rules after the Purchase, QT 2.0 and User 2.0 changes. Only the **new or changed** rows are listed; everything else stays as in Part 1. The order status is `Draft`, `In Progress`, `Completed` (computed; `Draft` replaces `New`). An order is made only by Confirm QT.
 
 ### New foreign keys
 

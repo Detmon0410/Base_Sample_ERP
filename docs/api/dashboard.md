@@ -27,4 +27,4 @@ One call gives the numbers of the page: the tiles, and for an Admin one chart of
 | `invoicing.unpaid` | the number and the total of the invoices that are `Unpaid` |
 | `invoicing.paidThisMonth` | the payments whose date is in the current month: their number and their sum |
 
-Money is whole yen. The page links a tile to the page that explains it (`/sale/orders`, `/accounting/invoices`). A Worker sees the three tiles of the orders; an Admin sees them, the three tiles of the invoices and the chart of the orders by status.
+Money is whole yen. The page links a tile to the page that explains it (`/sale/orders`, `/accounting`). A Worker sees the three tiles of the orders; an Admin sees them, the three tiles of the invoices and the chart of the orders by status.

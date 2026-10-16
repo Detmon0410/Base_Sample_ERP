@@ -5,12 +5,13 @@ import { AuthLayout } from "@/layouts/AuthLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { CustomersPage } from "@/pages/master/CustomersPage";
-import { InvoicesPage } from "@/pages/invoices/InvoicesPage";
+import { AccountingPage } from "@/pages/accounting/AccountingPage";
 import { OrdersPage } from "@/pages/orders/OrdersPage";
-import { ReceiptsPage } from "@/pages/receipts/ReceiptsPage";
 import { QtPage } from "@/pages/qt/QtPage";
+import { PurchasePage } from "@/pages/purchase/PurchasePage";
+import { SuppliersPage } from "@/pages/suppliers/SuppliersPage";
 import { ProductsPage } from "@/pages/master/ProductsPage";
-import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import { HomePage } from "@/pages/home/HomePage";
 import { StockMovementsPage } from "@/pages/stock/StockMovementsPage";
 import { StockPage } from "@/pages/stock/StockPage";
 import { UsersPage } from "@/pages/users/UsersPage";
@@ -23,7 +24,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { RequirePermission } from "./RequirePermission";
 
 // Menu entries whose page is built (the key of config/navigation.js). Everything else opens the "not built yet" placeholder.
-const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, receipts: ReceiptsPage, productionOrders: OrdersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage };
+const IMPLEMENTED_PAGES = { dashboard: HomePage, qt: QtPage, accounting: AccountingPage, productionOrders: OrdersPage, purchase: PurchasePage, suppliers: SuppliersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage };
 
 /** An old address of a material, /stock/<id> (a saved link, the Dashboard of before): it opens the material where it is now. */
 function LegacyMaterialRedirect() {

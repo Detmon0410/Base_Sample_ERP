@@ -11,6 +11,8 @@ import {
   LayoutDashboard,
   Package,
   ReceiptText,
+  ShoppingCart,
+  Truck,
   UserCog,
   Users,
   Warehouse,
@@ -34,6 +36,8 @@ const ICONS = {
   stockGroup: Warehouse,
   movements: ArrowLeftRight,
   users: UserCog,
+  purchase: ShoppingCart,
+  suppliers: Truck,
   down: ChevronDown,
 };
 

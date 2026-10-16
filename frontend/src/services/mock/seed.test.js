@@ -12,5 +12,8 @@ describe("the first data of the mock", () => {
     const materials = call("GET /materials").data;
     expect(materials.map((material) => material.stockStatus)).toEqual(expect.arrayContaining(["Normal", "Low", "Out"]));
     expect(call("GET /products").data.every((product) => product.bom.length > 0)).toBe(true);
+    expect(materials.every((material) => material.unit)).toBe(true);
+    expect(call("GET /suppliers").data.map((supplier) => supplier.active)).toEqual(expect.arrayContaining([true, false]));
+    expect(call("GET /purchase-orders").data.map((po) => po.status).sort()).toEqual(["Draft", "Received", "Sent"]);
   });
 });

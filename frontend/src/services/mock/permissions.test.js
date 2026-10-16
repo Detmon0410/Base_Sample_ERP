@@ -56,6 +56,20 @@ const TABLE = {
   "POST /orders/:id/start": ["factory"],
   "POST /orders/:id/progress": ["factory"],
 
+  "GET /suppliers": ["factory"],
+  "GET /suppliers/:id": ["factory"],
+  "POST /suppliers": [],
+  "PUT /suppliers/:id": [],
+  "DELETE /suppliers/:id": [],
+
+  "GET /purchase-orders": ["factory"],
+  "GET /purchase-orders/:id": ["factory"],
+  "POST /purchase-orders": ["factory"],
+  "PUT /purchase-orders/:id": ["factory"],
+  "DELETE /purchase-orders/:id": ["factory"],
+  "POST /purchase-orders/:id/status": ["factory"],
+  "POST /purchase-orders/:id/payment": ["factory"],
+
   "GET /invoices": [],
   "GET /invoices/:id": [],
   "POST /invoices": [],

@@ -3,7 +3,9 @@ import { qtRoutes } from "./qt.js";
 import { qtConfirmRoutes } from "./qtConfirm.js";
 import { invoiceRoutes } from "./invoices.js";
 import { orderRoutes } from "./orders.js";
+import { purchaseRoutes } from "./purchase.js";
 import { stockRoutes } from "./stock.js";
+import { supplierRoutes } from "./suppliers.js";
 import { deleteRoutes } from "./deletes.js";
 import { attachmentRoutes } from "./attachments.js";
 import { dashboardRoutes } from "./dashboard.js";
@@ -23,6 +25,8 @@ export const mockRoutes = {
   ...masterRoutes,
   ...qtRoutes,
   ...qtConfirmRoutes,
+  ...supplierRoutes,
+  ...purchaseRoutes,
   ...orderRoutes,
   ...invoiceRoutes,
   ...dashboardRoutes,

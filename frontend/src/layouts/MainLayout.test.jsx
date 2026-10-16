@@ -36,19 +36,20 @@ describe("the bar at the top", () => {
     const user = userEvent.setup();
     renderLayout();
     const menu = screen.getByRole("navigation", { name: "Main menu" });
-    await user.click(within(menu).getByRole("button", { name: /Accounting/ }));
-    expect(within(menu).getByRole("link", { name: "Invoices" })).toBeInTheDocument();
-    expect(within(menu).getByRole("link", { name: "Receipts" })).toBeInTheDocument();
-    for (const group of [/Sales/, /Stock/, /Master data/]) expect(within(menu).getByRole("button", { name: group })).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Accounting" })).toHaveAttribute("href", "/accounting"); // invoices and receipts are one page
+    await user.click(within(menu).getByRole("button", { name: /Sales/ }));
+    expect(within(menu).getByRole("link", { name: "Quotations" })).toBeInTheDocument();
+    for (const group of [/Stock/, /Master data/]) expect(within(menu).getByRole("button", { name: group })).toBeInTheDocument();
   });
 
   it("shows a Worker only the entries of a Worker", async () => {
     renderLayout(mockUsers[1]);
     const menu = screen.getByRole("navigation", { name: "Main menu" });
-    expect(within(menu).queryByRole("button", { name: /Accounting/ })).not.toBeInTheDocument();
-    expect(within(menu).getByRole("link", { name: "Dashboard" })).toBeInTheDocument();
+    expect(within(menu).queryByRole("link", { name: "Accounting" })).not.toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Today" })).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: "Production orders" })).toBeInTheDocument();
-    expect(within(menu).getByRole("link", { name: "Products and BOM" })).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Purchase" })).toBeInTheDocument(); // a Factory Worker buys the materials
+    expect(within(menu).getByRole("button", { name: /Master data/ })).toBeInTheDocument(); // products and suppliers, to look at
   });
 });
 

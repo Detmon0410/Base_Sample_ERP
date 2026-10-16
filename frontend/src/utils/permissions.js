@@ -35,12 +35,16 @@ export const ACTIONS = {
   "customers.view": ["Sales"],
   "customers.write": ADMIN,
 
+  "suppliers.view": ["Factory"],
+  "suppliers.write": ADMIN,
+  "purchase.use": ["Factory"], // purchase orders: make, print, move the status, pay, files
+
   "invoices.use": ADMIN,
   "receipts.use": ADMIN,
   "users.use": ADMIN,
 };
 
-export const isAdmin = (user) => user?.role === "Admin";
+const isAdmin = (user) => user?.role === "Admin";
 
 /** May this user do this action? The Admin may do everything; a Worker only what the department of the Worker is listed for. */
 export function can(user, action) {

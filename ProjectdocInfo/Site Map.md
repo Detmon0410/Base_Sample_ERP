@@ -1,98 +1,27 @@
 # Site Map
 
-One file with both versions: **Part 1** is the system as built on branch `mini-erp`; **Part 2** is Version 2.0 (planned): Purchase ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md)), QT Upgrade 2.0 ([doc](../docs/QT%20Upgrade%202.0.md)) and User Version 2.0 ([doc](../docs/User%20Version%202.0.md)).
-
-## Part 1: Current version (as built)
-
-Every page of the frontend, with the role that can open it. Source: [frontend/src/config/navigation.js](../frontend/src/config/navigation.js) and [frontend/src/routes/index.jsx](../frontend/src/routes/index.jsx). The menu is in the header.
-
-```mermaid
-flowchart TD
-    Root[App] --> Login["/login<br/>Sign in"]
-    Root --> Main[Main layout, signed in]
-
-    Main --> Dash["/<br/>Dashboard<br/>Admin, Worker"]
-
-    Main --> Orders[Menu: Orders]
-    Orders --> QT["/sale/quotations<br/>QT references<br/>Admin"]
-    QT --> QT1["/new, /:id<br/>QT form"]
-    Orders --> PO["/sale/orders<br/>Production orders<br/>Admin, Worker"]
-    PO --> PO1["/new<br/>New order, Admin"]
-    PO --> PO2["/:id<br/>Order, progress"]
-
-    Main --> Acc[Menu: Accounting]
-    Acc --> INV["/accounting/invoices<br/>Invoices<br/>Admin"]
-    INV --> INV1["/new, /:id<br/>Invoice, payment"]
-    Acc --> REC["/accounting/receipts<br/>Receipts<br/>Admin"]
-    REC --> REC1["/:id<br/>Receipt"]
-
-    Main --> Stk[Menu: Stock]
-    Stk --> MAT["/stock/materials<br/>Materials and lots<br/>Admin, Worker"]
-    MAT --> MAT1["/new, /:id<br/>Material, stock changes"]
-    Stk --> MOV["/stock/movements<br/>Movements<br/>Admin, Worker"]
-
-    Main --> Mst[Menu: Master data]
-    Mst --> CUS["/master/customers<br/>Customers<br/>Admin"]
-    CUS --> CUS1["/new, /:id"]
-    Mst --> PRD["/master/products<br/>Products + BOM<br/>Admin, Worker"]
-    PRD --> PRD1["/new, /:id"]
-    Mst --> USR["/master/users<br/>Users<br/>Admin"]
-    USR --> USR1["/new, /:id"]
-
-    Root --> Sys[System pages]
-    Sys --> F403["/403<br/>Forbidden"]
-    Sys --> F404["*<br/>Not found"]
-```
-
-### Page table
-
-| Menu | Page | Path | Admin | Worker |
-|---|---|---|---|---|
-| Dashboard | Dashboard | `/` | yes | yes (order tiles only) |
-| Orders | QT references | `/sale/quotations` | yes | no |
-| Orders | Production orders | `/sale/orders` | yes | yes (view, progress) |
-| Accounting | Invoices | `/accounting/invoices` | yes | no |
-| Accounting | Receipts | `/accounting/receipts` | yes | no |
-| Stock | Materials | `/stock/materials` | yes | read only |
-| Stock | Movements | `/stock/movements` | yes | read only |
-| Master data | Customers | `/master/customers` | yes | no |
-| Master data | Products | `/master/products` | yes | read only |
-| Master data | Users | `/master/users` | yes | no |
-| – | Sign in | `/login` | guests | guests |
-| – | Forbidden / Not found | `/403`, `*` | any | any |
-
-### Redirects
-
-- `/stock` opens `/stock/materials`; `/stock/:id` is redirected to the material page.
-- Old addresses of moved pages are redirected to their new place (`MovedRedirect`).
-- A menu with one visible entry is shown as that entry alone (for example a Worker sees "Production orders" without the Orders menu).
-
----
-
-## Part 2: Version 2.0 (planned)
-
-Pages after the three changes. The current site map is in [Part 1](#part-1-current-version-as-built). **New** pages are marked. Paths for new pages are proposed, not built.
+The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)) are in. This replaces the older single-version description.
 
 ```mermaid
 flowchart TD
     Root[App] --> Login["/login"]
     Root --> Main[Main layout]
 
-    Main --> Dash["/ Dashboard"]
+    Main --> Dash["/ First page<br/>Dashboard (Admin, Sale)<br/>Today (Factory)"]
 
-    Main --> Orders[Menu: Orders]
-    Orders --> QT["/sale/quotations<br/>QT references<br/>Admin, Sale"]
-    QT --> QT1["/new, /:id<br/>QT form: lines, Print,<br/>upload PO, Confirm (changed)"]
+    Main --> Orders[Menu: Sales]
+    Orders --> QT["/sale/quotations<br/>Sales work list: one row per job<br/>with its step<br/>Admin, Sale"]
+    QT --> QT1["/new, /:id<br/>One page for a job: steps, QT lines,<br/>PO, Confirm, then the production order<br/>(processes, progress)"]
     Orders --> PO["/sale/orders<br/>Production orders<br/>all"]
-    PO --> PO1["/new, /:id<br/>Order, progress,<br/>evidence upload (changed)"]
+    PO --> PO1["/:id<br/>Order: processes, start, progress,<br/>evidence upload"]
 
-    Main --> Pur["Menu: Purchase (NEW)"]
+    Main --> Pur["Menu: Purchase"]
     Pur --> PUR["/purchase/orders<br/>One page: stock, PO form, PO list<br/>Admin, Factory"]
     PUR --> PUR1["/new, /:id<br/>PO: lines, status, Print PDF,<br/>payment, files"]
 
-    Main --> Acc[Menu: Accounting]
-    Acc --> INV["/accounting/invoices<br/>Admin"]
-    Acc --> REC["/accounting/receipts<br/>Admin"]
+    Main --> Acc["/accounting<br/>One page: to invoice, waiting for payment, paid<br/>Admin"]
+    Acc --> INV["/accounting/invoices/:id<br/>Invoice as a document"]
+    Acc --> REC["/accounting/receipts/:id<br/>Receipt as a document"]
 
     Main --> Stk[Menu: Stock]
     Stk --> MAT["/stock/materials"]
@@ -101,40 +30,42 @@ flowchart TD
     Main --> Mst[Menu: Master data]
     Mst --> CUS["/master/customers"]
     Mst --> PRD["/master/products"]
-    Mst --> SUP["/master/suppliers (NEW)<br/>suppliers + their items and prices<br/>Admin"]
+    Mst --> SUP["/master/suppliers<br/>suppliers + their items and prices<br/>Admin"]
     Mst --> USR["/master/users<br/>(changed: Worker department rule)"]
 
     Root --> Sys["/403, * not found"]
 ```
 
-### Page table
+## Page table
 
 | Menu | Page | Path | Admin | Sale Worker | Factory Worker |
 |---|---|---|---|---|---|
-| Dashboard | Dashboard | `/` | all | orders | orders |
-| Orders | QT references | `/sale/quotations` | yes | yes | no |
-| Orders | Production orders | `/sale/orders` | yes | view + edit before start | view + start + progress |
-| **Purchase** | **Purchase orders (new)** | `/purchase/orders` | yes | no | yes |
-| Accounting | Invoices | `/accounting/invoices` | yes | no | no |
-| Accounting | Receipts | `/accounting/receipts` | yes | no | no |
+| Dashboard / Today | Dashboard (Admin, Sale), Today (Factory) | `/` | all | orders | work of today |
+| Sales | Sales work list and one page for a job | `/sale/quotations` | yes | yes | no |
+| Sales | Production orders | `/sale/orders` | yes | view + edit before start | view + start + progress |
+| Purchase | Purchase orders | `/purchase/orders` | yes | no | yes |
+| Accounting | Work list | `/accounting` | yes | no | no |
+| Accounting | Invoice and receipt documents | `/accounting/invoices/:id`, `/accounting/receipts/:id` | yes | no | no |
 | Stock | Materials | `/stock/materials` | yes | view | change |
 | Stock | Movements | `/stock/movements` | yes | view | view |
 | Master data | Customers | `/master/customers` | yes | view | no |
 | Master data | Products | `/master/products` | yes | view | view |
-| **Master data** | **Suppliers (new)** | `/master/suppliers` | yes | no | view |
+| Master data | Suppliers | `/master/suppliers` | yes | no | view |
 | Master data | Users | `/master/users` | yes | no | no |
 | – | Sign in, Forbidden, Not found | `/login`, `/403`, `*` | any | any | any |
 
-### What changed on existing pages
+## What is on the pages that QT 2.0 and the roles changed
 
 | Page | Change |
 |---|---|
-| QT form | adds lines and total, Print button, customer PO upload (number, date, file), Confirm button, status, link to the created order |
+| QT page | the steps of the job (Draft, Confirmed, In production, Done), lines and total, Print button, customer PO upload (number, date, file), Confirm button; after Confirm the production order of the job on the same page: processes before the start, progress after it |
 | Production order | shows the customer PO file, QT link, and an evidence upload area |
+| Today (Factory) | orders to start, orders in production with a big "Record progress" button, purchase orders to receive, a strip for low stock |
+| Accounting | tabs To invoice / Waiting for payment / Paid; Issue invoice and Record payment in small dialogs; Open receipt |
 | Users | a Worker must choose `Sales` or `Factory` |
 | Menus | each entry has `roles` and `departments`; a menu with one visible entry shows as that entry |
 
-### The Purchase page (one page)
+## The Purchase page (one page)
 
 | Area | Content |
 |---|---|
@@ -142,3 +73,11 @@ flowchart TD
 | PO form | supplier, required date, department, item lines, quantity, price, total |
 | PO list | PO No., supplier, required date, status buttons |
 | PO detail | lines, Print PDF, payment, attachments |
+
+## Redirects
+
+- `/stock` opens `/stock/materials`; `/stock/:id` is redirected to the material page.
+- `/sale/orders/new` opens `/sale/quotations`: an order is made by Confirm QT, never by hand.
+- `/accounting/invoices`, `/accounting/invoices/new` and `/accounting/receipts` open `/accounting`; the invoice and the receipt keep `/:id` as documents.
+- Old addresses of pages that moved (`/qt`, `/orders`, `/invoices`, ...) are redirected to their new place.
+- A menu with one visible entry is shown as that entry alone.

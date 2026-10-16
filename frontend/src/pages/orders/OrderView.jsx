@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { NativeSelect, Section, TextField } from "@/components/common/FormFields";
 import { Attachments } from "@/components/common/Attachments";
 import { PageHeader } from "@/components/common/PageHeader";
+import { StepChain } from "@/components/common/StepChain";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -25,7 +26,7 @@ import { useStartProduction } from "./StartProduction";
 const PROCESS_STATUSES = ["Not Started", "In Progress", "Completed"];
 
 /** The form to record one progress update of a process (an entry of the history). */
-function ProgressForm({ order, line, process, onDone, onCancel }) {
+export function ProgressForm({ order, line, process, onDone, onCancel }) {
   const { t } = useTranslation(["orders", "master", "common"]);
   const [summary, setSummary] = useState(null);
   const completed = process.status === "Completed";
@@ -96,8 +97,9 @@ function ProgressForm({ order, line, process, onDone, onCancel }) {
 /**
  * An order that has started (or any order, for a Worker): the order, its products with their processes and the progress of each,
  * and the history of every update. A Worker records progress; a completed process can be reopened only by an Admin.
+ * `embedded` is the part of the QT page: no title band, no steps, no back button and no QT or customer in the order box (the page shows them).
  */
-export function OrderView({ order, onChanged }) {
+export function OrderView({ order, onChanged, embedded = false }) {
   const { t, i18n } = useTranslation(["orders", "master", "common"]);
   const { user } = useAuth();
   const mayStart = !order.started && can(user, "orders.start"); // a Factory Worker starts an order that a Sale Worker prepared
@@ -112,9 +114,16 @@ export function OrderView({ order, onChanged }) {
 
   return (
     <>
-      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} />
+      {embedded ? null : <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} statusTone={{ Draft: "neutral", InProgress: "progress", Completed: "good" }[statusKey(order.status)]} />}
 
       <div className="flex max-w-5xl flex-col gap-5">
+        {embedded ? null : (
+          <StepChain
+            label={t("orders:steps.label")}
+            current={statusKey(order.status)}
+            steps={["Draft", "InProgress", "Completed"].map((key) => ({ key, label: t(`orders:status.${key}`) }))}
+          />
+        )}
         {order.started && order.status === "Draft" ? <p className="font-semibold">{t("orders:started")}</p> : null} {/* started, but no process has started yet */}
         {mayStart ? (
           <div className="flex flex-wrap items-center gap-3">
@@ -135,7 +144,9 @@ export function OrderView({ order, onChanged }) {
               [t("orders:invoice"), order.invoice ? <Link key="invoice" to={`/accounting/invoices/${order.invoice.id}`}>{order.invoice.invoiceNumber}</Link> : null],
               [t("orders:receipt"), order.invoice?.receiptNumber ? <Link key="receipt" to={`/accounting/receipts/${order.invoice.receiptId}`}>{order.invoice.receiptNumber}</Link> : null],
               [t("orders:notes"), order.notes],
-            ].map(([label, value], index) => (
+            ]
+              .filter((_, index) => !(embedded && index < 2)) // the QT and the customer are on the page
+              .map(([label, value], index) => (
               <div key={index}>
                 <dt className="text-sm font-semibold text-muted-foreground">{label}</dt>
                 <dd>{value || "-"}</dd>
@@ -232,11 +243,13 @@ export function OrderView({ order, onChanged }) {
 
         <Attachments ownerType="ProductionOrder" ownerId={order.id} kinds={["EVIDENCE", "OTHER"]} canChange={can(user, "orders.evidence")} lockedKinds={["PO_FILE"]} title={t("master:attachments.evidenceTitle")} />
 
-        <div>
-          <Button asChild variant="outline">
-            <Link to="/sale/orders"><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
-          </Button>
-        </div>
+        {embedded ? null : (
+          <div>
+            <Button asChild variant="outline">
+              <Link to="/sale/orders"><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
+            </Button>
+          </div>
+        )}
       </div>
 
       {starter.dialog}

@@ -31,7 +31,7 @@ Query: `q` searches the fields named below (case-insensitive, contains), `pageSi
 |---|---|---|
 | customer | a QT reference (`qt`) or a production order (`order`) uses it. An invoice keeps its own copy of the name and address | – |
 | product | a line of a production order uses it (`order`) | its BOM |
-| material | the BOM of a product uses it (`product`), a supplier sells it (`supplier`), a PO line uses it (`purchaseOrder`), or it has a stock change after its first stock (`stockChange`) | its lots and the first stock ("Initial stock") |
+| material | the BOM of a product uses it (`product`), or it has a stock change after its first stock (`stockChange`) | its lots and the first stock ("Initial stock") |
 | user | it is the user who is signed in (`self`), the last Admin (`lastAdmin`), or it recorded a progress update (`progress`) or a stock change (`stock`) | – |
 
 A QT is deleted the same way (`DELETE /qt/:id`, only a `Draft`: refused with `order` when it is confirmed, because its production order uses it; its files go with it).
@@ -53,7 +53,7 @@ Others answer `403 FORBIDDEN`. The full table by role and department is in [auth
 |---|---|---|---|
 | customers | `name` (required), `address`, `email`, `telephone` | name, email, telephone | `email`, when given, is an email |
 | products | `code` (required, unique), `name` (required), `price` (0 or more, whole yen), `bom`: `[{ materialId, quantity }]` | code, name | each `materialId` exists, `quantity` is more than 0, a material appears once in the BOM. The BOM is for reference: it never moves stock |
-| materials | `code` (required, unique), `name` (required), `unit` (text up to 20 characters, default `pcs`), `minLevel` (optional, 0 or more, up to 3 decimals; `""` or `null` means none), `lots`: `[{ lotNumber, quantity }]` (up to 3 decimals) | code, name | a lot number is unique inside the material (case-insensitive). `lots` is read on **create** only; afterwards a lot changes only through stock changes (below), and `PUT` ignores `lots` |
+| materials | `code` (required, unique), `name` (required), `unit` (text, `pcs` when not sent: `kg`, `m`, ...), `minLevel` (optional, 0 or more, up to 3 decimals; `""` or `null` means none), `lots`: `[{ lotNumber, quantity }]` (up to 3 decimals) | code, name | a lot number is unique inside the material (case-insensitive). `lots` is read on **create** only; afterwards a lot changes only through stock changes (below), and `PUT` ignores `lots` |
 | users | `name`, `department`, `email` (unique, lower-cased), `role`, `password` | name, email, department | `department` is one of the four, `role` is `Admin` or `Worker`. **A Worker needs `department` `Sales` or `Factory`**: any other department answers `400 VALIDATION_ERROR` with `INVALID` on `department` (an Admin may have any). `password` is required on create and at least 6 characters; on `PUT` an empty password keeps the current one. The password is never returned; the response also has `createdAt`, `lastLoginAt` |
 
 Errors

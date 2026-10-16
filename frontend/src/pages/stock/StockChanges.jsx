@@ -186,7 +186,7 @@ export function StockChanges({ materialId, canChange }) {
                   <TableCell data-label={t("stock.colLot")}>{entry.lotNumber}</TableCell>
                   <TableCell data-label={t("stock.colChange")}>{`${entry.change > 0 ? "+" : ""}${formatNumber(entry.change, language)}`}</TableCell>
                   <TableCell data-label={t("stock.colBalance")}>{formatNumber(entry.balance, language)}</TableCell>
-                  <TableCell data-label={t("stock.colOrder")}>{entry.orderNumber}</TableCell>
+                  <TableCell data-label={t("stock.colOrder")}>{entry.orderNumber || entry.purchaseOrderNumber}</TableCell>
                   <TableCell data-label={t("stock.colNote")} className="whitespace-normal">
                     {entry.note}
                   </TableCell>

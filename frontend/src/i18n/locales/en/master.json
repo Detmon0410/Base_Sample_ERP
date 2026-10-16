@@ -71,7 +71,9 @@
     "addLot": "Add a lot",
     "removeLot": "Remove",
     "minLevel": "Minimum level (optional)",
-    "minLevelHint": "When the total of all the lots is at or below this number the material is Low, and at 0 it is Out. Without a number the material has no status."
+    "minLevelHint": "When the total of all the lots is at or below this number the material is Low, and at 0 it is Out. Without a number the material has no status.",
+    "unit": "Unit",
+    "unitHint": "For example kg, m or pcs. It is shown on a purchase order."
   },
   "users": {
     "title": "Users",
@@ -150,6 +152,20 @@
       "approvedBy": "Approved by",
       "customerSign": "Customer",
       "dateLine": "Date"
+    },
+    "step": {
+      "Draft": "Draft",
+      "Confirmed": "Confirmed",
+      "InProduction": "In production",
+      "Done": "Done"
+    },
+    "steps": {
+      "label": "Steps of this job"
+    },
+    "production": {
+      "title": "Production order {{number}}",
+      "open": "Open the order page",
+      "failed": "The production order could not be loaded."
     }
   },
   "stock": {
@@ -217,7 +233,9 @@
       "product": "Products: {{items}}",
       "progress": "Progress updates recorded by this user: {{count}}",
       "stock": "Stock changes recorded by this user: {{count}}",
-      "stockChange": "Stock changes after the first stock: {{count}}"
+      "stockChange": "Stock changes after the first stock: {{count}}",
+      "supplier": "Suppliers: {{items}}",
+      "purchaseOrder": "Purchase orders: {{items}}"
     }
   },
   "attachments": {

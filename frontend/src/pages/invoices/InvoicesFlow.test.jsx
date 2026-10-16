@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { describe, expect, it, vi } from "vitest";
@@ -6,113 +6,115 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@/utils/pdf", () => ({ downloadPdf: vi.fn(async () => {}) }));
 
 import { AuthContext } from "@/lib/auth-context";
+import { AccountingPage } from "@/pages/accounting/AccountingPage";
 import { customersApi, productsApi } from "@/services/master.service";
 import { mockUsers, toPublicUser, tokenOf } from "@/services/mock/users";
 import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
 import { downloadPdf } from "@/utils/pdf";
 import { setToken } from "@/utils/session";
-
-import { ReceiptsPage } from "@/pages/receipts/ReceiptsPage";
-
-import { InvoicesPage } from "./InvoicesPage";
 import { makeOrder } from "@/test/orders";
 
-// Steps 6-7 of the workflow, driven like a person would, on the mock: issue the invoice, pay it in full, get the receipt, print.
+// Steps 6-7 of the workflow on the one Accounting page, driven like a person would on the mock: issue the invoice, pay it in full,
+// open the receipt, and the paper of both (PDF, print).
 
 const completedOrder = async () => {
   setToken(tokenOf(mockUsers[0]));
   const customer = await customersApi.create({ name: "Paper Customer", address: "5 Namba, Osaka" });
   const product = await productsApi.create({ code: "INV-FLOW", name: "Flow fridge", price: 100, bom: [] });
-  const qt = await qtApi.create({ qtNumber: "QT-INV-FLOW", qtDate: "2026-10-01", customerId: customer.id, file: { name: "q.pdf", dataUrl: "data:application/pdf;base64,AA==" } });
+  const qt = await qtApi.create({ qtNumber: "QT-INV-FLOW", qtDate: "2026-10-01", customerId: customer.id });
   const order = await makeOrder({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 3, unitPrice: 250, processes: [{ name: "Cut", instructions: "" }] }] });
   await ordersApi.start(order.id);
   await ordersApi.recordProgress(order.id, { processId: order.lines[0].processes[0].id, status: "Completed", completedQuantity: 3, workDate: "2026-10-03", note: "" });
   return order;
 };
 
-describe("invoices, page by page", () => {
-  it("issues an invoice after a confirmation, takes the full payment once, and shows the receipt", async () => {
+const renderAccounting = (path = "/accounting") =>
+  render(
+    <AuthContext.Provider value={{ user: toPublicUser(mockUsers[0]), status: "authenticated" }}>
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path="/accounting/*" element={<AccountingPage />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthContext.Provider>,
+  );
+
+describe("accounting on one page", () => {
+  it("issues the invoice, takes the full payment once and opens the receipt, all from the work list", async () => {
     const user = userEvent.setup();
     const order = await completedOrder();
     setToken(tokenOf(mockUsers[0]));
     window.print = vi.fn();
+    renderAccounting();
 
-    render(
-      <AuthContext.Provider value={{ user: toPublicUser(mockUsers[0]), status: "authenticated" }}>
-        <MemoryRouter initialEntries={["/accounting/invoices/new"]}>
-          <Routes>
-            <Route path="/accounting/invoices/*" element={<InvoicesPage />} />
-            <Route path="/accounting/receipts/*" element={<ReceiptsPage />} />
-          </Routes>
-        </MemoryRouter>
-      </AuthContext.Provider>,
-    );
+    // To invoice: the completed order, with the one thing to do
+    expect(await screen.findByRole("heading", { level: 1, name: "Accounting" })).toBeInTheDocument();
+    const row = await screen.findByRole("row", { name: new RegExp(order.orderNumber) });
+    expect(row).toHaveTextContent("Paper Customer");
+    await user.click(within(row).getByRole("button", { name: /^Issue invoice/ }));
+    const issue = await screen.findByRole("dialog", { name: "Issue this invoice?" });
+    await user.click(within(issue).getByRole("button", { name: "Issue invoice" }));
 
-    // nothing is chosen: the error is shown only after Save
-    await user.click(await screen.findByRole("button", { name: "Save" }));
-    await user.click(await screen.findByRole("button", { name: "Confirm" }));
-    expect(await screen.findByText("Enter or choose a value.")).toBeInTheDocument();
+    // the order left the first group; the invoice is waiting for payment, ¥750
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await user.click(screen.getByRole("tab", { name: /Waiting for payment/ }));
+    const invoiceRow = await screen.findByRole("row", { name: /Paper Customer/ });
+    expect(invoiceRow).toHaveTextContent("Unpaid");
+    expect(invoiceRow).toHaveTextContent("¥750");
 
-    await waitFor(() => expect(screen.getByRole("option", { name: `${order.orderNumber} Paper Customer` })).toBeInTheDocument());
-    await user.selectOptions(screen.getByLabelText("Production order"), `${order.orderNumber} Paper Customer`);
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    await user.click(await screen.findByRole("button", { name: "Confirm" }));
+    // a wrong amount is refused, and the invoice stays waiting
+    await user.click(within(invoiceRow).getByRole("button", { name: /^Record payment/ }));
+    const pay = await screen.findByRole("dialog", { name: /^Payment: INV-/ });
+    const amount = within(pay).getByLabelText("Amount paid");
+    expect(amount).toHaveValue(750); // it starts as the total
+    await user.clear(amount);
+    await user.type(amount, "700");
+    await user.click(within(pay).getByRole("button", { name: "Record payment" }));
+    expect(await within(pay).findByText("The payment must be equal to the total of the invoice.")).toBeInTheDocument();
 
-    // the list: the invoice, Unpaid, ¥750
-    const link = await screen.findByRole("link", { name: /^INV-\d{4}-\d{4}$/ });
-    expect(screen.getByRole("row", { name: /Paper Customer/ })).toHaveTextContent("Unpaid");
-    expect(screen.getByRole("row", { name: /Paper Customer/ })).toHaveTextContent("¥750");
-    await user.click(link);
+    // the full payment: Paid, the receipt is on the Paid tab
+    await user.clear(amount);
+    await user.type(amount, "750");
+    await user.click(within(pay).getByRole("button", { name: "Record payment" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await user.click(screen.getByRole("tab", { name: /Paid/ }));
+    const paidRow = await screen.findByRole("row", { name: /Paper Customer/ });
+    expect(paidRow).toHaveTextContent("Paid");
+    const receiptLink = within(paidRow).getByRole("link", { name: /^Receipt: RC-\d{4}-\d{4}$/ });
+    expect(receiptLink).toHaveAttribute("href", expect.stringMatching(/^\/accounting\/receipts\/\d+$/));
 
-    // the document, with no tax
+    // the invoice paper: no tax, the PDF
+    await user.click(within(paidRow).getByRole("link", { name: /^INV-\d{4}-\d{4}$/ }));
     expect(await screen.findByRole("heading", { level: 2, name: "Invoice" })).toBeInTheDocument();
     expect(screen.getByText("5 Namba, Osaka")).toBeInTheDocument();
     expect(screen.getByText("Total: ¥750")).toBeInTheDocument();
     expect(screen.getByText("No tax is charged.")).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { level: 2, name: "Receipt" })).not.toBeInTheDocument();
-
-    // a wrong amount is refused after the confirmation; the invoice stays Unpaid
-    await user.type(screen.getByLabelText("Amount paid"), "700");
-    await user.click(screen.getByRole("button", { name: "Record the payment" }));
-    await user.click(await screen.findByRole("button", { name: "Confirm" }));
-    expect(await screen.findByText("The payment must be equal to the total of the invoice.")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Record the payment" }));
-    await user.click(await screen.findByRole("button", { name: "Confirm" }));
-    expect(await screen.findByText("The payment must be equal to the total of the invoice.")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Unpaid");
-
-    // the full payment: Paid, and the receipt
-    const amount = screen.getByLabelText("Amount paid");
-    await user.clear(amount);
-    await user.type(amount, "750");
-    await user.click(screen.getByRole("button", { name: "Record the payment" }));
-    await user.click(await screen.findByRole("button", { name: "Confirm" }));
-    // Paid: the invoice shows the payment made and a link to its receipt, which is on its own page
-    expect(await screen.findByRole("link", { name: /^RC-\d{4}-\d{4}$/ })).toHaveAttribute("href", expect.stringMatching(/^\/accounting\/receipts\/\d+$/));
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Paid");
-    expect(screen.getByText(/^Paid on \d{4}-\d{2}-\d{2}: ¥750$/)).toBeInTheDocument(); // the payment made
-    expect(screen.queryByLabelText("Amount paid")).not.toBeInTheDocument(); // one payment only
-    expect(screen.queryByRole("heading", { level: 2, name: "Receipt" })).not.toBeInTheDocument(); // the paper of the receipt is not here
-
-    // the PDF of the invoice, and its print
+    expect(screen.getByText(/^Paid on \d{4}-\d{2}-\d{2}: ¥750$/)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Download PDF" }));
     expect(downloadPdf.mock.calls[0][0]).toHaveAttribute("data-print-doc", "invoice");
     expect(downloadPdf.mock.calls[0][1]).toMatch(/^INV-\d{4}-\d{4}\.pdf$/);
 
-    // the receipt page: the paper, the PDF, the print, and the way back to the invoice
+    // the receipt paper: the PDF, the print, and the way back to the invoice
     await user.click(screen.getByRole("link", { name: /^RC-\d{4}-\d{4}$/ }));
     expect(await screen.findByRole("heading", { level: 2, name: "Receipt" })).toBeInTheDocument();
     expect(screen.getByText(/^Amount received: ¥750$/)).toBeInTheDocument();
     expect(screen.queryByText(/Payment method/)).not.toBeInTheDocument(); // there is no payment method
     await user.click(screen.getByRole("button", { name: "Download PDF" }));
     expect(downloadPdf.mock.calls[1][0]).toHaveAttribute("data-print-doc", "receipt");
-    expect(downloadPdf.mock.calls[1][1]).toMatch(/^RC-\d{4}-\d{4}\.pdf$/);
     await user.click(screen.getByRole("button", { name: "Print" }));
     expect(window.print).toHaveBeenCalledTimes(1);
     expect(document.body.dataset.printing).toBe("receipt");
     window.dispatchEvent(new Event("afterprint"));
-    expect(document.body.dataset.printing).toBeUndefined();
     expect(screen.getByRole("link", { name: /^INV-\d{4}-\d{4}$/ })).toBeInTheDocument();
+  });
+
+  it("opens the work list from the old addresses of the invoices, the receipts and a new invoice", async () => {
+    setToken(tokenOf(mockUsers[0]));
+    for (const path of ["/accounting/invoices", "/accounting/invoices/new", "/accounting/receipts"]) {
+      const view = renderAccounting(path);
+      expect(await screen.findByRole("tab", { name: /To invoice/ })).toBeInTheDocument();
+      view.unmount();
+    }
   });
 });

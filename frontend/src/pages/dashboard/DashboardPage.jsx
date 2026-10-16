@@ -11,7 +11,7 @@ import { formatCurrency, formatNumber } from "@/utils/format";
 
 function Tile({ to, label, value, icon: Icon }) {
   return (
-    <Link to={to} className="flex flex-col gap-1 bg-primary p-5 text-primary-foreground hover:bg-[#6c6b9c]">
+    <Link to={to} className="flex flex-col gap-1 bg-primary p-5 text-primary-foreground hover:bg-[#006fa8]">
       <span className="flex items-center gap-2 text-sm">
         {Icon ? <Icon aria-hidden="true" className="size-5 shrink-0" /> : null}
         {label}
@@ -54,9 +54,9 @@ export function DashboardPage() {
             </div>
             {data.invoicing ? (
               <div className="grid gap-4 sm:grid-cols-3">
-                <Tile to="/accounting/invoices" icon={ReceiptText} label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
-                <Tile to="/accounting/invoices" icon={Banknote} label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
-                <Tile to="/accounting/invoices" icon={CircleCheck} label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
+                <Tile to="/accounting" icon={ReceiptText} label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
+                <Tile to="/accounting" icon={Banknote} label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
+                <Tile to="/accounting" icon={CircleCheck} label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
               </div>
             ) : null}
           </section>

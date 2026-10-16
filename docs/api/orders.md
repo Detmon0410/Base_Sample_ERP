@@ -18,7 +18,7 @@ An order is **made by Confirm QT** ([qt.md](qt.md)), so there is no `POST /order
 
 | Method | Path | Notes |
 |---|---|---|
-| `GET` | `/orders` | query `q` (order number, customer name, QT number, notes), `status` (`Draft`, `In Progress`, `Completed`), `page`, `pageSize`. Rows have no `lines` and no `history` |
+| `GET` | `/orders` | query `q` (order number, customer name, QT number, notes), `status` (`Draft`, `In Progress`, `Completed`), `invoiced` (`true` or `false`: with or without an invoice; the Accounting page asks for `status=Completed&invoiced=false`), `page`, `pageSize`. Rows have no `lines` and no `history` |
 | `GET` | `/orders/:id` | the whole order (below) |
 | `PUT` | `/orders/:id` | replaces the order date, the notes, the lines and the processes. Only before the start. The QT and the customer of an order never change (they are ignored if sent) |
 | `POST` | `/orders/:id/start` | the Admin or a Factory Worker starts the production |

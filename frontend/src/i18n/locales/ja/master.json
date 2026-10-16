@@ -71,7 +71,9 @@
     "addLot": "ロットを追加",
     "removeLot": "削除",
     "minLevel": "最低在庫数（任意）",
-    "minLevelHint": "全ロットの合計がこの数以下になると「在庫少」、0 になると「在庫切れ」です。数を入れない材料には状態が付きません。"
+    "minLevelHint": "全ロットの合計がこの数以下になると「在庫少」、0 になると「在庫切れ」です。数を入れない材料には状態が付きません。",
+    "unit": "単位",
+    "unitHint": "例：kg、m、個。発注書に表示されます。"
   },
   "users": {
     "title": "ユーザー",
@@ -150,6 +152,20 @@
       "approvedBy": "承認者",
       "customerSign": "顧客",
       "dateLine": "日付"
+    },
+    "step": {
+      "Draft": "下書き",
+      "Confirmed": "確定済み",
+      "InProduction": "製造中",
+      "Done": "完了"
+    },
+    "steps": {
+      "label": "この案件の進み具合"
+    },
+    "production": {
+      "title": "製造指示書 {{number}}",
+      "open": "指示書のページを開く",
+      "failed": "製造指示書を読み込めませんでした。"
     }
   },
   "stock": {
@@ -217,7 +233,9 @@
       "product": "製品：{{items}}",
       "progress": "このユーザーが入力した進捗：{{count}} 件",
       "stock": "このユーザーが入力した在庫変更：{{count}} 件",
-      "stockChange": "最初の在庫のあとの在庫変更：{{count}} 件"
+      "stockChange": "最初の在庫のあとの在庫変更：{{count}} 件",
+      "supplier": "仕入先：{{items}}",
+      "purchaseOrder": "発注書：{{items}}"
     }
   },
   "attachments": {

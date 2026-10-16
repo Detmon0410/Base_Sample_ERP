@@ -1,0 +1,146 @@
+{
+  "title": "Purchase orders",
+  "new": "New purchase order",
+  "edit": "Edit",
+  "search": "Search (PO No., supplier, notes)",
+  "poNumber": "PO No.",
+  "supplier": "Supplier",
+  "requiredDate": "Required date (YYYY-MM-DD)",
+  "requiredShort": "Required",
+  "department": "Department",
+  "chooseDepartment": "Choose a department",
+  "notes": "Notes",
+  "total": "Total",
+  "status": {
+    "Draft": "Draft",
+    "Sent": "Sent",
+    "Received": "Received"
+  },
+  "paid": "Payment",
+  "paidYes": "Paid",
+  "paidNo": "Not paid",
+  "stock": {
+    "title": "Stock to buy",
+    "hint": "The materials that are low or out. Create a PO for the ones you need.",
+    "none": "No material is low or out.",
+    "code": "Code",
+    "name": "Material",
+    "total": "In stock",
+    "minLevel": "Minimum level",
+    "status": "Status",
+    "create": "Create PO"
+  },
+  "form": {
+    "section": "Purchase order",
+    "chooseSupplier": "Choose a supplier",
+    "supplierHint": "Only the active suppliers. The lines can be the materials this supplier sells.",
+    "pickSupplier": "Choose the supplier first: its materials are the ones you can add.",
+    "noPrice": "The price starts from the price of the supplier; you can change it."
+  },
+  "lines": {
+    "title": "Materials",
+    "material": "Material",
+    "chooseMaterial": "Choose a material",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "unitPrice": "Unit price",
+    "amount": "Amount",
+    "total": "Total",
+    "add": "Add a material",
+    "remove": "Remove this material",
+    "none": "No material yet.",
+    "lot": "Lot"
+  },
+  "detail": {
+    "section": "Purchase order",
+    "received": "Received",
+    "by": "Made by",
+    "back": "Back to the list",
+    "delete": "Delete",
+    "deleteTitle": "Delete this purchase order?",
+    "deleteText": "\"{{name}}\" will be deleted for good, with its files. This cannot be undone.",
+    "deleted": "The purchase order was deleted.",
+    "editHint": "Only a Draft can be changed or deleted."
+  },
+  "actions": {
+    "markSent": "Mark as sent",
+    "markReceived": "Mark as received",
+    "sentTitle": "Mark this PO as sent?",
+    "sentText": "The lines cannot be changed after that.",
+    "sentDone": "The PO is marked as sent."
+  },
+  "receive": {
+    "title": "Receive the goods",
+    "hint": "Type the lot number for each material. The quantity is added to that lot (a new lot if it does not exist). It is added once.",
+    "lot": "Lot number",
+    "confirm": "Confirm: add to the stock",
+    "cancel": "Cancel",
+    "done": "The goods are received and the stock was added."
+  },
+  "payment": {
+    "title": "Payment",
+    "none": "The payment can be recorded when the PO is received.",
+    "date": "Payment date (YYYY-MM-DD)",
+    "amount": "Amount paid",
+    "method": "Payment method",
+    "chooseMethod": "Choose a payment method",
+    "reference": "Reference no.",
+    "note": "Note",
+    "record": "Record the payment",
+    "confirmTitle": "Record the payment?",
+    "confirmText": "The PO is marked as paid. This cannot be changed afterwards.",
+    "done": "The payment was recorded.",
+    "hint": "The amount must be equal to the total of the PO: {{total}}.",
+    "paidOn": "Paid on {{date}}: {{amount}} by {{method}}",
+    "methods": {
+      "Cash": "Cash",
+      "BankTransfer": "Bank transfer",
+      "Cheque": "Cheque",
+      "CreditCard": "Credit card",
+      "Other": "Other"
+    }
+  },
+  "doc": {
+    "section": "PO form",
+    "title": "Purchase order",
+    "to": "To",
+    "requiredDate": "Required date",
+    "department": "Department",
+    "preparedBy": "Prepared by",
+    "approvedBy": "Approved by",
+    "receivedBy": "Received by",
+    "dateLine": "Date"
+  },
+  "filesTitle": "Files",
+  "errors": {
+    "SUPPLIER_INACTIVE": "This supplier is not active. Choose another supplier.",
+    "NOT_SOLD_BY_SUPPLIER": "This supplier does not sell this material.",
+    "PO_LOCKED": "Only a Draft purchase order can be changed or deleted.",
+    "INVALID_STATUS_CHANGE": "The status moves one step forward: Draft, Sent, Received.",
+    "PO_NOT_RECEIVED": "The payment can be recorded only after the goods are received.",
+    "ALREADY_PAID": "This purchase order is paid already."
+  },
+  "suppliers": {
+    "title": "Suppliers",
+    "new": "New supplier",
+    "section": "Supplier",
+    "code": "Code",
+    "name": "Name",
+    "contact": "Contact",
+    "address": "Address",
+    "active": "Active",
+    "activeHint": "An inactive supplier cannot be chosen on a new purchase order.",
+    "activeYes": "Active",
+    "activeNo": "Not active",
+    "itemCount": "Materials",
+    "items": {
+      "title": "Materials it sells",
+      "none": "No material yet.",
+      "material": "Material",
+      "chooseMaterial": "Choose a material",
+      "price": "Initial price",
+      "add": "Add a material",
+      "remove": "Remove this material"
+    }
+  }
+}

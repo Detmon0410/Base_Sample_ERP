@@ -133,7 +133,7 @@ const materialRoutes = resource({
   filter: (record, query) => !query.status || materialView(record).stockStatus === query.status,
   normalize: (body) => {
     const minLevel = body.minLevel === "" || body.minLevel === null || body.minLevel === undefined ? null : Math.round(number(body.minLevel) * 1000) / 1000;
-    const data = { code: text(body.code), name: text(body.name), minLevel, lots: [] };
+    const data = { code: text(body.code), name: text(body.name), unit: text(body.unit) || "pcs", minLevel, lots: [] };
     const issues = [];
     if (!data.code) issues.push(issue("code", "REQUIRED"));
     if (!data.name) issues.push(issue("name", "REQUIRED"));

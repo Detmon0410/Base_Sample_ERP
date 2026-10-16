@@ -23,11 +23,12 @@ import { applyServerErrors } from "@/utils/serverErrors";
  *   newTitle   title of a new record;  titleOf(record) the title of an existing one
  *   defaults   the empty form;  toForm(record) -> form values;  toBody(values) -> what is sent
  *   readOnly   no Save (a Worker looking at products or materials, a QT that is confirmed)
- *   afterSave  (saved) => path: where a NEW record goes after Save (default: the list), for a page that has more to do on the record
- *   actions    ({ record }) => the extra buttons of a saved record (for example Confirm)
- *   children   ({ form, record, readOnly }) => the fields
+ *   afterSave  (saved) => path: where the page goes after Save (default: the list), for a page that has more to do on the record
+ *   actions    ({ record, reload }) => the extra buttons of a saved record (for example Confirm); `reload` loads the record again
+ *   after      ({ record, reload }) => what follows the form of a saved record, outside the <form> (a part with a form of its own)
+ *   children   ({ form, record, readOnly, reload }) => the fields
  */
-export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, afterSave, actions, children }) {
+export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, afterSave, actions, after, children }) {
   const { id } = useParams();
   const isNew = !id;
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
   const [blocked, setBlocked] = useState(null); // where the record is used, when the delete was refused
   const [asking, setAsking] = useState(false);
 
-  const { data: record, error: loadError, loading } = useLoad(() => (isNew ? Promise.resolve(null) : api.get(id)), [id]);
+  const { data: record, error: loadError, loading, reload } = useLoad(() => (isNew ? Promise.resolve(null) : api.get(id)), [id]);
   const form = useForm({ defaultValues: defaults, values: record ? toForm(record) : undefined });
 
   const show = (error) => setSummary(applyServerErrors(form, error, t));
@@ -44,11 +45,8 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
   const onSubmit = form.handleSubmit(async (values) => {
     setSummary(null);
     try {
-      let next = listPath;
-      if (isNew) {
-        const saved = await api.create(toBody(values));
-        if (afterSave) next = afterSave(saved);
-      } else await api.update(id, toBody(values));
+      const saved = isNew ? await api.create(toBody(values)) : await api.update(id, toBody(values));
+      const next = afterSave ? afterSave(saved) : listPath;
       toast.success(t("master:form.saved"));
       navigate(next);
     } catch (error) {
@@ -108,9 +106,9 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
           </Alert>
         ) : null}
 
-        {children({ form, record, readOnly })}
+        {children({ form, record, readOnly, reload })}
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="-mx-5 flex flex-wrap items-center gap-3 border-t border-border bg-page px-5 py-3 sm:sticky sm:bottom-0 sm:z-10">
           {readOnly ? null : (
             <Button type="submit" disabled={form.formState.isSubmitting}>
               <Save aria-hidden="true" />{form.formState.isSubmitting ? t("common:actions.saving") : t("common:actions.save")}
@@ -122,7 +120,7 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
               {readOnly ? t("master:form.back") : t("common:actions.cancel")}
             </Link>
           </Button>
-          {record && actions ? actions({ record }) : null}
+          {record && actions ? actions({ record, reload }) : null}
           {readOnly || isNew ? null : (
             <Button type="button" variant="destructive" className="ml-auto" onClick={() => setAsking(true)}>
               <Trash2 aria-hidden="true" />{t("master:delete.button")}
@@ -130,6 +128,8 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
           )}
         </div>
       </form>
+
+      {record && after ? <div className="mt-8 flex max-w-4xl flex-col gap-5">{after({ record, reload })}</div> : null}
 
       <ConfirmDialog
         open={asking}

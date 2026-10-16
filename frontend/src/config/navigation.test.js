@@ -11,12 +11,12 @@ const shape = (user) =>
   getVisibleNav(user).map((entry) => (entry.type === "link" ? entry.item.labelKey : `${entry.labelKey} > ${entry.items.map((item) => item.labelKey).join(", ")}`));
 
 describe("the menu of the header", () => {
-  it("shows an Admin everything: the two menus with their entries, the others as links", () => {
-    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "accounting > invoices, receipts", "stock > materialsStock, movements", "master > customers, products, users"]);
+  it("shows an Admin everything: the menus with their entries, the others as links", () => {
+    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "purchase", "accounting", "stock > materialsStock, movements", "master > customers, products, suppliers, users"]);
   });
 
-  it("shows a Factory Worker the production orders, the Stock menu and the products (a menu with one entry is that entry)", () => {
-    expect(shape(factory)).toEqual(["dashboard", "productionOrders", "stock > materialsStock, movements", "products"]);
+  it("shows a Factory Worker the production orders, Purchase, the Stock menu and the products and suppliers to look at", () => {
+    expect(shape(factory)).toEqual(["today", "productionOrders", "purchase", "stock > materialsStock, movements", "master > products, suppliers"]);
   });
 
   it("shows a Sale Worker the quotations too, and the customers to look at", () => {
@@ -35,8 +35,8 @@ describe("the menu of the header", () => {
     expect(findActive("/")?.key).toBe("dashboard");
     expect(findActive("/sale/orders/12")?.key).toBe("productionOrders");
     expect(findActive("/sale/orders/new")?.key).toBe("productionOrders");
-    expect(findActive("/accounting/invoices/4")?.key).toBe("invoices");
-    expect(findActive("/accounting/receipts/2")?.key).toBe("receipts");
+    expect(findActive("/accounting/invoices/4")?.key).toBe("accounting");
+    expect(findActive("/accounting/receipts/2")?.key).toBe("accounting");
     expect(findActive("/stock/materials/3")?.key).toBe("materials");
     expect(findActive("/stock/movements")?.key).toBe("movements");
     expect(findActive("/nothing")).toBeNull();

@@ -3,7 +3,6 @@
   "orders": "Sales",
   "qt": "Quotations",
   "productionOrders": "Production orders",
-  "invoices": "Invoices",
   "stock": "Stock",
   "master": "Master data",
   "customers": "Customers",
@@ -23,8 +22,10 @@
   "materialsStock": "Materials and stock",
   "movements": "Movements",
   "accounting": "Accounting",
-  "receipts": "Receipts",
   "userMenu": "User menu",
   "role": "Role",
-  "department": "Department"
+  "department": "Department",
+  "purchase": "Purchase",
+  "suppliers": "Suppliers",
+  "today": "Today"
 }

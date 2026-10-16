@@ -7,7 +7,7 @@ Who may call: everybody who is signed in reads everything on this page; a stock 
 
 ## Stock changes of a material
 
-The only automatic change is the **start of a production order**, which deducts the BOM of its lines, the oldest lot first, and is refused with `409 STOCK_SHORT` when a material is short ([orders.md](orders.md)). Otherwise an Admin changes it by hand, at any time; a Worker may read the history.
+There are two automatic changes. A purchase order that is **received** adds each of its lines to the lot typed for it, as an `Add` with `purchaseOrderId` ([purchase.md](purchase.md)). The **start of a production order**, which deducts the BOM of its lines, the oldest lot first, and is refused with `409 STOCK_SHORT` when a material is short ([orders.md](orders.md)). Otherwise an Admin changes it by hand, at any time; a Worker may read the history.
 
 | Method | Path | Body | Result |
 |---|---|---|---|

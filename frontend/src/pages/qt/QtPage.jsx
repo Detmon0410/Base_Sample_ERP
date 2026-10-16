@@ -30,7 +30,7 @@ import { OrderView } from "@/pages/orders/OrderView";
 import { useAuth } from "@/hooks/useAuth";
 import { can } from "@/utils/permissions";
 
-import { QtDocument } from "./QtDocument";
+import { QtDocument, QtDocumentActions } from "./QtDocument";
 
 const STEPS = ["Draft", "Confirmed", "InProduction", "Done"]; // where a job is: the QT, then its production order
 const STEP_TONE = { Draft: "neutral", Confirmed: "warn", InProduction: "progress", Done: "good" };
@@ -191,6 +191,8 @@ function QtForm() {
       })}
       toBody={(values) => values}
       actions={({ record, reload }) => (record.status === "Draft" ? <ConfirmQt qt={record} onDone={reload} /> : null)}
+      wide
+      headerActions={({ record }) => <QtDocumentActions qt={record} />}
       after={({ record, reload }) => (record.productionOrderId ? <QtProduction qt={record} onChanged={reload} /> : null)}
     >
       {({ form, record }) => {
@@ -208,6 +210,9 @@ function QtForm() {
               </Alert>
             ) : null}
 
+            {/* two columns on a wide screen: the QT and its products at the left, the customer PO and the files at the right */}
+            <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,48rem)_minmax(0,1fr)]">
+            <div className="flex flex-col gap-5">
             <Section icon={FileText} title={t("qt.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <TextField label={t("qt.qtNumber")} disabled={confirmed} error={errors.qtNumber?.message} {...form.register("qtNumber")} />
@@ -223,7 +228,9 @@ function QtForm() {
             </Section>
 
             <QtLines form={form} readOnly={confirmed} />
+            </div>
 
+            <div className="flex flex-col gap-5">
             <Section icon={UserCheck} title={t("qt.po.title")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <TextField label={t("qt.po.number")} error={errors.customerPoNumber?.message} {...form.register("customerPoNumber")} />
@@ -232,12 +239,11 @@ function QtForm() {
               <p className="mt-3 text-sm text-muted-foreground">{record ? t("qt.po.hint") : t("qt.po.saveFirst")}</p>
             </Section>
 
-            {record ? (
-              <>
-                <Attachments ownerType="QtReference" ownerId={record.id} kinds={["PO_FILE", "QUOTATION", "OTHER"]} canChange title={t("qt.filesTitle")} />
-                <QtDocument qt={record} language={i18n.language} />
-              </>
-            ) : null}
+            {record ? <Attachments ownerType="QtReference" ownerId={record.id} kinds={["PO_FILE", "QUOTATION", "OTHER"]} canChange title={t("qt.filesTitle")} /> : null}
+            </div>
+            </div>
+
+            {record ? <QtDocument qt={record} language={i18n.language} /> : null}
           </>
         );
       }}

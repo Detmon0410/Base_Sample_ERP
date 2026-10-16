@@ -227,6 +227,10 @@
 
 /* Print / save as PDF of one document (utils/print.js sets body[data-printing] to the name of the document): only that document is shown. */
 @media print {
+  [data-print-holder] {
+    position: static !important;
+    width: auto !important;
+  }
   body[data-printing] * {
     visibility: hidden;
   }

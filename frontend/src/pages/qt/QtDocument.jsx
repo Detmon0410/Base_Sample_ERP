@@ -1,7 +1,5 @@
-import { Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { Section } from "@/components/common/FormFields";
 import { DocumentActions } from "@/pages/invoices/Documents";
 import { Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
 import { formatCurrency, formatNumber } from "@/utils/format";
@@ -39,15 +37,19 @@ function QtPaper({ qt, language }) {
   );
 }
 
-/** The QT form as a paper of the page, with Download PDF and Print (any status). Only for a QT that is saved. */
+/**
+ * The paper of the QT, kept out of sight: the page shows only the buttons Download PDF and Print (`QtDocumentActions`, at the top of the page),
+ * and they use this paper. It is drawn off the screen at the width of a desktop so the PDF has the same layout on every screen. Only for a QT that is saved.
+ */
 export function QtDocument({ qt, language }) {
-  const { t } = useTranslation("master");
   return (
-    <Section icon={Printer} title={t("qt.doc.section")}>
-      <div className="flex flex-col gap-4">
-        <DocumentActions name="qt" number={qt.qtNumber} />
-        <QtPaper qt={qt} language={language} />
-      </div>
-    </Section>
+    <div aria-hidden="true" data-print-holder className="pointer-events-none fixed top-0 -left-[10000px] w-[800px]">
+      <QtPaper qt={qt} language={language} />
+    </div>
   );
+}
+
+/** Download PDF and Print of the QT paper (any status). */
+export function QtDocumentActions({ qt }) {
+  return <DocumentActions name="qt" number={qt.qtNumber} />;
 }

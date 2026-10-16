@@ -15,7 +15,7 @@ const include = {
   lines: { include: { material: true }, orderBy: { id: "asc" } }
 };
 
-const paymentView = (p) => (p ? { date: ymd(p.paymentDate), amount: p.amount, method: p.method, referenceNo: p.referenceNo, note: p.note } : null);
+const paymentView = (p) => (p ? { paymentDate: ymd(p.paymentDate), amount: p.amount, method: p.method, referenceNo: p.referenceNo, note: p.note } : null);
 
 function view(po, { withLines = true } = {}) {
   const out = {
@@ -23,6 +23,7 @@ function view(po, { withLines = true } = {}) {
     poNumber: po.poNumber,
     supplierId: po.supplierId,
     supplierName: po.supplier.name,
+    supplierAddress: po.supplier.address,
     department: po.department,
     requiredDate: ymd(po.requiredDate),
     notes: po.notes,
@@ -77,7 +78,7 @@ export async function list(query) {
   else if (query.paid === "false") where.payment = null;
   else if (query.paid) issues.add("paid", "INVALID");
   issues.throwIfAny();
-  if (q) where.OR = [{ poNumber: { contains: q } }, { supplier: { name: { contains: q } } }];
+  if (q) where.OR = [{ poNumber: { contains: q } }, { supplier: { name: { contains: q } } }, { notes: { contains: q } }];
 
   const [rows, total] = await Promise.all([
     prisma.purchaseOrder.findMany({ where, include, orderBy: { id: "desc" }, skip: p.skip, take: p.take }),
@@ -91,24 +92,25 @@ export async function get(id) {
 }
 
 // Shared by create and update: the fields and the lines of a Draft PO
-async function validate(body, user, { currentSupplierId } = {}) {
+async function validate(body) {
   const issues = new Issues();
 
   let supplier = null;
   if (!isInt(body.supplierId)) issues.add("supplierId", "REQUIRED");
   else {
     supplier = await prisma.supplier.findUnique({ where: { id: body.supplierId }, include: { items: true } });
-    if (!supplier) issues.add("supplierId", "INVALID");
-    // An inactive supplier cannot be picked on a new PO (an old PO may keep it)
-    else if (!supplier.active && supplier.id !== currentSupplierId) issues.add("supplierId", "SUPPLIER_INACTIVE");
+    if (!supplier) issues.add("supplierId", "REQUIRED");
+    // An inactive supplier cannot be chosen on a new or changed PO; it stays on the POs it has
+    else if (!supplier.active) issues.add("supplierId", "SUPPLIER_INACTIVE");
   }
 
   const requiredDate = body.requiredDate ? parseDate(body.requiredDate) : null;
   if (!body.requiredDate) issues.add("requiredDate", "REQUIRED");
   else if (!requiredDate) issues.add("requiredDate", "INVALID_DATE");
 
-  const department = body.department || user.department;
-  if (!DEPARTMENTS.includes(department)) issues.add("department", "INVALID");
+  const department = str(body.department);
+  if (!department) issues.add("department", "REQUIRED");
+  else if (!DEPARTMENTS.includes(department)) issues.add("department", "INVALID");
 
   const rawLines = Array.isArray(body.lines) ? body.lines : [];
   if (!rawLines.length) issues.add("lines", "REQUIRED");
@@ -118,13 +120,14 @@ async function validate(body, user, { currentSupplierId } = {}) {
   const sold = new Map((supplier?.items ?? []).map((i) => [i.materialId, i.unitPrice]));
 
   const seen = new Set();
+  let duplicate = false;
   const lines = [];
   rawLines.forEach((l, i) => {
     if (!isInt(l?.materialId)) return issues.add(["lines", i, "materialId"], "REQUIRED");
     const material = materials.get(l.materialId);
-    if (!material) issues.add(["lines", i, "materialId"], "INVALID");
+    if (!material) issues.add(["lines", i, "materialId"], "REQUIRED");
     else if (supplier && !sold.has(l.materialId)) issues.add(["lines", i, "materialId"], "NOT_SOLD_BY_SUPPLIER");
-    if (seen.has(l.materialId)) issues.add(["lines", i, "materialId"], "DUPLICATE");
+    if (seen.has(l.materialId)) duplicate = true;
     seen.add(l.materialId);
 
     const quantity = typeof l.quantity === "string" ? Number(l.quantity) : l.quantity;
@@ -137,6 +140,7 @@ async function validate(body, user, { currentSupplierId } = {}) {
       lines.push({ materialId: l.materialId, unit: material.unit, quantity, unitPrice, amount: Math.round(quantity * unitPrice) });
     }
   });
+  if (duplicate) issues.add("lines", "DUPLICATE");
   issues.throwIfAny();
 
   return {
@@ -150,7 +154,7 @@ async function validate(body, user, { currentSupplierId } = {}) {
 }
 
 export async function create(body, user) {
-  const v = await validate(body, user);
+  const v = await validate(body);
   const po = await prisma.$transaction(async (tx) =>
     tx.purchaseOrder.create({
       data: {
@@ -169,10 +173,10 @@ export async function create(body, user) {
   return view(po);
 }
 
-export async function update(id, body, user) {
+export async function update(id, body) {
   const po = await load(id);
   if (po.status !== "Draft") throw conflict("PO_LOCKED", "Only a Draft PO can change");
-  const v = await validate(body, user, { currentSupplierId: po.supplierId });
+  const v = await validate(body);
   await prisma.$transaction(async (tx) => {
     await tx.purchaseOrderLine.deleteMany({ where: { poId: id } });
     await tx.purchaseOrder.update({
@@ -208,8 +212,6 @@ export async function changeStatus(id, body, user) {
   if (!["Sent", "Received"].includes(target)) {
     throw new ApiError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["status"], code: target ? "INVALID" : "REQUIRED" }]);
   }
-  // Pressing Received again changes nothing
-  if (target === "Received" && po.status === "Received") return view(po);
   if (NEXT[po.status] !== target) throw conflict("INVALID_STATUS_CHANGE", `A ${po.status} PO cannot become ${target}`);
 
   if (target === "Sent") {
@@ -222,9 +224,9 @@ export async function changeStatus(id, body, user) {
   const lots = Array.isArray(body.lots) ? body.lots : [];
   const lotOf = new Map();
   for (const line of po.lines) {
-    const idx = lots.findIndex((l) => l?.lineId === line.id);
-    const lotNumber = idx >= 0 ? str(lots[idx].lotNumber) : "";
-    if (!lotNumber) issues.add(["lots", idx >= 0 ? idx : po.lines.indexOf(line), "lotNumber"], "REQUIRED");
+    const given = lots.find((l) => l?.lineId === line.id);
+    const lotNumber = given ? str(given.lotNumber) : "";
+    if (!lotNumber) issues.add(["lots", po.lines.indexOf(line), "lotNumber"], "REQUIRED");
     lotOf.set(line.id, lotNumber);
   }
   issues.throwIfAny();
@@ -232,7 +234,7 @@ export async function changeStatus(id, body, user) {
   await prisma.$transaction(async (tx) => {
     // Guards against a second press at the same time
     const moved = await tx.purchaseOrder.updateMany({ where: { id, status: "Sent" }, data: { status: "Received", receivedAt: new Date() } });
-    if (moved.count === 0) return;
+    if (moved.count === 0) throw conflict("INVALID_STATUS_CHANGE", "The PO is received already");
     for (const line of po.lines) {
       const lotNumber = lotOf.get(line.id);
       await applyChange(tx, {
@@ -262,8 +264,7 @@ export async function pay(id, body) {
   if (body.amount === undefined || body.amount === null || body.amount === "") issues.add("amount", "REQUIRED");
   else if (!isInt(body.amount)) issues.add("amount", "INVALID");
   else if (body.amount !== po.total) issues.add("amount", "MUST_EQUAL_TOTAL");
-  if (!body.method) issues.add("method", "REQUIRED");
-  else if (!METHODS.includes(body.method)) issues.add("method", "INVALID");
+  if (!METHODS.includes(body.method)) issues.add("method", "REQUIRED");
   issues.throwIfAny();
 
   if (po.status !== "Received") throw conflict("PO_NOT_RECEIVED", "The PO is not received");

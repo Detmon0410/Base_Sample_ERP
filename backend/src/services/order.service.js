@@ -103,6 +103,10 @@ export async function list(query) {
   const where = q
     ? { OR: [...containsFilter(["orderNumber", "notes"], q).OR, { customer: { name: { contains: q } } }, { qt: { qtNumber: { contains: q } } }] }
     : {};
+  // invoiced=true|false: with or without an invoice (the Accounting page asks for status=Completed&invoiced=false)
+  if (query.invoiced === "true") where.invoice = { isNot: null };
+  else if (query.invoiced === "false") where.invoice = null;
+  else if (query.invoiced) throw new ApiError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["invoiced"], code: "INVALID" }]);
 
   // The status is computed, so it is filtered after loading
   if (status) {

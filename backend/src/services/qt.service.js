@@ -4,12 +4,21 @@ import { containsFilter, iso, isInt, meta, nextNumber, paging, parseDate, str, t
 import { refuseIfInUse } from "../lib/inUse.js";
 import * as attachments from "./attachment.service.js";
 import * as orders from "./order.service.js";
+import { orderStatus } from "./order.service.js";
 
 const include = {
   customer: true,
-  productionOrder: true,
+  productionOrder: { include: { lines: { include: { processes: true } } } },
   lines: { include: { product: true }, orderBy: { id: "asc" } }
 };
+
+// Where the job is: Draft (not confirmed), Confirmed (the order has not started), InProduction, Done (every process completed)
+function stepOf(q) {
+  const order = q.productionOrder;
+  if (q.status !== "Confirmed" || !order) return "Draft";
+  if (!order.startedAt) return "Confirmed";
+  return orderStatus(order) === "Completed" ? "Done" : "InProduction";
+}
 
 function view(q, { withLines = true } = {}) {
   const lines = q.lines.map((l) => ({
@@ -34,6 +43,7 @@ function view(q, { withLines = true } = {}) {
     total: lines.reduce((s, l) => s + l.amount, 0),
     productionOrderId: q.productionOrderId,
     productionOrderNumber: q.productionOrder?.orderNumber ?? null,
+    step: stepOf(q),
     createdAt: iso(q.createdAt),
     updatedAt: iso(q.updatedAt)
   };
@@ -99,9 +109,19 @@ export async function list(query) {
   if (status && !["Draft", "Confirmed"].includes(status)) {
     throw new ApiError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["status"], code: "INVALID" }]);
   }
+  const step = str(query.step);
+  if (step && !["Draft", "Confirmed", "InProduction", "Done"].includes(step)) {
+    throw new ApiError(400, "VALIDATION_ERROR", "Validation failed", [{ path: ["step"], code: "INVALID" }]);
+  }
   const where = {};
   if (status) where.status = status;
   if (q) where.OR = [...containsFilter(["qtNumber", "notes", "customerPoNumber"], q).OR, { customer: { name: { contains: q } } }];
+  // The step is computed from the order, so it is filtered after loading
+  if (step) {
+    const all = await prisma.qtReference.findMany({ where, include, orderBy: { id: "desc" } });
+    const rows = all.filter((r) => stepOf(r) === step);
+    return { data: rows.slice(p.skip, p.skip + p.take).map((r) => view(r, { withLines: false })), ...meta(p, rows.length) };
+  }
   const [rows, total] = await Promise.all([
     prisma.qtReference.findMany({ where, include, orderBy: { id: "desc" }, skip: p.skip, take: p.take }),
     prisma.qtReference.count({ where })

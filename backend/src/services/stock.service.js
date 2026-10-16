@@ -71,7 +71,8 @@ async function validateMaterial(body, { creating }) {
       if (!lotNumber) issues.add(["lots", i, "lotNumber"], "REQUIRED");
       else if (seen.has(lotNumber.toLowerCase())) issues.add(["lots", i, "lotNumber"], "DUPLICATE");
       seen.add(lotNumber.toLowerCase());
-      const qty = typeof lot?.quantity === "string" ? Number(lot.quantity) : lot?.quantity;
+      // A blank quantity is not 0: Number("") would make it so
+      const qty = typeof lot?.quantity === "string" ? (lot.quantity.trim() === "" ? NaN : Number(lot.quantity)) : lot?.quantity;
       if (!isQty(qty, { min: 0, allowMin: true })) issues.add(["lots", i, "quantity"], "INVALID");
       lots.push({ lotNumber, quantity: Number(qty) });
     });

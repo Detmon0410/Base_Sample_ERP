@@ -143,6 +143,17 @@ describe("QT references", () => {
     assert.equal(ok.status, "Confirmed");
   });
 
+  it("step: Draft, Confirmed, InProduction, Done (computed from the order), and the list filters by it", async () => {
+    const confirmed = (await t.as.admin.get("/qt?q=QT-001")).body.data[0];
+    assert.equal(confirmed.step, "Confirmed", "confirmed, the order has not started");
+    assert.equal(must(await t.as.admin.get(`/qt/${confirmed.id}`)).step, "Confirmed");
+    assert.equal((await t.as.admin.get("/qt?step=Draft")).body.data.every((x) => x.step === "Draft"), true);
+    assert.equal((await t.as.admin.get("/qt?step=Confirmed")).body.data.length >= 1, true);
+    assert.equal((await t.as.admin.get("/qt?step=InProduction")).body.data.length, 0);
+    assert.equal((await t.as.admin.get("/qt?step=Done")).body.data.length, 0);
+    assert.equal((await t.as.admin.get("/qt?step=Sent")).status, 400);
+  });
+
   it("a confirmed QT cannot be deleted (IN_USE, kind order); a Draft can", async () => {
     const confirmed = (await t.as.admin.get("/qt?q=QT-001")).body.data[0];
     const res = await t.as.admin.delete(`/qt/${confirmed.id}`);
@@ -475,6 +486,19 @@ describe("production orders", () => {
     });
   });
 
+  it("the list filters by invoiced=true|false (the Accounting page asks for status=Completed&invoiced=false)", async () => {
+    const { order } = await makeOrder(t.as.admin, { product, customer, quantity: 1, qtNumber: "QT-O10" });
+    await t.as.factory.post(`/orders/${order.id}/start`);
+    await completeOrder(t.as.factory, order);
+    const ids = async (q) => (await t.as.admin.get(`/orders?${q}`)).body.data.map((o) => o.id);
+    assert.ok((await ids("status=Completed&invoiced=false")).includes(order.id));
+    assert.equal((await ids("invoiced=true")).includes(order.id), false);
+    must(await t.as.admin.post("/invoices", { orderId: order.id, invoiceDate: today() }), 201);
+    assert.equal((await ids("status=Completed&invoiced=false")).includes(order.id), false);
+    assert.ok((await ids("invoiced=true")).includes(order.id));
+    assert.equal((await t.as.admin.get("/orders?invoiced=maybe")).status, 400);
+  });
+
   it("an order with an invoice locks its progress (ORDER_INVOICED)", async () => {
     const { order } = await makeOrder(t.as.admin, { product, customer, quantity: 1, qtNumber: "QT-O9" });
     await t.as.factory.post(`/orders/${order.id}/start`);
@@ -484,7 +508,7 @@ describe("production orders", () => {
     assert.equal(res.status, 409);
     assert.equal(res.body.error, "ORDER_INVOICED");
     const o = must(await t.as.admin.get(`/orders/${order.id}`));
-    assert.equal(o.invoice.invoiceNumber, `INV-${year()}-0001`);
+    assert.match(o.invoice.invoiceNumber, new RegExp(`^INV-${year()}-\\d{4}$`));
     assert.equal(o.invoice.status, "Unpaid");
     assert.equal(o.invoice.receiptNumber, null);
   });

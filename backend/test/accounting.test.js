@@ -101,7 +101,7 @@ describe("invoices, payments and receipts", () => {
 
   it("payment must equal the total (MUST_EQUAL_TOTAL) and have a real date", async () => {
     assert.deepEqual(codes(await pay(invoice.id, { amount: 8000 })), ["amount:MUST_EQUAL_TOTAL"]);
-    assert.deepEqual(codes(await pay(invoice.id, { amount: "9000" })), ["amount:INVALID"]);
+    assert.deepEqual(codes(await pay(invoice.id, { amount: "abc" })), ["amount:INVALID"]);
     assert.deepEqual(codes(await pay(invoice.id, { amount: undefined })), ["amount:REQUIRED"]);
     assert.deepEqual(codes(await pay(invoice.id, { amount: 9000, paymentDate: "x" })), ["paymentDate:INVALID_DATE"]);
     assert.deepEqual(codes(await t.as.admin.post(`/invoices/${invoice.id}/payment`, { amount: 9000 })), ["paymentDate:REQUIRED"]);

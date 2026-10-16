@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import { Issues, conflict, notFound } from "../lib/errors.js";
-import { containsFilter, isInt, meta, paging, str } from "../lib/util.js";
+import { containsFilter, iso, isInt, meta, paging, str } from "../lib/util.js";
 import { refuseIfInUse } from "../lib/inUse.js";
 
 const include = { items: { include: { material: true }, orderBy: { materialId: "asc" } } };
@@ -12,6 +12,8 @@ const view = (s) => ({
   contact: s.contact,
   address: s.address,
   active: s.active,
+  createdAt: iso(s.createdAt),
+  updatedAt: iso(s.updatedAt),
   items: s.items.map((i) => ({
     materialId: i.materialId,
     materialCode: i.material.code,
@@ -21,35 +23,42 @@ const view = (s) => ({
   }))
 });
 
+// A list row has the number of items, not the items (docs/api/purchase.md)
+const listView = ({ items, ...row }) => ({ ...row, itemCount: items.length });
+
 async function validate(body) {
   const issues = new Issues();
   const code = str(body.code);
   const name = str(body.name);
   if (!code) issues.add("code", "REQUIRED");
   if (!name) issues.add("name", "REQUIRED");
-  if (body.active !== undefined && typeof body.active !== "boolean") issues.add("active", "INVALID");
+  // a checkbox sends true / false; the text "true" / "false" is accepted as well, like the mock of the frontend
+  const active = body.active === undefined ? true : body.active === true || body.active === "true" ? true : body.active === false || body.active === "false" ? false : null;
+  if (active === null) issues.add("active", "INVALID");
 
   const items = Array.isArray(body.items) ? body.items : [];
   const seen = new Set();
+  let duplicate = false;
   items.forEach((it, i) => {
     if (!isInt(it?.materialId)) return issues.add(["items", i, "materialId"], "REQUIRED");
-    if (seen.has(it.materialId)) issues.add(["items", i, "materialId"], "DUPLICATE");
+    if (seen.has(it.materialId)) duplicate = true;
     seen.add(it.materialId);
     if (!isInt(it.unitPrice) || it.unitPrice < 0) issues.add(["items", i, "unitPrice"], "INVALID");
   });
   if (seen.size) {
     const found = new Set((await prisma.material.findMany({ where: { id: { in: [...seen] } }, select: { id: true } })).map((m) => m.id));
     items.forEach((it, i) => {
-      if (isInt(it?.materialId) && !found.has(it.materialId)) issues.add(["items", i, "materialId"], "INVALID");
+      if (isInt(it?.materialId) && !found.has(it.materialId)) issues.add(["items", i, "materialId"], "REQUIRED");
     });
   }
+  if (duplicate) issues.add("items", "DUPLICATE");
   issues.throwIfAny();
   return {
     code,
     name,
     contact: str(body.contact),
     address: str(body.address),
-    active: body.active ?? true,
+    active,
     items: items.map((it) => ({ materialId: it.materialId, unitPrice: it.unitPrice }))
   };
 }
@@ -64,11 +73,12 @@ export async function list(query) {
   const q = str(query.q);
   const where = q ? containsFilter(["code", "name", "contact"], q) : {};
   if (query.active === "true" || query.active === "false") where.active = query.active === "true";
+  if (query.materialId && Number.isInteger(Number(query.materialId))) where.items = { some: { materialId: Number(query.materialId) } };
   const [rows, total] = await Promise.all([
     prisma.supplier.findMany({ where, include, orderBy: { id: "desc" }, skip: p.skip, take: p.take }),
     prisma.supplier.count({ where })
   ]);
-  return { data: rows.map(view), ...meta(p, total) };
+  return { data: rows.map((r) => listView(view(r))), ...meta(p, total) };
 }
 
 export async function get(id) {

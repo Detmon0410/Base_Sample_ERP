@@ -16,7 +16,7 @@ purchaseRoutes.get(
 );
 purchaseRoutes.get("/:id", asyncHandler(async (req, res) => ok(res, await purchase.get(parseId(req.params.id)))));
 purchaseRoutes.post("/", asyncHandler(async (req, res) => created(res, await purchase.create(req.body ?? {}, req.user))));
-purchaseRoutes.put("/:id", asyncHandler(async (req, res) => ok(res, await purchase.update(parseId(req.params.id), req.body ?? {}, req.user))));
+purchaseRoutes.put("/:id", asyncHandler(async (req, res) => ok(res, await purchase.update(parseId(req.params.id), req.body ?? {}))));
 purchaseRoutes.delete(
   "/:id",
   asyncHandler(async (req, res) => {

@@ -30,15 +30,15 @@ What the frontend expects from the backend, module by module. The frontend calls
 
 | Module | Document | State |
 |---|---|---|
-| Sign-in and the session | [auth.md](auth.md) | Frontend done (mock), **backend not implemented** |
-| Customers, products with BOM, materials (their fields), users; delete and `IN_USE` | [master-data.md](master-data.md) | Frontend done (mock), backend not implemented |
-| Stock: lots and stock changes, movements, the minimum level and the status | [stock.md](stock.md) | Frontend done (mock), backend not implemented |
-| QT references | [qt.md](qt.md) | Frontend done (mock), backend not implemented |
-| Production orders, processes, progress | [orders.md](orders.md) | Frontend done (mock), backend not implemented |
-| Accounting: invoices and payment (one work-list page) | [invoices.md](invoices.md) | Frontend done (mock), backend not implemented |
-| Accounting: receipts | [receipts.md](receipts.md) | Frontend done (mock), backend not implemented |
-| Suppliers and purchase orders: the stock that is low, PO with a status by hand, receiving adds the stock, payment | [purchase.md](purchase.md) | Frontend done (mock), backend not implemented |
-| Files: the evidence of a production order (and the files of a QT) | [files.md](files.md) | Frontend done (mock), backend not implemented |
-| Dashboard | [dashboard.md](dashboard.md) | Frontend done (mock), backend not implemented |
+| Sign-in and the session | [auth.md](auth.md) | Frontend done; backend implemented (`backend/`) |
+| Customers, products with BOM, materials (their fields), users; delete and `IN_USE` | [master-data.md](master-data.md) | Frontend done; backend implemented (`backend/`) |
+| Stock: lots and stock changes, movements, the minimum level and the status | [stock.md](stock.md) | Frontend done; backend implemented (`backend/`) |
+| QT references | [qt.md](qt.md) | Frontend done; backend implemented (`backend/`) |
+| Production orders, processes, progress | [orders.md](orders.md) | Frontend done; backend implemented (`backend/`) |
+| Accounting: invoices and payment (one work-list page) | [invoices.md](invoices.md) | Frontend done; backend implemented (`backend/`) |
+| Accounting: receipts | [receipts.md](receipts.md) | Frontend done; backend implemented (`backend/`) |
+| Suppliers and purchase orders: the stock that is low, PO with a status by hand, receiving adds the stock, payment | [purchase.md](purchase.md) | Frontend done; backend implemented (`backend/`) |
+| Files: the evidence of a production order (and the files of a QT) | [files.md](files.md) | Frontend done; backend implemented (`backend/`) |
+| Dashboard | [dashboard.md](dashboard.md) | Frontend done; backend implemented (`backend/`) |
 
 The contract of the big system (sale, factory, stock, purchase, accounting, serial numbers, dashboard) is on branch `jay`.

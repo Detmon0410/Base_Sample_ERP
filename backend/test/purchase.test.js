@@ -26,7 +26,7 @@ describe("suppliers", () => {
     const res = await t.as.admin.post("/suppliers", { code: "", name: "", active: "yes", items: [{ materialId: m1.id, unitPrice: -1 }, { materialId: m1.id, unitPrice: 1 }, { materialId: 99999, unitPrice: 1 }, { unitPrice: 1 }] });
     assert.equal(res.status, 400);
     const c = codes(res);
-    for (const e of ["code:REQUIRED", "name:REQUIRED", "active:INVALID", "items.0.unitPrice:INVALID", "items.1.materialId:DUPLICATE", "items.2.materialId:INVALID", "items.3.materialId:REQUIRED"]) assert.ok(c.includes(e), `${e} in ${c}`);
+    for (const e of ["code:REQUIRED", "name:REQUIRED", "active:INVALID", "items.0.unitPrice:INVALID", "items:DUPLICATE", "items.2.materialId:REQUIRED", "items.3.materialId:REQUIRED"]) assert.ok(c.includes(e), `${e} in ${c}`);
   });
 
   it("a used code is 409 DUPLICATE_VALUE", async () => {
@@ -52,6 +52,17 @@ describe("suppliers", () => {
     assert.deepEqual((await t.as.admin.get("/suppliers?active=false")).body.data.map((s) => s.code), ["SUP-2"]);
     assert.equal((await t.as.admin.get("/suppliers?pageSize=1&page=2")).body.data.length, 1);
     assert.equal((await t.as.admin.get("/suppliers/99999")).status, 404);
+  });
+
+  it("a list row has itemCount and no items; materialId keeps the suppliers that sell it; timestamps are there", async () => {
+    const row = (await t.as.admin.get("/suppliers")).body.data.find((x) => x.code === "SUP-1");
+    assert.equal(row.itemCount, 1);
+    assert.equal("items" in row, false);
+    assert.deepEqual((await t.as.admin.get(`/suppliers?materialId=${m1.id}`)).body.data.map((x) => x.code), ["SUP-1"]);
+    assert.equal((await t.as.admin.get(`/suppliers?materialId=${m2.id}`)).body.data.length, 0);
+    const one = must(await t.as.admin.get(`/suppliers/${row.id}`));
+    assert.ok(one.createdAt && one.updatedAt);
+    assert.equal(one.items.length, 1);
   });
 
   it("Admin full, Factory Worker view, Sale Worker none", async () => {
@@ -123,11 +134,10 @@ describe("purchase orders", () => {
       assert.equal(po.total, 49200, "the price of the second line started from the supplier's price (10)");
     });
 
-    it("the department starts from the department of the user", async () => {
-      const po = await make({ department: undefined });
-      assert.equal(po.department, "Factory");
-      const admin = must(await t.as.admin.post("/purchase-orders", poBody({ department: undefined })), 201);
-      assert.equal(admin.department, "Administration");
+    it("the department is required (the frontend starts it from the department of the user)", async () => {
+      const res = await t.as.admin.post("/purchase-orders", poBody({ department: undefined }));
+      assert.equal(res.status, 400);
+      assert.deepEqual(codes(res), ["department:REQUIRED"]);
     });
 
     it("validates the fields", async () => {
@@ -139,9 +149,9 @@ describe("purchase orders", () => {
       });
       assert.equal(res.status, 400);
       const c = codes(res);
-      for (const e of ["requiredDate:INVALID_DATE", "department:INVALID", "lines.0.quantity:INVALID", "lines.1.materialId:DUPLICATE", "lines.2.materialId:NOT_SOLD_BY_SUPPLIER", "lines.3.materialId:INVALID", "lines.4.unitPrice:INVALID"]) assert.ok(c.includes(e), `${e} in ${c}`);
-      assert.deepEqual(codes(await t.as.admin.post("/purchase-orders", {})), ["supplierId:REQUIRED", "requiredDate:REQUIRED", "lines:REQUIRED"]);
-      assert.deepEqual(codes(await t.as.admin.post("/purchase-orders", poBody({ supplierId: 99999 }))).includes("supplierId:INVALID"), true);
+      for (const e of ["requiredDate:INVALID_DATE", "department:INVALID", "lines.0.quantity:INVALID", "lines:DUPLICATE", "lines.2.materialId:NOT_SOLD_BY_SUPPLIER", "lines.3.materialId:REQUIRED", "lines.4.unitPrice:INVALID"]) assert.ok(c.includes(e), `${e} in ${c}`);
+      assert.deepEqual(codes(await t.as.admin.post("/purchase-orders", {})), ["supplierId:REQUIRED", "requiredDate:REQUIRED", "department:REQUIRED", "lines:REQUIRED"]);
+      assert.ok(codes(await t.as.admin.post("/purchase-orders", poBody({ supplierId: 99999 }))).includes("supplierId:REQUIRED"));
     });
 
     it("only a material of the chosen supplier; an inactive supplier cannot be picked", async () => {
@@ -159,12 +169,13 @@ describe("purchase orders", () => {
       assert.equal(upd.poNumber, po.poNumber);
     });
 
-    it("a PO may keep its supplier on PUT after the supplier became inactive", async () => {
+    it("a supplier that became inactive cannot be chosen again on a changed PO", async () => {
       const s = must(await t.as.admin.post("/suppliers", { code: "S3", name: "Goes quiet", items: [{ materialId: bolt.id, unitPrice: 1 }] }), 201);
       const po = must(await t.as.admin.post("/purchase-orders", poBody({ supplierId: s.id, lines: [{ materialId: bolt.id, quantity: 1 }] })), 201);
       must(await t.as.admin.put(`/suppliers/${s.id}`, { code: "S3", name: "Goes quiet", active: false, items: [{ materialId: bolt.id, unitPrice: 1 }] }));
       const upd = await t.as.admin.put(`/purchase-orders/${po.id}`, poBody({ supplierId: s.id, lines: [{ materialId: bolt.id, quantity: 2 }] }));
-      assert.equal(upd.status, 200);
+      assert.equal(upd.status, 400);
+      assert.deepEqual(codes(upd), ["supplierId:SUPPLIER_INACTIVE"]);
     });
 
     it("deletes a Draft with its files", async () => {
@@ -248,13 +259,13 @@ describe("purchase orders", () => {
       assert.ok(moves.every((e) => e.kind === "Add" && e.note === `Received ${po.poNumber}` && e.purchaseOrderNumber === po.poNumber && e.purchaseOrderId === po.id && e.orderId === null));
     });
 
-    it("Received a second time changes nothing", async () => {
+    it("Received a second time is 409 INVALID_STATUS_CHANGE and adds nothing", async () => {
       const total = (await stockOf(resin)).total;
       const again = await receive(t.as.admin, po, "LOT-OTHER");
-      assert.equal(again.status, 200);
-      assert.equal(again.body.data.status, "Received");
+      assert.equal(again.status, 409);
+      assert.equal(again.body.error, "INVALID_STATUS_CHANGE");
       assert.equal((await stockOf(resin)).total, total);
-      assert.equal(again.body.data.lines[0].lotNumber, "LOT-77-RESIN");
+      assert.equal(must(await t.as.admin.get(`/purchase-orders/${po.id}`)).lines[0].lotNumber, "LOT-77-RESIN");
       assert.equal((await t.as.admin.get(`/stock-changes?q=${po.poNumber}`)).body.meta.total, 2);
     });
 
@@ -275,7 +286,7 @@ describe("purchase orders", () => {
         assert.deepEqual(codes(await pay({ amount: undefined })), ["amount:REQUIRED"]);
         assert.deepEqual(codes(await pay({ paymentDate: "2026-02-30" })), ["paymentDate:INVALID_DATE"]);
         assert.deepEqual(codes(await pay({ paymentDate: undefined })), ["paymentDate:REQUIRED"]);
-        assert.deepEqual(codes(await pay({ method: "Barter" })), ["method:INVALID"]);
+        assert.deepEqual(codes(await pay({ method: "Barter" })), ["method:REQUIRED"]);
         assert.deepEqual(codes(await pay({ method: undefined })), ["method:REQUIRED"]);
         assert.equal(must(await t.as.admin.get(`/purchase-orders/${po.id}`)).paid, false);
       });
@@ -283,7 +294,7 @@ describe("purchase orders", () => {
       it("records the payment on the PO; one payment only", async () => {
         const paid = must(await pay({ referenceNo: "TT-1020", note: "paid in full" }));
         assert.equal(paid.paid, true);
-        assert.deepEqual(paid.payment, { date: today(), amount: po.total, method: "Bank transfer", referenceNo: "TT-1020", note: "paid in full" });
+        assert.deepEqual(paid.payment, { paymentDate: today(), amount: po.total, method: "Bank transfer", referenceNo: "TT-1020", note: "paid in full" });
         const again = await pay({});
         assert.equal(again.status, 409);
         assert.equal(again.body.error, "ALREADY_PAID");
@@ -309,6 +320,13 @@ describe("purchase orders", () => {
       assert.deepEqual(ids, [...ids].sort((a, b) => b - a));
       assert.equal("lines" in res.body.data[0], false);
       assert.equal(typeof res.body.data[0].paid, "boolean");
+    });
+
+    it("a PO carries the address of its supplier, and q also searches the notes", async () => {
+      const po = must(await t.as.admin.post("/purchase-orders", poBody({ notes: "needle-in-notes" })), 201);
+      assert.equal(po.supplierAddress, "");
+      assert.equal((await t.as.admin.get("/purchase-orders?q=needle-in-notes")).body.data.length, 1);
+      must(await t.as.admin.delete(`/purchase-orders/${po.id}`));
     });
 
     it("filters by q, status, supplierId and paid", async () => {

@@ -36,8 +36,12 @@ const SELECT = "h-10 w-full min-w-0 border-0 border-b border-input bg-transparen
 
 /** The browser's own select, underlined like the inputs. `options` is [{ value, label }]. */
 export function NativeSelect({ options, className, ...props }) {
+  // The options often arrive from the server after the form has its value (a QT with its product). A native select that gets its
+  // value before the matching <option> exists falls back to the first option. A new `key` when the options change makes React
+  // build the select again, and react-hook-form then puts the saved value into it.
+  const optionsKey = options.map((option) => option.value).join("|");
   return (
-    <select className={cn(SELECT, className)} {...props}>
+    <select key={optionsKey} className={cn(SELECT, className)} {...props}>
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}

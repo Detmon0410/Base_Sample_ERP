@@ -48,7 +48,9 @@ describe("the first page", () => {
     const user = userEvent.setup();
     renderAs(mockUsers[1]);
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Today" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "Dashboard" })).toBeInTheDocument();
+    // the numbers of the orders come first, as tiles
+    expect(await screen.findByRole("link", { name: /^Draft\s*\d+$/ })).toHaveAttribute("href", "/sale/orders");
     expect(await screen.findByText("1 material is low or out")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Buy" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /^Receive: PO-/ })).toBeInTheDocument();
@@ -78,7 +80,7 @@ describe("the first page", () => {
     expect(done).toMatchObject({ name: "Welding", status: "Completed", completedQuantity: 5 });
   });
 
-  it("opens the Dashboard for a Sale Worker and for the Admin, not the work of today", async () => {
+  it("opens the plain Dashboard (no work cards) for a Sale Worker and for the Admin", async () => {
     const sale = renderAs(mockUsers[2]);
     expect(await screen.findByRole("heading", { level: 1, name: "Dashboard" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: /^To start/ })).not.toBeInTheDocument();

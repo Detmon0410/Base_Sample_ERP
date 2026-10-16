@@ -26,6 +26,5 @@
   "role": "Role",
   "department": "Department",
   "purchase": "Purchase",
-  "suppliers": "Suppliers",
-  "today": "Today"
+  "suppliers": "Suppliers"
 }

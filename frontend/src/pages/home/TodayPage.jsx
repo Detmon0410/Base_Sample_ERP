@@ -1,8 +1,9 @@
-import { AlertTriangle, PackageCheck, Pencil, ShoppingCart } from "lucide-react";
+import { AlertTriangle, CircleCheck, Factory, FilePlus2, PackageCheck, Pencil, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
+import { NumberTile } from "@/components/common/NumberTile";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLoad } from "@/hooks/useLoad";
 import { ProgressForm } from "@/pages/orders/OrderView";
 import { useStartProduction } from "@/pages/orders/StartProduction";
+import { getDashboard } from "@/services/dashboard.service";
 import { materialsApi } from "@/services/master.service";
 import { ordersApi } from "@/services/orders.service";
 import { purchaseApi } from "@/services/purchase.service";
@@ -126,7 +128,7 @@ function RunningCard({ order, onChanged }) {
 }
 
 /**
- * The first page of a Factory Worker: what to do today. Orders waiting to start (one big button), orders in production (the next process
+ * The Dashboard of a Factory Worker: the numbers of the orders, then what to do today. Orders waiting to start (one big button), orders in production (the next process
  * and a big button to record progress), the purchase orders that were sent and wait to be received, and a strip for the materials that are low.
  * It only reads the lists the pages already use and calls the same actions; the detail pages are one click away.
  */
@@ -134,13 +136,15 @@ export function TodayPage() {
   const { t, i18n } = useTranslation(["dashboard", "nav", "common", "orders", "purchase"]);
   const { user } = useAuth();
   const { data, error, reload } = useLoad(async () => {
-    const [orders, materials, purchases] = await Promise.all([
+    const [numbers, orders, materials, purchases] = await Promise.all([
+      getDashboard(),
       ordersApi.list({ pageSize: 200 }),
       materialsApi.list({ pageSize: 200 }),
       can(user, "purchase.use") ? purchaseApi.list({ status: "Sent", pageSize: 50 }) : Promise.resolve({ items: [] }),
     ]);
     const open = await Promise.all(orders.items.filter((order) => order.status !== "Completed").slice(0, 20).map((order) => ordersApi.get(order.id)));
     return {
+      numbers: numbers.orders,
       toStart: open.filter((order) => !order.started),
       running: open.filter((order) => order.started),
       low: materials.items.filter((material) => material.stockStatus === "Low" || material.stockStatus === "Out"),
@@ -150,7 +154,7 @@ export function TodayPage() {
 
   return (
     <>
-      <PageHeader title={t("nav:today")} />
+      <PageHeader title={t("nav:dashboard")} />
       {error ? (
         <p role="alert" className="text-destructive">
           {t("dashboard:today.failed")}
@@ -159,6 +163,12 @@ export function TodayPage() {
         <p role="status">{t("common:loading")}</p>
       ) : (
         <div className="flex max-w-5xl flex-col gap-8">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <NumberTile to="/sale/orders" icon={FilePlus2} tone="waiting" label={t("dashboard:draft")} value={formatNumber(data.numbers.Draft, i18n.language)} />
+            <NumberTile to="/sale/orders" icon={Factory} tone="progress" label={t("dashboard:inProgress")} value={formatNumber(data.numbers.InProgress, i18n.language)} />
+            <NumberTile to="/sale/orders" icon={CircleCheck} tone="done" label={t("dashboard:completed")} value={formatNumber(data.numbers.Completed, i18n.language)} />
+          </div>
+
           {data.low.length > 0 ? (
             <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-border bg-[#fbefd2] p-3">
               <AlertTriangle aria-hidden="true" className="size-5 shrink-0 text-warning" />

@@ -35,7 +35,7 @@ These answers came from the owner of the project.
 | U1 | A Sale Worker adds a **new customer** from the QT page | **Decided: no.** The Sale Worker only chooses an existing customer; customers stay with the Admin | No business rule changes |
 | U2 | After **Confirm QT** the page stays on the same QT page | Yes: the processes and the progress of the order appear on it; the order page stays for the Factory Worker and for a link | The one-page idea of Sales |
 | U3 | The Accounting list pages become **one page**; the invoice and the receipt keep their own page as the **document** (print, PDF) | Yes: `/accounting` is the work list; `/accounting/invoices/:id` and `/accounting/receipts/:id` stay; `/accounting/invoices` and `/accounting/receipts` redirect to `/accounting` | Old links keep working |
-| U4 | The first page of a Factory Worker is **Today's work** at `/`; the Dashboard stays for the Admin and the Sale Worker | Yes | Starts from the work |
+| U4 | The first page of a Factory Worker is **their Dashboard** at `/`: the number tiles of the orders, then the work of today (built; the menu entry says Dashboard) | Yes | Starts from the work |
 | U5 | The Sale Worker's first page | The Dashboard as now | Not asked |
 | U6 | Does the menu get shorter? | Yes: Sales, Purchase and Accounting are one link each; Stock stays a menu | Fewer clicks |
 

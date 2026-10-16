@@ -26,6 +26,7 @@ const TABLE = {
   "GET /qt/:id": ["sale"],
   "POST /qt": ["sale"],
   "PUT /qt/:id": ["sale"],
+  "POST /qt/:id/confirm": ["sale"],
   "DELETE /qt/:id": ["sale"],
 
   "GET /customers": ["sale"],
@@ -51,7 +52,6 @@ const TABLE = {
 
   "GET /orders": ["factory", "sale"],
   "GET /orders/:id": ["factory", "sale"],
-  "POST /orders": ["sale"],
   "PUT /orders/:id": ["sale"],
   "POST /orders/:id/start": ["factory"],
   "POST /orders/:id/progress": ["factory"],

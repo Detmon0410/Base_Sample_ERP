@@ -12,6 +12,7 @@ import { todayIso } from "@/utils/dates";
 import { setToken } from "@/utils/session";
 
 import { DashboardPage } from "./DashboardPage";
+import { makeOrder } from "@/test/orders";
 
 const renderAs = (user) => {
   setToken(tokenOf(user));
@@ -32,9 +33,9 @@ describe("the Dashboard", () => {
     const customer = await customersApi.create({ name: "Dashboard Customer" });
     const product = await productsApi.create({ code: "DASH-P", name: "Fridge", price: 1 });
     const qt = await qtApi.create({ qtNumber: "QT-DASH", qtDate: "2026-10-01", customerId: customer.id, file: { name: "q.pdf", dataUrl: "data:application/pdf;base64,AA==" } });
-    const make = () => ordersApi.create({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 4, unitPrice: 400, processes: [{ name: "Cut" }] }] });
+    const make = () => makeOrder({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 4, unitPrice: 400, processes: [{ name: "Cut" }] }] });
 
-    await make(); // New
+    await make(); // Draft
     const running = await make();
     await ordersApi.start(running.id);
     await ordersApi.recordProgress(running.id, { processId: running.lines[0].processes[0].id, status: "In Progress", completedQuantity: 1, workDate: "2026-10-03", note: "" }); // 1 of 4: 25%
@@ -44,7 +45,7 @@ describe("the Dashboard", () => {
     await invoicesApi.create({ orderId: done.id, invoiceDate: "2026-10-04" }); // Unpaid, 4 x 400
 
     const admin = renderAs(mockUsers[0]);
-    expect(await tile(/^New\s*1$/)).toHaveAttribute("href", "/sale/orders");
+    expect(await tile(/^Draft\s*1$/)).toHaveAttribute("href", "/sale/orders");
     expect(await tile(/^In progress\s*1$/)).toBeInTheDocument();
     expect(await tile(/^Completed\s*1$/)).toBeInTheDocument();
     expect(await tile(/^Unpaid invoices\s*1$/)).toHaveAttribute("href", "/accounting/invoices");
@@ -58,7 +59,7 @@ describe("the Dashboard", () => {
 
     // a Worker: the orders, no money and no chart
     renderAs(mockUsers[1]);
-    expect(await tile(/^New\s*1$/)).toBeInTheDocument();
+    expect(await tile(/^Draft\s*1$/)).toBeInTheDocument();
     expect(screen.queryByText("Unpaid invoices")).not.toBeInTheDocument();
     expect(screen.queryByText("Paid this month")).not.toBeInTheDocument();
     expect(screen.queryByRole("list", { name: "Production orders by status" })).not.toBeInTheDocument();
@@ -69,7 +70,7 @@ describe("the Dashboard", () => {
     const customer = await customersApi.create({ name: "Paid Customer" });
     const product = await productsApi.create({ code: "DASH-P2", name: "Fridge", price: 1 });
     const qt = await qtApi.create({ qtNumber: "QT-DASH2", qtDate: "2026-10-01", customerId: customer.id, file: { name: "q.pdf", dataUrl: "data:application/pdf;base64,AA==" } });
-    const order = await ordersApi.create({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 5000, processes: [{ name: "Cut" }] }] });
+    const order = await makeOrder({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 5000, processes: [{ name: "Cut" }] }] });
     await ordersApi.start(order.id);
     await ordersApi.recordProgress(order.id, { processId: order.lines[0].processes[0].id, status: "Completed", completedQuantity: 1, workDate: todayIso(), note: "" });
     const invoice = await invoicesApi.create({ orderId: order.id, invoiceDate: todayIso() });

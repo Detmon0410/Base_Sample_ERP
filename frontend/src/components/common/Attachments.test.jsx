@@ -11,6 +11,7 @@ import { mockUsers, toPublicUser, tokenOf } from "@/services/mock/users";
 import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
 import { setToken } from "@/utils/session";
+import { makeOrder } from "@/test/orders";
 
 // The evidence of a production order, page by page: the Factory Worker adds and deletes files, the Sale Worker only looks.
 
@@ -36,7 +37,7 @@ async function startedOrder() {
   const product = await productsApi.create({ code: `EVI-P${made}`, name: "Evidence fridge", price: 1 });
   const customer = await customersApi.create({ name: `Evidence Customer ${made}` });
   const qt = await qtApi.create({ qtNumber: `QT-EVI-${made}`, qtDate: "2026-10-01", customerId: customer.id });
-  const order = await ordersApi.create({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [{ name: "Cut", instructions: "" }] }] });
+  const order = await makeOrder({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [{ name: "Cut", instructions: "" }] }] });
   await ordersApi.start(order.id);
   return order;
 }

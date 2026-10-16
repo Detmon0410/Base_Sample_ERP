@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
+import { makeOrderRoutes } from "@/test/orders";
 
 const admin = mockUsers[0];
 const factory = mockUsers[1];
@@ -20,7 +21,7 @@ const pdf = (name = "a.pdf") => ({ name, dataUrl: "data:application/pdf;base64,A
 const customer = call("POST /customers", admin, { body: { name: "File Customer" } }).data;
 const product = call("POST /products", admin, { body: { code: "FILE-P", name: "P", price: 1 } }).data;
 const qt = call("POST /qt", admin, { body: { qtNumber: "QT-FILE", qtDate: "2026-10-01", customerId: customer.id } }).data;
-const order = call("POST /orders", admin, { body: { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [{ name: "Cut" }] }] } }).data;
+const order = makeOrderRoutes(call, admin, { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [{ name: "Cut" }] }] }).data;
 
 const upload = (who, ownerType, ownerId, kind, file = pdf()) => call("POST /attachments", who, { body: { ownerType, ownerId, kind, file } });
 const list = (who, ownerType, ownerId) => call("GET /attachments", who, { query: { ownerType, ownerId } });

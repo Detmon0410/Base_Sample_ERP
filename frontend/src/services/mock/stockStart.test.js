@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
+import { makeOrderRoutes } from "@/test/orders";
 
 // Start production deducts the materials of the BOM by itself (the oldest lot first) and is refused when a material is short.
 
@@ -23,7 +24,7 @@ const foam = call("POST /materials", admin, { body: { code: "SS-FOAM", name: "Fo
 const product = call("POST /products", admin, { body: { code: "SS-P", name: "Fridge", price: 100, bom: [{ materialId: steel.id, quantity: 4 }, { materialId: foam.id, quantity: 1 }] } }).data;
 
 const order = (quantity) =>
-  call("POST /orders", admin, { body: { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity, unitPrice: 100, processes: [{ name: "Cut" }] }] } }).data;
+  makeOrderRoutes(call, admin, { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity, unitPrice: 100, processes: [{ name: "Cut" }] }] }).data;
 const lotsOf = (material) => Object.fromEntries(call("GET /materials/:id", admin, { params: { id: material.id } }).lots.map((lot) => [lot.lotNumber, lot.quantity]));
 
 describe("Start production and the stock", () => {

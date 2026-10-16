@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
+import { makeOrderRoutes } from "@/test/orders";
 
 const admin = mockUsers[0];
 const worker = mockUsers[1]; // a Factory Worker
@@ -34,39 +35,48 @@ const progress = (who, order, process, extra) =>
 describe("production orders of the mock", () => {
   it("numbers the orders ORD-year-0001, keeps the step order, and lists them with the computed status", () => {
     const year = new Date().getFullYear();
-    const first = call("POST /orders", admin, { body: draft() }).data;
-    const second = call("POST /orders", admin, { body: draft() }).data;
+    const first = makeOrderRoutes(call, admin, draft()).data;
+    const second = makeOrderRoutes(call, admin, draft()).data;
     expect(first.orderNumber).toBe(`ORD-${year}-0001`);
     expect(second.orderNumber).toBe(`ORD-${year}-0002`);
-    expect(first.status).toBe("New");
+    expect(first.status).toBe("Draft");
     expect(first.lines[0].processes.map((process) => [process.sequence, process.name])).toEqual([[1, "Cut"], [2, "Weld"]]);
-    expect(first.qtNumber).toBe("QT-ORD");
+    expect(first.qtNumber).toMatch(/^QT-T\d+$/); // made by Confirm QT
 
-    const list = call("GET /orders", worker, { query: { status: "New", q: "order customer" } });
+    const list = call("GET /orders", worker, { query: { status: "Draft", q: "order customer" } });
     expect(list.meta.total).toBe(2);
     expect(list.data[0].lines).toBeUndefined();
   });
 
-  it("checks the order", () => {
-    const issues = fails(() => call("POST /orders", admin, { body: draft({ qtId: 999, orderDate: "2026-13-01", lines: [{ productId: product.id, quantity: 0, unitPrice: -1, processes: [{ name: " " }] }] }) })).details;
-    expect(issues.map((item) => `${item.path.join(".")}:${item.code}`)).toEqual(["qtId:REQUIRED", "orderDate:INVALID_DATE", "lines.0.quantity:INVALID", "lines.0.unitPrice:INVALID", "lines.0.processes.0.name:REQUIRED"]);
+  it("checks the change of an order, and never changes its QT or its customer", () => {
+    const order = makeOrderRoutes(call, admin, draft()).data;
+    const issues = fails(() => call("PUT /orders/:id", admin, { params: { id: order.id }, body: draft({ orderDate: "2026-13-01", lines: [{ productId: product.id, quantity: 0, unitPrice: -1, processes: [{ name: " " }] }] }) })).details;
+    expect(issues.map((item) => `${item.path.join(".")}:${item.code}`)).toEqual(["orderDate:INVALID_DATE", "lines.0.quantity:INVALID", "lines.0.unitPrice:INVALID", "lines.0.processes.0.name:REQUIRED"]);
+
+    const other = call("POST /customers", admin, { body: { name: "Another" } }).data;
+    const changed = call("PUT /orders/:id", admin, { params: { id: order.id }, body: draft({ qtId: 999, customerId: other.id }) });
+    expect([changed.qtId, changed.customerId]).toEqual([order.qtId, order.customerId]);
+  });
+
+  it("has no way to make an order by hand: an order comes from Confirm QT", () => {
+    expect(mockRoutes["POST /orders"]).toBeUndefined();
   });
 
   it("starts only an order with a line and a process on every line, and then locks the products and processes", () => {
-    const empty = call("POST /orders", admin, { body: draft({ lines: [] }) }).data;
+    const empty = makeOrderRoutes(call, admin, draft({ lines: [] })).data;
     expect(fails(() => call("POST /orders/:id/start", admin, { params: { id: empty.id } })).code).toBe("ORDER_NOT_READY");
-    const noProcess = call("POST /orders", admin, { body: draft({ lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] }) }).data;
+    const noProcess = makeOrderRoutes(call, admin, draft({ lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] })).data;
     expect(fails(() => call("POST /orders/:id/start", admin, { params: { id: noProcess.id } })).code).toBe("ORDER_NOT_READY");
 
-    const order = call("POST /orders", admin, { body: draft() }).data;
+    const order = makeOrderRoutes(call, admin, draft()).data;
     expect(fails(() => call("POST /orders/:id/start", sale, { params: { id: order.id } })).status).toBe(403); // a Sale Worker only prepares the order
-    expect(call("POST /orders/:id/start", admin, { params: { id: order.id } }).status).toBe("New"); // no process has started yet
+    expect(call("POST /orders/:id/start", admin, { params: { id: order.id } }).status).toBe("Draft"); // no process has started yet
     expect(fails(() => call("PUT /orders/:id", admin, { params: { id: order.id }, body: draft() })).code).toBe("ORDER_LOCKED");
     expect(fails(() => call("POST /orders/:id/start", admin, { params: { id: order.id } })).code).toBe("ALREADY_STARTED");
   });
 
   it("records progress by the rules, keeps every update, and completes the order when every process is completed", () => {
-    const order = call("POST /orders", admin, { body: draft() }).data;
+    const order = makeOrderRoutes(call, admin, draft()).data;
     const [cut, weld] = order.lines[0].processes;
     expect(fails(() => progress(worker, order, cut)).code).toBe("ORDER_NOT_STARTED");
     call("POST /orders/:id/start", admin, { params: { id: order.id } });
@@ -90,7 +100,7 @@ describe("production orders of the mock", () => {
   });
 
   it("lets only an Admin reopen a completed process, and only with a note", () => {
-    const order = call("POST /orders", admin, { body: draft() }).data;
+    const order = makeOrderRoutes(call, admin, draft()).data;
     const [cut] = order.lines[0].processes;
     call("POST /orders/:id/start", admin, { params: { id: order.id } });
     progress(worker, order, cut, { status: "Completed", completedQuantity: 10 });

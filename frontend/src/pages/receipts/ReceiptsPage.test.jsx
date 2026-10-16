@@ -13,6 +13,7 @@ import { todayIso } from "@/utils/dates";
 import { setToken } from "@/utils/session";
 
 import { ReceiptsPage } from "./ReceiptsPage";
+import { makeOrder } from "@/test/orders";
 
 // The receipts, driven like a person would: the list of every receipt, the search, a click on a row, and no way to make or change one.
 
@@ -24,7 +25,7 @@ describe("the receipts pages", () => {
     const pay = async (name, price) => {
       const customer = await customersApi.create({ name, address: "Somewhere" });
       const qt = await qtApi.create({ qtNumber: `QT-${name}`, qtDate: todayIso(), customerId: customer.id, file: { name: "q.pdf", dataUrl: "data:application/pdf;base64,AA==" } });
-      const order = await ordersApi.create({ qtId: qt.id, customerId: customer.id, orderDate: todayIso(), lines: [{ productId: product.id, quantity: 1, unitPrice: price, processes: [{ name: "Cut" }] }] });
+      const order = await makeOrder({ qtId: qt.id, customerId: customer.id, orderDate: todayIso(), lines: [{ productId: product.id, quantity: 1, unitPrice: price, processes: [{ name: "Cut" }] }] });
       await ordersApi.start(order.id);
       await ordersApi.recordProgress(order.id, { processId: order.lines[0].processes[0].id, status: "Completed", completedQuantity: 1, workDate: todayIso(), note: "" });
       const invoice = await invoicesApi.create({ orderId: order.id, invoiceDate: todayIso() });

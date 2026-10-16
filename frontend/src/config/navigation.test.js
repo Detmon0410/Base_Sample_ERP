@@ -16,7 +16,7 @@ describe("the menu of the header", () => {
   });
 
   it("shows a Factory Worker the production orders, Purchase, the Stock menu and the products and suppliers to look at", () => {
-    expect(shape(factory)).toEqual(["dashboard", "productionOrders", "purchase", "stock > materialsStock, movements", "master > products, suppliers"]);
+    expect(shape(factory)).toEqual(["today", "productionOrders", "purchase", "stock > materialsStock, movements", "master > products, suppliers"]);
   });
 
   it("shows a Sale Worker the quotations too, and the customers to look at", () => {

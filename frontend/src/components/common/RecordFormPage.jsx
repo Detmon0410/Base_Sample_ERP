@@ -108,7 +108,7 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
 
         {children({ form, record, readOnly, reload })}
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="-mx-5 flex flex-wrap items-center gap-3 border-t border-border bg-page px-5 py-3 sm:sticky sm:bottom-0 sm:z-10">
           {readOnly ? null : (
             <Button type="submit" disabled={form.formState.isSubmitting}>
               <Save aria-hidden="true" />{form.formState.isSubmitting ? t("common:actions.saving") : t("common:actions.save")}

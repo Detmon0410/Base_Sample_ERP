@@ -91,7 +91,7 @@ function QtLines({ form, readOnly }) {
             {t("qt.lines.add")}
           </Button>
         )}
-        <p className="text-lg font-bold">
+        <p className="text-2xl font-bold tabular-nums">
           {t("qt.lines.total")}: {formatCurrency(total, i18n.language)}
         </p>
       </div>
@@ -266,7 +266,7 @@ export function QtPage() {
               { key: "qtNumber", header: t("qt.qtNumber") },
               { key: "qtDate", header: t("qt.qtDate") },
               { key: "customerName", header: t("qt.customer") },
-              { key: "total", header: t("qt.lines.total"), cell: (row) => formatCurrency(row.total, i18n.language) },
+              { key: "total", header: t("qt.lines.total"), numeric: true, cell: (row) => formatCurrency(row.total, i18n.language) },
               { key: "productionOrderNumber", header: t("qt.orderColumn"), cell: (row) => row.productionOrderNumber ?? "-" },
             ]}
           />

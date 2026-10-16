@@ -120,7 +120,7 @@ export function SuppliersPage() {
               { key: "code", header: t("suppliers.code") },
               { key: "name", header: t("suppliers.name") },
               { key: "contact", header: t("suppliers.contact") },
-              { key: "itemCount", header: t("suppliers.itemCount"), cell: (row) => formatNumber(row.itemCount, i18n.language) },
+              { key: "itemCount", header: t("suppliers.itemCount"), numeric: true, cell: (row) => formatNumber(row.itemCount, i18n.language) },
               { key: "active", header: t("suppliers.active"), cell: (row) => <StatusBadge tone={row.active ? "good" : "neutral"}>{row.active ? t("suppliers.activeYes") : t("suppliers.activeNo")}</StatusBadge> },
             ]}
           />

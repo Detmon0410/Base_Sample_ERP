@@ -118,8 +118,8 @@ export function ProductsPage() {
             columns={[
               { key: "code", header: t("products.code") },
               { key: "name", header: t("products.name") },
-              { key: "price", header: t("products.price"), cell: (row) => formatCurrency(row.price, i18n.language) },
-              { key: "bom", header: t("products.bomLines"), cell: (row) => formatNumber(row.bom.length, i18n.language) },
+              { key: "price", header: t("products.price"), numeric: true, cell: (row) => formatCurrency(row.price, i18n.language) },
+              { key: "bom", header: t("products.bomLines"), numeric: true, cell: (row) => formatNumber(row.bom.length, i18n.language) },
             ]}
           />
         }

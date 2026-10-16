@@ -129,8 +129,8 @@ export function StockPage() {
             columns={[
               { key: "code", header: t("materials.code") },
               { key: "name", header: t("materials.name") },
-              { key: "lotCount", header: t("materials.lotCount"), cell: (row) => formatNumber(row.lots.length, i18n.language) },
-              { key: "total", header: t("materials.total"), cell: (row) => formatNumber(row.total, i18n.language) },
+              { key: "lotCount", header: t("materials.lotCount"), numeric: true, cell: (row) => formatNumber(row.lots.length, i18n.language) },
+              { key: "total", header: t("materials.total"), numeric: true, cell: (row) => formatNumber(row.total, i18n.language) },
             ]}
           />
         }

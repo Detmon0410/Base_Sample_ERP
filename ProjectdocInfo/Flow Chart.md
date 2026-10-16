@@ -1,84 +1,8 @@
 # Flow Chart
 
-One file with both versions: **Part 1** is the system as built on branch `mini-erp`; **Part 2** is Version 2.0 (planned): Purchase ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md)), QT Upgrade 2.0 ([doc](../docs/QT%20Upgrade%202.0.md)) and User Version 2.0 ([doc](../docs/User%20Version%202.0.md)).
+The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)) are in. This replaces the older single-version description.
 
-## Part 1: Current version (as built)
-
-The business flow of the Mini ERP, from master data to the receipt. Source: [README.md](../README.md) (Workflow) and [docs/api](../docs/api/README.md).
-
-### Main flow
-
-```mermaid
-flowchart TD
-    A([Start]) --> B[Admin sets up master data:<br/>customers, products + BOM, materials + lots, users]
-    B --> C[Admin saves a QT reference:<br/>number, date, customer, optional file]
-    C --> D[Admin creates a production order from the QT:<br/>lines with quantity and price,<br/>ordered processes per line]
-    D --> E{Enough stock<br/>for the BOM?}
-    E -- No --> F[409 STOCK_SHORT<br/>Admin adds stock by hand] --> E
-    E -- Yes --> G[Admin starts production:<br/>BOM deducted, oldest lot first,<br/>products and processes locked]
-    G --> H[Worker or Admin records progress<br/>of each process]
-    H --> I{All processes<br/>Completed?}
-    I -- No --> H
-    I -- Yes --> J[Order status = Completed]
-    J --> K[Admin issues the invoice<br/>one per order, a snapshot,<br/>progress locked]
-    K --> L[Admin records one full payment]
-    L --> M{Date and amount<br/>equal the total?}
-    M -- No --> N[400 MUST_EQUAL_TOTAL] --> L
-    M -- Yes --> O[Invoice = Paid<br/>one receipt issued]
-    O --> P([End])
-```
-
-### Order status
-
-```mermaid
-stateDiagram-v2
-    [*] --> New
-    New --> InProgress: first process started
-    InProgress --> Completed: every process Completed
-    Completed --> InProgress: a process reopened (Admin, note required)
-    Completed --> [*]: invoiced
-```
-
-The status of an order is computed from its processes, not set by hand.
-
-### Process status
-
-```mermaid
-stateDiagram-v2
-    [*] --> NotStarted
-    NotStarted --> InProgress
-    InProgress --> Completed
-    Completed --> InProgress: Admin only, note required
-```
-
-### Invoice status
-
-```mermaid
-stateDiagram-v2
-    [*] --> Unpaid: issued
-    Unpaid --> Paid: full payment, receipt issued
-```
-
-### Stock change
-
-```mermaid
-flowchart LR
-    S1[Admin: Add / Deduct / Adjust a lot] --> S3[(MaterialLot)]
-    S2[Start production] --> S3
-    S3 --> S4[(StockChange history)]
-    S3 --> S5{Total vs min level}
-    S5 --> Normal
-    S5 --> Low
-    S5 --> Out
-```
-
----
-
-## Part 2: Version 2.0 (planned)
-
-Business flow after the three changes. The current flow is in [Part 1](#part-1-current-version-as-built).
-
-### Main flow
+## Main flow
 
 ```mermaid
 flowchart TD
@@ -99,7 +23,7 @@ flowchart TD
     M --> N([End])
 ```
 
-### Purchase flow
+## Purchase flow
 
 ```mermaid
 flowchart TD
@@ -117,7 +41,7 @@ flowchart TD
     S7 -.-> S10
 ```
 
-### PO status
+## PO status
 
 ```mermaid
 stateDiagram-v2
@@ -129,7 +53,7 @@ stateDiagram-v2
 
 Lines can be edited only in `Draft`. A `Draft` PO can be deleted.
 
-### QT status
+## QT status
 
 ```mermaid
 stateDiagram-v2
@@ -138,11 +62,52 @@ stateDiagram-v2
     Confirmed --> [*]: locked, cannot be deleted
 ```
 
-### Order, process and invoice status
+## Order status
 
-Unchanged: see [Part 1](#part-1-current-version-as-built).
+```mermaid
+stateDiagram-v2
+    [*] --> Draft: made by Confirm QT
+    Draft --> InProgress: first process started
+    InProgress --> Completed: every process Completed
+    Completed --> InProgress: a process reopened (Admin, note required)
+    Completed --> [*]: invoiced
+```
 
-### Confirm QT: checks
+The status of an order is computed from its processes, not set by hand. `Draft` also covers an order that was started but has no progress yet (the page says "Production started").
+
+## Process status
+
+```mermaid
+stateDiagram-v2
+    [*] --> NotStarted
+    NotStarted --> InProgress
+    InProgress --> Completed
+    Completed --> InProgress: Admin only, note required
+```
+
+## Invoice status
+
+```mermaid
+stateDiagram-v2
+    [*] --> Unpaid: issued
+    Unpaid --> Paid: full payment, receipt issued
+```
+
+## Stock changes
+
+```mermaid
+flowchart LR
+    S1[Admin or Factory Worker: Add / Deduct / Adjust a lot] --> S3[(MaterialLot)]
+    S2[Start production: BOM deducted, oldest lot first] --> S3
+    S6[PO received: Add to the lot typed for each line, once] --> S3
+    S3 --> S4[(StockChange history)]
+    S3 --> S5{Total vs min level}
+    S5 --> Normal
+    S5 --> Low
+    S5 --> Out
+```
+
+## Confirm QT: checks
 
 ```mermaid
 flowchart LR

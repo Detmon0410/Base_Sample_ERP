@@ -1,175 +1,6 @@
 # ER Diagram
 
-One file with both versions: **Part 1** is the system as built on branch `mini-erp`; **Part 2** is Version 2.0 (planned): Purchase ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md)), QT Upgrade 2.0 ([doc](../docs/QT%20Upgrade%202.0.md)) and User Version 2.0 ([doc](../docs/User%20Version%202.0.md)).
-
-## Part 1: Current version (as built)
-
-Entities of the Mini ERP (branch `mini-erp`). Source: the `Table(...)` sketches in [docs/api](../docs/api/README.md). Only `User` exists in the backend today; the rest is the contract the backend has to build.
-
-```mermaid
-erDiagram
-    USER {
-        int id PK
-        string name
-        string department
-        string email UK
-        string password_hash
-        string role "Admin | Worker"
-        datetime last_login_at
-    }
-    CUSTOMER {
-        int id PK
-        string name
-        string address
-        string email
-        string telephone
-    }
-    PRODUCT {
-        int id PK
-        string code UK
-        string name
-        int price
-    }
-    MATERIAL {
-        int id PK
-        string code UK
-        string name
-        decimal min_level "optional"
-    }
-    PRODUCT_BOM {
-        int product_id FK
-        int material_id FK
-        decimal quantity
-    }
-    MATERIAL_LOT {
-        int material_id FK
-        string lot_number "UK with material_id"
-        decimal quantity
-    }
-    STOCK_CHANGE {
-        int id PK
-        int material_id FK
-        string lot_number
-        string kind "Add | Deduct | Adjust"
-        decimal change
-        decimal balance
-        date change_date
-        string note
-        bool initial
-        int order_id FK "optional"
-        int user_id FK
-        datetime at
-    }
-    QT_REFERENCE {
-        int id PK
-        string qt_number UK
-        date qt_date
-        int customer_id FK
-        string notes
-        string file_name
-        string file_type
-        string file_path
-    }
-    PRODUCTION_ORDER {
-        int id PK
-        string order_number UK
-        int qt_id FK
-        int customer_id FK
-        date order_date
-        string notes
-        datetime started_at "null until started"
-    }
-    ORDER_LINE {
-        int id PK
-        int order_id FK
-        int product_id FK
-        int quantity
-        int unit_price
-    }
-    ORDER_PROCESS {
-        int id PK
-        int line_id FK
-        int sequence
-        string name
-        string instructions
-        string status "Not Started | In Progress | Completed"
-        int completed_quantity
-    }
-    PROGRESS_ENTRY {
-        int id PK
-        int process_id FK
-        string status
-        int completed_quantity
-        date work_date
-        string note
-        int user_id FK
-        datetime at
-    }
-    INVOICE {
-        int id PK
-        string invoice_number UK
-        date invoice_date
-        int order_id FK,UK
-        string customer_name "snapshot"
-        string customer_address "snapshot"
-        int total
-        string status "Unpaid | Paid"
-    }
-    INVOICE_LINE {
-        int invoice_id FK
-        string product_code "snapshot"
-        string product_name "snapshot"
-        int quantity
-        int unit_price
-        int amount
-    }
-    PAYMENT {
-        int invoice_id FK,UK
-        date payment_date
-        int amount
-    }
-    RECEIPT {
-        int id PK
-        string receipt_number UK
-        int invoice_id FK,UK
-        date receipt_date
-        string customer_name "snapshot"
-        string customer_address "snapshot"
-        int amount
-    }
-
-    CUSTOMER ||--o{ QT_REFERENCE : "has"
-    CUSTOMER ||--o{ PRODUCTION_ORDER : "orders"
-    QT_REFERENCE ||--o{ PRODUCTION_ORDER : "origin of"
-    PRODUCTION_ORDER ||--|{ ORDER_LINE : "contains"
-    PRODUCT ||--o{ ORDER_LINE : "ordered as"
-    ORDER_LINE ||--|{ ORDER_PROCESS : "is made by"
-    ORDER_PROCESS ||--o{ PROGRESS_ENTRY : "records"
-    USER ||--o{ PROGRESS_ENTRY : "writes"
-    PRODUCT ||--o{ PRODUCT_BOM : "needs"
-    MATERIAL ||--o{ PRODUCT_BOM : "used in"
-    MATERIAL ||--o{ MATERIAL_LOT : "kept in"
-    MATERIAL ||--o{ STOCK_CHANGE : "history"
-    USER ||--o{ STOCK_CHANGE : "makes"
-    PRODUCTION_ORDER o|--o{ STOCK_CHANGE : "start deducts"
-    PRODUCTION_ORDER ||--o| INVOICE : "billed by"
-    INVOICE ||--|{ INVOICE_LINE : "contains"
-    INVOICE ||--o| PAYMENT : "paid by"
-    INVOICE ||--o| RECEIPT : "proved by"
-```
-
-### Notes
-
-- `Invoice` and `Receipt` copy the customer name, address and product data when they are issued (a **snapshot**), so later changes to master data do not change them.
-- An order is billed once (`order_id` unique on `Invoice`), and an invoice has at most one payment and one receipt.
-- `Order status` (New, In Progress, Completed) is **computed** from the processes. It is not a column.
-- Stock status (`Normal`, `Low`, `Out`) is computed from the lot totals and `min_level`.
-
----
-
-## Part 2: Version 2.0 (planned)
-
-The data model after three changes: [Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md) and [User Version 2.0](../docs/User%20Version%202.0.md). The current model is in [Part 1](#part-1-current-version-as-built). **New or changed** items are marked in the notes below the diagram.
+The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)) are in. This replaces the older single-version description.
 
 ```mermaid
 erDiagram
@@ -232,7 +63,7 @@ erDiagram
         decimal change
         decimal balance
         int order_id FK "start production"
-        int purchase_order_id FK "NEW: PO received"
+        int purchase_order_id FK "PO received"
         int user_id FK
     }
     QT_REFERENCE {
@@ -240,10 +71,10 @@ erDiagram
         string qt_number UK
         date qt_date
         int customer_id FK
-        string status "NEW: Draft | Confirmed"
-        string customer_po_number "NEW"
-        date customer_po_date "NEW"
-        int production_order_id FK "NEW: set on confirm"
+        string status "Draft | Confirmed"
+        string customer_po_number
+        date customer_po_date
+        int production_order_id FK "set on confirm"
         string notes
     }
     QT_LINE {
@@ -376,7 +207,7 @@ erDiagram
     INVOICE ||--o| RECEIPT : "proved by"
 ```
 
-### What is new or changed
+## What Version 2.0 added
 
 | Source | Change |
 |---|---|
@@ -386,9 +217,12 @@ erDiagram
 | User 2.0 | No new column. A Worker's `department` must be `Sales` or `Factory` and decides access |
 | Material | `unit` added (the PO lines need a unit) |
 
-### Notes
+## Notes
 
 - `Attachment` is polymorphic (`owner_type` + `owner_id`), so there is no database foreign key to the owner; the service checks it.
 - `PurchasePayment` is stored on the PO and does not go through the Accounting tables.
 - `QT_REFERENCE.production_order_id` is unique: one QT creates one Factory Order.
 - Invoice, Payment and Receipt are unchanged and keep their snapshot fields (not repeated here).
+- `Order status` (`Draft`, `In Progress`, `Completed`) is **computed** from the processes; it is not a column. The stock status (`Normal`, `Low`, `Out`) is computed from the lot totals and `min_level`.
+- `Invoice` and `Receipt` copy the customer and the product data when they are issued (a snapshot). An order is billed once, and an invoice has at most one payment and one receipt.
+- An order is made only by Confirm QT, so `ProductionOrder.qt_id` is always set and each QT has at most one order.

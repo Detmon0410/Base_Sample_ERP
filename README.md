@@ -31,7 +31,8 @@ Where this differs from `simplified_factory_system_requirements.md` (changes the
 ```text
 backend/    Express API (MVC + Service layer, Prisma/MySQL)
 frontend/   React app (Vite, Tailwind v4, i18next, vitest, Playwright)
-docs/       the API contract (docs/api)
+docs/       the API contract (docs/api) and the plan of Version 2.0 (docs/Version 2.0 Plan.md)
+ProjectdocInfo/   the diagrams of the system as built: context, flow chart, site map, user flow, ER, DB relations
 docs/BaseRequirement_md/   the requirements (only simplified_factory_system_requirements.md is for this Mini ERP; the other files are of the big system on branch jay)
 ```
 

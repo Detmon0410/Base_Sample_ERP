@@ -13,7 +13,7 @@
   "startedAt": "着手日時",
   "notStarted": "まだ着手していません",
   "status": {
-    "New": "新規",
+    "Draft": "下書き",
     "InProgress": "作業中",
     "Completed": "完了"
   },
@@ -96,5 +96,7 @@
     "perUnit": "製品1個あたり",
     "needed": "この明細の必要量",
     "none": "この製品には材料がありません。"
-  }
+  },
+  "customerPo": "顧客PO",
+  "started": "生産を開始済み"
 }

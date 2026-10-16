@@ -22,10 +22,12 @@ import { applyServerErrors } from "@/utils/serverErrors";
  *   listPath   where Cancel and a successful Save go
  *   newTitle   title of a new record;  titleOf(record) the title of an existing one
  *   defaults   the empty form;  toForm(record) -> form values;  toBody(values) -> what is sent
- *   readOnly   no Save (a Worker looking at products or materials)
+ *   readOnly   no Save (a Worker looking at products or materials, a QT that is confirmed)
+ *   afterSave  (saved) => path: where a NEW record goes after Save (default: the list), for a page that has more to do on the record
+ *   actions    ({ record }) => the extra buttons of a saved record (for example Confirm)
  *   children   ({ form, record, readOnly }) => the fields
  */
-export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, children }) {
+export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, afterSave, actions, children }) {
   const { id } = useParams();
   const isNew = !id;
   const navigate = useNavigate();
@@ -42,10 +44,13 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
   const onSubmit = form.handleSubmit(async (values) => {
     setSummary(null);
     try {
-      if (isNew) await api.create(toBody(values));
-      else await api.update(id, toBody(values));
+      let next = listPath;
+      if (isNew) {
+        const saved = await api.create(toBody(values));
+        if (afterSave) next = afterSave(saved);
+      } else await api.update(id, toBody(values));
       toast.success(t("master:form.saved"));
-      navigate(listPath);
+      navigate(next);
     } catch (error) {
       show(error);
     }
@@ -117,6 +122,7 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
               {readOnly ? t("master:form.back") : t("common:actions.cancel")}
             </Link>
           </Button>
+          {record && actions ? actions({ record }) : null}
           {readOnly || isNew ? null : (
             <Button type="button" variant="destructive" className="ml-auto" onClick={() => setAsking(true)}>
               <Trash2 aria-hidden="true" />{t("master:delete.button")}

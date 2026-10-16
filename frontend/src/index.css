@@ -196,11 +196,14 @@
   body[data-printing="invoice"] [data-print-doc="invoice"],
   body[data-printing="invoice"] [data-print-doc="invoice"] *,
   body[data-printing="receipt"] [data-print-doc="receipt"],
-  body[data-printing="receipt"] [data-print-doc="receipt"] * {
+  body[data-printing="receipt"] [data-print-doc="receipt"] *,
+  body[data-printing="qt"] [data-print-doc="qt"],
+  body[data-printing="qt"] [data-print-doc="qt"] * {
     visibility: visible;
   }
   body[data-printing="invoice"] [data-print-doc="invoice"],
-  body[data-printing="receipt"] [data-print-doc="receipt"] {
+  body[data-printing="receipt"] [data-print-doc="receipt"],
+  body[data-printing="qt"] [data-print-doc="qt"] {
     position: absolute;
     top: 0;
     left: 0;

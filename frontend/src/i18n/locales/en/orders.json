@@ -13,7 +13,7 @@
   "startedAt": "Started",
   "notStarted": "Not started yet",
   "status": {
-    "New": "New",
+    "Draft": "Draft",
     "InProgress": "In progress",
     "Completed": "Completed"
   },
@@ -96,5 +96,7 @@
     "perUnit": "For one product",
     "needed": "For this line",
     "none": "This product has no materials."
-  }
+  },
+  "customerPo": "Customer PO",
+  "started": "Production started"
 }

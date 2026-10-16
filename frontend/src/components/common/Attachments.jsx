@@ -47,9 +47,10 @@ async function download(id) {
  *   ownerType, ownerId   whose files these are
  *   kinds                the kinds this owner may have, for example ["EVIDENCE", "OTHER"]
  *   canChange            may the user add and delete files (the server decides too)
+ *   lockedKinds          kinds that cannot be deleted here (the PO file of an order is the copy of the PO file of its QT)
  *   title                the heading of the section
  */
-export function Attachments({ ownerType, ownerId, kinds, canChange, title }) {
+export function Attachments({ ownerType, ownerId, kinds, canChange, title, lockedKinds = [] }) {
   const { t, i18n } = useTranslation(["master", "common"]);
   const fileId = useId();
   const input = useRef(null);
@@ -136,7 +137,7 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title }) {
                     <Button type="button" variant="outline" size="icon" aria-label={`${t("master:attachments.download")}: ${row.fileName}`} title={t("master:attachments.download")} onClick={() => download(row.id).catch(() => setError(say("UNKNOWN_ERROR")))}>
                       <Download aria-hidden="true" />
                     </Button>
-                    {canChange ? (
+                    {canChange && !lockedKinds.includes(row.kind) ? (
                       <Button type="button" variant="outline" size="icon" aria-label={`${t("master:attachments.delete")}: ${row.fileName}`} title={t("master:attachments.delete")} onClick={() => setDeleting(row)}>
                         <Trash2 aria-hidden="true" />
                       </Button>

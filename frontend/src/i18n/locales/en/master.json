@@ -27,7 +27,9 @@
     "FILE_TOO_BIG": "The file is larger than 10 MB.",
     "STOCK_NEGATIVE": "This change would make the lot negative.",
     "LOT_NOT_FOUND": "This lot does not exist. Choose an existing lot.",
-    "IN_USE": "This record is still used and cannot be deleted."
+    "IN_USE": "This record is still used and cannot be deleted.",
+    "QT_LOCKED": "The QT is confirmed: its customer and its products cannot be changed.",
+    "FILE_LOCKED": "This file follows the PO file of the QT and cannot be deleted here."
   },
   "customers": {
     "title": "Customers",
@@ -98,18 +100,57 @@
   },
   "qt": {
     "title": "Quotations",
-    "new": "New QT reference",
-    "section": "QT reference",
+    "new": "New QT",
+    "section": "QT",
     "qtNumber": "QT number",
     "qtDate": "QT date",
     "customer": "Customer",
     "chooseCustomer": "Choose a customer",
     "notes": "Notes",
-    "file": "QT file (optional)",
-    "attached": "Attached file",
-    "fileHint": "PDF, PNG or JPG, up to 10 MB. The quotation itself is made outside this system.",
-    "removeFile": "Remove the file",
-    "fileColumn": "QT file"
+    "orderColumn": "Production order",
+    "filesTitle": "Files",
+    "status": {
+      "Draft": "Draft",
+      "Confirmed": "Confirmed"
+    },
+    "lines": {
+      "title": "Products",
+      "none": "No product yet. Add the products of the quotation.",
+      "product": "Product",
+      "chooseProduct": "Choose a product",
+      "quantity": "Quantity",
+      "unitPrice": "Unit price",
+      "amount": "Amount",
+      "total": "Total",
+      "add": "Add a product",
+      "remove": "Remove this product"
+    },
+    "po": {
+      "title": "Customer PO",
+      "number": "Customer PO number",
+      "date": "Customer PO date (YYYY-MM-DD)",
+      "hint": "Upload the file of the customer PO in Files below (kind: PO file). A new PO file replaces the old one.",
+      "saveFirst": "Save the QT first: then the files, the printed form and Confirm QT are here."
+    },
+    "confirm": {
+      "button": "Confirm QT",
+      "title": "Confirm this QT?",
+      "text": "The QT is confirmed and a production order is made from its products. The customer and the products of the QT cannot be changed after that. Save your changes first.",
+      "textNoPo": "The customer PO file is not attached yet. You can confirm without it. The QT is confirmed and a production order is made from its products. The customer and the products of the QT cannot be changed after that.",
+      "done": "The QT is confirmed and the production order was made.",
+      "already": "This QT is confirmed already. Here is its production order.",
+      "noLines": "Add at least one product before you confirm.",
+      "banner": "This QT is confirmed. Its customer and its products cannot be changed. Production order:"
+    },
+    "doc": {
+      "section": "QT form",
+      "title": "Quotation",
+      "to": "To",
+      "preparedBy": "Prepared by",
+      "approvedBy": "Approved by",
+      "customerSign": "Customer",
+      "dateLine": "Date"
+    }
   },
   "stock": {
     "lotsTitle": "Lots and quantities",

@@ -115,6 +115,7 @@ export function OrderView({ order, onChanged }) {
       <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} />
 
       <div className="flex max-w-5xl flex-col gap-5">
+        {order.started && order.status === "Draft" ? <p className="font-semibold">{t("orders:started")}</p> : null} {/* started, but no process has started yet */}
         {mayStart ? (
           <div className="flex flex-wrap items-center gap-3">
             {starter.button}
@@ -128,6 +129,7 @@ export function OrderView({ order, onChanged }) {
             {[
               [t("orders:qt"), can(user, "qt.use") ? <Link key="qt" to={`/sale/quotations/${order.qtId}`}>{order.qtNumber}</Link> : order.qtNumber],
               [t("orders:customer"), order.customerName],
+              [t("orders:customerPo"), order.customerPoNumber],
               [t("orders:orderDate"), order.orderDate],
               [t("orders:startedAt"), order.started ? formatDateTime(order.startedAt, language) : t("orders:notStarted")],
               [t("orders:invoice"), order.invoice ? <Link key="invoice" to={`/accounting/invoices/${order.invoice.id}`}>{order.invoice.invoiceNumber}</Link> : null],
@@ -228,7 +230,7 @@ export function OrderView({ order, onChanged }) {
           )}
         </Section>
 
-        <Attachments ownerType="ProductionOrder" ownerId={order.id} kinds={["EVIDENCE", "OTHER"]} canChange={can(user, "orders.evidence")} title={t("master:attachments.evidenceTitle")} />
+        <Attachments ownerType="ProductionOrder" ownerId={order.id} kinds={["EVIDENCE", "OTHER"]} canChange={can(user, "orders.evidence")} lockedKinds={["PO_FILE"]} title={t("master:attachments.evidenceTitle")} />
 
         <div>
           <Button asChild variant="outline">

@@ -18,19 +18,17 @@ function OrderPage() {
   const { id } = useParams();
   const { t } = useTranslation(["orders", "common", "master"]);
   const { user } = useAuth();
-  const { data, error, loading, reload } = useLoad(() => (id ? ordersApi.get(id) : Promise.resolve(null)), [id]);
+  const { data, error, loading, reload } = useLoad(() => ordersApi.get(id), [id]);
 
-  if (!id) return can(user, "orders.edit") ? <OrderForm /> : <Navigate to="/403" replace />;
   if (error) return <PageHeader title={t("master:form.notFound")} />;
   if (loading) return <PageHeader title={t("common:loading")} />;
   return can(user, "orders.edit") && !data.started ? <OrderForm key={data.updatedAt} order={data} onChanged={reload} /> : <OrderView order={data} onChanged={reload} />;
 }
 
-/** Production orders: the list (search, status filter), a new order, one order. */
+/** Production orders: the list (search, status filter) and one order. Orders are made by Confirm QT, so there is no "new order" here. */
 export function OrdersPage() {
   const { t } = useTranslation(["orders", "master"]);
-  const { user } = useAuth();
-  const statuses = ["New", "In Progress", "Completed"];
+  const statuses = ["Draft", "In Progress", "Completed"];
 
   return (
     <Routes>
@@ -41,10 +39,8 @@ export function OrdersPage() {
             api={ordersApi}
             base="/sale/orders"
             title={t("title")}
-            canCreate={can(user, "orders.edit")}
-            newLabel={t("new")}
             statusOptions={[{ value: "", label: t("master:list.all") }, ...statuses.map((value) => ({ value, label: t(`status.${statusKey(value)}`) }))]}
-            statusOf={(row) => <StatusBadge tone={{ New: "neutral", InProgress: "progress", Completed: "good" }[statusKey(row.status)]}>{t(`status.${statusKey(row.status)}`)}</StatusBadge>}
+            statusOf={(row) => <StatusBadge tone={{ Draft: "neutral", InProgress: "progress", Completed: "good" }[statusKey(row.status)]}>{t(`status.${statusKey(row.status)}`)}</StatusBadge>}
             columns={[
               { key: "orderNumber", header: t("orderNumber") },
               { key: "orderDate", header: t("orderDate") },
@@ -54,7 +50,7 @@ export function OrdersPage() {
           />
         }
       />
-      <Route path="new" element={<OrderPage />} />
+      <Route path="new" element={<Navigate to="/sale/quotations" replace />} /> {/* an order is made by Confirm QT */}
       <Route path=":id" element={<OrderPage />} />
     </Routes>
   );

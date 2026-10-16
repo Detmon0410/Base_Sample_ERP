@@ -13,10 +13,8 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { useLoad } from "@/hooks/useLoad";
-import { customersApi, materialsApi, productsApi } from "@/services/master.service";
+import { materialsApi, productsApi } from "@/services/master.service";
 import { ordersApi } from "@/services/orders.service";
-import { qtApi } from "@/services/qt.service";
-import { todayIso } from "@/utils/dates";
 import { can } from "@/utils/permissions";
 import { formatNumber } from "@/utils/format";
 
@@ -25,11 +23,8 @@ import { applyServerErrors, statusKey } from "@/utils/serverErrors";
 import { useStartProduction } from "./StartProduction";
 
 const emptyLine = () => ({ productId: "", quantity: "", unitPrice: "", processes: [] });
-const empty = () => ({ qtId: "", customerId: "", orderDate: todayIso(), notes: "", lines: [emptyLine()] });
 
 const toForm = (order) => ({
-  qtId: String(order.qtId),
-  customerId: String(order.customerId),
   orderDate: order.orderDate,
   notes: order.notes,
   lines: order.lines.map((line) => ({
@@ -151,8 +146,9 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
 }
 
 /**
- * A new production order, or an existing one that has not started (Admin): the order, the product lines and, for every line,
- * the ordered processes. Save returns to the list. "Start production" (after a confirmation) locks the products and processes.
+ * An order that has not started (Admin and Sale Worker): the order, the product lines and, for every line, the ordered processes.
+ * The order was made by Confirm QT, so its QT and its customer are shown and cannot change. Save returns to the list. "Start production"
+ * (Admin and Factory Worker, after a confirmation) locks the products and processes.
  */
 export function OrderForm({ order, onChanged }) {
   const { t } = useTranslation(["orders", "master", "common"]);
@@ -160,26 +156,19 @@ export function OrderForm({ order, onChanged }) {
   const notesId = useId();
   const [summary, setSummary] = useState(null);
 
-  const form = useForm({ defaultValues: order ? toForm(order) : empty() });
+  const form = useForm({ defaultValues: toForm(order) });
   const lines = useFieldArray({ control: form.control, name: "lines" });
   const errors = form.formState.errors;
 
-  const qtList = useLoad(() => qtApi.list({ pageSize: 200 }), []);
-  const customerList = useLoad(() => customersApi.list({ pageSize: 200 }), []);
   const productList = useLoad(() => productsApi.list({ pageSize: 200 }), []);
   const materialList = useLoad(() => materialsApi.list({ pageSize: 200 }), []);
-  const qts = qtList.data?.items ?? [];
   const products = productList.data?.items ?? [];
   const materials = materialList.data?.items ?? [];
-
-  const qtOptions = [{ value: "", label: t("orders:chooseQt") }, ...qts.map((qt) => ({ value: String(qt.id), label: `${qt.qtNumber} ${qt.customerName}` }))];
-  const customerOptions = [{ value: "", label: t("orders:chooseCustomer") }, ...(customerList.data?.items ?? []).map((customer) => ({ value: String(customer.id), label: customer.name }))];
 
   const onSubmit = form.handleSubmit(async (values) => {
     setSummary(null);
     try {
-      if (order) await ordersApi.update(order.id, values);
-      else await ordersApi.create(values);
+      await ordersApi.update(order.id, values);
       toast.success(t("master:form.saved"));
       navigate("/sale/orders");
     } catch (error) {
@@ -187,12 +176,12 @@ export function OrderForm({ order, onChanged }) {
     }
   });
 
-  const starter = useStartProduction(order ?? {}, onChanged); // used by whoever may start (docs/api, Who may call)
+  const starter = useStartProduction(order, onChanged); // used by whoever may start (docs/api, Who may call)
   const { user } = useAuth();
 
   return (
     <>
-      <PageHeader title={order ? order.orderNumber : t("orders:new")} status={order ? t(`orders:status.${statusKey(order.status)}`) : null} />
+      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} />
 
       <form noValidate onSubmit={onSubmit} className="flex max-w-4xl flex-col gap-5">
         {summary ? (
@@ -204,21 +193,19 @@ export function OrderForm({ order, onChanged }) {
 
         <Section icon={ClipboardList} title={t("orders:section")}>
           <div className="grid gap-5 sm:grid-cols-2">
-            <SelectField
-              label={t("orders:qt")}
-              options={qtOptions}
-              error={errors.qtId?.message}
-              {...form.register("qtId", {
-                // the customer of the QT reference is the default customer of the order
-                onChange: (event) => {
-                  const qt = qts.find((item) => String(item.id) === event.target.value);
-                  if (qt) form.setValue("customerId", String(qt.customerId));
-                },
-              })}
-            />
-            <SelectField label={t("orders:customer")} options={customerOptions} error={errors.customerId?.message} {...form.register("customerId")} />
+            <div>
+              <p className="text-sm font-semibold text-muted-foreground">{t("orders:qt")}</p>
+              <p>{can(user, "qt.use") ? <Link to={`/sale/quotations/${order.qtId}`}>{order.qtNumber}</Link> : order.qtNumber}</p>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-muted-foreground">{t("orders:customer")}</p>
+              <p>{order.customerName}</p>
+            </div>
             <TextField label={t("orders:orderDate")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.orderDate?.message} {...form.register("orderDate")} />
-            <p className="self-end pb-2 text-sm text-muted-foreground">{order ? `${t("orders:orderNumber")}: ${order.orderNumber}` : t("orders:numberHint")}</p>
+            <div>
+              <p className="text-sm font-semibold text-muted-foreground">{t("orders:customerPo")}</p>
+              <p>{order.customerPoNumber || "-"}</p>
+            </div>
             <Field className="sm:col-span-2">
               <FieldLabel htmlFor={notesId} className="text-sm font-semibold">
                 {t("orders:notes")}
@@ -246,7 +233,7 @@ export function OrderForm({ order, onChanged }) {
           <Button asChild variant="outline">
             <Link to="/sale/orders"><X aria-hidden="true" />{t("common:actions.cancel")}</Link>
           </Button>
-          {order && can(user, "orders.start") ? (
+          {can(user, "orders.start") ? (
             <span className="ml-auto flex flex-col items-end gap-1">
               {starter.button}
               <span className="text-sm text-muted-foreground">{t("orders:start.hint")}</span>

@@ -48,7 +48,7 @@ export function DashboardPage() {
               {t("dashboard:numbers")}
             </h2>
             <div className="grid gap-4 sm:grid-cols-3">
-              <Tile to="/sale/orders" icon={FilePlus2} label={t("dashboard:new")} value={number(data.orders.New)} />
+              <Tile to="/sale/orders" icon={FilePlus2} label={t("dashboard:draft")} value={number(data.orders.Draft)} />
               <Tile to="/sale/orders" icon={Factory} label={t("dashboard:inProgress")} value={number(data.orders.InProgress)} />
               <Tile to="/sale/orders" icon={CircleCheck} label={t("dashboard:completed")} value={number(data.orders.Completed)} />
             </div>
@@ -67,7 +67,7 @@ export function DashboardPage() {
               <BarList
                 label={t("dashboard:ordersChart")}
                 rows={[
-                  { label: t("dashboard:new"), value: data.orders.New },
+                  { label: t("dashboard:draft"), value: data.orders.Draft },
                   { label: t("dashboard:inProgress"), value: data.orders.InProgress },
                   { label: t("dashboard:completed"), value: data.orders.Completed },
                 ]}

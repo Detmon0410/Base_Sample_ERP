@@ -27,7 +27,16 @@
     "unitPrice": "単価",
     "amount": "金額",
     "total": "合計",
-    "noTax": "消費税は計上していません。"
+    "noTax": "消費税は計上していません。",
+    "billTo": "請求先",
+    "status": "状態",
+    "description": "内容",
+    "paymentOf": "請求書のお支払い：",
+    "receivedFrom": "受領先",
+    "issuedBy": "発行者",
+    "customerSign": "お客様",
+    "receivedBy": "受領者",
+    "terms": "この請求書の合計金額を全額お支払いください。入金を確認後、領収書を発行します。"
   },
   "print": "印刷",
   "payment": {

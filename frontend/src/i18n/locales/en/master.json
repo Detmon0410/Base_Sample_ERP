@@ -151,7 +151,8 @@
       "preparedBy": "Prepared by",
       "approvedBy": "Approved by",
       "customerSign": "Customer",
-      "dateLine": "Date"
+      "dateLine": "Date",
+      "noTax": "No tax is charged."
     },
     "step": {
       "Draft": "Draft",

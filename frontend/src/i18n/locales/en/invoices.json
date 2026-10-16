@@ -27,7 +27,16 @@
     "unitPrice": "Unit price",
     "amount": "Amount",
     "total": "Total",
-    "noTax": "No tax is charged."
+    "noTax": "No tax is charged.",
+    "billTo": "Bill to",
+    "status": "Status",
+    "description": "Description",
+    "paymentOf": "Payment of invoice",
+    "receivedFrom": "Received from",
+    "issuedBy": "Issued by",
+    "customerSign": "Customer",
+    "receivedBy": "Received by",
+    "terms": "Please pay the total of this invoice in full. A receipt is issued when the payment is received."
   },
   "print": "Print",
   "payment": {

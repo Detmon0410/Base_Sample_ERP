@@ -151,7 +151,8 @@
       "preparedBy": "作成者",
       "approvedBy": "承認者",
       "customerSign": "顧客",
-      "dateLine": "日付"
+      "dateLine": "日付",
+      "noTax": "税は加算されません。"
     },
     "step": {
       "Draft": "下書き",

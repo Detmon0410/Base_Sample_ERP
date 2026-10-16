@@ -14,6 +14,7 @@ const TABLE = {
   "orders.edit": { admin: true, sale: true, factory: false },
   "orders.start": { admin: true, sale: false, factory: true },
   "orders.progress": { admin: true, sale: false, factory: true },
+  "orders.evidence": { admin: true, sale: false, factory: true },
   "orders.reopen": { admin: true, sale: false, factory: false },
   "stock.view": { admin: true, sale: true, factory: true },
   "stock.change": { admin: true, sale: false, factory: true },

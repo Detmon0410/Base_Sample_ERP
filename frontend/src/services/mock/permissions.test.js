@@ -71,8 +71,8 @@ const TABLE = {
 };
 
 describe("who may call what (docs/api, Who may call)", () => {
-  it("covers every route of the mock except the sign-in ones", () => {
-    const routes = Object.keys(mockRoutes).filter((route) => !route.includes("/auth/")).sort();
+  it("covers every route of the mock except the sign-in ones and the files (their rule depends on the owner: attachments.test.js)", () => {
+    const routes = Object.keys(mockRoutes).filter((route) => !route.includes("/auth/") && !route.includes("/attachments")).sort();
     expect(Object.keys(TABLE).sort()).toEqual(routes);
   });
 

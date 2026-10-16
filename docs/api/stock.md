@@ -54,7 +54,7 @@ The ledger of every stock change of every material together (the page `/stock/mo
 
 `data` is a list of the entries below with `materialCode` and `materialName` added, **newest `changeDate` first** (then the last made first); `meta` is `{ page, pageSize, total }`. `400 VALIDATION_ERROR` with `INVALID` (a type that does not exist) or `INVALID_DATE` (a `from` or `to` that is not a real day). The changes of a deleted material are gone with it.
 
-A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, change (+ or -), balance (of the lot after it), changeDate, note, initial (true for the first stock of a new material), orderId, orderNumber, userId, userName, at }`; both `GET /stock-changes` and `GET /materials/:id/stock-changes` also carry `materialCode` and `materialName`. Creating a material with lots writes one `Add` entry (note `Initial stock`) per lot.
+A history entry (never changed or deleted): `{ id, materialId, lotNumber, kind, change (+ or -), balance (of the lot after it), changeDate, note, initial (true for the first stock of a new material), orderId, orderNumber, purchaseOrderId, purchaseOrderNumber, userId, userName, at }`; both `GET /stock-changes` and `GET /materials/:id/stock-changes` also carry `materialCode` and `materialName`. Creating a material with lots writes one `Add` entry (note `Initial stock`) per lot.
 
 ## Data needed
 

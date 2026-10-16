@@ -1,0 +1,35 @@
+{
+  "title": "ER図",
+  "description": "システムのテーブル、キー、テーブル同士の関係と、データベースの削除ルール・複数テーブルのルールです。",
+  "pdfTitle": "冷蔵庫工場 Mini ERP - ER図",
+  "pdfSubtitle": "テーブル{{tables}}個、リレーション{{relationships}}個。クロウズフット表記。{{date}} 作成。",
+  "downloadPdf": "PDFをダウンロード",
+  "makingPdf": "PDFを作成中...",
+  "pdfFailed": "PDFを作成できませんでした。もう一度お試しください。",
+  "diagramLabel": "ER図：テーブル{{tables}}個、リレーション{{relationships}}個",
+  "relationships": "リレーション",
+  "colParent": "親",
+  "colChild": "子",
+  "colKey": "外部キー",
+  "colCardinality": "親：子",
+  "colMeaning": "意味",
+  "ends": {
+    "one": "必ず1",
+    "zeroOne": "0または1",
+    "oneMany": "1以上",
+    "zeroMany": "0以上"
+  },
+  "notesTitle": "補足",
+  "notes": {
+    "snapshot": "請求書と領収書は発行時に顧客名・住所・製品の内容をコピー（スナップショット）するため、後でマスターデータを変えても変わりません。",
+    "oneInvoice": "1つの指示書の請求は1回だけ（Invoice の order_id は一意）、1件の請求書に入金と領収書は最大1件ずつです。",
+    "computedOrderStatus": "指示書のステータス（新規・進行中・完了）は工程から計算されます。列ではありません。",
+    "computedStockStatus": "在庫ステータス（正常・少ない・なし）はロットの合計と min_level から計算されます。"
+  },
+  "colDeleteRule": "削除ルール",
+  "rulesTitle": "複数のテーブルにまたがるルール",
+  "colEvent": "イベント",
+  "colTablesWritten": "書き込むテーブル",
+  "colRule": "ルール",
+  "uniqueDetails": "補足のある一意キー："
+}

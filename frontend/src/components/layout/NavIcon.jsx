@@ -9,6 +9,7 @@ import {
   FileText,
   Landmark,
   LayoutDashboard,
+  Network,
   Package,
   ReceiptText,
   UserCog,
@@ -34,6 +35,7 @@ const ICONS = {
   stockGroup: Warehouse,
   movements: ArrowLeftRight,
   users: UserCog,
+  erDiagram: Network,
   down: ChevronDown,
 };
 

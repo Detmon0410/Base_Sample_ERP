@@ -1,0 +1,35 @@
+{
+  "title": "ER diagram",
+  "description": "The tables of the system, their keys and how they are tied together, with the delete rules and the rules across tables of the database.",
+  "pdfTitle": "Refrigerator Factory Mini ERP - ER diagram",
+  "pdfSubtitle": "{{tables}} tables, {{relationships}} relationships. Crow's foot notation. Made on {{date}}.",
+  "downloadPdf": "Download PDF",
+  "makingPdf": "Making the PDF...",
+  "pdfFailed": "The PDF could not be made. Please try again.",
+  "diagramLabel": "ER diagram: {{tables}} tables and {{relationships}} relationships",
+  "relationships": "Relationships",
+  "colParent": "Parent",
+  "colChild": "Child",
+  "colKey": "Foreign key",
+  "colCardinality": "Parent : child",
+  "colMeaning": "Meaning",
+  "ends": {
+    "one": "exactly one",
+    "zeroOne": "zero or one",
+    "oneMany": "one or many",
+    "zeroMany": "zero or many"
+  },
+  "notesTitle": "Notes",
+  "notes": {
+    "snapshot": "Invoice and Receipt copy the customer name, address and product data when they are issued (a snapshot), so later changes to master data do not change them.",
+    "oneInvoice": "An order is billed once (order_id unique on Invoice), and an invoice has at most one payment and one receipt.",
+    "computedOrderStatus": "Order status (New, In Progress, Completed) is computed from the processes. It is not a column.",
+    "computedStockStatus": "Stock status (Normal, Low, Out) is computed from the lot totals and min_level."
+  },
+  "colDeleteRule": "Delete rule",
+  "rulesTitle": "Rules that touch several tables",
+  "colEvent": "Event",
+  "colTablesWritten": "Tables written",
+  "colRule": "Rule",
+  "uniqueDetails": "Unique keys with a detail:"
+}

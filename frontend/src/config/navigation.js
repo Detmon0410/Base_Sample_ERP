@@ -45,6 +45,7 @@ export const NAV = [
       { key: "customers", to: "/master/customers", labelKey: "customers", icon: "customers", roles: ["Admin"] },
       { key: "products", to: "/master/products", labelKey: "products", icon: "products", roles: ["Admin", "Worker"] },
       { key: "users", to: "/master/users", labelKey: "users", icon: "users", roles: ["Admin"] },
+      { key: "erDiagram", to: "/master/er-diagram", labelKey: "erDiagram", icon: "erDiagram", roles: ["Admin"] },
     ],
   },
 ];

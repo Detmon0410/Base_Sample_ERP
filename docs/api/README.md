@@ -35,7 +35,7 @@ What the frontend expects from the backend, module by module. The frontend calls
 | Stock: lots and stock changes, movements, the minimum level and the status | [stock.md](stock.md) | Frontend done (mock), backend not implemented |
 | QT references | [qt.md](qt.md) | Frontend done (mock), backend not implemented |
 | Production orders, processes, progress | [orders.md](orders.md) | Frontend done (mock), backend not implemented |
-| Accounting: invoices and payment | [invoices.md](invoices.md) | Frontend done (mock), backend not implemented |
+| Accounting: invoices and payment (one work-list page) | [invoices.md](invoices.md) | Frontend done (mock), backend not implemented |
 | Accounting: receipts | [receipts.md](receipts.md) | Frontend done (mock), backend not implemented |
 | Suppliers and purchase orders: the stock that is low, PO with a status by hand, receiving adds the stock, payment | [purchase.md](purchase.md) | Frontend done (mock), backend not implemented |
 | Files: the evidence of a production order (and the files of a QT) | [files.md](files.md) | Frontend done (mock), backend not implemented |

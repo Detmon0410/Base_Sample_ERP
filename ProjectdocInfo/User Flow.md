@@ -6,13 +6,13 @@ The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purc
 
 ```mermaid
 flowchart TD
-    D[Dashboard: order tiles] --> Q[QT references]
-    Q --> Q1[New QT: customer + lines]
+    D[Dashboard: order tiles] --> Q[Sales work list]
+    Q --> Q1[One page for the job:<br/>customer + lines]
     Q1 --> Q2[Print QT form PDF]
     Q2 --> Q3[Upload customer PO]
     Q3 --> Q4[Confirm QT]
-    Q4 --> O[Factory Order created]
-    O --> O1[Edit the order before start:<br/>lines and processes]
+    Q4 --> O[Same page: the production order]
+    O --> O1[Add the processes<br/>before the start,<br/>see the progress after it]
     D --> V[View: orders, stock, products, customers]
 ```
 
@@ -20,11 +20,10 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    D[Dashboard: order tiles] --> O[Production orders]
-    O --> O1[Open an order]
-    O1 --> O2[Start production<br/>409 STOCK_SHORT if material short]
-    O2 --> O3[Record progress]
-    O3 --> O4[Upload evidence: images, documents]
+    D[Today: the work of the day] --> O2[Start production on the card<br/>409 STOCK_SHORT if material short]
+    D --> O3[Record progress on the card]
+    O3 --> O4[Open the order: upload evidence,<br/>images and documents]
+    D --> R[Purchase orders to receive]
     D --> S[Stock]
     S --> S1[Add / Deduct / Adjust a lot]
     D --> P[Purchase]
@@ -44,7 +43,7 @@ flowchart TD
     D --> Fac[Start production, progress, reopen]
     D --> Stk[Stock changes]
     D --> Pur[Purchase: PO, status, payment]
-    D --> Acc[Invoice -> payment -> receipt]
+    D --> Acc[Accounting page:<br/>invoice -> payment -> receipt]
 ```
 
 The Admin can do everything the two Workers can.

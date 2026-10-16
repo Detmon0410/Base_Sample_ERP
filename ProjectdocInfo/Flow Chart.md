@@ -27,7 +27,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    S1[Check stock on the Purchase page] --> S2{Item low?}
+    S1[Check the low stock<br/>on Today or the Purchase page] --> S2{Item low?}
     S2 -- No --> S1
     S2 -- Yes --> S3[Create PO:<br/>supplier, required date, department,<br/>items of that supplier, quantity,<br/>initial price from the system]
     S3 --> S4[Save: status Draft]

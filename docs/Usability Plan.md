@@ -1,6 +1,6 @@
 # Usability Plan
 
-How the system becomes easier to use and to understand: a job is finished on **one page**, the screens are lighter, and each person starts from the work that is theirs. This is a plan, not built.
+How the system becomes easier to use and to understand: a job is finished on **one page**, the screens are lighter, and each person starts from the work that is theirs. Built on branch `mini-erp` (phases U1 to U6; the Playwright specs of the changed pages are not updated or run yet).
 
 Related: [Version 2.0 Plan](Version%202.0%20Plan.md) (what is built), [docs/api](api/README.md) (the contract), [ProjectdocInfo](../ProjectdocInfo/) (the diagrams).
 

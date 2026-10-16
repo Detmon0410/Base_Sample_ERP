@@ -1,6 +1,6 @@
 # Refrigerator Factory — Mini ERP
 
-A simplified factory system: keep the QT references, make production orders with their processes, record the progress by hand, keep the material stock by hand, issue an invoice and a receipt. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only. Languages: English and Japanese. Currency: JPY only, no tax.
+A simplified factory system: make the QT, confirm it into a production order with its processes, record the progress by hand, keep the material stock by hand, issue an invoice and a receipt. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only. Languages: English and Japanese. Currency: JPY only, no tax.
 
 This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accounting, serial numbers, 33 pages) is on branch `jay`.
 
@@ -15,15 +15,15 @@ This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accou
 ## Workflow
 
 1. **Master data** (Admin): customers, products with a BOM, materials with lots, users. A user is an Admin, a Sale Worker or a Factory Worker (a Worker has the department `Sales` or `Factory`, and the department decides the access: [docs/api/auth.md](docs/api/auth.md#access-by-role-and-department)).
-2. **QT reference** (Admin or Sale Worker): the quotation is made outside the system; only its number, date, customer and an optional file are kept.
-3. **Production order** (Admin or Sale Worker): from a QT, with product lines (quantity, agreed price) and a manual, ordered list of processes for every line.
+2. **QT** (Admin or Sale Worker): the quotation, with its lines (product, quantity, price), is made in the system and printed as a form. The customer's PO (number, date, file) is kept with it. Status Draft, then Confirmed.
+3. **Confirm QT** makes the **production order** (status Draft) from the lines of the QT, with their prices; the QT is then locked. The Admin or a Sale Worker adds the manual, ordered list of processes for every line. Files (evidence) can be added to the order.
 4. **Start production** (Admin or Factory Worker): needs enough stock. It deducts the BOM of every line from the oldest lot first (`409 STOCK_SHORT` when a material is short) and locks the products and processes.
-5. **Progress** (Factory Worker or Admin): every process goes Not Started, In Progress, Completed. The status of the order is computed: New, In Progress, Completed.
+5. **Progress** (Factory Worker or Admin): every process goes Not Started, In Progress, Completed. The status of the order is computed: Draft, In Progress, Completed.
 6. **Stock** (Admin or Factory Worker): adds, deducts or adjusts a lot by hand at any time; the history of every change is kept.
 7. **Invoice** (Admin): only for a Completed order, one per order, a snapshot. It locks the progress of the order.
 8. **Payment and receipt** (Admin): one full payment (date and amount equal to the total) makes the invoice Paid and issues one receipt.
 
-Where this differs from `simplified_factory_system_requirements.md` (changes the user asked for): no payment method and no payment note, no stock overview page, the QT file is optional, and Start production deducts the stock. Follow `docs/api` for the contract.
+Where this differs from `simplified_factory_system_requirements.md` (changes the user asked for): no payment method and no payment note, no stock overview page, the quotation is made in the system (QT 2.0) and Confirm QT makes the production order, the order status is called Draft (not New), and Start production deducts the stock. Follow `docs/api` for the contract.
 
 ## Structure
 

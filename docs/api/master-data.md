@@ -34,7 +34,7 @@ Query: `q` searches the fields named below (case-insensitive, contains), `pageSi
 | material | the BOM of a product uses it (`product`), or it has a stock change after its first stock (`stockChange`) | its lots and the first stock ("Initial stock") |
 | user | it is the user who is signed in (`self`), the last Admin (`lastAdmin`), or it recorded a progress update (`progress`) or a stock change (`stock`) | – |
 
-A QT reference is deleted the same way (`DELETE /qt/:id`, refused with `order` when a production order uses it; its file goes with it).
+A QT is deleted the same way (`DELETE /qt/:id`, only a `Draft`: refused with `order` when it is confirmed, because its production order uses it; its files go with it).
 
 ## Who may call
 

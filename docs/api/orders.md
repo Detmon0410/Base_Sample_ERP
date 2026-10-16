@@ -1,6 +1,6 @@
 # API — Production orders
 
-Pages: `/sale/orders`, `/sale/orders/new`, `/sale/orders/:id` · Frontend: `frontend/src/pages/orders`, `services/orders.service.js` · Mock: `services/mock/orders.js`
+Pages: `/sale/orders` and `/sale/orders/:id` (`/sale/orders/new` is gone: an order is made by [Confirm QT](qt.md#confirm-qt-post-qtidconfirm)) · Frontend: `frontend/src/pages/orders`, `services/orders.service.js` · Mock: `services/mock/orders.js`
 Conventions: [README.md](README.md)
 
 ## Who may call
@@ -8,30 +8,29 @@ Conventions: [README.md](README.md)
 | Call | Admin | Sale Worker | Factory Worker |
 |---|---|---|---|
 | `GET /orders`, `GET /orders/:id` | yes | yes | yes |
-| `POST /orders`, `PUT /orders/:id` (before the start) | yes | yes | `403 FORBIDDEN` |
+| `PUT /orders/:id` (before the start) | yes | yes | `403 FORBIDDEN` |
 | `POST /orders/:id/start` | yes | `403 FORBIDDEN` | yes |
 | `POST /orders/:id/progress` | yes | `403 FORBIDDEN` | yes (not on a completed process) |
 
-A Sale Worker prepares the order (lines and processes); a Factory Worker starts it and records the progress. See [auth.md](auth.md#access-by-role-and-department).
+An order is **made by Confirm QT** ([qt.md](qt.md)), so there is no `POST /orders`. A Sale Worker (or the Admin) prepares the order (lines and processes); a Factory Worker (or the Admin) starts it and records the progress. See [auth.md](auth.md#access-by-role-and-department).
 
 ## Calls
 
 | Method | Path | Notes |
 |---|---|---|
-| `GET` | `/orders` | query `q` (order number, customer name, QT number, notes), `status` (`New`, `In Progress`, `Completed`), `page`, `pageSize`. Rows have no `lines` and no `history` |
+| `GET` | `/orders` | query `q` (order number, customer name, QT number, notes), `status` (`Draft`, `In Progress`, `Completed`), `page`, `pageSize`. Rows have no `lines` and no `history` |
 | `GET` | `/orders/:id` | the whole order (below) |
-| `POST` | `/orders` | `201`. The number `ORD-yyyy-0001` is given by the server |
-| `PUT` | `/orders/:id` | replaces the header, the lines and the processes. Only before the start |
+| `PUT` | `/orders/:id` | replaces the order date, the notes, the lines and the processes. Only before the start. The QT and the customer of an order never change (they are ignored if sent) |
 | `POST` | `/orders/:id/start` | the Admin or a Factory Worker starts the production |
 | `POST` | `/orders/:id/progress` | adds one progress entry to a process |
 
 The evidence files of an order (images, documents) are uploaded and read through [files.md](files.md) (`ownerType` `ProductionOrder`): everybody who can read the order reads them; the Admin and the Factory Worker upload and delete.
 
-Body of `POST` / `PUT`:
+Body of `PUT`:
 
 ```json
 {
-  "qtId": 1, "customerId": 3, "orderDate": "2026-10-02", "notes": "",
+  "orderDate": "2026-10-02", "notes": "",
   "lines": [ { "productId": 5, "quantity": 10, "unitPrice": 45000,
                "processes": [ { "name": "Cutting", "instructions": "" }, { "name": "Welding", "instructions": "" } ] } ]
 }
@@ -43,9 +42,10 @@ Body of `progress`: `{ "processId": 12, "status": "Not Started" | "In Progress" 
 
 ## The order
 
-`{ id, orderNumber, qtId, qtNumber, customerId, customerName, orderDate, notes, status, started, startedAt, invoice, lines, history, createdAt, updatedAt }`
+`{ id, orderNumber, qtId, qtNumber, customerPoNumber, customerPoDate, customerId, customerName, orderDate, notes, status, started, startedAt, invoice, lines, history, createdAt, updatedAt }`
 
-* `status` is **computed**, never sent: `New` until a process has started (an order that was started by the Admin but has no progress yet is still `New`) → `In Progress` (at least one process has started) → `Completed` (every process of every line is `Completed`). Same words as section 6 of the requirements.
+* `orderNumber` is `ORD-yyyy-0001`, unique, given by the server when Confirm QT makes the order. `customerPoNumber` and `customerPoDate` come from the QT; the customer's PO file is one of the files of the order ([files.md](files.md), kind `PO_FILE`).
+* `status` is **computed**, never sent: `Draft` until a process has started (an order that was started but has no progress yet is still `Draft`; the page shows "Production started" for it) → `In Progress` (at least one process has started) → `Completed` (every process of every line is `Completed`). Same words as section 6 of the requirements.
 * `invoice` is `null` or `{ id, invoiceNumber, status, receiptNumber }` (`receiptNumber` is `null` until the payment); the order page links to the invoice and its receipt.
 * `lines[]`: `{ id, productId, productCode, productName, quantity, unitPrice, processes[] }`; `processes[]`: `{ id, sequence, name, instructions, status, completedQuantity }`. The required quantity of a process is the `quantity` of its line.
 * `history[]`, newest first, one entry for **every** progress update (never changed): `{ id, lineId, processId, processName, status, completedQuantity, workDate, note, userId, userName, at }`.

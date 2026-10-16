@@ -54,7 +54,7 @@ The frontend only hides what a user may not use (`frontend/src/utils/permissions
 | Action | Admin | Sale Worker (`Sales`) | Factory Worker (`Factory`) |
 |---|---|---|---|
 | Dashboard | all tiles and the chart | order tiles | order tiles |
-| QT: see, make, change, delete | yes | yes | `403` |
+| QT: see, make, change, print, Confirm, delete a Draft | yes | yes | `403` |
 | Production orders: read | yes | yes | yes |
 | Production orders: make or change before the start | yes | yes | `403` |
 | Start production (it deducts stock) | yes | `403` | yes |

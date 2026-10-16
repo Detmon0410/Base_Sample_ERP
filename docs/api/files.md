@@ -1,9 +1,9 @@
 # API - Files (attachments)
 
-Where it is used: the **Evidence** section of a production order (`/sale/orders/:id`) · Frontend: `frontend/src/components/common/Attachments.jsx`, `services/attachments.service.js` · Mock: `services/mock/attachments.js`
+Where it is used: the **Files** of a QT (`/sale/quotations/:id`) and the **Evidence** section of a production order (`/sale/orders/:id`) · Frontend: `frontend/src/components/common/Attachments.jsx`, `services/attachments.service.js` · Mock: `services/mock/attachments.js`
 Conventions: [README.md](README.md)
 
-Files kept with a record. One feature serves every owner: the evidence of a production order now, and the customer's PO and the quotation of a QT ([qt.md](qt.md)) and the files of a purchase order later.
+Files kept with a record. One feature serves every owner: the customer's PO and the quotation of a QT ([qt.md](qt.md)), the evidence of a production order, and later the files of a purchase order.
 
 ## The attachment
 
@@ -22,12 +22,16 @@ Files kept with a record. One feature serves every owner: the evidence of a prod
 
 | `kind` | Meaning | Owners that may have it |
 |---|---|---|
-| `PO_FILE` | The customer's PO on a QT (or the PO file of a purchase order). **One per owner**: a new upload replaces the old one | `QtReference` |
+| `PO_FILE` | The customer's PO on a QT (or the PO file of a purchase order). **One per owner**: a new upload replaces the old one. On a production order it is the **copy** of the PO of its QT, made by the system (below) | `QtReference`; `ProductionOrder` (made by the system only) |
 | `QUOTATION` | A quotation file | `QtReference` |
 | `EVIDENCE` | Images or documents that show the production | `ProductionOrder` |
 | `OTHER` | Any other printable document | every owner |
 
-A kind that the owner may not have answers `400 VALIDATION_ERROR` with `INVALID` on `kind`.
+A kind that the owner may not have answers `400 VALIDATION_ERROR` with `INVALID` on `kind`. A user cannot upload a `PO_FILE` to a production order.
+
+### The PO file of an order
+
+When a QT is confirmed ([qt.md](qt.md)), the system copies its `PO_FILE` to the production order made from it (owner `ProductionOrder`, kind `PO_FILE`), so that everybody who reads the order reads the customer's PO, also a Factory Worker who cannot read the QT. The copy follows the QT: a `PO_FILE` uploaded to the confirmed QT later replaces it, and one deleted from the QT leaves the order too. A user cannot delete the copy on the order (`409 FILE_LOCKED`).
 
 ### The file
 
@@ -66,6 +70,7 @@ Others answer `403 FORBIDDEN` ([auth.md](auth.md#access-by-role-and-department))
 | 400 | `VALIDATION_ERROR` | `errors` = `[{ "path": ["kind"], "code": "INVALID" }]`. Codes: `REQUIRED` (`ownerType`, `kind` or `file` missing), `INVALID` (`ownerType` or `kind` not allowed), `FILE_TYPE`, `FILE_TOO_BIG` |
 | 401 | `UNAUTHORIZED` | No valid token |
 | 403 | `FORBIDDEN` | The role or the department may not do this |
+| 409 | `FILE_LOCKED` | `DELETE` of the `PO_FILE` copy of a production order |
 | 404 | `NOT_FOUND` | The owner or the file does not exist |
 
 ## Rules

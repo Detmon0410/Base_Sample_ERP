@@ -1,0 +1,150 @@
+{
+  "title": "発注",
+  "new": "発注書を追加",
+  "edit": "編集",
+  "search": "検索（発注番号・仕入先・備考）",
+  "poNumber": "発注番号",
+  "supplier": "仕入先",
+  "requiredDate": "希望納期（YYYY-MM-DD）",
+  "requiredShort": "希望納期",
+  "department": "部門",
+  "chooseDepartment": "部門を選択",
+  "notes": "備考",
+  "total": "合計",
+  "status": {
+    "Draft": "下書き",
+    "Sent": "送付済",
+    "Received": "受領済"
+  },
+  "paid": "支払",
+  "allPaid": "すべて",
+  "paidYes": "支払済",
+  "paidNo": "未払い",
+  "all": "すべて",
+  "stock": {
+    "title": "発注が必要な在庫",
+    "hint": "残りが少ない・なくなった材料です。必要なものは発注書を作成してください。",
+    "none": "残りが少ない材料はありません。",
+    "code": "コード",
+    "name": "材料",
+    "total": "在庫",
+    "minLevel": "最低在庫",
+    "status": "状態",
+    "create": "発注書を作成"
+  },
+  "form": {
+    "section": "発注書",
+    "chooseSupplier": "仕入先を選択",
+    "supplierHint": "有効な仕入先のみです。明細には、その仕入先が扱う材料を選べます。",
+    "pickSupplier": "先に仕入先を選択してください。その仕入先の材料を追加できます。",
+    "saved": "発注書を保存しました。",
+    "noPrice": "単価は仕入先の価格から始まります。変更できます。"
+  },
+  "lines": {
+    "title": "材料",
+    "material": "材料",
+    "chooseMaterial": "材料を選択",
+    "quantity": "数量",
+    "unit": "単位",
+    "unitPrice": "単価",
+    "amount": "金額",
+    "total": "合計",
+    "add": "材料を追加",
+    "remove": "この材料を削除",
+    "none": "材料はまだありません。",
+    "lot": "ロット"
+  },
+  "detail": {
+    "section": "発注書",
+    "received": "受領日時",
+    "by": "作成者",
+    "back": "一覧に戻る",
+    "delete": "削除",
+    "deleteTitle": "この発注書を削除しますか？",
+    "deleteText": "「{{name}}」をファイルとともに完全に削除します。元に戻せません。",
+    "deleted": "発注書を削除しました。",
+    "editHint": "下書きのみ変更・削除できます。"
+  },
+  "actions": {
+    "markSent": "送付済にする",
+    "markReceived": "受領済にする",
+    "sentTitle": "この発注書を送付済にしますか？",
+    "sentText": "以後、明細は変更できません。",
+    "sentDone": "送付済にしました。"
+  },
+  "receive": {
+    "title": "入荷の受け入れ",
+    "hint": "材料ごとにロット番号を入力してください。数量はそのロットに加算されます（ロットがなければ新規作成）。加算は1回だけです。",
+    "lot": "ロット番号",
+    "confirm": "確定して在庫に加算",
+    "cancel": "キャンセル",
+    "done": "受け入れ、在庫に加算しました。"
+  },
+  "payment": {
+    "title": "支払",
+    "none": "受領済になると支払を記録できます。",
+    "date": "支払日（YYYY-MM-DD）",
+    "amount": "支払金額",
+    "method": "支払方法",
+    "chooseMethod": "支払方法を選択",
+    "reference": "参照番号",
+    "note": "備考",
+    "record": "支払を記録",
+    "confirmTitle": "支払を記録しますか？",
+    "confirmText": "発注書は支払済になります。後から変更できません。",
+    "done": "支払を記録しました。",
+    "hint": "金額は発注書の合計と同じにしてください：{{total}}。",
+    "paidOn": "{{date}} に {{method}} で支払：{{amount}}",
+    "methods": {
+      "Cash": "現金",
+      "BankTransfer": "銀行振込",
+      "Cheque": "小切手",
+      "CreditCard": "クレジットカード",
+      "Other": "その他"
+    }
+  },
+  "doc": {
+    "section": "発注書フォーム",
+    "title": "発注書",
+    "to": "宛先",
+    "requiredDate": "希望納期",
+    "department": "部門",
+    "preparedBy": "作成者",
+    "approvedBy": "承認者",
+    "receivedBy": "受領者",
+    "dateLine": "日付"
+  },
+  "filesTitle": "ファイル",
+  "errors": {
+    "SUPPLIER_INACTIVE": "この仕入先は有効ではありません。別の仕入先を選択してください。",
+    "NOT_SOLD_BY_SUPPLIER": "この仕入先はこの材料を扱っていません。",
+    "PO_LOCKED": "下書きの発注書のみ変更・削除できます。",
+    "INVALID_STATUS_CHANGE": "状態は下書き、送付済、受領済の順に1つずつ進みます。",
+    "PO_NOT_RECEIVED": "支払は受領後に記録できます。",
+    "ALREADY_PAID": "この発注書はすでに支払済です。"
+  },
+  "suppliers": {
+    "title": "仕入先",
+    "new": "仕入先を追加",
+    "section": "仕入先",
+    "code": "コード",
+    "name": "名称",
+    "contact": "担当者",
+    "address": "住所",
+    "active": "有効",
+    "activeHint": "有効でない仕入先は、新しい発注書で選べません。",
+    "activeYes": "有効",
+    "activeNo": "無効",
+    "itemCount": "材料数",
+    "items": {
+      "title": "扱う材料",
+      "none": "材料はまだありません。",
+      "material": "材料",
+      "chooseMaterial": "材料を選択",
+      "price": "初期単価",
+      "add": "材料を追加",
+      "remove": "この材料を削除"
+    },
+    "allActive": "すべて"
+  }
+}

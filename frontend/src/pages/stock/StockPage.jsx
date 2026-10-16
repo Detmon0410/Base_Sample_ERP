@@ -18,7 +18,7 @@ import { RequirePermission } from "@/routes/RequirePermission";
 import { StockChanges } from "./StockChanges";
 
 const STOCK_STATUSES = ["Normal", "Low", "Out"];
-const EMPTY = { code: "", name: "", minLevel: "", lots: [] };
+const EMPTY = { code: "", name: "", unit: "pcs", minLevel: "", lots: [] };
 
 /** The lots a NEW material starts with (each becomes an "Add" in the stock history). After that the lots change only through stock changes. */
 function LotLines({ form, readOnly }) {
@@ -72,7 +72,7 @@ function MaterialForm() {
       titleOf={(record) => `${record.code} ${record.name}`}
       defaults={EMPTY}
       readOnly={readOnly}
-      toForm={(record) => ({ code: record.code, name: record.name, minLevel: record.minLevel ?? "", lots: record.lots })}
+      toForm={(record) => ({ code: record.code, name: record.name, unit: record.unit, minLevel: record.minLevel ?? "", lots: record.lots })}
       toBody={(values) => values}
     >
       {({ form, record }) => {
@@ -83,6 +83,8 @@ function MaterialForm() {
               <div className="grid gap-5 sm:grid-cols-2">
                 <TextField label={t("materials.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
                 <TextField label={t("materials.name")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />
+                <TextField label={t("materials.unit")} disabled={readOnly} error={errors.unit?.message} {...form.register("unit")} />
+                <p className="self-end pb-2 text-sm text-muted-foreground">{t("materials.unitHint")}</p>
                 <TextField label={t("materials.minLevel")} type="number" min="0" step="0.001" disabled={readOnly} error={errors.minLevel?.message} className="sm:col-span-2" {...form.register("minLevel")} />
                 <p className="text-sm text-muted-foreground sm:col-span-2">{t("materials.minLevelHint")}</p>
               </div>

@@ -19,6 +19,7 @@ export const NAV = [
       { key: "productionOrders", to: "/sale/orders", labelKey: "productionOrders", icon: "productionOrders", action: "orders.view" },
     ],
   },
+  { key: "purchase", to: "/purchase/orders", labelKey: "purchase", icon: "purchase", action: "purchase.use" },
   {
     key: "accounting",
     labelKey: "accounting",
@@ -44,6 +45,7 @@ export const NAV = [
     items: [
       { key: "customers", to: "/master/customers", labelKey: "customers", icon: "customers", action: "customers.view" },
       { key: "products", to: "/master/products", labelKey: "products", icon: "products", action: "products.view" },
+      { key: "suppliers", to: "/master/suppliers", labelKey: "suppliers", icon: "suppliers", action: "suppliers.view" },
       { key: "users", to: "/master/users", labelKey: "users", icon: "users", action: "users.use" },
     ],
   },

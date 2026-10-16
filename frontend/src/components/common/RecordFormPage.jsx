@@ -23,7 +23,7 @@ import { applyServerErrors } from "@/utils/serverErrors";
  *   newTitle   title of a new record;  titleOf(record) the title of an existing one
  *   defaults   the empty form;  toForm(record) -> form values;  toBody(values) -> what is sent
  *   readOnly   no Save (a Worker looking at products or materials, a QT that is confirmed)
- *   afterSave  (saved) => path: where a NEW record goes after Save (default: the list), for a page that has more to do on the record
+ *   afterSave  (saved) => path: where the page goes after Save (default: the list), for a page that has more to do on the record
  *   actions    ({ record }) => the extra buttons of a saved record (for example Confirm)
  *   children   ({ form, record, readOnly }) => the fields
  */
@@ -44,11 +44,8 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
   const onSubmit = form.handleSubmit(async (values) => {
     setSummary(null);
     try {
-      let next = listPath;
-      if (isNew) {
-        const saved = await api.create(toBody(values));
-        if (afterSave) next = afterSave(saved);
-      } else await api.update(id, toBody(values));
+      const saved = isNew ? await api.create(toBody(values)) : await api.update(id, toBody(values));
+      const next = afterSave ? afterSave(saved) : listPath;
       toast.success(t("master:form.saved"));
       navigate(next);
     } catch (error) {

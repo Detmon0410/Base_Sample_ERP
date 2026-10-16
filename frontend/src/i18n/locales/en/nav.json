@@ -26,5 +26,7 @@
   "receipts": "Receipts",
   "userMenu": "User menu",
   "role": "Role",
-  "department": "Department"
+  "department": "Department",
+  "purchase": "Purchase",
+  "suppliers": "Suppliers"
 }

@@ -7,9 +7,11 @@ import { Pagination } from "@/components/common/Pagination";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
 import { useLoad } from "@/hooks/useLoad";
 import { stockApi } from "@/services/master.service";
 import { formatDateTime, formatNumber } from "@/utils/format";
+import { can } from "@/utils/permissions";
 
 const PAGE_SIZE = 20;
 const KINDS = ["Add", "Deduct", "Adjust"];
@@ -21,6 +23,7 @@ const DAY = /^\d{4}-\d{2}-\d{2}$/; // a typed date is sent only when it has the 
  * opens the material, where an Admin changes the stock.
  */
 export function StockMovementsPage() {
+  const { user } = useAuth();
   const { t, i18n } = useTranslation(["master", "common"]);
   const navigate = useNavigate();
   const language = i18n.language;
@@ -116,6 +119,7 @@ export function StockMovementsPage() {
                   </TableCell>
                   <TableCell data-label={t("master:stock.colOrder")} className="px-4 py-3">
                     {row.orderId ? <Link to={`/sale/orders/${row.orderId}`}>{row.orderNumber}</Link> : null}
+                    {row.purchaseOrderId ? can(user, "purchase.use") ? <Link to={`/purchase/orders/${row.purchaseOrderId}`}>{row.purchaseOrderNumber}</Link> : row.purchaseOrderNumber : null}
                   </TableCell>
                   <TableCell data-label={t("master:stock.colNote")} className="px-4 py-3 whitespace-normal">
                     {row.note}

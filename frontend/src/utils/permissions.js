@@ -35,6 +35,10 @@ export const ACTIONS = {
   "customers.view": ["Sales"],
   "customers.write": ADMIN,
 
+  "suppliers.view": ["Factory"],
+  "suppliers.write": ADMIN,
+  "purchase.use": ["Factory"], // purchase orders: make, print, move the status, pay, files
+
   "invoices.use": ADMIN,
   "receipts.use": ADMIN,
   "users.use": ADMIN,

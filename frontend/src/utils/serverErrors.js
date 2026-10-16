@@ -2,7 +2,7 @@ import i18n from "i18next";
 
 /** The text of an error code: the first of `invoices`, `orders`, `master` that has one (a missing key is never asked for), else `fallback`. */
 function errorText(t, code, fallback) {
-  const namespace = ["invoices", "orders", "master"].find((ns) => i18n.exists(`${ns}:errors.${code}`));
+  const namespace = ["invoices", "orders", "purchase", "master"].find((ns) => i18n.exists(`${ns}:errors.${code}`));
   return namespace ? t(`${namespace}:errors.${code}`) : t(`master:errors.${fallback}`);
 }
 

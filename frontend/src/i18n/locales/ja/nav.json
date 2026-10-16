@@ -26,5 +26,7 @@
   "receipts": "領収書",
   "userMenu": "ユーザーメニュー",
   "role": "権限",
-  "department": "部署"
+  "department": "部署",
+  "purchase": "発注",
+  "suppliers": "仕入先"
 }

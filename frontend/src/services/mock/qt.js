@@ -28,7 +28,8 @@ const withoutFileData = (record) => {
 export const qtRoutes = resource({
   path: "/qt",
   store: qtReferences,
-  readRoles: ["Admin"],
+  readAction: "qt.use",
+  writeAction: "qt.use",
   unique: ["qtNumber"],
   searchIn: ["qtNumber", "notes", customerName],
   toView: withCustomer,

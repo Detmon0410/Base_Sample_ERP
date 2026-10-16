@@ -6,7 +6,7 @@
 import { MockHttpError, MockResponse } from "./errors.js";
 import { materialView, STOCK_STATUSES } from "./stockStatus.js";
 import { mockUsers, toPublicUser, userFromAuthorization } from "./users.js";
-import { DEPARTMENTS, ROLES } from "@/utils/permissions";
+import { DEPARTMENTS, ROLES, WORKER_DEPARTMENTS, can } from "@/utils/permissions";
 
 const stamp = () => new Date().toISOString();
 export const text = (value) => String(value ?? "").trim();
@@ -19,12 +19,12 @@ export const invalid = (issues) => {
 export const issue = (field, code) => ({ path: field.split("."), code });
 
 /** Builds the routes of one resource. `normalize(body, record)` returns the clean fields or throws through `invalid`. */
-export function resource({ path, store, readRoles, normalize, unique = [], searchIn, toView = (record) => record, toListView = toView, filter = () => true }) {
+export function resource({ path, store, readAction, writeAction, normalize, unique = [], searchIn, toView = (record) => record, toListView = toView, filter = () => true }) {
   let nextId = store.reduce((max, record) => Math.max(max, record.id), 0) + 1;
 
   const access = (authorization, write) => {
     const user = userFromAuthorization(authorization);
-    if ((write || !readRoles.includes(user.role)) && user.role !== "Admin") throw new MockHttpError(403, "FORBIDDEN", "Not allowed");
+    if (!can(user, write ? writeAction : readAction)) throw new MockHttpError(403, "FORBIDDEN", "Not allowed");
     return user;
   };
   const find = (id) => {
@@ -82,7 +82,8 @@ export const materials = [];
 const customerRoutes = resource({
   path: "/customers",
   store: customers,
-  readRoles: ["Admin"],
+  readAction: "customers.view",
+  writeAction: "customers.write",
   searchIn: ["name", "email", "telephone"],
   normalize: (body) => {
     const data = { name: text(body.name), address: text(body.address), email: text(body.email), telephone: text(body.telephone) };
@@ -97,7 +98,8 @@ const customerRoutes = resource({
 const productRoutes = resource({
   path: "/products",
   store: products,
-  readRoles: ["Admin", "Worker"],
+  readAction: "products.view",
+  writeAction: "products.write",
   unique: ["code"],
   searchIn: ["code", "name"],
   normalize: (body) => {
@@ -122,7 +124,8 @@ const productRoutes = resource({
 const materialRoutes = resource({
   path: "/materials",
   store: materials,
-  readRoles: ["Admin", "Worker"],
+  readAction: "stock.view",
+  writeAction: "materials.write",
   unique: ["code"],
   searchIn: ["code", "name"],
   toView: materialView,
@@ -151,7 +154,8 @@ const materialRoutes = resource({
 const userRoutes = resource({
   path: "/users",
   store: mockUsers,
-  readRoles: ["Admin"],
+  readAction: "users.use",
+  writeAction: "users.use",
   unique: ["email"],
   searchIn: ["name", "email", "department"],
   toView: (user) => ({ ...toPublicUser(user), createdAt: user.createdAt, lastLoginAt: user.lastLoginAt }),
@@ -161,6 +165,7 @@ const userRoutes = resource({
     const issues = [];
     if (!data.name) issues.push(issue("name", "REQUIRED"));
     if (!DEPARTMENTS.includes(data.department)) issues.push(issue("department", "REQUIRED"));
+    else if (data.role === "Worker" && !WORKER_DEPARTMENTS.includes(data.department)) issues.push(issue("department", "INVALID")); // a Worker is in Sales or Factory
     if (!data.email) issues.push(issue("email", "REQUIRED"));
     else if (!EMAIL.test(data.email)) issues.push(issue("email", "INVALID"));
     if (!ROLES.includes(data.role)) issues.push(issue("role", "REQUIRED"));

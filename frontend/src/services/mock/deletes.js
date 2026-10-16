@@ -14,7 +14,7 @@ import { customers, materials, products } from "./master.js";
 import { orders } from "./orders.js";
 import { qtReferences } from "./qt.js";
 import { stockChanges } from "./stock.js";
-import { mockUsers, userFromAuthorization } from "./users.js";
+import { mockUsers, requireCan, userFromAuthorization } from "./users.js";
 
 const SHOWN = 5; // how many names of a kind are listed
 
@@ -85,7 +85,7 @@ export const deleteRoutes = {
   },
 
   "DELETE /qt/:id": ({ authorization, params }) => {
-    admin(authorization);
+    requireCan(authorization, "qt.use"); // a Sale Worker deletes a QT too
     const qt = find(qtReferences, params.id);
     remove(qtReferences, qt, [place("order", orders.filter((order) => order.qtId === qt.id).map((order) => order.orderNumber))]);
     return null;

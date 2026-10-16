@@ -1,6 +1,9 @@
 // The users of the mock: the store behind the login, GET /auth/me and the token check.
 // Passwords are kept in plain text here because this is only a stand-in for the backend.
-// A user: { id, name, department, email, password, role: "Admin" | "Worker" }. The department is only a field.
+// A user: { id, name, department, email, password, role: "Admin" | "Worker" }. A Worker is a Sale Worker (department Sales) or a Factory
+// Worker (department Factory); the department decides the access (utils/permissions.js).
+
+import { can } from "@/utils/permissions";
 
 import { MockHttpError } from "./errors.js";
 
@@ -9,6 +12,7 @@ const STAMP = "2026-10-01T09:00:00.000Z";
 export const mockUsers = [
   { id: 1, name: "Admin", department: "Administration", email: "admin@gmail.com", password: "admin", role: "Admin" },
   { id: 2, name: "Worker", department: "Factory", email: "worker@gmail.com", password: "worker", role: "Worker" },
+  { id: 3, name: "Sale", department: "Sales", email: "sale@gmail.com", password: "sale", role: "Worker" },
 ].map((user) => ({ createdAt: STAMP, updatedAt: STAMP, lastLoginAt: null, sessionVersion: 0, ...user }));
 
 /** What the app may see of a user (never the password). */
@@ -36,6 +40,13 @@ export function userFromAuthorization(authorization) {
 export function requireAdmin(authorization) {
   const user = userFromAuthorization(authorization);
   if (user.role !== "Admin") throw new MockHttpError(403, "FORBIDDEN", "Admin only");
+  return user;
+}
+
+/** The signed-in user, or 403 when the action (a key of ACTIONS in utils/permissions.js) is not for them. */
+export function requireCan(authorization, action) {
+  const user = userFromAuthorization(authorization);
+  if (!can(user, action)) throw new MockHttpError(403, "FORBIDDEN", "Not allowed");
   return user;
 }
 

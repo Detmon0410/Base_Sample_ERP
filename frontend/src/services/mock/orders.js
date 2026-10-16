@@ -12,7 +12,9 @@
 import { MockHttpError, MockResponse } from "./errors.js";
 import { customers, invalid, issue, number, products, text } from "./master.js";
 import { qtReferences } from "./qt.js";
-import { userFromAuthorization } from "./users.js";
+import { can } from "@/utils/permissions";
+
+import { requireCan } from "./users.js";
 
 export const orders = [];
 /** The invoices live here too: an order that has an invoice cannot change any more (the store is filled by invoices.js). */
@@ -64,11 +66,8 @@ const toListView = (order) => {
   return { ...rest, productCodes: lines.map((line) => line.productCode).join(" ") }; // the list is searched by product code too
 };
 
-function access(authorization, adminOnly) {
-  const user = userFromAuthorization(authorization);
-  if (adminOnly && user.role !== "Admin") throw new MockHttpError(403, "FORBIDDEN", "Admin only");
-  return user;
-}
+/** The signed-in user, or 403 when the action (a key of ACTIONS in utils/permissions.js) is not for them. */
+const access = requireCan;
 
 function find(orderId) {
   const order = orders.find((item) => item.id === Number(orderId));
@@ -112,7 +111,7 @@ const withIds = (lines) =>
 
 export const orderRoutes = {
   "GET /orders": ({ authorization, query }) => {
-    access(authorization, false);
+    access(authorization, "orders.view");
     const q = text(query.q).toLowerCase();
     let rows = orders.map(toListView).filter((row) => (!query.status || row.status === query.status) && (!q || [row.orderNumber, row.customerName, row.qtNumber, row.notes, row.productCodes].some((value) => String(value).toLowerCase().includes(q))));
     rows = rows.sort((a, b) => b.id - a.id);
@@ -122,12 +121,12 @@ export const orderRoutes = {
   },
 
   "GET /orders/:id": ({ authorization, params }) => {
-    access(authorization, false);
+    access(authorization, "orders.view");
     return toView(find(params.id));
   },
 
   "POST /orders": ({ authorization, body }) => {
-    access(authorization, true);
+    access(authorization, "orders.edit");
     const data = normalize(body);
     const year = new Date().getFullYear();
     const count = orders.filter((order) => order.orderNumber.startsWith(`ORD-${year}-`)).length;
@@ -147,7 +146,7 @@ export const orderRoutes = {
   },
 
   "PUT /orders/:id": ({ authorization, params, body }) => {
-    access(authorization, true);
+    access(authorization, "orders.edit");
     const order = find(params.id);
     if (order.started) throw new MockHttpError(409, "ORDER_LOCKED", "The order has started; its products and processes cannot change");
     const data = normalize(body);
@@ -156,7 +155,7 @@ export const orderRoutes = {
   },
 
   "POST /orders/:id/start": ({ authorization, params }) => {
-    access(authorization, true);
+    access(authorization, "orders.start");
     const order = find(params.id);
     if (order.started) throw new MockHttpError(409, "ALREADY_STARTED", "The order has started already");
     if (order.lines.length === 0 || order.lines.some((line) => line.processes.length === 0)) {
@@ -169,7 +168,7 @@ export const orderRoutes = {
   },
 
   "POST /orders/:id/progress": ({ authorization, params, body }) => {
-    const user = access(authorization, false);
+    const user = access(authorization, "orders.progress");
     const order = find(params.id);
     if (!order.started) throw new MockHttpError(409, "ORDER_NOT_STARTED", "The order has not started");
     if (invoices.some((invoice) => invoice.orderId === order.id)) throw new MockHttpError(409, "ORDER_INVOICED", "The order is invoiced; its progress cannot change");
@@ -178,7 +177,7 @@ export const orderRoutes = {
     const line = order.lines.find((item) => item.processes.some((process) => process.id === processId));
     const process = line?.processes.find((item) => item.id === processId);
     if (!process) throw new MockHttpError(404, "NOT_FOUND", "Process not found");
-    if (process.status === "Completed" && user.role !== "Admin") throw new MockHttpError(403, "COMPLETED_LOCKED", "Only an Admin can reopen a completed process");
+    if (process.status === "Completed" && !can(user, "orders.reopen")) throw new MockHttpError(403, "COMPLETED_LOCKED", "Only an Admin can reopen a completed process");
 
     const entry = { status: text(body.status), completedQuantity: number(body.completedQuantity), workDate: text(body.workDate), note: text(body.note) };
     const required = line.quantity;

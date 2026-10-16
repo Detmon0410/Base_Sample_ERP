@@ -10,7 +10,9 @@ import { MockHttpError, MockResponse } from "./errors.js";
 import { invalid, issue, materials, masterRoutes, number, products, text } from "./master.js";
 import { orderRoutes, orders } from "./orders.js";
 import { materialView } from "./stockStatus.js";
-import { userFromAuthorization } from "./users.js";
+import { can } from "@/utils/permissions";
+
+import { requireCan, userFromAuthorization } from "./users.js";
 
 export const stockChanges = [];
 
@@ -63,7 +65,7 @@ export const stockRoutes = {
   "POST /orders/:id/start": (request) => {
     const user = userFromAuthorization(request.authorization);
     const order = orders.find((item) => item.id === Number(request.params.id));
-    const ready = order && !order.started && user.role === "Admin" && order.lines.length > 0 && order.lines.every((line) => line.processes.length > 0);
+    const ready = order && !order.started && can(user, "orders.start") && order.lines.length > 0 && order.lines.every((line) => line.processes.length > 0);
     const needed = ready ? materialsNeeded(order) : [];
     const short = needed
       .map(({ material, need }) => ({ materialId: material.id, materialCode: material.code, materialName: material.name, need, have: round(material.lots.reduce((sum, lot) => sum + lot.quantity, 0)) }))
@@ -120,6 +122,7 @@ export const stockRoutes = {
 
   // the code and the name can change; the lots only through stock changes
   "PUT /materials/:id": (request) => {
+    requireCan(request.authorization, "materials.write"); // the answer 403 comes before 404
     const material = findMaterial(request.params.id);
     return masterRoutes["PUT /materials/:id"]({ ...request, body: { ...request.body, lots: material.lots } });
   },
@@ -134,8 +137,7 @@ export const stockRoutes = {
   },
 
   "POST /materials/:id/stock-changes": ({ authorization, params, body }) => {
-    const user = userFromAuthorization(authorization);
-    if (user.role !== "Admin") throw new MockHttpError(403, "FORBIDDEN", "Admin only");
+    const user = requireCan(authorization, "stock.change");
     const material = findMaterial(params.id);
 
     const kind = text(body.kind);

@@ -5,12 +5,17 @@ import { Route, Routes } from "react-router";
 import { RecordFormPage } from "@/components/common/RecordFormPage";
 import { RecordList } from "@/components/common/RecordList";
 import { Section, TextField } from "@/components/common/FormFields";
+import { useAuth } from "@/hooks/useAuth";
+import { RequirePermission } from "@/routes/RequirePermission";
 import { customersApi } from "@/services/master.service";
+import { can } from "@/utils/permissions";
 
 const EMPTY = { name: "", address: "", email: "", telephone: "" };
 
 function CustomerForm() {
   const { t } = useTranslation("master");
+  const { user } = useAuth();
+  const readOnly = !can(user, "customers.write"); // a Sale Worker only looks
   return (
     <RecordFormPage
       api={customersApi}
@@ -18,6 +23,7 @@ function CustomerForm() {
       newTitle={t("customers.new")}
       titleOf={(record) => record.name}
       defaults={EMPTY}
+      readOnly={readOnly}
       toForm={(record) => ({ name: record.name, address: record.address, email: record.email, telephone: record.telephone })}
       toBody={(values) => values}
     >
@@ -26,10 +32,10 @@ function CustomerForm() {
         return (
           <Section icon={Users} title={t("customers.section")}>
             <div className="grid gap-5 sm:grid-cols-2">
-              <TextField label={t("customers.name")} error={errors.name?.message} className="sm:col-span-2" {...form.register("name")} />
-              <TextField label={t("customers.address")} error={errors.address?.message} className="sm:col-span-2" {...form.register("address")} />
-              <TextField label={t("customers.email")} type="email" error={errors.email?.message} {...form.register("email")} />
-              <TextField label={t("customers.telephone")} type="tel" error={errors.telephone?.message} {...form.register("telephone")} />
+              <TextField label={t("customers.name")} error={errors.name?.message} disabled={readOnly} className="sm:col-span-2" {...form.register("name")} />
+              <TextField label={t("customers.address")} error={errors.address?.message} disabled={readOnly} className="sm:col-span-2" {...form.register("address")} />
+              <TextField label={t("customers.email")} type="email" error={errors.email?.message} disabled={readOnly} {...form.register("email")} />
+              <TextField label={t("customers.telephone")} type="tel" error={errors.telephone?.message} disabled={readOnly} {...form.register("telephone")} />
             </div>
           </Section>
         );
@@ -38,19 +44,20 @@ function CustomerForm() {
   );
 }
 
-/** Customers (Admin): the list, a new customer, one customer. */
+/** Customers: the list, a new customer, one customer. The Admin changes them; a Sale Worker only looks. */
 export function CustomersPage() {
   const { t } = useTranslation("master");
+  const { user } = useAuth();
   return (
     <Routes>
       <Route
         index
         element={
           <RecordList
-                  api={customersApi}
+            api={customersApi}
             base="/master/customers"
             title={t("customers.title")}
-            canCreate
+            canCreate={can(user, "customers.write")}
             newLabel={t("customers.new")}
             columns={[
               { key: "name", header: t("customers.name") },
@@ -61,7 +68,9 @@ export function CustomersPage() {
           />
         }
       />
-      <Route path="new" element={<CustomerForm />} />
+      <Route element={<RequirePermission action="customers.write" />}>
+        <Route path="new" element={<CustomerForm />} />
+      </Route>
       <Route path=":id" element={<CustomerForm />} />
     </Routes>
   );

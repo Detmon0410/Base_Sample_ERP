@@ -12,8 +12,9 @@ import { FieldError } from "@/components/ui/field";
 import { useAuth } from "@/hooks/useAuth";
 import { formatNumber } from "@/utils/format";
 import { materialsApi } from "@/services/master.service";
-import { isAdmin } from "@/utils/permissions";
+import { can } from "@/utils/permissions";
 
+import { RequirePermission } from "@/routes/RequirePermission";
 import { StockChanges } from "./StockChanges";
 
 const STOCK_STATUSES = ["Normal", "Low", "Out"];
@@ -62,7 +63,7 @@ function LotLines({ form, readOnly }) {
 function MaterialForm() {
   const { t } = useTranslation("master");
   const { user } = useAuth();
-  const readOnly = !isAdmin(user);
+  const readOnly = !can(user, "materials.write");
   return (
     <RecordFormPage
       api={materialsApi}
@@ -101,7 +102,7 @@ function MaterialPage() {
   return (
     <>
       <MaterialForm />
-      {id ? <StockChanges materialId={id} canChange={isAdmin(user)} /> : null}
+      {id ? <StockChanges materialId={id} canChange={can(user, "stock.change")} /> : null}
     </>
   );
 }
@@ -119,7 +120,7 @@ export function StockPage() {
             api={materialsApi}
             base="/stock/materials"
             title={t("materials.title")}
-            canCreate={isAdmin(user)}
+            canCreate={can(user, "materials.write")}
             newLabel={t("materials.new")}
             statusOptions={[{ value: "", label: t("list.all") }, ...STOCK_STATUSES.map((value) => ({ value, label: t(`stock.status.${value}`) }))]}
             statusOf={(row) => <StockStatus status={row.stockStatus} />}
@@ -132,7 +133,9 @@ export function StockPage() {
           />
         }
       />
-      <Route path="new" element={<MaterialPage />} />
+      <Route element={<RequirePermission action="materials.write" />}>
+        <Route path="new" element={<MaterialPage />} />
+      </Route>
       <Route path=":id" element={<MaterialPage />} />
     </Routes>
   );

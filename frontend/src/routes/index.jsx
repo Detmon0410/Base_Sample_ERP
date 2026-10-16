@@ -59,13 +59,13 @@ export function AppRoutes() {
           {NAV_ITEMS.map((item) => {
             const Page = IMPLEMENTED_PAGES[item.key] ?? UnderConstructionPage;
             return (
-              <Route key={item.key} element={<RequirePermission roles={item.roles} />}>
+              <Route key={item.key} element={<RequirePermission action={item.action} />}>
                 {item.to === "/" ? <Route index element={<Page />} /> : <Route path={`${item.to.slice(1)}/*`} element={<Page />} />}
               </Route>
             );
           })}
 
-          <Route element={<RequirePermission roles={["Admin", "Worker"]} />}>
+          <Route element={<RequirePermission action="stock.view" />}>
             <Route path="stock" element={<Navigate to="/stock/materials" replace />} />
             <Route path="stock/:id" element={<LegacyMaterialRedirect />} />
           </Route>

@@ -7,23 +7,23 @@ import { RecordList } from "@/components/common/RecordList";
 import { useAuth } from "@/hooks/useAuth";
 import { useLoad } from "@/hooks/useLoad";
 import { ordersApi } from "@/services/orders.service";
-import { isAdmin } from "@/utils/permissions";
+import { can } from "@/utils/permissions";
 
 import { OrderForm } from "./OrderForm";
 import { OrderView } from "./OrderView";
 import { statusKey } from "@/utils/serverErrors";
 
-/** An order: an Admin edits one that has not started; everything else is the view with the progress. */
+/** An order: an Admin or a Sale Worker edits one that has not started; everything else is the view with the progress. */
 function OrderPage() {
   const { id } = useParams();
   const { t } = useTranslation(["orders", "common", "master"]);
   const { user } = useAuth();
   const { data, error, loading, reload } = useLoad(() => (id ? ordersApi.get(id) : Promise.resolve(null)), [id]);
 
-  if (!id) return isAdmin(user) ? <OrderForm /> : <Navigate to="/403" replace />;
+  if (!id) return can(user, "orders.edit") ? <OrderForm /> : <Navigate to="/403" replace />;
   if (error) return <PageHeader title={t("master:form.notFound")} />;
   if (loading) return <PageHeader title={t("common:loading")} />;
-  return isAdmin(user) && !data.started ? <OrderForm key={data.updatedAt} order={data} onChanged={reload} /> : <OrderView order={data} onChanged={reload} />;
+  return can(user, "orders.edit") && !data.started ? <OrderForm key={data.updatedAt} order={data} onChanged={reload} /> : <OrderView order={data} onChanged={reload} />;
 }
 
 /** Production orders: the list (search, status filter), a new order, one order. */
@@ -41,7 +41,7 @@ export function OrdersPage() {
             api={ordersApi}
             base="/sale/orders"
             title={t("title")}
-            canCreate={isAdmin(user)}
+            canCreate={can(user, "orders.edit")}
             newLabel={t("new")}
             statusOptions={[{ value: "", label: t("master:list.all") }, ...statuses.map((value) => ({ value, label: t(`status.${statusKey(value)}`) }))]}
             statusOf={(row) => <StatusBadge tone={{ New: "neutral", InProgress: "progress", Completed: "good" }[statusKey(row.status)]}>{t(`status.${statusKey(row.status)}`)}</StatusBadge>}

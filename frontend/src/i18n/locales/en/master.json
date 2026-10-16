@@ -88,6 +88,12 @@
       "Factory": "Factory",
       "Accounting": "Accounting",
       "Administration": "Administration"
+    },
+    "access": {
+      "Admin": "Admin: everything.",
+      "Worker": "A Worker is in the Sales or the Factory department; the department decides what the Worker may do.",
+      "Sales": "Sale Worker: quotations, and the order before it starts. Can look at stock, products and customers.",
+      "Factory": "Factory Worker: start production, record progress, change stock. Can look at orders and products."
     }
   },
   "qt": {

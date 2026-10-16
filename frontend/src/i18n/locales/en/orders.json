@@ -70,7 +70,8 @@
     "hint": "Save your changes first: the start uses the saved order.",
     "done": "The production has started.",
     "short": "{{name}}: needs {{need}}, in stock {{have}}.",
-    "addStock": "Add stock"
+    "addStock": "Add stock",
+    "viewHint": "Starting deducts the materials of the BOM from the stock."
   },
   "errors": {
     "ORDER_NOT_READY": "The order needs at least one product, and every product needs at least one process.",

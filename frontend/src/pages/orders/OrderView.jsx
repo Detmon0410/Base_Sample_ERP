@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { NativeSelect, Section, TextField } from "@/components/common/FormFields";
 import { Attachments } from "@/components/common/Attachments";
 import { PageHeader } from "@/components/common/PageHeader";
+import { StepChain } from "@/components/common/StepChain";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -115,6 +116,11 @@ export function OrderView({ order, onChanged }) {
       <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} statusTone={{ Draft: "neutral", InProgress: "progress", Completed: "good" }[statusKey(order.status)]} />
 
       <div className="flex max-w-5xl flex-col gap-5">
+        <StepChain
+          label={t("orders:steps.label")}
+          current={statusKey(order.status)}
+          steps={["Draft", "InProgress", "Completed"].map((key) => ({ key, label: t(`orders:status.${key}`) }))}
+        />
         {order.started && order.status === "Draft" ? <p className="font-semibold">{t("orders:started")}</p> : null} {/* started, but no process has started yet */}
         {mayStart ? (
           <div className="flex flex-wrap items-center gap-3">

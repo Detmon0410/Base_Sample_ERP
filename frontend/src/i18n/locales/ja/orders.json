@@ -8,6 +8,9 @@
   "notes": "備考",
   "startedAt": "着手日時",
   "notStarted": "まだ着手していません",
+  "steps": {
+    "label": "この注文の進み具合"
+  },
   "status": {
     "Draft": "下書き",
     "InProgress": "作業中",

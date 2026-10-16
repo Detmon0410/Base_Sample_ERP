@@ -51,7 +51,14 @@ export function AppHeader() {
   }, []);
 
   const nav = getVisibleNav(user);
-  const toggle = (key) => setOpen((value) => (value === key ? null : key));
+  // With a mouse on a wide screen a menu opens when the pointer is over it and closes when it leaves; a click keeps it open.
+  // On a touch screen, and with the keyboard, a click opens and closes it.
+  const canHover = () => typeof window.matchMedia === "function" && window.matchMedia("(hover: hover) and (min-width: 768px)").matches;
+  const toggle = (key) => setOpen((value) => (value === key && !canHover() ? null : key));
+  const hover = (key) => ({
+    onMouseEnter: () => canHover() && setOpen(key),
+    onMouseLeave: () => canHover() && setOpen((value) => (value === key ? null : value)),
+  });
   const link = (item) => (
     <NavLink key={item.key} to={item.to} end={item.to === "/"} className={({ isActive }) => cn(ENTRY, isActive && CURRENT)}>
       <NavIcon name={item.icon} />
@@ -70,7 +77,7 @@ export function AppHeader() {
           entry.type === "link" ? (
             link(entry.item)
           ) : (
-            <div key={entry.key} className="relative flex md:items-stretch">
+            <div key={entry.key} className="relative flex md:items-stretch" {...hover(entry.key)}>
               <button
                 type="button"
                 aria-expanded={open === entry.key}
@@ -112,7 +119,7 @@ export function AppHeader() {
           {t("nav:menu")}
         </button>
 
-        <div className="relative flex items-stretch">
+        <div className="relative flex items-stretch" {...hover("user")}>
           <button type="button" aria-label={user?.name} aria-expanded={open === "user"} aria-haspopup="true" onClick={() => toggle("user")} className={cn(ENTRY, "gap-3", open === "user" && "bg-white/15 text-white")}>
             <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full bg-white/25 text-sm font-bold text-white">
               {(user?.name ?? "?").trim().charAt(0).toUpperCase()}

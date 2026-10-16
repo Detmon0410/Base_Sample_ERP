@@ -9,6 +9,7 @@
 //   users       signed in now, the last Admin, or recorded a progress update or a stock change
 //   QT          used by a production order (the file goes with it)
 
+import { removeAttachmentsOf } from "./attachments.js";
 import { MockHttpError } from "./errors.js";
 import { customers, materials, products } from "./master.js";
 import { orders } from "./orders.js";
@@ -88,6 +89,7 @@ export const deleteRoutes = {
     requireCan(authorization, "qt.use"); // a Sale Worker deletes a QT too
     const qt = find(qtReferences, params.id);
     remove(qtReferences, qt, [place("order", orders.filter((order) => order.qtId === qt.id).map((order) => order.orderNumber))]);
+    removeAttachmentsOf("QtReference", qt.id); // the files go with the QT
     return null;
   },
 };

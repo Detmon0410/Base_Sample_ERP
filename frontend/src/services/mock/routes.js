@@ -4,6 +4,7 @@ import { invoiceRoutes } from "./invoices.js";
 import { orderRoutes } from "./orders.js";
 import { stockRoutes } from "./stock.js";
 import { deleteRoutes } from "./deletes.js";
+import { attachmentRoutes } from "./attachments.js";
 import { dashboardRoutes } from "./dashboard.js";
 import { PERSIST } from "./persist.js";
 import { seedMock } from "./seed.js";
@@ -23,6 +24,7 @@ export const mockRoutes = {
   ...orderRoutes,
   ...invoiceRoutes,
   ...dashboardRoutes,
+  ...attachmentRoutes,
   ...deleteRoutes,
   ...stockRoutes, // after masterRoutes and orderRoutes: it wraps POST of /materials and the start of an order
 };

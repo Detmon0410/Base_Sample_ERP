@@ -59,5 +59,26 @@
   "downloadPdf": "PDFをダウンロード",
   "makingPdf": "PDFを作成中...",
   "pdfFailed": "PDFを作成できませんでした。印刷は引き続き使えます。",
-  "receiptsTitle": "領収書"
+  "receiptsTitle": "領収書",
+  "accounting": {
+    "tabsLabel": "経理の作業",
+    "tabs": {
+      "toInvoice": "請求書の発行待ち",
+      "unpaid": "入金待ち",
+      "paid": "入金済み"
+    },
+    "toInvoiceCount": "請求書を発行する指示書",
+    "unpaidTotal": "入金待ちの合計",
+    "orderDate": "指示書の日付",
+    "statusColumn": "状態",
+    "issue": "請求書を発行",
+    "pay": "入金を記録",
+    "openReceipt": "領収書",
+    "empty": {
+      "toInvoice": "請求書の発行を待つ完了済みの指示書はありません。",
+      "unpaid": "入金待ちの請求書はありません。",
+      "paid": "入金済みの請求書はまだありません。"
+    },
+    "failed": "経理の一覧を読み込めませんでした。"
+  }
 }

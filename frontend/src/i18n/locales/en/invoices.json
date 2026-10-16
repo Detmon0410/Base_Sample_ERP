@@ -59,5 +59,26 @@
   "downloadPdf": "Download PDF",
   "makingPdf": "Making the PDF...",
   "pdfFailed": "The PDF could not be made. You can still print the document.",
-  "receiptsTitle": "Receipts"
+  "receiptsTitle": "Receipts",
+  "accounting": {
+    "tabsLabel": "Money jobs",
+    "tabs": {
+      "toInvoice": "To invoice",
+      "unpaid": "Waiting for payment",
+      "paid": "Paid"
+    },
+    "toInvoiceCount": "Orders to invoice",
+    "unpaidTotal": "Waiting for payment",
+    "orderDate": "Order date",
+    "statusColumn": "Status",
+    "issue": "Issue invoice",
+    "pay": "Record payment",
+    "openReceipt": "Receipt",
+    "empty": {
+      "toInvoice": "No completed order is waiting for an invoice.",
+      "unpaid": "No invoice is waiting for payment.",
+      "paid": "No invoice has been paid yet."
+    },
+    "failed": "The accounting lists could not be loaded."
+  }
 }

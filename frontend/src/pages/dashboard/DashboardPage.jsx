@@ -54,9 +54,9 @@ export function DashboardPage() {
             </div>
             {data.invoicing ? (
               <div className="grid gap-4 sm:grid-cols-3">
-                <Tile to="/accounting/invoices" icon={ReceiptText} label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
-                <Tile to="/accounting/invoices" icon={Banknote} label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
-                <Tile to="/accounting/invoices" icon={CircleCheck} label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
+                <Tile to="/accounting" icon={ReceiptText} label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
+                <Tile to="/accounting" icon={Banknote} label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
+                <Tile to="/accounting" icon={CircleCheck} label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
               </div>
             ) : null}
           </section>

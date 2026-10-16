@@ -12,19 +12,21 @@ export const PAGES = [
   { path: "/", name: "Dashboard", roles: ["admin", "sale", "factory"] },
   { path: "/sale/quotations", name: "Quotations", roles: ["admin", "sale"] },
   { path: "/sale/orders", name: "Production orders", roles: ["admin", "sale", "factory"] },
+  { path: "/purchase/orders", name: "Purchase orders", roles: ["admin", "factory"] },
   { path: "/accounting/invoices", name: "Invoices", roles: ["admin"] },
   { path: "/accounting/receipts", name: "Receipts", roles: ["admin"] },
   { path: "/stock/materials", name: "Materials and stock", roles: ["admin", "sale", "factory"] },
   { path: "/stock/movements", name: "Movements", roles: ["admin", "sale", "factory"] },
   { path: "/master/customers", name: "Customers", roles: ["admin", "sale"] },
   { path: "/master/products", name: "Products and BOM", roles: ["admin", "sale", "factory"] },
+  { path: "/master/suppliers", name: "Suppliers", roles: ["admin", "factory"] },
   { path: "/master/users", name: "Users", roles: ["admin"] },
 ];
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */
 export const MENU_OF = {
-  admin: ["Dashboard", "Sales", "Accounting", "Stock", "Master data"],
-  factory: ["Dashboard", "Production orders", "Stock", "Products and BOM"],
+  admin: ["Dashboard", "Sales", "Purchase", "Accounting", "Stock", "Master data"],
+  factory: ["Dashboard", "Production orders", "Purchase", "Stock", "Master data"],
   sale: ["Dashboard", "Sales", "Stock", "Master data"],
 };
 

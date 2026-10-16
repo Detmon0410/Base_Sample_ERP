@@ -1,9 +1,9 @@
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 
-import { NativeSelect } from "@/components/common/FormFields";
+import { TabBar } from "@/components/common/TabBar";
 import { Pagination } from "@/components/common/Pagination";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -47,11 +47,27 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
 
       {above}
 
+      {withStatus ? (
+        <div className="mb-4">
+          <TabBar
+            label={t("master:list.status")}
+            value={status}
+            onChange={(value) => {
+              setStatus(value);
+              setPage(1);
+            }}
+            tabs={statusOptions.map((option) => ({ key: option.value, label: option.label }))}
+          />
+        </div>
+      ) : null}
+
       <div className="mb-4 flex flex-wrap items-end gap-6">
-        <label className="flex min-w-60 flex-1 flex-col gap-1 text-sm font-semibold">
+        <label className="relative flex min-w-60 max-w-md flex-1 flex-col gap-1 text-sm font-semibold">
           {t("master:list.search")}
+          <Search aria-hidden="true" className="pointer-events-none absolute bottom-2.5 left-1 size-4 text-muted-foreground" />
           <Input
             type="search"
+            className="pl-7"
             value={q}
             onChange={(event) => {
               setQ(event.target.value);
@@ -59,19 +75,6 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
             }}
           />
         </label>
-        {withStatus ? (
-          <label className="flex w-48 flex-col gap-1 text-sm font-semibold">
-            {t("master:list.status")}
-            <NativeSelect
-              value={status}
-              onChange={(event) => {
-                setStatus(event.target.value);
-                setPage(1);
-              }}
-              options={statusOptions}
-            />
-          </label>
-        ) : null}
       </div>
 
       {error ? (

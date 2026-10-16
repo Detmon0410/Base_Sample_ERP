@@ -7,7 +7,7 @@
 
 /*
   Design tokens - Refrigerator Factory, Mini ERP look.
-  Theme colour #6A69A0 (white text on it is 5:1), square corners (radius 0), flat: no shadows, no rings, no icons.
+  Theme colour #2563EB, a plain vivid blue (white text on it is 5.2:1), square corners (radius 0), flat: no shadows, no rings.
   The root size stays 18px, so every rem-based Tailwind size scales with it.
 */
 :root {
@@ -17,22 +17,22 @@
   --card-foreground: #212529;
   --popover: #ffffff;
   --popover-foreground: #212529;
-  --primary: #6a69a0;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
   --secondary: #f0f0f0;
   --secondary-foreground: #212529;
   --muted: #f0f0f0;
   --muted-foreground: #5b6168;
-  --accent: #ececf4;
+  --accent: #eaf1ff;
   --accent-foreground: #212529;
   --destructive: #b42318;
   --success: #1b6e3c;
   --warning: #8a5a00;
-  --link: #017e84; /* teal, for links inside the page */
+  --link: #1d4ed8; /* dark blue, for links inside the page */
   --page: #f9f9f9; /* the grey behind the pages */
   --border: #d5d8dc;
   --input: #8a9099; /* the underline of a field */
-  --ring: #6a69a0;
+  --ring: #2563eb;
   --radius: 0;
 }
 

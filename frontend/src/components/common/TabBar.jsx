@@ -18,11 +18,11 @@ export function TabBar({ tabs, value, onChange, label }) {
             onClick={() => onChange(tab.key)}
             className={cn(
               "-mb-px flex items-center gap-2 border-b-2 px-4 py-2 text-base",
-              selected ? "border-primary font-bold" : "border-transparent text-muted-foreground hover:text-foreground",
+              selected ? "border-primary font-bold text-primary" : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
             {tab.label}
-            {tab.count != null ? <span className={cn("min-w-6 px-1.5 text-center text-sm font-bold tabular-nums", selected ? "bg-primary text-primary-foreground" : "bg-[#eceef1]")}>{tab.count}</span> : null}
+            {tab.count != null ? <span className={cn("min-w-6 px-1.5 text-center text-sm font-bold tabular-nums", selected ? "bg-[#dbe8ff] text-primary" : "bg-[#eceef1]")}>{tab.count}</span> : null}
           </button>
         );
       })}

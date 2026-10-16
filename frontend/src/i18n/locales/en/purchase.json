@@ -17,10 +17,8 @@
     "Received": "Received"
   },
   "paid": "Payment",
-  "allPaid": "All",
   "paidYes": "Paid",
   "paidNo": "Not paid",
-  "all": "All",
   "stock": {
     "title": "Stock to buy",
     "hint": "The materials that are low or out. Create a PO for the ones you need.",
@@ -37,7 +35,6 @@
     "chooseSupplier": "Choose a supplier",
     "supplierHint": "Only the active suppliers. The lines can be the materials this supplier sells.",
     "pickSupplier": "Choose the supplier first: its materials are the ones you can add.",
-    "saved": "The purchase order was saved.",
     "noPrice": "The price starts from the price of the supplier; you can change it."
   },
   "lines": {
@@ -144,7 +141,6 @@
       "price": "Initial price",
       "add": "Add a material",
       "remove": "Remove this material"
-    },
-    "allActive": "All"
+    }
   }
 }

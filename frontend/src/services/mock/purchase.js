@@ -15,7 +15,7 @@ import { DEPARTMENTS } from "@/utils/permissions";
 
 export const purchaseOrders = [];
 
-export const PAYMENT_METHODS = ["Cash", "Bank transfer", "Cheque", "Credit card", "Other"];
+const PAYMENT_METHODS = ["Cash", "Bank transfer", "Cheque", "Credit card", "Other"];
 const STEPS = ["Draft", "Sent", "Received"];
 let nextId = 1;
 let nextLineId = 1;

@@ -203,8 +203,7 @@
       "Out": "Out"
     },
     "backToOrder": "Back to the production order",
-    "refillNote": "Added to start a production order",
-    "colPurchaseOrder": "Purchase order"
+    "refillNote": "Added to start a production order"
   },
   "delete": {
     "button": "Delete",

@@ -1,8 +1,12 @@
 # DB Relations
 
-Table-by-table list of keys, relations and delete rules. The diagram is in [ER Diagram.md](ER%20Diagram.md). Source: [docs/api](../docs/api/README.md) (`master-data.md`, `stock.md`, `qt.md`, `orders.md`, `invoices.md`, `receipts.md`).
+The system as built on branch `mini-erp` (Version 2.0): the base tables first, then what Purchase, QT 2.0 and User 2.0 added or changed. Sources ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)).
 
-## Foreign keys
+## Part 1: The base tables (the Mini ERP before Version 2.0)
+
+Table-by-table list of keys, relations and delete rules. The whole model, as built, is in the [ER Diagram](ER%20Diagram.md). The rows of QtReference, Material and User are changed by Part 2 below. Source: [docs/api](../docs/api/README.md) (`master-data.md`, `stock.md`, `qt.md`, `orders.md`, `invoices.md`, `receipts.md`).
+
+### Foreign keys
 
 | Table | Column | References | Cardinality | Delete rule |
 |---|---|---|---|---|
@@ -25,7 +29,7 @@ Table-by-table list of keys, relations and delete rules. The diagram is in [ER D
 | Payment | invoice_id | Invoice.id | one to one | one full payment per invoice |
 | Receipt | invoice_id | Invoice.id | one to one | one receipt per invoice |
 
-## Unique keys
+### Unique keys
 
 | Table | Unique |
 |---|---|
@@ -39,7 +43,7 @@ Table-by-table list of keys, relations and delete rules. The diagram is in [ER D
 | Payment | invoice_id |
 | Receipt | receipt_number, invoice_id |
 
-## Lifecycle rules that touch several tables
+### Lifecycle rules that touch several tables
 
 | Event | Tables written | Rule |
 |---|---|---|
@@ -49,7 +53,7 @@ Table-by-table list of keys, relations and delete rules. The diagram is in [ER D
 | Pay invoice | Payment, Invoice.status, Receipt | Payment date and amount must equal the total (`MUST_EQUAL_TOTAL`). Sets `Paid` and issues one receipt |
 | Manual stock change | MaterialLot, StockChange | `Add`, `Deduct` or `Adjust` a lot at any time. The history is never changed or deleted |
 
-## Chain of one sale
+### Chain of one sale
 
 ```text
 Customer -> QtReference -> ProductionOrder -> OrderLine -> OrderProcess -> ProgressEntry
@@ -59,4 +63,71 @@ Customer -> QtReference -> ProductionOrder -> OrderLine -> OrderProcess -> Progr
                                Invoice -> InvoiceLine
                                   |
                                   +-> Payment -> Receipt
+```
+
+---
+
+## Part 2: Added or changed in Version 2.0 (as built)
+
+Keys, relations and rules after the Purchase, QT 2.0 and User 2.0 changes. Only the **new or changed** rows are listed; everything else stays as in Part 1. The order status is `Draft`, `In Progress`, `Completed` (computed; `Draft` replaces `New`). An order is made only by Confirm QT.
+
+### New foreign keys
+
+| Table | Column | References | Cardinality | Delete rule |
+|---|---|---|---|---|
+| SupplierMaterial | supplier_id | Supplier.id | many to one | goes with the supplier |
+| SupplierMaterial | material_id | Material.id | many to one | material sold by a supplier -> `409 IN_USE` |
+| PurchaseOrder | supplier_id | Supplier.id | many to one | supplier with a PO -> `409 IN_USE` |
+| PurchaseOrder | created_by | User.id | many to one | user with history -> `409 IN_USE` |
+| PurchaseOrderLine | po_id | PurchaseOrder.id | many to one | goes with the PO; only a `Draft` PO can be deleted |
+| PurchaseOrderLine | material_id | Material.id | many to one | material on a PO -> `409 IN_USE` |
+| PurchasePayment | po_id | PurchaseOrder.id | one to one | one payment per PO |
+| StockChange | purchase_order_id | PurchaseOrder.id | many to one, optional | set when a PO is received |
+| QtLine | qt_id | QtReference.id | many to one | goes with the QT; only a `Draft` QT can be deleted |
+| QtLine | product_id | Product.id | many to one | product on a QT -> `409 IN_USE` |
+| QtReference | production_order_id | ProductionOrder.id | one to one, optional | set when the QT is confirmed |
+| Attachment | uploaded_by | User.id | many to one | never deleted |
+| Attachment | (owner_type, owner_id) | PurchaseOrder, QtReference or ProductionOrder | many to one, **no database key** | goes with the owner (service deletes the file too) |
+
+### Changed columns
+
+| Table | Change |
+|---|---|
+| QtReference | adds `status` (`Draft`, `Confirmed`), `customer_po_number`, `customer_po_date`, `production_order_id`; drops `file_name`, `file_type`, `file_path` (moved to Attachment) |
+| Material | adds `unit` |
+| User | rule: `role = Worker` needs `department` in (`Sales`, `Factory`) |
+
+### Unique keys
+
+| Table | Unique |
+|---|---|
+| Supplier | code |
+| SupplierMaterial | (supplier_id, material_id) |
+| PurchaseOrder | po_number |
+| PurchasePayment | po_id |
+| QtReference | qt_number, production_order_id |
+
+### Lifecycle rules that touch several tables
+
+| Event | Tables written | Rule |
+|---|---|---|
+| Create PO | PurchaseOrder, PurchaseOrderLine | Status `Draft`. Only materials of the chosen supplier (`SupplierMaterial`) can be picked. Unit price starts from `SupplierMaterial.unit_price`, the user can change it. `total` = sum of line amounts |
+| Edit PO | PurchaseOrderLine | Lines change only in `Draft` |
+| Change PO status | PurchaseOrder | `Draft` -> `Sent` -> `Received`, one step forward, by hand |
+| Receive PO | PurchaseOrder.received_at, MaterialLot, StockChange | Adds each line to a lot as a stock change `Add` linked by `purchase_order_id`. **Once only**: a second `Received` does not add again |
+| Pay PO | PurchasePayment | Needs status `Received`. One payment per PO |
+| Upload file | Attachment | Kinds `PO_FILE`, `QUOTATION`, `EVIDENCE`, `OTHER`. PDF, PNG or JPG, up to 10 MB. A new `PO_FILE` replaces the old one |
+| Confirm QT | QtReference.status, ProductionOrder, OrderLine, QtReference.production_order_id | Needs a customer and at least one line. Creates one Draft Factory Order from the QT lines. Once only. The customer PO file is attached to the order. Locks the QT lines |
+| Start production | as before | Unchanged |
+
+### Chain of the new flows
+
+```text
+Purchase: Supplier -> SupplierMaterial -> PurchaseOrder -> PurchaseOrderLine
+                                              |-> PurchasePayment
+                                              |-> Attachment
+                                              '-> StockChange -> MaterialLot   (on Received)
+
+Sale:     Customer -> QtReference -> QtLine -> (Confirm) -> ProductionOrder -> OrderLine -> ...
+                          '-> Attachment (QT form, customer PO)
 ```

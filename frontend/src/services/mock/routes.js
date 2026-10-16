@@ -1,9 +1,13 @@
 import { masterRoutes } from "./master.js";
 import { qtRoutes } from "./qt.js";
+import { qtConfirmRoutes } from "./qtConfirm.js";
 import { invoiceRoutes } from "./invoices.js";
 import { orderRoutes } from "./orders.js";
+import { purchaseRoutes } from "./purchase.js";
 import { stockRoutes } from "./stock.js";
+import { supplierRoutes } from "./suppliers.js";
 import { deleteRoutes } from "./deletes.js";
+import { attachmentRoutes } from "./attachments.js";
 import { dashboardRoutes } from "./dashboard.js";
 import { PERSIST } from "./persist.js";
 import { seedMock } from "./seed.js";
@@ -20,9 +24,13 @@ export const mockRoutes = {
 
   ...masterRoutes,
   ...qtRoutes,
+  ...qtConfirmRoutes,
+  ...supplierRoutes,
+  ...purchaseRoutes,
   ...orderRoutes,
   ...invoiceRoutes,
   ...dashboardRoutes,
+  ...attachmentRoutes,
   ...deleteRoutes,
   ...stockRoutes, // after masterRoutes and orderRoutes: it wraps POST of /materials and the start of an order
 };

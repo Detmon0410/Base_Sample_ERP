@@ -6,12 +6,12 @@ import { describe, expect, it } from "vitest";
 import { AuthContext } from "@/lib/auth-context";
 import { customersApi } from "@/services/master.service";
 import { mockUsers, toPublicUser, tokenOf } from "@/services/mock/users";
-import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
 import { productsApi } from "@/services/master.service";
 import { setToken } from "@/utils/session";
 
 import { CustomersPage } from "./CustomersPage";
+import { makeOrder } from "@/test/orders";
 
 // The delete of a record, driven like a person would: a confirmation, a refusal that says where the record is used, and a delete.
 
@@ -36,7 +36,7 @@ describe("deleting a customer", () => {
     const free = await customersApi.create({ name: "Free Customer" });
     const qt = await qtApi.create({ qtNumber: "QT-DELUI", qtDate: "2026-10-01", customerId: used.id, file: { name: "q.pdf", dataUrl: "data:application/pdf;base64,AA==" } });
     const product = await productsApi.create({ code: "DELUI-P", name: "P", price: 1 });
-    const order = await ordersApi.create({ qtId: qt.id, customerId: used.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] });
+    const order = await makeOrder({ qtId: qt.id, customerId: used.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] });
 
     // the used customer: the confirmation names it, then the refusal lists the QT reference and the order
     const first = renderAs(mockUsers[0], `/master/customers/${used.id}`);
@@ -44,7 +44,7 @@ describe("deleting a customer", () => {
     expect(await screen.findByText('"Used Customer" will be deleted for good. This cannot be undone.')).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Confirm" }));
     expect(await screen.findByText("This record cannot be deleted because it is still used:")).toBeInTheDocument();
-    expect(screen.getByText("QT references: QT-DELUI")).toBeInTheDocument();
+    expect(screen.getByText(`QT references: QT-DELUI, ${order.qtNumber}`)).toBeInTheDocument(); // the second QT is the one the order was made from
     expect(screen.getByText(`Production orders: ${order.orderNumber}`)).toBeInTheDocument();
     expect(screen.getByLabelText("Name")).toHaveValue("Used Customer"); // still there
     first.unmount();

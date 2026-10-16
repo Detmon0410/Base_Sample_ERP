@@ -1,4 +1,5 @@
 import { UserCog } from "lucide-react";
+import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Route, Routes } from "react-router";
 
@@ -6,14 +7,30 @@ import { Section, SelectField, TextField } from "@/components/common/FormFields"
 import { RecordFormPage } from "@/components/common/RecordFormPage";
 import { RecordList } from "@/components/common/RecordList";
 import { usersApi } from "@/services/master.service";
-import { DEPARTMENTS, ROLES } from "@/utils/permissions";
+import { DEPARTMENTS, ROLES, WORKER_DEPARTMENTS } from "@/utils/permissions";
 
 const EMPTY = { name: "", department: "", email: "", role: "Worker", password: "" };
 
+/** The department and the role. A Worker is in Sales (a Sale Worker) or in Factory (a Factory Worker); the department decides the access. */
+function DepartmentAndRole({ form, errors }) {
+  const { t } = useTranslation(["master", "nav"]);
+  const role = useWatch({ control: form.control, name: "role" });
+  const department = useWatch({ control: form.control, name: "department" });
+  const allowed = role === "Worker" ? WORKER_DEPARTMENTS : DEPARTMENTS;
+  const departments = [{ value: "", label: t("master:users.chooseDepartment") }, ...allowed.map((value) => ({ value, label: t(`master:users.departments.${value}`) }))];
+  const roles = ROLES.map((value) => ({ value, label: t(`nav:roles.${value}`) }));
+  const hint = role === "Admin" ? "Admin" : department === "Sales" || department === "Factory" ? department : "Worker";
+  return (
+    <>
+      <SelectField label={t("master:users.department")} options={departments} error={errors.department?.message} {...form.register("department")} />
+      <SelectField label={t("master:users.role")} options={roles} error={errors.role?.message} {...form.register("role")} />
+      <p className="text-sm text-muted-foreground sm:col-span-2">{t(`master:users.access.${hint}`)}</p>
+    </>
+  );
+}
+
 function UserForm() {
   const { t } = useTranslation(["master", "nav"]);
-  const departments = [{ value: "", label: t("master:users.chooseDepartment") }, ...DEPARTMENTS.map((value) => ({ value, label: t(`master:users.departments.${value}`) }))];
-  const roles = ROLES.map((value) => ({ value, label: t(`nav:roles.${value}`) }));
   return (
     <RecordFormPage
       api={usersApi}
@@ -31,8 +48,7 @@ function UserForm() {
             <div className="grid gap-5 sm:grid-cols-2">
               <TextField label={t("master:users.name")} error={errors.name?.message} {...form.register("name")} />
               <TextField label={t("master:users.email")} type="email" autoComplete="off" error={errors.email?.message} {...form.register("email")} />
-              <SelectField label={t("master:users.department")} options={departments} error={errors.department?.message} {...form.register("department")} />
-              <SelectField label={t("master:users.role")} options={roles} error={errors.role?.message} {...form.register("role")} />
+              <DepartmentAndRole form={form} errors={errors} />
               <TextField
                 label={record ? t("master:users.newPassword") : t("master:users.password")}
                 type="password"

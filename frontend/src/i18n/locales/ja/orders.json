@@ -1,19 +1,15 @@
 {
   "title": "製造指示書",
-  "new": "製造指示書を追加",
   "section": "指示書",
   "orderNumber": "指示書番号",
-  "numberHint": "番号は保存したときに付きます。",
   "qt": "見積書の参照",
-  "chooseQt": "見積書の参照を選択",
   "customer": "顧客",
-  "chooseCustomer": "顧客を選択",
   "orderDate": "受注日",
   "notes": "備考",
   "startedAt": "着手日時",
   "notStarted": "まだ着手していません",
   "status": {
-    "New": "新規",
+    "Draft": "下書き",
     "InProgress": "作業中",
     "Completed": "完了"
   },
@@ -70,7 +66,9 @@
     "hint": "先に保存してください。開始は保存済みの内容で行われます。",
     "done": "生産を開始しました。",
     "short": "{{name}}：必要 {{need}}、在庫 {{have}}。",
-    "addStock": "在庫を追加"
+    "addStock": "在庫を追加",
+    "viewHint": "開始すると、BOMの材料が在庫から引き落とされます。",
+    "createPo": "発注書を作成"
   },
   "errors": {
     "ORDER_NOT_READY": "製品を1件以上、各製品に工程を1件以上登録してください。",
@@ -95,5 +93,7 @@
     "perUnit": "製品1個あたり",
     "needed": "この明細の必要量",
     "none": "この製品には材料がありません。"
-  }
+  },
+  "customerPo": "顧客PO",
+  "started": "生産を開始済み"
 }

@@ -1,18 +1,23 @@
 // Production orders.
 //
+// An order is made by Confirm QT (createOrderFromQt), from the lines of the QT. The Admin or a Sale Worker then adds the processes (PUT), and
+// an Admin or a Factory Worker starts it.
+//
 // An order: { id, orderNumber, qtId, customerId, orderDate, notes, started, startedAt, lines, history, createdAt, updatedAt }
 //   line:    { id, productId, quantity, unitPrice, processes }
 //   process: { id, sequence, name, instructions, status: "Not Started" | "In Progress" | "Completed", completedQuantity }
 //   history: one entry for every progress update, never changed: { id, lineId, processId, status, completedQuantity, workDate, note, userId, userName, at }
 //
-// The status of the order is computed, nobody sets it: New (no process has started) -> In Progress (at least one process has started) -> Completed (every process of
+// The status of the order is computed, nobody sets it: Draft (no process has started) -> In Progress (at least one process has started) -> Completed (every process of
 // every line Completed). Every process needs the quantity of its line; "Completed" means the completed quantity equals it.
 // Before the start an Admin may change the whole order; after it only progress is recorded.
 
 import { MockHttpError, MockResponse } from "./errors.js";
 import { customers, invalid, issue, number, products, text } from "./master.js";
 import { qtReferences } from "./qt.js";
-import { userFromAuthorization } from "./users.js";
+import { can } from "@/utils/permissions";
+
+import { requireCan } from "./users.js";
 
 export const orders = [];
 /** The invoices live here too: an order that has an invoice cannot change any more (the store is filled by invoices.js). */
@@ -30,12 +35,12 @@ const isDay = (value) => {
   return date.getUTCFullYear() === Number(match[1]) && date.getUTCMonth() === Number(match[2]) - 1 && date.getUTCDate() === Number(match[3]);
 };
 
-/** The status of an order, computed from its processes: New until a process has started, Completed when every process is Completed. */
+/** The status of an order, computed from its processes: Draft until a process has started, Completed when every process is Completed. */
 export function orderStatus(order) {
-  if (!order.started) return "New";
+  if (!order.started) return "Draft";
   const processes = order.lines.flatMap((line) => line.processes);
   if (processes.length > 0 && processes.every((process) => process.status === "Completed")) return "Completed";
-  return processes.some((process) => process.status !== "Not Started") ? "In Progress" : "New";
+  return processes.some((process) => process.status !== "Not Started") ? "In Progress" : "Draft";
 }
 
 function toView(order) {
@@ -49,6 +54,8 @@ function toView(order) {
     ...order,
     status: orderStatus(order),
     qtNumber: qtReferences.find((qt) => qt.id === order.qtId)?.qtNumber ?? "",
+    customerPoNumber: qtReferences.find((qt) => qt.id === order.qtId)?.customerPoNumber ?? "",
+    customerPoDate: qtReferences.find((qt) => qt.id === order.qtId)?.customerPoDate ?? "",
     customerName: customers.find((customer) => customer.id === order.customerId)?.name ?? "",
     invoice: (() => {
       const invoice = invoices.find((item) => item.orderId === order.id);
@@ -64,11 +71,8 @@ const toListView = (order) => {
   return { ...rest, productCodes: lines.map((line) => line.productCode).join(" ") }; // the list is searched by product code too
 };
 
-function access(authorization, adminOnly) {
-  const user = userFromAuthorization(authorization);
-  if (adminOnly && user.role !== "Admin") throw new MockHttpError(403, "FORBIDDEN", "Admin only");
-  return user;
-}
+/** The signed-in user, or 403 when the action (a key of ACTIONS in utils/permissions.js) is not for them. */
+const access = requireCan;
 
 function find(orderId) {
   const order = orders.find((item) => item.id === Number(orderId));
@@ -76,12 +80,10 @@ function find(orderId) {
   return order;
 }
 
-/** Checks the body of a new or changed order and returns the clean fields. */
+/** Checks the body of a changed order and returns the clean fields. The QT and the customer of an order never change (they come from the QT). */
 function normalize(body) {
-  const data = { qtId: Number(body.qtId), customerId: Number(body.customerId), orderDate: text(body.orderDate), notes: text(body.notes), lines: [] };
+  const data = { orderDate: text(body.orderDate), notes: text(body.notes), lines: [] };
   const issues = [];
-  if (!qtReferences.some((qt) => qt.id === data.qtId)) issues.push(issue("qtId", "REQUIRED"));
-  if (!customers.some((customer) => customer.id === data.customerId)) issues.push(issue("customerId", "REQUIRED"));
   if (!data.orderDate) issues.push(issue("orderDate", "REQUIRED"));
   else if (!isDay(data.orderDate)) issues.push(issue("orderDate", "INVALID_DATE"));
 
@@ -110,9 +112,36 @@ const withIds = (lines) =>
     processes: line.processes.map((process) => ({ id: id(), ...process, status: "Not Started", completedQuantity: 0 })),
   }));
 
+/** Makes the order of a confirmed QT: the customer, the date of today and the lines of the QT with their prices; the processes come later. */
+export function createOrderFromQt(qt) {
+  const year = new Date().getFullYear();
+  const count = orders.filter((order) => order.orderNumber.startsWith(`ORD-${year}-`)).length;
+  const today = new Date();
+  const orderDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const order = {
+    id: id(),
+    orderNumber: `ORD-${year}-${String(count + 1).padStart(4, "0")}`,
+    qtId: qt.id,
+    customerId: qt.customerId,
+    orderDate,
+    notes: "",
+    lines: withIds(qt.lines.map((line) => ({ productId: line.productId, quantity: line.quantity, unitPrice: line.unitPrice, processes: [] }))),
+    started: false,
+    startedAt: null,
+    history: [],
+    createdAt: stamp(),
+    updatedAt: stamp(),
+  };
+  orders.push(order);
+  return order;
+}
+
+/** The order the way the API shows it. */
+export const orderView = (order) => toView(order);
+
 export const orderRoutes = {
   "GET /orders": ({ authorization, query }) => {
-    access(authorization, false);
+    access(authorization, "orders.view");
     const q = text(query.q).toLowerCase();
     let rows = orders.map(toListView).filter((row) => (!query.status || row.status === query.status) && (!q || [row.orderNumber, row.customerName, row.qtNumber, row.notes, row.productCodes].some((value) => String(value).toLowerCase().includes(q))));
     rows = rows.sort((a, b) => b.id - a.id);
@@ -122,32 +151,12 @@ export const orderRoutes = {
   },
 
   "GET /orders/:id": ({ authorization, params }) => {
-    access(authorization, false);
+    access(authorization, "orders.view");
     return toView(find(params.id));
   },
 
-  "POST /orders": ({ authorization, body }) => {
-    access(authorization, true);
-    const data = normalize(body);
-    const year = new Date().getFullYear();
-    const count = orders.filter((order) => order.orderNumber.startsWith(`ORD-${year}-`)).length;
-    const order = {
-      id: id(),
-      orderNumber: `ORD-${year}-${String(count + 1).padStart(4, "0")}`,
-      ...data,
-      lines: withIds(data.lines),
-      started: false,
-      startedAt: null,
-      history: [],
-      createdAt: stamp(),
-      updatedAt: stamp(),
-    };
-    orders.push(order);
-    return new MockResponse({ data: toView(order), status: 201 });
-  },
-
   "PUT /orders/:id": ({ authorization, params, body }) => {
-    access(authorization, true);
+    access(authorization, "orders.edit");
     const order = find(params.id);
     if (order.started) throw new MockHttpError(409, "ORDER_LOCKED", "The order has started; its products and processes cannot change");
     const data = normalize(body);
@@ -156,7 +165,7 @@ export const orderRoutes = {
   },
 
   "POST /orders/:id/start": ({ authorization, params }) => {
-    access(authorization, true);
+    access(authorization, "orders.start");
     const order = find(params.id);
     if (order.started) throw new MockHttpError(409, "ALREADY_STARTED", "The order has started already");
     if (order.lines.length === 0 || order.lines.some((line) => line.processes.length === 0)) {
@@ -169,7 +178,7 @@ export const orderRoutes = {
   },
 
   "POST /orders/:id/progress": ({ authorization, params, body }) => {
-    const user = access(authorization, false);
+    const user = access(authorization, "orders.progress");
     const order = find(params.id);
     if (!order.started) throw new MockHttpError(409, "ORDER_NOT_STARTED", "The order has not started");
     if (invoices.some((invoice) => invoice.orderId === order.id)) throw new MockHttpError(409, "ORDER_INVOICED", "The order is invoiced; its progress cannot change");
@@ -178,7 +187,7 @@ export const orderRoutes = {
     const line = order.lines.find((item) => item.processes.some((process) => process.id === processId));
     const process = line?.processes.find((item) => item.id === processId);
     if (!process) throw new MockHttpError(404, "NOT_FOUND", "Process not found");
-    if (process.status === "Completed" && user.role !== "Admin") throw new MockHttpError(403, "COMPLETED_LOCKED", "Only an Admin can reopen a completed process");
+    if (process.status === "Completed" && !can(user, "orders.reopen")) throw new MockHttpError(403, "COMPLETED_LOCKED", "Only an Admin can reopen a completed process");
 
     const entry = { status: text(body.status), completedQuantity: number(body.completedQuantity), workDate: text(body.workDate), note: text(body.note) };
     const required = line.quantity;

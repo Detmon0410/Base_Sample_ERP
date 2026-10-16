@@ -20,7 +20,7 @@ const PAGE_SIZE = 20;
  * `columns` is [{ key, header, cell?(row) }]. A page with its own statuses (orders, invoices) gives `statusOptions` and `statusOf` and
  * gets the status filter and the status column at the end; master data has no status.
  */
-export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf }) {
+export function RecordList({ api, base, title, columns, canCreate, newLabel, statusOptions, statusOf, above }) {
   const { t } = useTranslation(["master", "common"]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("");
@@ -44,6 +44,8 @@ export function RecordList({ api, base, title, columns, canCreate, newLabel, sta
           ) : null
         }
       />
+
+      {above}
 
       <div className="mb-4 flex flex-wrap items-end gap-6">
         <label className="flex min-w-60 flex-1 flex-col gap-1 text-sm font-semibold">

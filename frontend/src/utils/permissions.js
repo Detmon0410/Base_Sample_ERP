@@ -1,16 +1,57 @@
-// Client-side mirror of the access rules. This only decides what the UI shows;
-// the backend must enforce the same rules on every request.
+// The access rules, in ONE place. The frontend asks `can(user, action)` to decide what to show, and the mock API asks the same to
+// decide what to refuse; the real backend must enforce the same table on every request (docs/api, "Who may call").
 //
-// A user: { id, name, department, email, role }. There are two roles: "Admin" (everything) and "Worker" (production orders,
-// progress, and a read-only look at products and materials). The department is only a field of the user.
+// A user: { id, name, department, email, role }. `role` is "Admin" (everything) or "Worker". A Worker belongs to one department,
+// "Sales" (a Sale Worker) or "Factory" (a Factory Worker), and the department decides what the Worker may do.
 
 export const ROLES = ["Admin", "Worker"];
 export const DEPARTMENTS = ["Sales", "Factory", "Accounting", "Administration"];
+/** The departments a Worker may have. Accounting and Administration are not Worker departments (accounting stays Admin only). */
+export const WORKER_DEPARTMENTS = ["Sales", "Factory"];
 
-export const isAdmin = (user) => user?.role === "Admin";
+const ANYONE = "anyone"; // every signed-in user
+const ADMIN = []; // only the Admin (no department)
 
-/** `roles` is the list of roles that may use something; no list means every signed-in user. */
-export function canUse(user, roles) {
+/** action -> who may do it besides the Admin: ANYONE, or the departments of a Worker who may. */
+export const ACTIONS = {
+  "dashboard.view": ANYONE,
+
+  "qt.use": ["Sales"], // see, make, print, confirm
+
+  "orders.view": ANYONE,
+  "orders.edit": ["Sales"], // make or change an order before the start
+  "orders.start": ["Factory"], // start production (it deducts the stock)
+  "orders.progress": ["Factory"], // record progress of a process
+  "orders.evidence": ["Factory"], // upload or delete the evidence files of an order
+  "orders.reopen": ADMIN, // change or reopen a Completed process
+
+  "stock.view": ANYONE,
+  "stock.change": ["Factory"], // Add / Deduct / Adjust a lot by hand
+  "materials.write": ADMIN, // make or change a material itself
+
+  "products.view": ANYONE,
+  "products.write": ADMIN,
+
+  "customers.view": ["Sales"],
+  "customers.write": ADMIN,
+
+  "suppliers.view": ["Factory"],
+  "suppliers.write": ADMIN,
+  "purchase.use": ["Factory"], // purchase orders: make, print, move the status, pay, files
+
+  "invoices.use": ADMIN,
+  "receipts.use": ADMIN,
+  "users.use": ADMIN,
+  "erDiagram.view": ADMIN, // the ER diagram page
+};
+
+const isAdmin = (user) => user?.role === "Admin";
+
+/** May this user do this action? The Admin may do everything; a Worker only what the department of the Worker is listed for. */
+export function can(user, action) {
   if (!user) return false;
-  return !roles || roles.includes(user.role);
+  if (isAdmin(user)) return true;
+  const rule = ACTIONS[action];
+  if (rule === ANYONE) return true;
+  return user.role === "Worker" && Array.isArray(rule) && rule.includes(user.department);
 }

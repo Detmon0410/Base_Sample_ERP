@@ -34,16 +34,18 @@ Query: `q` searches the fields named below (case-insensitive, contains), `pageSi
 | material | the BOM of a product uses it (`product`), or it has a stock change after its first stock (`stockChange`) | its lots and the first stock ("Initial stock") |
 | user | it is the user who is signed in (`self`), the last Admin (`lastAdmin`), or it recorded a progress update (`progress`) or a stock change (`stock`) | – |
 
-A QT reference is deleted the same way (`DELETE /qt/:id`, refused with `order` when a production order uses it; its file goes with it).
+A QT is deleted the same way (`DELETE /qt/:id`, only a `Draft`: refused with `order` when it is confirmed, because its production order uses it; its files go with it).
 
 ## Who may call
 
 | Resource | Read | Write |
 |---|---|---|
-| customers, users | Admin | Admin |
-| products, materials (and their stock history) | Admin, Worker | Admin |
+| customers | Admin, Sale Worker | Admin |
+| users | Admin | Admin |
+| products | Admin, Sale Worker, Factory Worker | Admin |
+| materials (and their stock history) | Admin, Sale Worker, Factory Worker | Admin (a stock change by hand: Admin and Factory Worker, [stock.md](stock.md)) |
 
-Others answer `403 FORBIDDEN`.
+Others answer `403 FORBIDDEN`. The full table by role and department is in [auth.md](auth.md#access-by-role-and-department).
 
 ## Fields and rules
 
@@ -51,8 +53,8 @@ Others answer `403 FORBIDDEN`.
 |---|---|---|---|
 | customers | `name` (required), `address`, `email`, `telephone` | name, email, telephone | `email`, when given, is an email |
 | products | `code` (required, unique), `name` (required), `price` (0 or more, whole yen), `bom`: `[{ materialId, quantity }]` | code, name | each `materialId` exists, `quantity` is more than 0, a material appears once in the BOM. The BOM is for reference: it never moves stock |
-| materials | `code` (required, unique), `name` (required), `minLevel` (optional, 0 or more, up to 3 decimals; `""` or `null` means none), `lots`: `[{ lotNumber, quantity }]` (up to 3 decimals) | code, name | a lot number is unique inside the material (case-insensitive). `lots` is read on **create** only; afterwards a lot changes only through stock changes (below), and `PUT` ignores `lots` |
-| users | `name`, `department`, `email` (unique, lower-cased), `role`, `password` | name, email, department | `department` is one of the four, `role` is `Admin` or `Worker`. `password` is required on create and at least 6 characters; on `PUT` an empty password keeps the current one. The password is never returned; the response also has `createdAt`, `lastLoginAt` |
+| materials | `code` (required, unique), `name` (required), `unit` (text, `pcs` when not sent: `kg`, `m`, ...), `minLevel` (optional, 0 or more, up to 3 decimals; `""` or `null` means none), `lots`: `[{ lotNumber, quantity }]` (up to 3 decimals) | code, name | a lot number is unique inside the material (case-insensitive). `lots` is read on **create** only; afterwards a lot changes only through stock changes (below), and `PUT` ignores `lots` |
+| users | `name`, `department`, `email` (unique, lower-cased), `role`, `password` | name, email, department | `department` is one of the four, `role` is `Admin` or `Worker`. **A Worker needs `department` `Sales` or `Factory`**: any other department answers `400 VALIDATION_ERROR` with `INVALID` on `department` (an Admin may have any). `password` is required on create and at least 6 characters; on `PUT` an empty password keeps the current one. The password is never returned; the response also has `createdAt`, `lastLoginAt` |
 
 Errors
 
@@ -62,7 +64,7 @@ Errors
 | 409 | `DUPLICATE_VALUE` | A unique value (`code`, `email`) is used already; `errors` names the field with `DUPLICATE` |
 | 409 | `IN_USE` | `DELETE` of a record that is still used (above) |
 | 404 | `NOT_FOUND` | No such record |
-| 403 | `FORBIDDEN` | The role may not do this |
+| 403 | `FORBIDDEN` | The role or the department may not do this |
 
 Changing the password of a user ends their sessions ([auth.md](auth.md)). A user account cannot be disabled in this version.
 

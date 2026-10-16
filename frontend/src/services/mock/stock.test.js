@@ -4,7 +4,8 @@ import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
 
 const admin = mockUsers[0];
-const worker = mockUsers[1];
+const worker = mockUsers[1]; // a Factory Worker
+const sale = mockUsers[2]; // a Sale Worker
 const call = (route, who, { body = {}, params = {}, query = {} } = {}) => mockRoutes[route]({ body, authorization: `Bearer ${tokenOf(who)}`, params, query });
 const fails = (fn) => {
   try {
@@ -57,9 +58,11 @@ describe("stock changes of the mock", () => {
     expect(fails(() => change({ orderId: 9999 })).details).toEqual([{ path: ["orderId"], code: "REQUIRED" }]);
   });
 
-  it("changes the lots only through stock changes, and only for an Admin", () => {
+  it("changes the lots only through stock changes, and only for an Admin or a Factory Worker", () => {
     call("PUT /materials/:id", admin, { params: { id: material.id }, body: { code: "ST-1", name: "Steel sheet", lots: [{ lotNumber: "X", quantity: 999 }] } });
     expect(lots().map((lot) => lot.lotNumber)).toEqual(["L1", "L2"]);
-    expect(fails(() => call("POST /materials/:id/stock-changes", worker, { params: { id: material.id }, body: { kind: "Add", lotNumber: "L1", quantity: 1, changeDate: "2026-10-05" } })).status).toBe(403);
+    const add = (who) => call("POST /materials/:id/stock-changes", who, { params: { id: material.id }, body: { kind: "Add", lotNumber: "L1", quantity: 1, changeDate: "2026-10-05" } });
+    expect(fails(() => add(sale)).status).toBe(403); // a Sale Worker cannot
+    expect(add(worker).status).toBe(201); // a Factory Worker can
   });
 });

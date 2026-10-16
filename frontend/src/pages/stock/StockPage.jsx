@@ -12,12 +12,13 @@ import { FieldError } from "@/components/ui/field";
 import { useAuth } from "@/hooks/useAuth";
 import { formatNumber } from "@/utils/format";
 import { materialsApi } from "@/services/master.service";
-import { isAdmin } from "@/utils/permissions";
+import { can } from "@/utils/permissions";
 
+import { RequirePermission } from "@/routes/RequirePermission";
 import { StockChanges } from "./StockChanges";
 
 const STOCK_STATUSES = ["Normal", "Low", "Out"];
-const EMPTY = { code: "", name: "", minLevel: "", lots: [] };
+const EMPTY = { code: "", name: "", unit: "pcs", minLevel: "", lots: [] };
 
 /** The lots a NEW material starts with (each becomes an "Add" in the stock history). After that the lots change only through stock changes. */
 function LotLines({ form, readOnly }) {
@@ -62,7 +63,7 @@ function LotLines({ form, readOnly }) {
 function MaterialForm() {
   const { t } = useTranslation("master");
   const { user } = useAuth();
-  const readOnly = !isAdmin(user);
+  const readOnly = !can(user, "materials.write");
   return (
     <RecordFormPage
       api={materialsApi}
@@ -71,7 +72,7 @@ function MaterialForm() {
       titleOf={(record) => `${record.code} ${record.name}`}
       defaults={EMPTY}
       readOnly={readOnly}
-      toForm={(record) => ({ code: record.code, name: record.name, minLevel: record.minLevel ?? "", lots: record.lots })}
+      toForm={(record) => ({ code: record.code, name: record.name, unit: record.unit, minLevel: record.minLevel ?? "", lots: record.lots })}
       toBody={(values) => values}
     >
       {({ form, record }) => {
@@ -82,6 +83,8 @@ function MaterialForm() {
               <div className="grid gap-5 sm:grid-cols-2">
                 <TextField label={t("materials.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
                 <TextField label={t("materials.name")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />
+                <TextField label={t("materials.unit")} disabled={readOnly} error={errors.unit?.message} {...form.register("unit")} />
+                <p className="self-end pb-2 text-sm text-muted-foreground">{t("materials.unitHint")}</p>
                 <TextField label={t("materials.minLevel")} type="number" min="0" step="0.001" disabled={readOnly} error={errors.minLevel?.message} className="sm:col-span-2" {...form.register("minLevel")} />
                 <p className="text-sm text-muted-foreground sm:col-span-2">{t("materials.minLevelHint")}</p>
               </div>
@@ -101,7 +104,7 @@ function MaterialPage() {
   return (
     <>
       <MaterialForm />
-      {id ? <StockChanges materialId={id} canChange={isAdmin(user)} /> : null}
+      {id ? <StockChanges materialId={id} canChange={can(user, "stock.change")} /> : null}
     </>
   );
 }
@@ -119,7 +122,7 @@ export function StockPage() {
             api={materialsApi}
             base="/stock/materials"
             title={t("materials.title")}
-            canCreate={isAdmin(user)}
+            canCreate={can(user, "materials.write")}
             newLabel={t("materials.new")}
             statusOptions={[{ value: "", label: t("list.all") }, ...STOCK_STATUSES.map((value) => ({ value, label: t(`stock.status.${value}`) }))]}
             statusOf={(row) => <StockStatus status={row.stockStatus} />}
@@ -132,7 +135,9 @@ export function StockPage() {
           />
         }
       />
-      <Route path="new" element={<MaterialPage />} />
+      <Route element={<RequirePermission action="materials.write" />}>
+        <Route path="new" element={<MaterialPage />} />
+      </Route>
       <Route path=":id" element={<MaterialPage />} />
     </Routes>
   );

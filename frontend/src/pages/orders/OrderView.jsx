@@ -6,6 +6,7 @@ import { Link } from "react-router";
 import { toast } from "sonner";
 
 import { NativeSelect, Section, TextField } from "@/components/common/FormFields";
+import { Attachments } from "@/components/common/Attachments";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { ordersApi } from "@/services/orders.service";
 import { todayIso } from "@/utils/dates";
 import { formatCurrency, formatDateTime, formatNumber } from "@/utils/format";
-import { isAdmin } from "@/utils/permissions";
+import { can } from "@/utils/permissions";
 
 import { applyServerErrors, statusKey } from "@/utils/serverErrors";
+
+import { useStartProduction } from "./StartProduction";
 
 const PROCESS_STATUSES = ["Not Started", "In Progress", "Completed"];
 
@@ -97,7 +100,8 @@ function ProgressForm({ order, line, process, onDone, onCancel }) {
 export function OrderView({ order, onChanged }) {
   const { t, i18n } = useTranslation(["orders", "master", "common"]);
   const { user } = useAuth();
-  const admin = isAdmin(user);
+  const mayStart = !order.started && can(user, "orders.start"); // a Factory Worker starts an order that a Sale Worker prepared
+  const starter = useStartProduction(order, onChanged);
   const [editing, setEditing] = useState(null); // the id of the process whose progress is being recorded
   const language = i18n.language;
 
@@ -108,14 +112,24 @@ export function OrderView({ order, onChanged }) {
 
   return (
     <>
-      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} />
+      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} statusTone={{ Draft: "neutral", InProgress: "progress", Completed: "good" }[statusKey(order.status)]} />
 
       <div className="flex max-w-5xl flex-col gap-5">
+        {order.started && order.status === "Draft" ? <p className="font-semibold">{t("orders:started")}</p> : null} {/* started, but no process has started yet */}
+        {mayStart ? (
+          <div className="flex flex-wrap items-center gap-3">
+            {starter.button}
+            <span className="text-sm text-muted-foreground">{t("orders:start.viewHint")}</span>
+          </div>
+        ) : null}
+        {starter.alert}
+
         <Section icon={ClipboardList} title={t("orders:section")}>
           <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
             {[
-              [t("orders:qt"), admin ? <Link key="qt" to={`/sale/quotations/${order.qtId}`}>{order.qtNumber}</Link> : order.qtNumber],
+              [t("orders:qt"), can(user, "qt.use") ? <Link key="qt" to={`/sale/quotations/${order.qtId}`}>{order.qtNumber}</Link> : order.qtNumber],
               [t("orders:customer"), order.customerName],
+              [t("orders:customerPo"), order.customerPoNumber],
               [t("orders:orderDate"), order.orderDate],
               [t("orders:startedAt"), order.started ? formatDateTime(order.startedAt, language) : t("orders:notStarted")],
               [t("orders:invoice"), order.invoice ? <Link key="invoice" to={`/accounting/invoices/${order.invoice.id}`}>{order.invoice.invoiceNumber}</Link> : null],
@@ -149,7 +163,7 @@ export function OrderView({ order, onChanged }) {
               </TableHeader>
               <TableBody>
                 {line.processes.map((process) => {
-                  const canRecord = order.started && (process.status !== "Completed" || admin);
+                  const canRecord = order.started && can(user, "orders.progress") && (process.status !== "Completed" || can(user, "orders.reopen"));
                   return (
                     <TableRow key={process.id}>
                       <TableCell data-label={t("orders:processes.step")}>{process.sequence}</TableCell>
@@ -216,12 +230,16 @@ export function OrderView({ order, onChanged }) {
           )}
         </Section>
 
+        <Attachments ownerType="ProductionOrder" ownerId={order.id} kinds={["EVIDENCE", "OTHER"]} canChange={can(user, "orders.evidence")} lockedKinds={["PO_FILE"]} title={t("master:attachments.evidenceTitle")} />
+
         <div>
           <Button asChild variant="outline">
             <Link to="/sale/orders"><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
           </Button>
         </div>
       </div>
+
+      {starter.dialog}
     </>
   );
 }

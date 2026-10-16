@@ -9,8 +9,11 @@
 import { MockHttpError, MockResponse } from "./errors.js";
 import { invalid, issue, materials, masterRoutes, number, products, text } from "./master.js";
 import { orderRoutes, orders } from "./orders.js";
+import { purchaseOrders } from "./purchase.js";
 import { materialView } from "./stockStatus.js";
-import { userFromAuthorization } from "./users.js";
+import { can } from "@/utils/permissions";
+
+import { requireCan, userFromAuthorization } from "./users.js";
 
 export const stockChanges = [];
 
@@ -33,19 +36,34 @@ const findMaterial = (id) => {
 };
 
 const log = (material, lotNumber, kind, change, balance, extra, user) => {
-  const entry = { id: nextId++, materialId: material.id, lotNumber, kind, change, balance, changeDate: extra.changeDate, note: extra.note ?? "", initial: extra.initial ?? false, orderId: extra.orderId ?? null, userId: user.id, userName: user.name, at: new Date().toISOString() };
+  const entry = { id: nextId++, materialId: material.id, lotNumber, kind, change, balance, changeDate: extra.changeDate, note: extra.note ?? "", initial: extra.initial ?? false, orderId: extra.orderId ?? null, purchaseOrderId: extra.purchaseOrderId ?? null, userId: user.id, userName: user.name, at: new Date().toISOString() };
   stockChanges.push(entry);
   return entry;
 };
 
 const view = (entry) => {
   const material = materials.find((item) => item.id === entry.materialId);
-  return { ...entry, materialCode: material?.code ?? "", materialName: material?.name ?? "", orderNumber: orders.find((order) => order.id === entry.orderId)?.orderNumber ?? "" };
+  return { ...entry, materialCode: material?.code ?? "", materialName: material?.name ?? "", orderNumber: orders.find((order) => order.id === entry.orderId)?.orderNumber ?? "", purchaseOrderNumber: purchaseOrders.find((po) => po.id === entry.purchaseOrderId)?.poNumber ?? "" };
 };
 const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
+
+/**
+ * A purchase order is received: the quantity of a line is added to the lot typed for it (a new lot when it does not exist yet), as a
+ * stock change "Add" tied to the purchase order. Called once for each line, when the PO moves to Received.
+ */
+export function receiveIntoStock(material, lotNumber, quantity, purchaseOrder, user) {
+  let lot = material.lots.find((item) => sameLot(item.lotNumber, lotNumber));
+  if (!lot) {
+    lot = { lotNumber, quantity: 0 };
+    material.lots.push(lot);
+  }
+  lot.quantity = round(lot.quantity + quantity);
+  material.updatedAt = new Date().toISOString();
+  log(material, lot.lotNumber, "Add", quantity, lot.quantity, { changeDate: today(), note: `Received ${purchaseOrder.poNumber}`, purchaseOrderId: purchaseOrder.id }, user);
+}
 
 /** What the lines of an order need of every material: BOM quantity of a product x the quantity of its line. [{ material, need }] */
 function materialsNeeded(order) {
@@ -63,7 +81,7 @@ export const stockRoutes = {
   "POST /orders/:id/start": (request) => {
     const user = userFromAuthorization(request.authorization);
     const order = orders.find((item) => item.id === Number(request.params.id));
-    const ready = order && !order.started && user.role === "Admin" && order.lines.length > 0 && order.lines.every((line) => line.processes.length > 0);
+    const ready = order && !order.started && can(user, "orders.start") && order.lines.length > 0 && order.lines.every((line) => line.processes.length > 0);
     const needed = ready ? materialsNeeded(order) : [];
     const short = needed
       .map(({ material, need }) => ({ materialId: material.id, materialCode: material.code, materialName: material.name, need, have: round(material.lots.reduce((sum, lot) => sum + lot.quantity, 0)) }))
@@ -120,6 +138,7 @@ export const stockRoutes = {
 
   // the code and the name can change; the lots only through stock changes
   "PUT /materials/:id": (request) => {
+    requireCan(request.authorization, "materials.write"); // the answer 403 comes before 404
     const material = findMaterial(request.params.id);
     return masterRoutes["PUT /materials/:id"]({ ...request, body: { ...request.body, lots: material.lots } });
   },
@@ -134,8 +153,7 @@ export const stockRoutes = {
   },
 
   "POST /materials/:id/stock-changes": ({ authorization, params, body }) => {
-    const user = userFromAuthorization(authorization);
-    if (user.role !== "Admin") throw new MockHttpError(403, "FORBIDDEN", "Admin only");
+    const user = requireCan(authorization, "stock.change");
     const material = findMaterial(params.id);
 
     const kind = text(body.kind);

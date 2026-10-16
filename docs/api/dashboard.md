@@ -11,7 +11,7 @@ One call gives the numbers of the page: the tiles, and for an Admin one chart of
 {
   "success": true,
   "data": {
-    "orders": { "New": 1, "InProgress": 2, "Completed": 5 },
+    "orders": { "Draft": 1, "InProgress": 2, "Completed": 5 },
     "invoicing": {
       "unpaid": { "count": 3, "total": 270000 },
       "paidThisMonth": { "count": 2, "total": 450000 }

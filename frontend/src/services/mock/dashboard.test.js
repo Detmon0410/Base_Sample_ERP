@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
+import { makeOrderRoutes } from "@/test/orders";
 
 const admin = mockUsers[0];
 const worker = mockUsers[1];
@@ -15,7 +16,7 @@ const pdf = { name: "a.pdf", dataUrl: "data:application/pdf;base64,AA==" };
 describe("GET /dashboard of the mock", () => {
   it("is empty at the start: zeros", () => {
     const data = call("GET /dashboard", admin);
-    expect(data.orders).toEqual({ New: 0, InProgress: 0, Completed: 0 });
+    expect(data.orders).toEqual({ Draft: 0, InProgress: 0, Completed: 0 });
     expect(data.invoicing).toEqual({ unpaid: { count: 0, total: 0 }, paidThisMonth: { count: 0, total: 0 } });
   });
 
@@ -23,7 +24,7 @@ describe("GET /dashboard of the mock", () => {
     const customer = call("POST /customers", admin, { body: { name: "Dash" } }).data;
     const product = call("POST /products", admin, { body: { code: "D-P", name: "P", price: 1 } }).data;
     const qt = call("POST /qt", admin, { body: { qtNumber: "QT-D", qtDate: "2026-10-01", customerId: customer.id, file: pdf } }).data;
-    const order = (lines) => call("POST /orders", admin, { body: { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines } }).data;
+    const order = (lines) => makeOrderRoutes(call, admin, { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines }).data;
     const progress = (made, status, completedQuantity) =>
       call("POST /orders/:id/progress", worker, { params: { id: made.id }, body: { processId: made.lines[0].processes[0].id, status, completedQuantity, workDate: today() } });
     const start = (made) => call("POST /orders/:id/start", admin, { params: { id: made.id } });
@@ -41,7 +42,7 @@ describe("GET /dashboard of the mock", () => {
     for (const [code, quantity] of [["D-M-HIGH", 50], ["D-M-LOW", 3], ["D-M-MID", 20]]) call("POST /materials", admin, { body: { code, name: code, lots: [{ lotNumber: "L", quantity }] } });
 
     let data = call("GET /dashboard", admin);
-    expect(data.orders).toEqual({ New: 1, InProgress: 1, Completed: 1 });
+    expect(data.orders).toEqual({ Draft: 1, InProgress: 1, Completed: 1 });
     expect(data.invoicing.unpaid).toEqual({ count: 1, total: 500 });
     expect(data.invoicing.paidThisMonth).toEqual({ count: 0, total: 0 });
 

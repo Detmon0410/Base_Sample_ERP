@@ -134,7 +134,7 @@ function InvoicePage() {
 
   return (
     <>
-      <PageHeader title={invoice.invoiceNumber} status={t(`invoices:status.${invoice.status}`)} />
+      <PageHeader title={invoice.invoiceNumber} status={t(`invoices:status.${invoice.status}`)} statusTone={invoice.status === "Paid" ? "good" : "warn"} />
       <div className="flex max-w-3xl flex-col gap-5">
         <div className="flex flex-wrap gap-3">
           <DocumentActions name="invoice" number={invoice.invoiceNumber} />

@@ -85,23 +85,31 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("link", { name: WORKER.name })).toBeVisible();
 
-  // 2. a QT reference with its file
-  await open(page, "/sale/quotations", "New QT reference");
+  // 2. a QT with its lines and the customer's PO file, printed form there, then Confirm QT makes the order
+  await open(page, "/sale/quotations", "New QT");
   await page.getByLabel("QT number").fill("QT-001");
-  await page.getByLabel("Customer").selectOption({ label: "Tokyo Cold Chain" });
+  await page.getByLabel("Customer", { exact: true }).selectOption({ label: "Tokyo Cold Chain" });
   await page.getByLabel("Notes").fill("Ten refrigerators");
-  await page.getByLabel("QT file").setInputFiles({ name: "qt-001.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 quotation QT-001") });
-  await expect(page.getByText("Attached file:")).toBeVisible();
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByRole("row", { name: /QT-001/ })).toContainText("qt-001.pdf");
-
-  // 3 and 4. an order of 10 units linked to the QT, and its processes added by hand
-  await open(page, "/sale/orders", "New production order");
-  await page.getByLabel("QT reference").selectOption({ label: "QT-001 Tokyo Cold Chain" });
-  await expect(page.getByLabel("Customer")).toHaveValue(/\d+/); // the customer of the QT
+  await page.getByRole("button", { name: "Add a product" }).click();
   await page.getByLabel("Product", { exact: true }).selectOption({ label: "FR-100 Refrigerator 100L" });
-  await expect(page.getByLabel("Agreed unit price")).toHaveValue("45000");
+  await expect(page.getByLabel("Unit price")).toHaveValue("45000"); // the price of the product
   await page.getByLabel("Quantity").fill("10");
+  await page.getByLabel("Customer PO number").fill("PO-77");
+  await page.getByRole("button", { name: "Save" }).click();
+
+  // the same QT opens: the PO file, the printed form and Confirm QT
+  await expect(page).toHaveURL(/\/sale\/quotations\/\d+$/);
+  await page.getByLabel(/Choose a file/).setInputFiles({ name: "po-77.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 customer PO 77") });
+  await page.getByRole("button", { name: "Upload" }).click();
+  await expect(page.getByText("po-77.pdf")).toBeVisible();
+  await expect(page.locator('[data-print-doc="qt"]')).toContainText("QT-001");
+  await page.getByRole("button", { name: "Confirm QT" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
+
+  // 3 and 4. the order of 10 units is there (made from the QT, with its price); its processes are added by hand
+  await expect(page).toHaveURL(/\/sale\/orders\/\d+$/);
+  await expect(page.getByLabel("Quantity")).toHaveValue("10");
+  await expect(page.getByLabel("Agreed unit price")).toHaveValue("45000");
   await page.getByRole("button", { name: "Add a process" }).click();
   await page.getByRole("button", { name: "Add a process" }).click();
   await page.getByLabel("Process", { exact: true }).nth(0).fill("Cutting");
@@ -113,8 +121,8 @@ test("the example of the requirements, from the customer to the receipt", async 
   const orderNumber = (await orderLink.textContent()).trim();
   await orderLink.click();
   await page.getByRole("button", { name: "Start production" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("New"); // started, but no process has started yet
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Draft"); // started, but no process has started yet
   await logOut(page, "Admin");
 
   // 5. a Worker records progress and completes 10 units on every process
@@ -171,7 +179,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await open(page, "/accounting/invoices", "New invoice");
   await page.getByLabel("Production order").selectOption({ label: `${orderNumber} Tokyo Cold Chain` });
   await page.getByRole("button", { name: "Save" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   const invoiceLink = page.getByRole("link", { name: /^INV-\d{4}-0001$/ });
   await expect(invoiceLink).toBeVisible();
   const invoiceNumber = (await invoiceLink.textContent()).trim();
@@ -184,11 +192,11 @@ test("the example of the requirements, from the customer to the receipt", async 
   // 9. the full payment: Paid, and the receipt
   await page.getByLabel("Amount paid").fill("449999");
   await page.getByRole("button", { name: "Record the payment" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByText("The payment must be equal to the total of the invoice.")).toBeVisible();
   await page.getByLabel("Amount paid").fill("450000");
   await page.getByRole("button", { name: "Record the payment" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Paid");
   await expect(page.getByText(/^Paid on \d{4}-\d{2}-\d{2}: ¥450,000$/)).toBeVisible(); // the payment made
 
@@ -223,19 +231,19 @@ test("the example of the requirements, from the customer to the receipt", async 
   // deleting: a record that is still used is refused and the message says where it is used
   await open(page, "/master/customers", "Tokyo Cold Chain");
   await page.getByRole("button", { name: "Delete" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByText("This record cannot be deleted because it is still used:")).toBeVisible();
   await expect(page.getByText("QT references: QT-001")).toBeVisible();
   await expect(page.getByText(`Production orders: ${orderNumber}`)).toBeVisible();
 
   await open(page, "/master/products", "FR-100");
   await page.getByRole("button", { name: "Delete" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByText(`Production orders: ${orderNumber}`)).toBeVisible();
 
   await open(page, "/stock/materials", "STEEL-01");
   await page.getByRole("button", { name: "Delete" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByText("Products: FR-100")).toBeVisible(); // its BOM line
   await expect(page.getByText("Stock changes after the first stock: 1")).toBeVisible(); // the deduction of step 7
 
@@ -245,14 +253,14 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Save" }).click();
   await page.getByRole("link", { name: "Free Customer" }).click();
   await page.getByRole("button", { name: "Delete" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByRole("link", { name: "Tokyo Cold Chain" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Free Customer" })).toHaveCount(0);
 
   // the Dashboard: no order is New or in progress, one is Completed, nothing is unpaid, the payment of this month is in the money tile
   await open(page, "/");
   await expect(page.getByRole("link", { name: /^Completed\s*1$/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: /^New\s*0$/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Draft\s*0$/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /^Unpaid invoices\s*0$/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /^Paid this month\s*¥450,000$/ })).toBeVisible();
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
+import { makeOrderRoutes } from "@/test/orders";
 
 const admin = mockUsers[0];
 const worker = mockUsers[1];
@@ -21,7 +22,7 @@ const qt = call("POST /qt", admin, { body: { qtNumber: "QT-INV", qtDate: "2026-1
 
 /** An order of 10 pieces at 900 with one process; `complete` finishes it. */
 const order = (complete) => {
-  const made = call("POST /orders", admin, { body: { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 10, unitPrice: 900, processes: [{ name: "Cut" }] }] } }).data;
+  const made = makeOrderRoutes(call, admin, { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 10, unitPrice: 900, processes: [{ name: "Cut" }] }] }).data;
   call("POST /orders/:id/start", admin, { params: { id: made.id } });
   if (complete) call("POST /orders/:id/progress", worker, { params: { id: made.id }, body: { processId: made.lines[0].processes[0].id, status: "Completed", completedQuantity: 10, workDate: "2026-10-03" } });
   return made;

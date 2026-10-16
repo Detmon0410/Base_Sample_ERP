@@ -6,11 +6,11 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { AuthContext } from "@/lib/auth-context";
 import { customersApi, materialsApi, productsApi } from "@/services/master.service";
 import { mockUsers, tokenOf, toPublicUser } from "@/services/mock/users";
-import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
 import { setToken } from "@/utils/session";
 
 import { OrdersPage } from "./OrdersPage";
+import { makeOrder } from "@/test/orders";
 
 // The pages of the production orders, driven like a person would, on the mock (steps 2-5 of the workflow).
 
@@ -22,6 +22,7 @@ const renderAs = (user, path) => {
         <Routes>
           <Route path="/sale/orders/*" element={<OrdersPage />} />
           <Route path="/403" element={<p>forbidden</p>} />
+          <Route path="/sale/quotations" element={<p>the quotations</p>} />
         </Routes>
       </MemoryRouter>
     </AuthContext.Provider>,
@@ -29,64 +30,61 @@ const renderAs = (user, path) => {
 };
 
 describe("production orders, page by page", () => {
+  let flow; // the order of a confirmed QT, with no process yet (made by Confirm QT)
+
   beforeAll(async () => {
     setToken(tokenOf(mockUsers[0]));
     const customer = await customersApi.create({ name: "Flow Customer" });
-    await productsApi.create({ code: "FLOW-P", name: "Flow fridge", price: 5000 });
-    await qtApi.create({ qtNumber: "QT-FLOW", qtDate: "2026-10-01", customerId: customer.id, file: { name: "q.pdf", dataUrl: "data:application/pdf;base64,AA==" } });
+    const product = await productsApi.create({ code: "FLOW-P", name: "Flow fridge", price: 5000 });
+    const qt = await qtApi.create({ qtNumber: "QT-FLOW", qtDate: "2026-10-01", customerId: customer.id, customerPoNumber: "PO-FLOW", lines: [{ productId: product.id, quantity: 10, unitPrice: 5000 }] });
+    flow = (await qtApi.confirm(qt.id)).order;
   });
 
   it("shows the BOM of the product beside the processes, for the quantity, without a warning when the material is out and with nothing to add", async () => {
-    const user = userEvent.setup();
     const material = await materialsApi.create({ code: "MAT-OUT", name: "Steel sheet" }); // no lot: nothing in stock
-    await productsApi.create({ code: "BOM-P", name: "Bom fridge", price: 100, bom: [{ materialId: material.id, quantity: 2 }] });
-    renderAs(mockUsers[0], "/sale/orders/new");
+    const product = await productsApi.create({ code: "BOM-P", name: "Bom fridge", price: 100, bom: [{ materialId: material.id, quantity: 2 }] });
+    const customer = await customersApi.create({ name: "Bom Customer" });
+    const order = await makeOrder({ customerId: customer.id, lines: [{ productId: product.id, quantity: 10, unitPrice: 100, processes: [] }] });
+    renderAs(mockUsers[2], `/sale/orders/${order.id}`); // a Sale Worker prepares the order
 
-    await waitFor(() => expect(screen.getByRole("option", { name: "BOM-P Bom fridge" })).toBeInTheDocument());
-    await user.selectOptions(screen.getByLabelText("Product"), "BOM-P Bom fridge");
-    await user.type(screen.getByLabelText("Quantity"), "10");
-
-    expect(screen.getByRole("heading", { name: "Materials (BOM)" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Materials (BOM)" })).toBeInTheDocument();
     const row = await screen.findByRole("row", { name: /MAT-OUT Steel sheet/ });
     expect(row).toHaveTextContent("20"); // 2 for one product x 10
     expect(screen.queryByRole("alert")).not.toBeInTheDocument(); // the material is out of stock, and nothing is said
     expect(screen.queryByRole("button", { name: /material/i })).not.toBeInTheDocument(); // nothing to add to the BOM here
   });
 
-  it("an Admin makes an order with a process, starts it, and a Worker completes it", async () => {
+  it("a Sale Worker adds the process to the order of a QT, an Admin starts it, and a Factory Worker completes it", async () => {
     const user = userEvent.setup();
-    const view = renderAs(mockUsers[0], "/sale/orders/new");
+    const sale = renderAs(mockUsers[2], `/sale/orders/${flow.id}`);
 
-    await screen.findByText("New production order");
-    // saving the empty form shows the errors only now
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    expect(await screen.findByText("Some fields need your attention. Please check the marked fields.")).toBeInTheDocument();
-
-    await waitFor(() => expect(screen.getByRole("option", { name: "QT-FLOW Flow Customer" })).toBeInTheDocument());
-    await user.selectOptions(screen.getByLabelText("QT reference"), "QT-FLOW Flow Customer");
-    expect(screen.getByLabelText("Customer")).toHaveDisplayValue("Flow Customer"); // the customer of the QT
-    await waitFor(() => expect(screen.getByRole("option", { name: "FLOW-P Flow fridge" })).toBeInTheDocument());
-    await user.selectOptions(screen.getByLabelText("Product"), "FLOW-P Flow fridge");
-    expect(screen.getByLabelText("Agreed unit price")).toHaveValue(5000); // the price of the product
-    await user.type(screen.getByLabelText("Quantity"), "10");
+    // the order came from the QT: its QT, customer and customer PO are shown, and the product and the quantity are the QT's
+    expect(await screen.findByText("Flow Customer")).toBeInTheDocument();
+    expect(screen.getByText("QT-FLOW")).toBeInTheDocument();
+    expect(screen.getByText("PO-FLOW")).toBeInTheDocument();
+    expect(screen.getByLabelText("Quantity")).toHaveValue(10);
+    expect(screen.getByLabelText("Agreed unit price")).toHaveValue(5000);
     await user.click(screen.getByRole("button", { name: "Add a process" }));
     await user.type(screen.getByLabelText("Process"), "Cutting");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    // after Save the list opens
-    const link = await screen.findByRole("link", { name: /^ORD-\d{4}-0001$/ });
-    expect(screen.getByRole("row", { name: /Flow Customer/ })).toHaveTextContent("New");
+    // after Save the list opens, with the order as a Draft
+    const link = await screen.findByRole("link", { name: flow.orderNumber });
+    expect(screen.getByRole("row", { name: new RegExp(flow.orderNumber) })).toHaveTextContent("Draft");
+    expect(screen.queryByRole("link", { name: /New production order/ })).not.toBeInTheDocument(); // an order is made by Confirm QT
+    sale.unmount();
 
     // the Admin starts it
-    await user.click(link);
+    const admin = renderAs(mockUsers[0], `/sale/orders/${flow.id}`);
     await user.click(await screen.findByRole("button", { name: "Start production" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
     expect(await screen.findByText("Not started")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("New"); // no process has started yet
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Draft"); // no process has started yet
+    expect(screen.getByText("Production started")).toBeInTheDocument(); // so a started order is not taken for a draft that waits
     const orderPath = `/sale/orders/${link.getAttribute("href").split("/").pop()}`;
-    view.unmount();
+    admin.unmount();
 
-    // a Worker records progress, 4 then all 10
+    // a Factory Worker records progress, 4 then all 10
     renderAs(mockUsers[1], orderPath);
     await user.click(await screen.findByRole("button", { name: "Record progress" }));
     await user.selectOptions(screen.getByLabelText("Status"), "In progress");
@@ -114,9 +112,9 @@ describe("production orders, page by page", () => {
     expect(screen.queryByRole("button", { name: "Record progress" })).not.toBeInTheDocument(); // a Worker cannot reopen
   });
 
-  it("keeps a Worker out of the page of a new order", async () => {
-    renderAs(mockUsers[1], "/sale/orders/new");
-    expect(await screen.findByText("forbidden")).toBeInTheDocument();
+  it("has no new order: the old address opens the quotations, where an order is made by Confirm QT", async () => {
+    renderAs(mockUsers[2], "/sale/orders/new");
+    expect(await screen.findByText("the quotations")).toBeInTheDocument();
   });
 
   it("says which material is short when the start is refused, with a button that opens it ready to add the missing quantity", async () => {
@@ -126,7 +124,7 @@ describe("production orders, page by page", () => {
     const product = await productsApi.create({ code: "SHORT-P", name: "Short fridge", price: 100, bom: [{ materialId: material.id, quantity: 2 }] });
     const customer = await customersApi.create({ name: "Short Customer" });
     const qt = await qtApi.create({ qtNumber: "QT-SHORT", qtDate: "2026-10-01", customerId: customer.id });
-    const order = await ordersApi.create({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 10, unitPrice: 100, processes: [{ name: "Cut", instructions: "" }] }] });
+    const order = await makeOrder({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 10, unitPrice: 100, processes: [{ name: "Cut", instructions: "" }] }] });
     renderAs(mockUsers[0], `/sale/orders/${order.id}`);
 
     await user.click(await screen.findByRole("button", { name: "Start production" }));
@@ -134,5 +132,27 @@ describe("production orders, page by page", () => {
     expect(await screen.findByText(/MAT-SHORT Short steel: needs 20, in stock 5\./)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Add stock" })).toHaveAttribute("href", `/stock/materials/${material.id}?add=15&order=${order.id}`);
     expect(screen.getByRole("button", { name: "Start production" })).toBeInTheDocument(); // it did not start
+  });
+
+  it("lets a Sale Worker prepare an order and a Factory Worker start it", async () => {
+    const user = userEvent.setup();
+    setToken(tokenOf(mockUsers[0]));
+    const product = await productsApi.create({ code: "ROLE-P", name: "Role fridge", price: 100 }); // no BOM: nothing to deduct
+    const customer = await customersApi.create({ name: "Role Customer" });
+    const qt = await qtApi.create({ qtNumber: "QT-ROLE", qtDate: "2026-10-01", customerId: customer.id });
+    const order = await makeOrder({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 2, unitPrice: 100, processes: [{ name: "Cut", instructions: "" }] }] });
+
+    // the Sale Worker: the form of the order (to change it), and no Start
+    const sale = renderAs(mockUsers[2], `/sale/orders/${order.id}`);
+    expect(await screen.findByRole("button", { name: "Save" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Start production" })).not.toBeInTheDocument();
+    sale.unmount();
+
+    // the Factory Worker: the page of the order, with Start (and no way to change the products and the processes)
+    renderAs(mockUsers[1], `/sale/orders/${order.id}`);
+    expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument();
+    await user.click(await screen.findByRole("button", { name: "Start production" }));
+    await user.click(await screen.findByRole("button", { name: "Confirm" }));
+    await waitFor(() => expect(screen.queryByRole("button", { name: "Start production" })).not.toBeInTheDocument()); // it started
   });
 });

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
+import { makeOrderRoutes } from "@/test/orders";
 
 const admin = mockUsers[0];
 const worker = mockUsers[1];
@@ -39,15 +40,15 @@ describe("delete of master data", () => {
     expect(error.details).toEqual([{ kind: "qt", count: 1, items: ["QT-DEL"] }]);
 
     const product = call("POST /products", admin, { body: { code: "DEL-P", name: "P", price: 1 } }).data;
-    const order = call("POST /orders", admin, { body: { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] } }).data;
+    const order = makeOrderRoutes(call, admin, { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] }).data;
     expect(fails(() => call("DELETE /customers/:id", admin, { params: { id: customer.id } })).details).toEqual([
-      { kind: "qt", count: 1, items: ["QT-DEL"] },
+      { kind: "qt", count: 2, items: ["QT-DEL", order.qtNumber] }, // the QT of the order is a second one
       { kind: "order", count: 1, items: [order.orderNumber] },
     ]);
     expect(exists("customers", customer.id)).toBe(true);
 
     // the QT reference and the product are used by that order too
-    expect(fails(() => call("DELETE /qt/:id", admin, { params: { id: qt.id } })).details).toEqual([{ kind: "order", count: 1, items: [order.orderNumber] }]);
+    expect(fails(() => call("DELETE /qt/:id", admin, { params: { id: order.qtId } })).details).toEqual([{ kind: "order", count: 1, items: [order.orderNumber] }]); // the QT Confirm made the order from
     expect(fails(() => call("DELETE /products/:id", admin, { params: { id: product.id } })).details).toEqual([{ kind: "order", count: 1, items: [order.orderNumber] }]);
   });
 
@@ -104,7 +105,7 @@ describe("delete of master data", () => {
     const customer = call("POST /customers", admin, { body: { name: "For progress" } }).data;
     const qt = call("POST /qt", admin, { body: { qtNumber: "QT-USER", qtDate: "2026-10-01", customerId: customer.id, file } }).data;
     const product = call("POST /products", admin, { body: { code: "DEL-P3", name: "P3", price: 1 } }).data;
-    const order = call("POST /orders", admin, { body: { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 2, unitPrice: 1, processes: [{ name: "Cut" }] }] } }).data;
+    const order = makeOrderRoutes(call, admin, { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 2, unitPrice: 1, processes: [{ name: "Cut" }] }] }).data;
     call("POST /orders/:id/start", admin, { params: { id: order.id } });
     call("POST /orders/:id/progress", worker, { params: { id: order.id }, body: { processId: order.lines[0].processes[0].id, status: "Completed", completedQuantity: 2, workDate: "2026-10-03" } });
     expect(fails(() => call("DELETE /users/:id", admin, { params: { id: worker.id } })).details.map((place) => place.kind)).toEqual(["progress"]);

@@ -16,6 +16,7 @@ import { setToken } from "@/utils/session";
 import { ReceiptsPage } from "@/pages/receipts/ReceiptsPage";
 
 import { InvoicesPage } from "./InvoicesPage";
+import { makeOrder } from "@/test/orders";
 
 // Steps 6-7 of the workflow, driven like a person would, on the mock: issue the invoice, pay it in full, get the receipt, print.
 
@@ -24,7 +25,7 @@ const completedOrder = async () => {
   const customer = await customersApi.create({ name: "Paper Customer", address: "5 Namba, Osaka" });
   const product = await productsApi.create({ code: "INV-FLOW", name: "Flow fridge", price: 100, bom: [] });
   const qt = await qtApi.create({ qtNumber: "QT-INV-FLOW", qtDate: "2026-10-01", customerId: customer.id, file: { name: "q.pdf", dataUrl: "data:application/pdf;base64,AA==" } });
-  const order = await ordersApi.create({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 3, unitPrice: 250, processes: [{ name: "Cut", instructions: "" }] }] });
+  const order = await makeOrder({ qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 3, unitPrice: 250, processes: [{ name: "Cut", instructions: "" }] }] });
   await ordersApi.start(order.id);
   await ordersApi.recordProgress(order.id, { processId: order.lines[0].processes[0].id, status: "Completed", completedQuantity: 3, workDate: "2026-10-03", note: "" });
   return order;

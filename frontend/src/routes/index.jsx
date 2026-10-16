@@ -9,6 +9,8 @@ import { InvoicesPage } from "@/pages/invoices/InvoicesPage";
 import { OrdersPage } from "@/pages/orders/OrdersPage";
 import { ReceiptsPage } from "@/pages/receipts/ReceiptsPage";
 import { QtPage } from "@/pages/qt/QtPage";
+import { PurchasePage } from "@/pages/purchase/PurchasePage";
+import { SuppliersPage } from "@/pages/suppliers/SuppliersPage";
 import { ProductsPage } from "@/pages/master/ProductsPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { ErDiagramPage } from "@/pages/erDiagram/ErDiagramPage";
@@ -24,7 +26,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { RequirePermission } from "./RequirePermission";
 
 // Menu entries whose page is built (the key of config/navigation.js). Everything else opens the "not built yet" placeholder.
-const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, receipts: ReceiptsPage, productionOrders: OrdersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage, erDiagram: ErDiagramPage };
+const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, invoices: InvoicesPage, receipts: ReceiptsPage, productionOrders: OrdersPage, purchase: PurchasePage, suppliers: SuppliersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage, erDiagram: ErDiagramPage };
 
 /** An old address of a material, /stock/<id> (a saved link, the Dashboard of before): it opens the material where it is now. */
 function LegacyMaterialRedirect() {
@@ -60,13 +62,13 @@ export function AppRoutes() {
           {NAV_ITEMS.map((item) => {
             const Page = IMPLEMENTED_PAGES[item.key] ?? UnderConstructionPage;
             return (
-              <Route key={item.key} element={<RequirePermission roles={item.roles} />}>
+              <Route key={item.key} element={<RequirePermission action={item.action} />}>
                 {item.to === "/" ? <Route index element={<Page />} /> : <Route path={`${item.to.slice(1)}/*`} element={<Page />} />}
               </Route>
             );
           })}
 
-          <Route element={<RequirePermission roles={["Admin", "Worker"]} />}>
+          <Route element={<RequirePermission action="stock.view" />}>
             <Route path="stock" element={<Navigate to="/stock/materials" replace />} />
             <Route path="stock/:id" element={<LegacyMaterialRedirect />} />
           </Route>

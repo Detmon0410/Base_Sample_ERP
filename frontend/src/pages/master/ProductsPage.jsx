@@ -9,10 +9,11 @@ import { RecordList } from "@/components/common/RecordList";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
 import { useAuth } from "@/hooks/useAuth";
+import { RequirePermission } from "@/routes/RequirePermission";
 import { useLoad } from "@/hooks/useLoad";
 import { formatCurrency, formatNumber } from "@/utils/format";
 import { materialsApi, productsApi } from "@/services/master.service";
-import { isAdmin } from "@/utils/permissions";
+import { can } from "@/utils/permissions";
 
 const EMPTY = { code: "", name: "", price: "", bom: [] };
 
@@ -68,7 +69,7 @@ function BomLines({ form, readOnly }) {
 function ProductForm() {
   const { t } = useTranslation("master");
   const { user } = useAuth();
-  const readOnly = !isAdmin(user);
+  const readOnly = !can(user, "products.write");
   return (
     <RecordFormPage
       api={productsApi}
@@ -109,10 +110,10 @@ export function ProductsPage() {
         index
         element={
           <RecordList
-                  api={productsApi}
+            api={productsApi}
             base="/master/products"
             title={t("products.title")}
-            canCreate={isAdmin(user)}
+            canCreate={can(user, "products.write")}
             newLabel={t("products.new")}
             columns={[
               { key: "code", header: t("products.code") },
@@ -123,7 +124,9 @@ export function ProductsPage() {
           />
         }
       />
-      <Route path="new" element={<ProductForm />} />
+      <Route element={<RequirePermission action="products.write" />}>
+        <Route path="new" element={<ProductForm />} />
+      </Route>
       <Route path=":id" element={<ProductForm />} />
     </Routes>
   );

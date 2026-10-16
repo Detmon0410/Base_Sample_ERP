@@ -48,7 +48,8 @@ describe("the bar at the top", () => {
     expect(within(menu).queryByRole("button", { name: /Accounting/ })).not.toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: "Dashboard" })).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: "Production orders" })).toBeInTheDocument();
-    expect(within(menu).getByRole("link", { name: "Products and BOM" })).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Purchase" })).toBeInTheDocument(); // a Factory Worker buys the materials
+    expect(within(menu).getByRole("button", { name: /Master data/ })).toBeInTheDocument(); // products and suppliers, to look at
   });
 });
 

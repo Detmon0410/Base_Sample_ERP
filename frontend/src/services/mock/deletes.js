@@ -9,12 +9,15 @@
 //   users       signed in now, the last Admin, or recorded a progress update or a stock change
 //   QT          used by a production order (the file goes with it)
 
+import { removeAttachmentsOf } from "./attachments.js";
 import { MockHttpError } from "./errors.js";
 import { customers, materials, products } from "./master.js";
 import { orders } from "./orders.js";
+import { purchaseOrders } from "./purchase.js";
 import { qtReferences } from "./qt.js";
 import { stockChanges } from "./stock.js";
-import { mockUsers, userFromAuthorization } from "./users.js";
+import { suppliers } from "./suppliers.js";
+import { mockUsers, requireCan, userFromAuthorization } from "./users.js";
 
 const SHOWN = 5; // how many names of a kind are listed
 
@@ -64,10 +67,19 @@ export const deleteRoutes = {
     const later = stockChanges.filter((entry) => entry.materialId === material.id && !entry.initial);
     remove(materials, material, [
       place("product", products.filter((product) => product.bom.some((line) => line.materialId === material.id)).map((product) => product.code)),
+      place("supplier", suppliers.filter((supplier) => supplier.items.some((item) => item.materialId === material.id)).map((supplier) => supplier.code)),
+      place("purchaseOrder", purchaseOrders.filter((po) => po.lines.some((line) => line.materialId === material.id)).map((po) => po.poNumber)),
       place("stockChange", later.map((entry) => String(entry.id))),
     ]);
     // the first stock of its lots goes with it
     for (let index = stockChanges.length - 1; index >= 0; index -= 1) if (stockChanges[index].materialId === material.id) stockChanges.splice(index, 1);
+    return null;
+  },
+
+  "DELETE /suppliers/:id": ({ authorization, params }) => {
+    admin(authorization);
+    const supplier = find(suppliers, params.id);
+    remove(suppliers, supplier, [place("purchaseOrder", purchaseOrders.filter((po) => po.supplierId === supplier.id).map((po) => po.poNumber))]);
     return null;
   },
 
@@ -85,9 +97,10 @@ export const deleteRoutes = {
   },
 
   "DELETE /qt/:id": ({ authorization, params }) => {
-    admin(authorization);
+    requireCan(authorization, "qt.use"); // a Sale Worker deletes a QT too
     const qt = find(qtReferences, params.id);
     remove(qtReferences, qt, [place("order", orders.filter((order) => order.qtId === qt.id).map((order) => order.orderNumber))]);
+    removeAttachmentsOf("QtReference", qt.id); // the files go with the QT
     return null;
   },
 };

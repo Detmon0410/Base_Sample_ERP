@@ -5,8 +5,8 @@ import { expect, test } from "@playwright/test";
 import { USERS, settle, signIn, watchErrors } from "./helpers.js";
 
 // The ER diagram in a real browser: the Admin opens it from the menu and downloads the PDF, a real file with the drawing (as
-// text, not a picture), then the relationships with their delete rules and the rules of DB Relations.md. A Worker does not have the
-// page.
+// text, not a picture), then the relationships with their delete rules and the rules of DB Relations.md. A Worker (Sale or Factory)
+// does not have the page.
 
 test("the Admin opens the ER diagram and downloads it as a PDF", async ({ page }) => {
   const errors = watchErrors(page);
@@ -48,8 +48,10 @@ test("the Japanese page downloads the PDF in Japanese: the same two pages, drawn
   expect(errors.take()).toEqual([]);
 });
 
-test("a Worker cannot open the ER diagram", async ({ page }) => {
-  await signIn(page, USERS.worker);
-  await page.goto("/master/er-diagram");
-  await expect(page.getByText("You do not have permission")).toBeVisible();
-});
+for (const who of ["sale", "factory"]) {
+  test(`a ${who === "sale" ? "Sale" : "Factory"} Worker cannot open the ER diagram`, async ({ page }) => {
+    await signIn(page, USERS[who]);
+    await page.goto("/master/er-diagram");
+    await expect(page.getByText("You do not have permission")).toBeVisible();
+  });
+}

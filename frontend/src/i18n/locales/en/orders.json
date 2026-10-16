@@ -1,19 +1,15 @@
 {
   "title": "Production orders",
-  "new": "New production order",
   "section": "Order",
   "orderNumber": "Order number",
-  "numberHint": "The number is given when the order is saved.",
   "qt": "QT reference",
-  "chooseQt": "Choose a QT reference",
   "customer": "Customer",
-  "chooseCustomer": "Choose a customer",
   "orderDate": "Order date",
   "notes": "Notes",
   "startedAt": "Started",
   "notStarted": "Not started yet",
   "status": {
-    "New": "New",
+    "Draft": "Draft",
     "InProgress": "In progress",
     "Completed": "Completed"
   },
@@ -70,7 +66,9 @@
     "hint": "Save your changes first: the start uses the saved order.",
     "done": "The production has started.",
     "short": "{{name}}: needs {{need}}, in stock {{have}}.",
-    "addStock": "Add stock"
+    "addStock": "Add stock",
+    "viewHint": "Starting deducts the materials of the BOM from the stock.",
+    "createPo": "Create PO"
   },
   "errors": {
     "ORDER_NOT_READY": "The order needs at least one product, and every product needs at least one process.",
@@ -95,5 +93,7 @@
     "perUnit": "For one product",
     "needed": "For this line",
     "none": "This product has no materials."
-  }
+  },
+  "customerPo": "Customer PO",
+  "started": "Production started"
 }

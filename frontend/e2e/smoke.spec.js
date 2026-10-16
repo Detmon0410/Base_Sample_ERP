@@ -96,8 +96,8 @@ test("an old address (/qt, /orders/5, /users) opens the page where it is now", a
   await signIn(page, USERS.admin);
   await page.goto("/qt");
   await expect(page).toHaveURL(/\/sale\/quotations$/);
-  await page.goto("/orders/new");
-  await expect(page).toHaveURL(/\/sale\/orders\/new$/);
+  await page.goto("/orders/new"); // the old address of a new order, which is gone too: it ends at the quotations
+  await expect(page).toHaveURL(/\/sale\/quotations$/);
 });
 
 test("the address /stock opens the materials, there is no overview page", async ({ page }) => {

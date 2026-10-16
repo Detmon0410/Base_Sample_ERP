@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { mockRoutes } from "./routes.js";
 import { mockUsers, tokenOf } from "./users.js";
+import { makeOrderRoutes } from "@/test/orders";
 
 const admin = mockUsers[0];
 const worker = mockUsers[1];
@@ -23,7 +24,7 @@ describe("GET /stock-changes of the mock: the movements of every material", () =
   const customer = call("POST /customers", admin, { body: { name: "Movements" } }).data;
   const product = call("POST /products", admin, { body: { code: "MV-P", name: "P", price: 1 } }).data;
   const qt = call("POST /qt", admin, { body: { qtNumber: "QT-MV", qtDate: "2026-10-01", customerId: customer.id, file: { name: "a.pdf", dataUrl: "data:application/pdf;base64,AA==" } } }).data;
-  const order = call("POST /orders", admin, { body: { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] } }).data;
+  const order = makeOrderRoutes(call, admin, { qtId: qt.id, customerId: customer.id, orderDate: "2026-10-02", lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [] }] }).data;
 
   change(steel, { kind: "Deduct", quantity: 25, changeDate: "2099-10-03", note: "Cutting", orderId: order.id });
   change(foam, { kind: "Add", lotNumber: "F1", quantity: 5, changeDate: "2099-10-07" });

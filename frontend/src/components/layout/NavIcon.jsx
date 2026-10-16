@@ -12,6 +12,8 @@ import {
   Network,
   Package,
   ReceiptText,
+  ShoppingCart,
+  Truck,
   UserCog,
   Users,
   Warehouse,
@@ -35,6 +37,8 @@ const ICONS = {
   stockGroup: Warehouse,
   movements: ArrowLeftRight,
   users: UserCog,
+  purchase: ShoppingCart,
+  suppliers: Truck,
   erDiagram: Network,
   down: ChevronDown,
 };

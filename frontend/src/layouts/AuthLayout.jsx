@@ -16,7 +16,7 @@ export function AuthLayout() {
       <AuthBackground />
 
       <header className="relative flex h-12 shrink-0 items-center justify-between bg-primary px-4 text-primary-foreground">
-        <p className="text-xl font-bold">{t("app.name")}</p>
+        <p className="text-base font-bold">{t("app.name")}</p>
         <LanguageSwitcher />
       </header>
 

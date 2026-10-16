@@ -1,6 +1,6 @@
 // The Dashboard, the first page. One call, the numbers of every block:
 //
-//   orders       how many production orders are New / InProgress / Completed (every signed-in user)
+//   orders       how many production orders are Draft / InProgress / Completed (every signed-in user)
 //   invoicing    Admin only (null for a Worker): unpaid { count, total }, paidThisMonth { count, total }
 
 import { invoices, orderStatus, orders } from "./orders.js";
@@ -27,7 +27,7 @@ export const dashboardRoutes = {
     }
 
     return {
-      orders: { New: count("New"), InProgress: count("In Progress"), Completed: count("Completed") },
+      orders: { Draft: count("Draft"), InProgress: count("In Progress"), Completed: count("Completed") },
       invoicing,
     };
   },

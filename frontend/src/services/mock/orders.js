@@ -1,11 +1,14 @@
 // Production orders.
 //
+// An order is made by Confirm QT (createOrderFromQt), from the lines of the QT. The Admin or a Sale Worker then adds the processes (PUT), and
+// an Admin or a Factory Worker starts it.
+//
 // An order: { id, orderNumber, qtId, customerId, orderDate, notes, started, startedAt, lines, history, createdAt, updatedAt }
 //   line:    { id, productId, quantity, unitPrice, processes }
 //   process: { id, sequence, name, instructions, status: "Not Started" | "In Progress" | "Completed", completedQuantity }
 //   history: one entry for every progress update, never changed: { id, lineId, processId, status, completedQuantity, workDate, note, userId, userName, at }
 //
-// The status of the order is computed, nobody sets it: New (no process has started) -> In Progress (at least one process has started) -> Completed (every process of
+// The status of the order is computed, nobody sets it: Draft (no process has started) -> In Progress (at least one process has started) -> Completed (every process of
 // every line Completed). Every process needs the quantity of its line; "Completed" means the completed quantity equals it.
 // Before the start an Admin may change the whole order; after it only progress is recorded.
 
@@ -32,12 +35,12 @@ const isDay = (value) => {
   return date.getUTCFullYear() === Number(match[1]) && date.getUTCMonth() === Number(match[2]) - 1 && date.getUTCDate() === Number(match[3]);
 };
 
-/** The status of an order, computed from its processes: New until a process has started, Completed when every process is Completed. */
+/** The status of an order, computed from its processes: Draft until a process has started, Completed when every process is Completed. */
 export function orderStatus(order) {
-  if (!order.started) return "New";
+  if (!order.started) return "Draft";
   const processes = order.lines.flatMap((line) => line.processes);
   if (processes.length > 0 && processes.every((process) => process.status === "Completed")) return "Completed";
-  return processes.some((process) => process.status !== "Not Started") ? "In Progress" : "New";
+  return processes.some((process) => process.status !== "Not Started") ? "In Progress" : "Draft";
 }
 
 function toView(order) {
@@ -51,6 +54,8 @@ function toView(order) {
     ...order,
     status: orderStatus(order),
     qtNumber: qtReferences.find((qt) => qt.id === order.qtId)?.qtNumber ?? "",
+    customerPoNumber: qtReferences.find((qt) => qt.id === order.qtId)?.customerPoNumber ?? "",
+    customerPoDate: qtReferences.find((qt) => qt.id === order.qtId)?.customerPoDate ?? "",
     customerName: customers.find((customer) => customer.id === order.customerId)?.name ?? "",
     invoice: (() => {
       const invoice = invoices.find((item) => item.orderId === order.id);
@@ -75,12 +80,10 @@ function find(orderId) {
   return order;
 }
 
-/** Checks the body of a new or changed order and returns the clean fields. */
+/** Checks the body of a changed order and returns the clean fields. The QT and the customer of an order never change (they come from the QT). */
 function normalize(body) {
-  const data = { qtId: Number(body.qtId), customerId: Number(body.customerId), orderDate: text(body.orderDate), notes: text(body.notes), lines: [] };
+  const data = { orderDate: text(body.orderDate), notes: text(body.notes), lines: [] };
   const issues = [];
-  if (!qtReferences.some((qt) => qt.id === data.qtId)) issues.push(issue("qtId", "REQUIRED"));
-  if (!customers.some((customer) => customer.id === data.customerId)) issues.push(issue("customerId", "REQUIRED"));
   if (!data.orderDate) issues.push(issue("orderDate", "REQUIRED"));
   else if (!isDay(data.orderDate)) issues.push(issue("orderDate", "INVALID_DATE"));
 
@@ -109,6 +112,33 @@ const withIds = (lines) =>
     processes: line.processes.map((process) => ({ id: id(), ...process, status: "Not Started", completedQuantity: 0 })),
   }));
 
+/** Makes the order of a confirmed QT: the customer, the date of today and the lines of the QT with their prices; the processes come later. */
+export function createOrderFromQt(qt) {
+  const year = new Date().getFullYear();
+  const count = orders.filter((order) => order.orderNumber.startsWith(`ORD-${year}-`)).length;
+  const today = new Date();
+  const orderDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const order = {
+    id: id(),
+    orderNumber: `ORD-${year}-${String(count + 1).padStart(4, "0")}`,
+    qtId: qt.id,
+    customerId: qt.customerId,
+    orderDate,
+    notes: "",
+    lines: withIds(qt.lines.map((line) => ({ productId: line.productId, quantity: line.quantity, unitPrice: line.unitPrice, processes: [] }))),
+    started: false,
+    startedAt: null,
+    history: [],
+    createdAt: stamp(),
+    updatedAt: stamp(),
+  };
+  orders.push(order);
+  return order;
+}
+
+/** The order the way the API shows it. */
+export const orderView = (order) => toView(order);
+
 export const orderRoutes = {
   "GET /orders": ({ authorization, query }) => {
     access(authorization, "orders.view");
@@ -123,26 +153,6 @@ export const orderRoutes = {
   "GET /orders/:id": ({ authorization, params }) => {
     access(authorization, "orders.view");
     return toView(find(params.id));
-  },
-
-  "POST /orders": ({ authorization, body }) => {
-    access(authorization, "orders.edit");
-    const data = normalize(body);
-    const year = new Date().getFullYear();
-    const count = orders.filter((order) => order.orderNumber.startsWith(`ORD-${year}-`)).length;
-    const order = {
-      id: id(),
-      orderNumber: `ORD-${year}-${String(count + 1).padStart(4, "0")}`,
-      ...data,
-      lines: withIds(data.lines),
-      started: false,
-      startedAt: null,
-      history: [],
-      createdAt: stamp(),
-      updatedAt: stamp(),
-    };
-    orders.push(order);
-    return new MockResponse({ data: toView(order), status: 201 });
   },
 
   "PUT /orders/:id": ({ authorization, params, body }) => {

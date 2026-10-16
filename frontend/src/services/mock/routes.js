@@ -1,5 +1,6 @@
 import { masterRoutes } from "./master.js";
 import { qtRoutes } from "./qt.js";
+import { qtConfirmRoutes } from "./qtConfirm.js";
 import { invoiceRoutes } from "./invoices.js";
 import { orderRoutes } from "./orders.js";
 import { stockRoutes } from "./stock.js";
@@ -21,6 +22,7 @@ export const mockRoutes = {
 
   ...masterRoutes,
   ...qtRoutes,
+  ...qtConfirmRoutes,
   ...orderRoutes,
   ...invoiceRoutes,
   ...dashboardRoutes,

@@ -1,13 +1,15 @@
-// QT references: the quotation is made outside the system; here only its
-// reference is kept - QT number, QT date, customer, notes and the file of the quotation (a data URL in the mock, Q8).
-// A QT reference: { id, qtNumber, qtDate, customerId, notes, file: { name, type, dataUrl } | null }. The file is optional (changed by the user).
+// QT references (QT 2.0): a quotation with lines, printed from the system, with the customer's PO, that Confirm turns into a production order.
+//
+// A QT: { id, qtNumber, qtDate, customerId, notes, customerPoNumber, customerPoDate, status: "Draft" | "Confirmed",
+//         lines: [{ productId, quantity, unitPrice }], productionOrderId | null, createdAt, updatedAt }
+// The files of a QT (the quotation, the customer's PO file) are attachments (attachments.js). Confirming makes one production order
+// (qtConfirm.js); after that the customer and the lines cannot change (409 QT_LOCKED) and the QT cannot be deleted.
 
-import { customers, invalid, issue, resource, text } from "./master.js";
+import { MockHttpError } from "./errors.js";
+import { customers, invalid, issue, number, products, resource, text } from "./master.js";
+import { orders } from "./orders.js";
 
 export const qtReferences = [];
-
-const MAX_BYTES = 10 * 1024 * 1024;
-const FILE_TYPES = ["application/pdf", "image/png", "image/jpeg"];
 
 /** "YYYY-MM-DD" that is a real day. */
 const isDay = (value) => {
@@ -18,12 +20,31 @@ const isDay = (value) => {
 };
 
 const customerName = (record) => customers.find((customer) => customer.id === record.customerId)?.name ?? "";
-const withCustomer = (record) => ({ ...record, customerName: customerName(record) });
-const withoutFileData = (record) => {
-  if (!record.file) return withCustomer(record);
-  const { dataUrl: _dataUrl, ...file } = record.file;
-  return { ...withCustomer(record), file };
+const orderOf = (record) => orders.find((order) => order.id === record.productionOrderId);
+
+const lineView = (line) => {
+  const product = products.find((item) => item.id === line.productId);
+  return { ...line, productCode: product?.code ?? "", productName: product?.name ?? "", amount: line.quantity * line.unitPrice };
 };
+const totalOf = (record) => record.lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0);
+
+/** The whole QT, with the names, the amounts, the total and the order made from it. */
+const toView = (record) => ({
+  ...record,
+  customerName: customerName(record),
+  customerAddress: customers.find((customer) => customer.id === record.customerId)?.address ?? "",
+  lines: record.lines.map(lineView),
+  total: totalOf(record),
+  productionOrderNumber: orderOf(record)?.orderNumber ?? null,
+});
+
+/** A row of the list: no lines. */
+const toListView = (record) => {
+  const { lines: _lines, ...rest } = toView(record);
+  return rest;
+};
+
+const sameLines = (a, b) => a.length === b.length && a.every((line, index) => line.productId === b[index].productId && line.quantity === b[index].quantity && line.unitPrice === b[index].unitPrice);
 
 export const qtRoutes = resource({
   path: "/qt",
@@ -31,26 +52,45 @@ export const qtRoutes = resource({
   readAction: "qt.use",
   writeAction: "qt.use",
   unique: ["qtNumber"],
-  searchIn: ["qtNumber", "notes", customerName],
-  toView: withCustomer,
-  toListView: withoutFileData,
-  normalize: (body) => {
-    const data = { qtNumber: text(body.qtNumber), qtDate: text(body.qtDate), customerId: Number(body.customerId), notes: text(body.notes), file: null };
+  searchIn: ["qtNumber", "notes", "customerPoNumber", customerName],
+  toView,
+  toListView,
+  filter: (record, query) => !query.status || record.status === query.status, // the list can be filtered by Draft or Confirmed
+  normalize: (body, record) => {
+    const data = {
+      qtNumber: text(body.qtNumber),
+      qtDate: text(body.qtDate),
+      customerId: Number(body.customerId),
+      notes: text(body.notes),
+      customerPoNumber: text(body.customerPoNumber),
+      customerPoDate: text(body.customerPoDate),
+      lines: [],
+      status: record?.status ?? "Draft",
+      productionOrderId: record?.productionOrderId ?? null,
+    };
     const issues = [];
     if (!data.qtNumber) issues.push(issue("qtNumber", "REQUIRED"));
     if (!data.qtDate) issues.push(issue("qtDate", "REQUIRED"));
     else if (!isDay(data.qtDate)) issues.push(issue("qtDate", "INVALID_DATE"));
     if (!customers.some((customer) => customer.id === data.customerId)) issues.push(issue("customerId", "REQUIRED"));
+    if (data.customerPoDate && !isDay(data.customerPoDate)) issues.push(issue("customerPoDate", "INVALID_DATE"));
 
-    const file = body.file;
-    if (file?.dataUrl) {
-      const type = /^data:([^;,]+)[;,]/.exec(file.dataUrl)?.[1];
-      const bytes = Math.floor((file.dataUrl.length * 3) / 4);
-      if (!FILE_TYPES.includes(type)) issues.push(issue("file", "FILE_TYPE"));
-      else if (bytes > MAX_BYTES) issues.push(issue("file", "FILE_TOO_BIG"));
-      else data.file = { name: text(file.name) || "quotation", type, dataUrl: file.dataUrl };
-    }
+    (Array.isArray(body.lines) ? body.lines : []).forEach((line, index) => {
+      const productId = Number(line.productId);
+      const quantity = number(line.quantity);
+      const unitPrice = number(line.unitPrice);
+      if (!products.some((product) => product.id === productId)) issues.push(issue(`lines.${index}.productId`, "REQUIRED"));
+      if (!(Number.isInteger(quantity) && quantity > 0)) issues.push(issue(`lines.${index}.quantity`, "INVALID"));
+      if (!(unitPrice >= 0)) issues.push(issue(`lines.${index}.unitPrice`, "INVALID"));
+      data.lines.push({ productId, quantity, unitPrice });
+    });
+    if (new Set(data.lines.map((line) => line.productId)).size < data.lines.length) issues.push(issue("lines", "DUPLICATE"));
     if (issues.length) invalid(issues);
+
+    // a confirmed QT keeps its customer and its lines (its order was made from them)
+    if (record?.status === "Confirmed" && (data.customerId !== record.customerId || !sameLines(data.lines, record.lines))) {
+      throw new MockHttpError(409, "QT_LOCKED", "The QT is confirmed; its customer and its lines cannot change");
+    }
     return data;
   },
 });

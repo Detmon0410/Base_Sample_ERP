@@ -19,6 +19,7 @@ const FILE_TYPES = ["application/pdf", "image/png", "image/jpeg"];
 // who owns files, where to look for the owner, which kinds it may have and which actions read and write its files
 const OWNERS = {
   QtReference: { store: qtReferences, kinds: ["QUOTATION", "PO_FILE", "OTHER"], read: "qt.use", write: "qt.use" },
+  // a PO_FILE of an order is the copy of the PO of its QT: the system makes it (syncOrderPoFile), a user cannot upload or delete it
   ProductionOrder: { store: orders, kinds: ["EVIDENCE", "OTHER"], read: "orders.view", write: "orders.evidence" },
 };
 
@@ -55,6 +56,19 @@ export function removeAttachmentsOf(ownerType, ownerId, kind) {
     if (item.ownerType === ownerType && item.ownerId === Number(ownerId) && (!kind || item.kind === kind)) attachments.splice(index, 1);
   }
 }
+
+/**
+ * Keeps the PO file of an order the same as the PO file of its QT: a copy (kind PO_FILE, owner the order) so that everyone who reads the
+ * order can read the customer's PO, also a Factory Worker who has no access to the QT. No PO file on the QT means no copy.
+ */
+export function syncOrderPoFile(qt) {
+  if (!qt.productionOrderId) return;
+  removeAttachmentsOf("ProductionOrder", qt.productionOrderId, "PO_FILE");
+  const source = attachments.find((item) => item.ownerType === "QtReference" && item.ownerId === qt.id && item.kind === "PO_FILE");
+  if (source) attachments.push({ ...source, id: nextId++, ownerType: "ProductionOrder", ownerId: qt.productionOrderId });
+}
+
+const qtOf = (record) => (record.ownerType === "QtReference" ? qtReferences.find((qt) => qt.id === record.ownerId) : null);
 
 export const attachmentRoutes = {
   "GET /attachments": ({ authorization, query }) => {
@@ -110,6 +124,7 @@ export const attachmentRoutes = {
       at: new Date().toISOString(),
     };
     attachments.push(record);
+    if (kind === "PO_FILE") syncOrderPoFile(qtOf(record) ?? {}); // a PO file added to a QT that is confirmed reaches its order
     return new MockResponse({ data: listView(record), status: 201 });
   },
 
@@ -117,7 +132,9 @@ export const attachmentRoutes = {
     userFromAuthorization(authorization);
     const record = find(params.id);
     requireCan(authorization, OWNERS[record.ownerType].write);
+    if (record.ownerType === "ProductionOrder" && record.kind === "PO_FILE") throw new MockHttpError(409, "FILE_LOCKED", "The PO file of an order follows the PO file of its QT");
     attachments.splice(attachments.indexOf(record), 1);
+    if (record.kind === "PO_FILE") syncOrderPoFile(qtOf(record) ?? {}); // a PO file taken from a confirmed QT leaves its order too
     return null;
   },
 };

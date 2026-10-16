@@ -29,7 +29,7 @@ test("from a material that is low to a purchase order that is paid", async ({ pa
   await page.getByLabel("Code").fill("SUP-FOAM");
   await page.getByLabel("Name", { exact: true }).fill("Foam Supplier");
   await page.getByRole("button", { name: "Add a material" }).click();
-  await page.getByLabel("Material").selectOption({ label: "FOAM-01 Insulation foam (kg)" });
+  await page.getByLabel("Material", { exact: true }).selectOption({ label: "FOAM-01 Insulation foam (kg)" });
   await page.getByLabel("Initial price").fill("1200");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("link", { name: "SUP-FOAM" })).toBeVisible();
@@ -50,7 +50,7 @@ test("from a material that is low to a purchase order that is paid", async ({ pa
 
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Draft");
   await page.getByRole("button", { name: "Mark as sent" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Sent");
 
   await page.getByRole("button", { name: "Mark as received" }).click();
@@ -61,7 +61,7 @@ test("from a material that is low to a purchase order that is paid", async ({ pa
   await page.getByLabel("Amount paid").fill("36000");
   await page.getByLabel("Payment method").selectOption("Bank transfer");
   await page.getByRole("button", { name: "Record the payment" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByText(/Paid on \d{4}-\d{2}-\d{2}: ¥36,000 by Bank transfer/)).toBeVisible();
 
   // the stock grew: 20 + 30, and the movement shows the purchase order

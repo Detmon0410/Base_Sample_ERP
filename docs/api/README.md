@@ -37,6 +37,7 @@ What the frontend expects from the backend, module by module. The frontend calls
 | Production orders, processes, progress | [orders.md](orders.md) | Frontend done (mock), backend not implemented |
 | Accounting: invoices and payment | [invoices.md](invoices.md) | Frontend done (mock), backend not implemented |
 | Accounting: receipts | [receipts.md](receipts.md) | Frontend done (mock), backend not implemented |
+| Files: the evidence of a production order (and the files of a QT) | [files.md](files.md) | Frontend done (mock), backend not implemented |
 | Dashboard | [dashboard.md](dashboard.md) | Frontend done (mock), backend not implemented |
 
 The contract of the big system (sale, factory, stock, purchase, accounting, serial numbers, dashboard) is on branch `jay`.

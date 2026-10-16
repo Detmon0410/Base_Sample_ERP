@@ -25,6 +25,8 @@ A Sale Worker prepares the order (lines and processes); a Factory Worker starts 
 | `POST` | `/orders/:id/start` | the Admin or a Factory Worker starts the production |
 | `POST` | `/orders/:id/progress` | adds one progress entry to a process |
 
+The evidence files of an order (images, documents) are uploaded and read through [files.md](files.md) (`ownerType` `ProductionOrder`): everybody who can read the order reads them; the Admin and the Factory Worker upload and delete.
+
 Body of `POST` / `PUT`:
 
 ```json

@@ -60,6 +60,8 @@ The frontend only hides what a user may not use (`frontend/src/utils/permissions
 | Start production (it deducts stock) | yes | `403` | yes |
 | Record progress | yes | `403` | yes (not on a Completed process) |
 | Change or reopen a Completed process | yes | `403` | `403` |
+| Order evidence files: read | yes | yes | yes |
+| Order evidence files: upload, delete ([files.md](files.md)) | yes | `403` | yes |
 | Stock and its history: read | yes | yes | yes |
 | Stock changes (Add / Deduct / Adjust) | yes | `403` | yes |
 | Materials (make, change, delete) | yes | `403` | `403` |

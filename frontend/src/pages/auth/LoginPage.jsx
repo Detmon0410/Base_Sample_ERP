@@ -1,10 +1,11 @@
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, LogIn, Mail } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
+import { AppLogo } from "@/components/common/AppLogo";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -68,9 +69,10 @@ export function LoginPage() {
   const passwordInvalid = Boolean(errors.password) || isCredentialError;
 
   return (
-    <Card className="border border-slate-300 [--card-spacing:--spacing(7)]">
-      <CardContent className="flex flex-col gap-5">
+    <Card className="rounded-lg border-0 shadow-md [--card-spacing:--spacing(7)]">
+      <CardContent className="flex flex-col gap-6">
         <div className="text-center">
+          <AppLogo className="mx-auto mb-3 size-20" />
           <div>
             <h1 className="text-2xl leading-tight font-bold">{t("login.title")}</h1>
             {/* Hidden while the error alert is shown so the card stays within one screen. */}
@@ -92,17 +94,20 @@ export function LoginPage() {
             <FieldLabel htmlFor="email" className="text-base font-semibold">
               {t("login.email")}
             </FieldLabel>
+            <div className="relative">
+            <Mail aria-hidden="true" className="pointer-events-none absolute top-1/2 left-1 size-5 -translate-y-1/2 text-muted-foreground" />
             <Input
               id="email"
               type="email"
               autoComplete="username"
               autoFocus
               placeholder={t("login.emailPlaceholder")}
-              className="h-10"
+              className="h-11 pl-9"
               aria-invalid={emailInvalid ? true : undefined}
               aria-describedby={emailErrorText ? "email-error" : undefined}
               {...register("email", { onChange: clearServerError })}
             />
+            </div>
             {emailErrorText ? <FieldError id="email-error">{emailErrorText}</FieldError> : null}
           </Field>
 
@@ -110,12 +115,13 @@ export function LoginPage() {
             <FieldLabel htmlFor="password" className="text-base font-semibold">
               {t("login.password")}
             </FieldLabel>
-                        <div className="group/password relative">
+            <div className="group/password relative">
+              <LockKeyhole aria-hidden="true" className="pointer-events-none absolute top-1/2 left-1 size-5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
-                className="h-10 pr-32"
+                className="h-11 pr-10 pl-9"
                 aria-invalid={passwordInvalid ? true : undefined}
                 aria-describedby={
                   errors.password ? "password-error" : isCredentialError ? "email-error" : undefined
@@ -138,7 +144,7 @@ export function LoginPage() {
             ) : null}
           </Field>
 
-          <Button type="submit" className="mt-1 h-10 w-full" disabled={isSubmitting}>
+          <Button type="submit" className="mt-2 h-11 w-full text-base" disabled={isSubmitting}>
             <LogIn aria-hidden="true" />{isSubmitting ? t("login.submitting") : t("login.submit")}
           </Button>
         </form>

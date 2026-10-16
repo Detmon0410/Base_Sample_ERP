@@ -70,7 +70,7 @@ export function AppHeader() {
   return (
     <header ref={bar} className="relative z-20 flex min-h-14 flex-wrap items-stretch bg-primary text-primary-foreground shadow-sm">
       <Link to="/" className="mr-1 inline-flex shrink-0 items-center px-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" aria-label={t("common:app.name")} title={t("common:app.name")}>
-        <AppLogo className="size-10 rounded-md bg-white p-0.5" />
+        <AppLogo className="size-11 rounded-lg bg-white p-1" />
       </Link>
 
       <nav aria-label={t("nav:mainMenu")} className={cn("order-3 w-full flex-col md:order-none md:flex md:w-auto md:flex-row md:items-stretch", narrowOpen ? "flex" : "hidden")}>

@@ -14,7 +14,7 @@ const PAGES = [
   { path: "/master/apis-diagram", file: "apis-diagram", charts: 6, en: "APIs Diagram", ja: "API図", words: ["1. Layers", "Purchase flow", "7. Error codes", "STOCK_SHORT", "All endpoints above are implemented in", "\x95\x95\x95\x95\x95"] },
   { path: "/master/context-diagram", file: "context-diagram", charts: 2, openLines: 3, en: "Context Diagram", ja: "コンテキスト図", words: ["Level 0: system context", "External entities", "Not in this system", "Sales orders, delivery, supplier invoices in Accounting, serial numbers and tax."] },
 ];
-const SECRET = /kanou_mini_erp|localhost|:5173|:3000|DATABASE_URL|@gmail\.com|\/orders\/:id|\/auth\/|routes\/|backend\/|pnpm/;
+const SECRET = /kanou_mini_erp|localhost|:5173|:3000|:3001|DATABASE_URL|@gmail\.com|\/orders\/:id|\/auth\/|routes\/|backend\/|pnpm/;
 
 for (const target of PAGES) {
   for (const language of ["en", "ja"]) {

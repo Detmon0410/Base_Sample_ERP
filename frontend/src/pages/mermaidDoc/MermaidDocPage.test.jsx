@@ -123,7 +123,7 @@ describe("the User Flow page", () => {
 });
 
 // what the APIs Diagram page never shows: the database, the addresses, the paths of the API, the logins, the files of the server
-const SECRET = /kanou_mini_erp|localhost|:5173|:3000|DATABASE_URL|@gmail\.com|\/orders\/:id|\/auth\/|\/api\b|routes\/|backend\/|pnpm|Bearer <token>/;
+const SECRET = /kanou_mini_erp|localhost|:5173|:3000|:3001|DATABASE_URL|@gmail\.com|\/orders\/:id|\/auth\/|\/api\b|routes\/|backend\/|pnpm|Bearer <token>/;
 
 describe("the APIs Diagram page", () => {
   it("has the title, no intro (the .md has none), every section, the sub-heading and the tables of the .md, with the details hidden", async () => {

@@ -5,8 +5,8 @@ The frontend (`frontend/`) talks to the real backend (`backend/`, Node.js + Expr
 ## How to run it linked
 
 1. `cd backend && pnpm run db:setup` (creates the tables of `kanou_mini_erp` and the three demo users), then, for the demo data, `node prisma/seed-demo.js --fresh`.
-2. `frontend/.env`: `VITE_API_URL=http://localhost:3000/api` and `VITE_USE_MOCK=false`.
-3. `node scripts/dev.js` from the repository root (backend on `:3000`, frontend on `:5173`).
+2. `frontend/.env`: `VITE_API_URL=http://localhost:3001/api` and `VITE_USE_MOCK=false`.
+3. `node scripts/dev.js` from the repository root (backend on `:3001`, frontend on `:5173`).
 
 Users: `admin@gmail.com` / `admin`, `worker@gmail.com` / `worker` (Factory Worker), `sale@gmail.com` / `sale` (Sale Worker). The demo seed adds `hana@gmail.com`, `ken@gmail.com`, `mika@gmail.com` (password `demo123`).
 

@@ -58,7 +58,7 @@ pnpm run e2e          # Playwright (a browser is installed once: pnpm exec playw
 ```bash
 pnpm run setup        # installs both, creates .env from .env.example, generates the Prisma client
 pnpm run db:migrate   # after you fill DATABASE_URL in backend/.env
-pnpm run kanou        # backend http://localhost:3000/api and frontend http://localhost:5173
+pnpm run kanou        # backend http://localhost:3001/api and frontend http://localhost:5173
 ```
 
 Never commit real credentials: commit `.env.example`, not `.env`.

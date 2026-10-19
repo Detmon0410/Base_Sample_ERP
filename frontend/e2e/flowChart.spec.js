@@ -12,7 +12,7 @@ const PAGES = [
   { path: "/master/flow-chart", file: "flow-chart", charts: 9, en: "Flow Chart", ja: "フローチャート", words: ["Main flow", "Confirm QT: checks", "Lines can be edited only in Draft."] },
   { path: "/master/user-flow", file: "user-flow", charts: 8, en: "User Flow", ja: "ユーザーフロー", words: ["Sale Worker", "Who can do what", "The Admin can do everything the two Workers can.", "view only"] },
   { path: "/master/apis-diagram", file: "apis-diagram", charts: 6, en: "APIs Diagram", ja: "API図", words: ["1. Layers", "Purchase flow", "7. Error codes", "STOCK_SHORT", "All endpoints above are implemented in", "\x95\x95\x95\x95\x95"] },
-  { path: "/master/context-diagram", file: "context-diagram", charts: 2, en: "Context Diagram", ja: "コンテキスト図", words: ["Level 0: system context", "External entities", "Not in this system", "Sales orders, delivery, supplier invoices in Accounting, serial numbers and tax."] },
+  { path: "/master/context-diagram", file: "context-diagram", charts: 2, openLines: 3, en: "Context Diagram", ja: "コンテキスト図", words: ["Level 0: system context", "External entities", "Not in this system", "Sales orders, delivery, supplier invoices in Accounting, serial numbers and tax."] },
 ];
 const SECRET = /kanou_mini_erp|localhost|:5173|:3000|DATABASE_URL|@gmail\.com|\/orders\/:id|\/auth\/|routes\/|backend\/|pnpm/;
 
@@ -28,6 +28,8 @@ for (const target of PAGES) {
       await expect(page.locator("main [role=img] svg")).toHaveCount(target.charts, { timeout: 30000 });
       // every chart has boxes or states with text (mermaid did not fail on a chart)
       for (const chart of await page.locator("main [role=img] svg").all()) expect((await chart.locator("text").count()) > 1).toBe(true);
+      // a line written without an arrow (A --- B, A -. text .- B) is drawn without an arrowhead
+      if (target.openLines) expect(await page.locator("main [role=img] svg").first().locator("path.flowchart-link:not([marker-end])").count()).toBe(target.openLines);
       expect(await page.locator("main").innerText()).not.toMatch(SECRET);
       for (const chart of await page.locator("main [role=img] svg").all()) expect(await chart.textContent()).not.toMatch(SECRET);
       if (process.env.FLOW_SHOT) await page.screenshot({ path: process.env.FLOW_SHOT.replace(".png", `-${target.file}-${language}.png`), fullPage: true });

@@ -1,0 +1,6 @@
+{
+  "downloadPdf": "PDFをダウンロード",
+  "makingPdf": "PDFを作成中...",
+  "pdfFailed": "PDFを作成できませんでした。もう一度お試しください。",
+  "diagramLabel": "ER図：テーブル{{tables}}個、リレーション{{relationships}}個"
+}

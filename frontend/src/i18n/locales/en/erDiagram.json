@@ -1,0 +1,6 @@
+{
+  "downloadPdf": "Download PDF",
+  "makingPdf": "Making the PDF...",
+  "pdfFailed": "The PDF could not be made. Please try again.",
+  "diagramLabel": "ER Diagram: {{tables}} tables and {{relationships}} relationships"
+}

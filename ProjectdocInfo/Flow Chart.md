@@ -12,7 +12,8 @@ flowchart TD
     D --> E[Upload the customer PO<br/>PO No., date, file]
     E --> F[Confirm QT]
     F --> G[System creates a Draft Factory Order<br/>from the QT lines]
-    G --> H{Enough stock<br/>for the BOM?}
+    G --> G2[Sale: add the processes<br/>of each line]
+    G2 --> H{Enough stock<br/>for the BOM?}
     H -- No --> P1[Purchase flow below] --> H
     H -- Yes --> I[Factory: start production<br/>BOM deducted, oldest lot first]
     I --> J[Factory: record progress,<br/>upload evidence images / documents]
@@ -69,6 +70,7 @@ stateDiagram-v2
     [*] --> Draft: made by Confirm QT
     Draft --> InProgress: first process started
     InProgress --> Completed: every process Completed
+    InProgress --> Draft: every process back to Not Started
     Completed --> InProgress: a process reopened (Admin, note required)
     Completed --> [*]: invoiced
 ```
@@ -81,8 +83,11 @@ The status of an order is computed from its processes, not set by hand. `Draft` 
 stateDiagram-v2
     [*] --> NotStarted
     NotStarted --> InProgress
+    NotStarted --> Completed: full quantity at once
     InProgress --> Completed
+    InProgress --> NotStarted: quantity back to 0
     Completed --> InProgress: Admin only, note required
+    Completed --> NotStarted: Admin only, note required
 ```
 
 ## Invoice status

@@ -12,6 +12,10 @@ import { PurchasePage } from "@/pages/purchase/PurchasePage";
 import { SuppliersPage } from "@/pages/suppliers/SuppliersPage";
 import { ProductsPage } from "@/pages/master/ProductsPage";
 import { HomePage } from "@/pages/home/HomePage";
+import { ErDiagramPage } from "@/pages/erDiagram/ErDiagramPage";
+import { DbRelationsPage } from "@/pages/dbRelations/DbRelationsPage";
+import { FlowChartPage } from "@/pages/flowChart/FlowChartPage";
+import { UserFlowPage } from "@/pages/userFlow/UserFlowPage";
 import { StockMovementsPage } from "@/pages/stock/StockMovementsPage";
 import { StockPage } from "@/pages/stock/StockPage";
 import { UsersPage } from "@/pages/users/UsersPage";
@@ -24,7 +28,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { RequirePermission } from "./RequirePermission";
 
 // Menu entries whose page is built (the key of config/navigation.js). Everything else opens the "not built yet" placeholder.
-const IMPLEMENTED_PAGES = { dashboard: HomePage, qt: QtPage, accounting: AccountingPage, productionOrders: OrdersPage, purchase: PurchasePage, suppliers: SuppliersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage };
+const IMPLEMENTED_PAGES = { dashboard: HomePage, qt: QtPage, accounting: AccountingPage, productionOrders: OrdersPage, purchase: PurchasePage, suppliers: SuppliersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage, erDiagram: ErDiagramPage, dbRelations: DbRelationsPage, flowChart: FlowChartPage, userFlow: UserFlowPage };
 
 /** An old address of a material, /stock/<id> (a saved link, the Dashboard of before): it opens the material where it is now. */
 function LegacyMaterialRedirect() {

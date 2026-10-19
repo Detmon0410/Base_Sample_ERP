@@ -29,6 +29,10 @@ const TABLE = {
   "invoices.use": { admin: true, sale: false, factory: false },
   "receipts.use": { admin: true, sale: false, factory: false },
   "users.use": { admin: true, sale: false, factory: false },
+  "erDiagram.view": { admin: true, sale: false, factory: false },
+  "dbRelations.view": { admin: true, sale: false, factory: false },
+  "flowChart.view": { admin: true, sale: false, factory: false },
+  "userFlow.view": { admin: true, sale: false, factory: false },
 };
 
 describe("can(user, action)", () => {

@@ -20,7 +20,8 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    D[Today: the work of the day] --> O2[Start production on the card<br/>409 STOCK_SHORT if material short]
+    D[Today: the work of the day] --> L[Production orders]
+    L --> O2[Open the order: start production<br/>409 STOCK_SHORT if material short]
     D --> O3[Record progress on the card]
     O3 --> O4[Open the order: upload evidence,<br/>images and documents]
     D --> R[Purchase orders to receive]

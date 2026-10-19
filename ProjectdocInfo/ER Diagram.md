@@ -11,6 +11,10 @@ erDiagram
         string email UK
         string password_hash
         string role "Admin | Worker"
+        int token_version
+        datetime last_login_at
+        datetime created_at
+        datetime updated_at
     }
     CUSTOMER {
         int id PK
@@ -18,6 +22,8 @@ erDiagram
         string address
         string email
         string telephone
+        datetime created_at
+        datetime updated_at
     }
     SUPPLIER {
         int id PK
@@ -26,10 +32,12 @@ erDiagram
         string contact
         string address
         bool active
+        datetime created_at
+        datetime updated_at
     }
     SUPPLIER_MATERIAL {
-        int supplier_id FK
-        int material_id FK
+        int supplier_id PK,FK
+        int material_id PK,FK
         int unit_price "initial price"
     }
     PRODUCT {
@@ -37,6 +45,8 @@ erDiagram
         string code UK
         string name
         int price
+        datetime created_at
+        datetime updated_at
     }
     MATERIAL {
         int id PK
@@ -44,16 +54,20 @@ erDiagram
         string name
         string unit
         decimal min_level
+        datetime created_at
+        datetime updated_at
     }
     PRODUCT_BOM {
-        int product_id FK
-        int material_id FK
+        int product_id PK,FK
+        int material_id PK,FK
         decimal quantity
     }
     MATERIAL_LOT {
+        int id PK
         int material_id FK
         string lot_number
         decimal quantity
+        datetime created_at
     }
     STOCK_CHANGE {
         int id PK
@@ -62,20 +76,26 @@ erDiagram
         string kind "Add | Deduct | Adjust"
         decimal change
         decimal balance
+        date change_date
+        string note
+        bool initial
         int order_id FK "start production"
         int purchase_order_id FK "PO received"
         int user_id FK
+        datetime at
     }
     QT_REFERENCE {
         int id PK
         string qt_number UK
         date qt_date
         int customer_id FK
-        string status "Draft | Confirmed"
+        string notes
         string customer_po_number
         date customer_po_date
-        int production_order_id FK "set on confirm"
-        string notes
+        string status "Draft | Confirmed"
+        int production_order_id FK,UK "set on confirm"
+        datetime created_at
+        datetime updated_at
     }
     QT_LINE {
         int id PK
@@ -83,7 +103,6 @@ erDiagram
         int product_id FK
         int quantity
         int unit_price
-        int amount
     }
     PRODUCTION_ORDER {
         int id PK
@@ -91,7 +110,10 @@ erDiagram
         int qt_id FK
         int customer_id FK
         date order_date
+        string notes
         datetime started_at
+        datetime created_at
+        datetime updated_at
     }
     ORDER_LINE {
         int id PK
@@ -103,14 +125,21 @@ erDiagram
     ORDER_PROCESS {
         int id PK
         int line_id FK
+        int sequence
         string name
+        string instructions
         string status
+        int completed_quantity
     }
     PROGRESS_ENTRY {
         int id PK
         int process_id FK
         string status
+        int completed_quantity
+        date work_date
+        string note
         int user_id FK
+        datetime at
     }
     PURCHASE_ORDER {
         int id PK
@@ -118,10 +147,13 @@ erDiagram
         int supplier_id FK
         string department "Sales | Factory | ..."
         date required_date
+        string notes
         string status "Draft | Sent | Received"
         int total
         datetime received_at
         int created_by FK
+        datetime created_at
+        datetime updated_at
     }
     PURCHASE_ORDER_LINE {
         int id PK
@@ -131,8 +163,10 @@ erDiagram
         string unit
         int unit_price
         int amount
+        string lot_number
     }
     PURCHASE_PAYMENT {
+        int id PK
         int po_id FK,UK
         date payment_date
         int amount
@@ -147,6 +181,7 @@ erDiagram
         string kind "PO_FILE | QUOTATION | EVIDENCE | OTHER"
         string file_name
         string file_type
+        int size
         string file_path
         int uploaded_by FK
         datetime at
@@ -154,17 +189,25 @@ erDiagram
     INVOICE {
         int id PK
         string invoice_number UK
+        date invoice_date
         int order_id FK,UK
+        string customer_name
+        string customer_address
         int total
         string status
+        datetime created_at
     }
     INVOICE_LINE {
+        int id PK
         int invoice_id FK
         string product_code
+        string product_name
         int quantity
+        int unit_price
         int amount
     }
     PAYMENT {
+        int id PK
         int invoice_id FK,UK
         date payment_date
         int amount
@@ -173,6 +216,9 @@ erDiagram
         int id PK
         string receipt_number UK
         int invoice_id FK,UK
+        date receipt_date
+        string customer_name
+        string customer_address
         int amount
     }
 
@@ -190,6 +236,8 @@ erDiagram
     MATERIAL ||--o{ PRODUCT_BOM : "used in"
     MATERIAL ||--o{ MATERIAL_LOT : "kept in"
     MATERIAL ||--o{ STOCK_CHANGE : "history"
+    PRODUCTION_ORDER o|--o{ STOCK_CHANGE : "start deducts"
+    USER ||--o{ STOCK_CHANGE : "makes"
     SUPPLIER ||--o{ SUPPLIER_MATERIAL : "sells"
     MATERIAL ||--o{ SUPPLIER_MATERIAL : "sold by"
     SUPPLIER ||--o{ PURCHASE_ORDER : "receives"
@@ -201,6 +249,7 @@ erDiagram
     PURCHASE_ORDER ||--o{ ATTACHMENT : "files"
     QT_REFERENCE ||--o{ ATTACHMENT : "files"
     PRODUCTION_ORDER ||--o{ ATTACHMENT : "evidence"
+    USER ||--o{ ATTACHMENT : "uploads"
     PRODUCTION_ORDER ||--o| INVOICE : "billed by"
     INVOICE ||--|{ INVOICE_LINE : "contains"
     INVOICE ||--o| PAYMENT : "paid by"
@@ -222,7 +271,7 @@ erDiagram
 - `Attachment` is polymorphic (`owner_type` + `owner_id`), so there is no database foreign key to the owner; the service checks it.
 - `PurchasePayment` is stored on the PO and does not go through the Accounting tables.
 - `QT_REFERENCE.production_order_id` is unique: one QT creates one Factory Order.
-- Invoice, Payment and Receipt are unchanged and keep their snapshot fields (not repeated here).
+- Invoice, Payment and Receipt are unchanged and keep their snapshot fields.
 - `Order status` (`Draft`, `In Progress`, `Completed`) is **computed** from the processes; it is not a column. The stock status (`Normal`, `Low`, `Out`) is computed from the lot totals and `min_level`.
 - `Invoice` and `Receipt` copy the customer and the product data when they are issued (a snapshot). An order is billed once, and an invoice has at most one payment and one receipt.
 - An order is made only by Confirm QT, so `ProductionOrder.qt_id` is always set and each QT has at most one order.

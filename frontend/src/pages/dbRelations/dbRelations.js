@@ -84,7 +84,7 @@ export const PARTS = [
           ["Start production (`POST /orders/:id/start`)", "ProductionOrder.started_at, MaterialLot, StockChange", "Deducts the BOM of every line, oldest lot first. `409 STOCK_SHORT` if a material is short. Locks products and processes"],
           ["Progress entry", "ProgressEntry, OrderProcess", "Updates the status and completed quantity of the process. An order is Completed when all processes are"],
           ["Issue invoice", "Invoice, InvoiceLine", "Only for a Completed order, once. Copies the data (snapshot). Locks the progress of the order"],
-          ["Pay invoice", "Payment, Invoice.status, Receipt", "Payment date and amount must equal the total (`MUST_EQUAL_TOTAL`). Sets `Paid` and issues one receipt"],
+          ["Pay invoice", "Payment, Invoice.status, Receipt", "Needs a payment date; the amount must equal the total (`MUST_EQUAL_TOTAL`). Sets `Paid` and issues one receipt"],
           ["Manual stock change", "MaterialLot, StockChange", "`Add`, `Deduct` or `Adjust` a lot at any time. The history is never changed or deleted"],
         ],
       },

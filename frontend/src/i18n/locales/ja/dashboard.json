@@ -10,10 +10,13 @@
   "ordersChart": "状態別の製造指示書",
   "today": {
     "failed": "今日の作業を読み込めませんでした。もう一度お試しください。",
+    "toStart": "着手待ち",
     "running": "製造中",
     "toReceive": "受け入れ待ち",
+    "noneToStart": "着手待ちの指示書はありません。",
     "noneRunning": "製造中の指示書はありません。",
     "noneToReceive": "受け入れ待ちの発注書はありません。",
+    "noProcesses": "この指示書にはまだ工程がありません。営業に追加を依頼してください。",
     "record": "進捗を記録",
     "receive": "受け入れ",
     "low_other": "在庫が少ない、または無い材料：{{count}}件",

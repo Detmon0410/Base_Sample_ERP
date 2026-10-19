@@ -1,6 +1,6 @@
 # Context Diagram
 
-The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)) are in. This replaces the older single-version description.
+
 
 ## Level 0: system context
 
@@ -34,8 +34,8 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph Client["Frontend"]
-        UI[Pages: Dashboard, Today, Sales (QT),<br/>Orders, Purchase, Accounting,<br/>Stock, Master]
-        PDF[PDF print: QT form, PO]
+        UI["Pages: Dashboard, Today, Sales (QT),<br/>Orders, Purchase, Accounting,<br/>Stock, Master"]
+        PDF[PDF print: QT form, PO,<br/>invoice, receipt]
         Mock[(Mock API)]
     end
     subgraph Server["Backend"]

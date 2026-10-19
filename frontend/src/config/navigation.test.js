@@ -12,11 +12,11 @@ const shape = (user) =>
 
 describe("the menu of the header", () => {
   it("shows an Admin everything: the menus with their entries, the others as links", () => {
-    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "purchase", "accounting", "stock > materialsStock, movements", "master > customers, products, suppliers, users, erDiagram, dbRelations, flowChart, userFlow, apisDiagram"]);
+    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "purchase", "accounting", "stock > materialsStock, movements", "master > customers, products, suppliers, users, erDiagram, dbRelations, flowChart, userFlow, apisDiagram, contextDiagram"]);
   });
 
   it("shows a Factory Worker the production orders, Purchase, the Stock menu and the products and suppliers to look at", () => {
-    expect(shape(factory)).toEqual(["dashboard", "productionOrders", "purchase", "stock > materialsStock, movements", "master > products, suppliers"]);
+    expect(shape(factory)).toEqual(["today", "productionOrders", "purchase", "stock > materialsStock, movements", "master > products, suppliers"]);
   });
 
   it("shows a Sale Worker the quotations too, and the customers to look at", () => {
@@ -39,7 +39,6 @@ describe("the menu of the header", () => {
     expect(findActive("/accounting/receipts/2")?.key).toBe("accounting");
     expect(findActive("/stock/materials/3")?.key).toBe("materials");
     expect(findActive("/stock/movements")?.key).toBe("movements");
-    expect(findActive("/master/er-diagram")?.key).toBe("erDiagram");
     expect(findActive("/nothing")).toBeNull();
   });
 });

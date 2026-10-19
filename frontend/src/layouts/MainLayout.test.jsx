@@ -46,7 +46,7 @@ describe("the bar at the top", () => {
     renderLayout(mockUsers[1]);
     const menu = screen.getByRole("navigation", { name: "Main menu" });
     expect(within(menu).queryByRole("link", { name: "Accounting" })).not.toBeInTheDocument();
-    expect(within(menu).getByRole("link", { name: "Dashboard" })).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: "Today" })).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: "Production orders" })).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: "Purchase" })).toBeInTheDocument(); // a Factory Worker buys the materials
     expect(within(menu).getByRole("button", { name: /Master data/ })).toBeInTheDocument(); // products and suppliers, to look at
@@ -59,7 +59,7 @@ describe("the user menu", () => {
     renderLayout(mockUsers[1]);
     expect(screen.queryByRole("button", { name: "Log out" })).not.toBeInTheDocument(); // closed
 
-    await user.click(screen.getByRole("button", { name: "Factory Worker" }));
+    await user.click(screen.getByRole("button", { name: "Worker" }));
     const panel = screen.getByRole("group", { name: "User menu" });
     expect(panel).toHaveTextContent("worker@gmail.com");
     expect(within(panel).getByText("Role").nextSibling).toHaveTextContent("Worker");

@@ -42,23 +42,24 @@ describe("the first page", () => {
     const supplier = await suppliersApi.create({ code: "TD-SUP", name: "Today Supplier", active: true, items: [{ materialId: steel.id, unitPrice: 300 }] });
     const po = await purchaseApi.create({ supplierId: supplier.id, requiredDate: "2026-11-01", department: "Factory", lines: [{ materialId: steel.id, quantity: 10, unitPrice: 300 }] });
     await purchaseApi.setStatus(po.id, { status: "Sent" });
-    await ordersApi.start(order.id);
   });
 
-  it("shows a Factory Worker the work of today: record the next process, the PO to receive and the low stock", async () => {
+  it("shows a Factory Worker the work of today: start an order, record the next process, the PO to receive and the low stock", async () => {
     const user = userEvent.setup();
     renderAs(mockUsers[1]);
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Dashboard" })).toBeInTheDocument();
-    // the numbers of the orders come first, as tiles
-    expect(await screen.findByRole("link", { name: /^Draft\s*\d+$/ })).toHaveAttribute("href", "/sale/orders");
+    expect(await screen.findByRole("heading", { level: 1, name: "Today" })).toBeInTheDocument();
     expect(await screen.findByText("1 material is low or out")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Buy" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /^Receive: PO-/ })).toBeInTheDocument();
 
-    // there is no "To start" group: the start is on the page of the order
-    expect(screen.queryByRole("heading", { name: /^To start/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Start production" })).not.toBeInTheDocument();
+    // to start: the order, with one big button; the start asks first
+    const toStart = screen.getByRole("heading", { name: /^To start/ }).closest("section");
+    const card = await within(toStart).findByRole("article");
+    expect(card).toHaveTextContent(order.orderNumber);
+    expect(card).toHaveTextContent("Today Customer");
+    await user.click(within(card).getByRole("button", { name: "Start production" }));
+    await user.click(await screen.findByRole("button", { name: "Confirm" }));
 
     // in production: the next process, and the progress is recorded on the card
     const running = screen.getByRole("heading", { name: /^In production/ }).closest("section");
@@ -77,7 +78,7 @@ describe("the first page", () => {
     expect(done).toMatchObject({ name: "Welding", status: "Completed", completedQuantity: 5 });
   });
 
-  it("opens the plain Dashboard (no work cards) for a Sale Worker and for the Admin", async () => {
+  it("opens the Dashboard for a Sale Worker and for the Admin, not the work of today", async () => {
     const sale = renderAs(mockUsers[2]);
     expect(await screen.findByRole("heading", { level: 1, name: "Dashboard" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: /^To start/ })).not.toBeInTheDocument();
@@ -85,18 +86,4 @@ describe("the first page", () => {
     renderAs(mockUsers[0]);
     expect(await screen.findByRole("heading", { level: 1, name: "Dashboard" })).toBeInTheDocument();
   });
-});
-
-describe("the work of today, with many orders", () => {
-  it("shows an order in production even when many newer orders have not started", async () => {
-    setToken(tokenOf(mockUsers[0]));
-    const customer = await customersApi.create({ name: "Many Customer" });
-    const product = await productsApi.create({ code: "MANY-P", name: "Many fridge", price: 1, bom: [] });
-    const old = await makeOrder({ customerId: customer.id, lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [{ name: "Oldest process" }] }] });
-    await ordersApi.start(old.id);
-    for (let index = 0; index < 25; index += 1) await makeOrder({ customerId: customer.id, lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [{ name: "Waiting" }] }] }); // newer, not started
-    renderAs(mockUsers[1]);
-    expect(await screen.findByText(old.orderNumber)).toBeInTheDocument();
-    expect(screen.getByText("1. Oldest process")).toBeInTheDocument();
-  }, 30000);
 });

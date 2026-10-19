@@ -12,7 +12,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "db:setup": "prisma migrate reset --force --skip-seed && prisma migrate dev --name erp_schema && node prisma/seed.js",
-    "test": "node test-support/setup-db.js && node --test --test-concurrency=1 --test-reporter=spec \"test/*.test.js\"",
+    "test": "node test-support/setup-db.js && node --test --test-concurrency=1 --test-reporter=spec test/",
     "test:only": "node --test --test-concurrency=1 --test-reporter=spec",
     "db:seed:demo": "node prisma/seed-demo.js"
   },

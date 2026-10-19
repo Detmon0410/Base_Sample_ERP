@@ -7,8 +7,6 @@
     "setup": "node scripts/setup.js",
     "kanou": "node scripts/dev.js",
     "db:migrate": "pnpm --filter ./backend run prisma:migrate",
-    "db:studio": "pnpm --filter ./backend run prisma:studio",
-    "backup": "node scripts/backup.mjs",
-    "restore": "node scripts/restore.mjs"
+    "db:studio": "pnpm --filter ./backend run prisma:studio"
   }
 }

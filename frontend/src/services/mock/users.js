@@ -11,8 +11,8 @@ const STAMP = "2026-10-01T09:00:00.000Z";
 
 export const mockUsers = [
   { id: 1, name: "Admin", department: "Administration", email: "admin@gmail.com", password: "admin", role: "Admin" },
-  { id: 2, name: "Factory Worker", department: "Factory", email: "worker@gmail.com", password: "worker", role: "Worker" },
-  { id: 3, name: "Sale Worker", department: "Sales", email: "sale@gmail.com", password: "sale", role: "Worker" },
+  { id: 2, name: "Worker", department: "Factory", email: "worker@gmail.com", password: "worker", role: "Worker" },
+  { id: 3, name: "Sale", department: "Sales", email: "sale@gmail.com", password: "sale", role: "Worker" },
 ].map((user) => ({ createdAt: STAMP, updatedAt: STAMP, lastLoginAt: null, sessionVersion: 0, ...user }));
 
 /** What the app may see of a user (never the password). */

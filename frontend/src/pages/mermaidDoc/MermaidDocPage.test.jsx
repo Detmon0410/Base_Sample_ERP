@@ -9,6 +9,8 @@ vi.mock("./mermaidDocPdf", () => ({ downloadMermaidDocPdf: vi.fn(async () => {})
 import i18n from "@/i18n";
 import { ApisDiagramPage } from "@/pages/apisDiagram/ApisDiagramPage";
 import { INTRO as APIS_INTRO, SECTIONS as APIS } from "@/pages/apisDiagram/apisDiagram";
+import { ContextDiagramPage } from "@/pages/contextDiagram/ContextDiagramPage";
+import { SECTIONS as CONTEXT } from "@/pages/contextDiagram/contextDiagram";
 import { FlowChartPage } from "@/pages/flowChart/FlowChartPage";
 import { SECTIONS as FLOW } from "@/pages/flowChart/flowChart";
 import { UserFlowPage } from "@/pages/userFlow/UserFlowPage";
@@ -63,17 +65,23 @@ describe("the Flow Chart page", () => {
 });
 
 describe("the User Flow page", () => {
-  it("has the title of the .md, the three roles, the table of who can do what and the chart of print and upload", async () => {
+  it("has the title of the .md, every section with its charts, list and tables", async () => {
     render(<UserFlowPage />);
     expect(screen.getByRole("heading", { level: 1, name: "User Flow" })).toBeInTheDocument();
-    expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(["Sale Worker", "Factory Worker", "Admin", "Who can do what", "Print and upload (any page with files)"]);
+    expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(USER_FLOW.map((section) => section.title));
+    expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toContain("Errors a user may see");
     const charts = await screen.findAllByRole("img");
+    expect(charts).toHaveLength(8);
     expect(charts.map(codeOf)).toEqual(chartsOf(USER_FLOW).map((code) => code.replaceAll(" -> ", " → ")));
     expect(screen.getByText("The Admin can do everything the two Workers can.")).toBeInTheDocument();
-    const rows = within(screen.getByRole("table")).getAllByRole("row");
-    expect(rows).toHaveLength(1 + 11);
+    expect(within(screen.getByRole("list")).getAllByRole("listitem")[1]).toHaveTextContent("A menu that has only one visible entry is shown as that entry alone.");
+    const tables = screen.getAllByRole("table");
+    expect(tables).toHaveLength(4);
+    const rows = within(tables[1]).getAllByRole("row");
+    expect(rows).toHaveLength(1 + 16);
     expect(rows[0]).toHaveTextContent("AreaAdminSale WorkerFactory Worker");
-    expect(rows[1]).toHaveTextContent("QT: create, print, upload PO, confirmyesyesno access");
+    expect(rows[2]).toHaveTextContent("QT: create, print, upload PO, confirm, delete a Draftyesyesno access");
+    expect(within(tables[3]).getAllByRole("row")[3]).toHaveTextContent("409 STOCK_SHORTstart production without enough materialpurchase or add stock, then start again");
     expect(document.body.textContent).not.toMatch(DOCS);
   });
 
@@ -82,13 +90,13 @@ describe("the User Flow page", () => {
     const { unmount } = render(<UserFlowPage />);
     try {
       expect(screen.getByRole("heading", { level: 1, name: "ユーザーフロー" })).toBeInTheDocument();
-      expect(screen.getAllByRole("heading", { level: 2 })[1]).toHaveTextContent("工場担当");
+      expect(screen.getAllByRole("heading", { level: 2 })[3]).toHaveTextContent("工場担当");
       const charts = await screen.findAllByRole("img");
-      expect(codeOf(charts[1])).toContain("D[今日：その日の作業]");
-      expect(codeOf(charts[1])).toContain("P4[Sent → Received]");
-      const rows = within(screen.getByRole("table")).getAllByRole("row");
+      expect(codeOf(charts[2])).toContain("T[今日：その日の作業]");
+      expect(codeOf(charts[2])).toContain("S1[ロットを Add・Deduct・Adjust<br/>理由を付けて]");
+      const rows = within(screen.getAllByRole("table")[1]).getAllByRole("row");
       expect(rows[0]).toHaveTextContent("機能管理者営業担当工場担当");
-      expect(rows[8]).toHaveTextContent("仕入先可不可閲覧のみ");
+      expect(rows[12]).toHaveTextContent("仕入先可不可閲覧のみ");
     } finally {
       unmount(); // before the language changes back, so the page does not draw again after the test
       await i18n.changeLanguage("en");
@@ -108,8 +116,9 @@ describe("the User Flow page", () => {
     expect(fileName).toMatch(/^user-flow-\d{4}-\d{2}-\d{2}\.pdf$/);
     expect(texts).toEqual({ system: "Refrigerator Factory Mini ERP", footer: expect.stringMatching(/^Made on /) });
     expect(sections.map((section) => section.title)).toEqual(USER_FLOW.map((section) => section.title));
-    expect(sections[2].blocks[1]).toEqual({ text: "The Admin can do everything the two Workers can." });
-    expect(sections[3].blocks[0].table.rows).toEqual(USER_FLOW[3].blocks[0].table.rows);
+    expect(sections[1].blocks[1]).toEqual({ items: USER_FLOW[1].blocks[1].items });
+    expect(sections[5].blocks[1]).toEqual({ text: "The Admin can do everything the two Workers can." });
+    expect(sections[8].blocks[0].table.rows).toEqual(USER_FLOW[8].blocks[0].table.rows);
   });
 });
 
@@ -117,15 +126,15 @@ describe("the User Flow page", () => {
 const SECRET = /kanou_mini_erp|localhost|:5173|:3000|DATABASE_URL|@gmail\.com|\/orders\/:id|\/auth\/|\/api\b|routes\/|backend\/|pnpm|Bearer <token>/;
 
 describe("the APIs Diagram page", () => {
-  it("has the title, the intro, every section, the sub-heading and the tables of the .md, with the details hidden", async () => {
+  it("has the title, no intro (the .md has none), every section, the sub-heading and the tables of the .md, with the details hidden", async () => {
     const { container } = render(<ApisDiagramPage />);
     expect(screen.getByRole("heading", { level: 1, name: "APIs Diagram" })).toBeInTheDocument();
     expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(APIS.map((section) => section.title));
     expect(screen.getByRole("heading", { level: 3, name: "Purchase flow" })).toBeInTheDocument();
     const charts = await screen.findAllByRole("img");
     expect(charts).toHaveLength(6);
-    // the intro: its words stay, the base address, the paths and the header are dark bars
-    expect(screen.getByText(/Summary of the backend API built in/).closest("p")).toHaveTextContent(`Summary of the backend API built in ${HIDDEN} (Node.js, Express, Prisma, MySQL). Base URL ${HIDDEN}. Every route except ${HIDDEN} and ${HIDDEN} needs ${HIDDEN}.`);
+    // the status: its words stay, the folder, the database, the command and the logins are dark bars
+    expect(screen.getByText(/All endpoints above are implemented in/).closest("p")).toHaveTextContent(`All endpoints above are implemented in ${HIDDEN} and covered by the tests. The development database ${HIDDEN} still has to be created with ${HIDDEN} (users ${HIDDEN}, ${HIDDEN}, ${HIDDEN}).`);
     expect(container.querySelectorAll("[data-hidden]").length).toBeGreaterThan(20);
     const tables = screen.getAllByRole("table");
     expect(tables).toHaveLength(3);
@@ -158,7 +167,7 @@ describe("the APIs Diagram page", () => {
     }
   });
 
-  it("gives the PDF the intro and the sections; the PDF hides the same", async () => {
+  it("gives the PDF the sections (no intro); the PDF hides the same", async () => {
     const user = userEvent.setup();
     downloadMermaidDocPdf.mockClear();
     render(<ApisDiagramPage />);
@@ -172,7 +181,42 @@ describe("the APIs Diagram page", () => {
     expect(sections[3].blocks[1]).toEqual({ heading: "Purchase flow" });
     expect(sections[6].blocks[0].table.align).toEqual(["right", "left", "left"]);
     // the texts are hidden where the PDF writes them (utils/textPdf.js: plain); the charts are already drawn hidden
-    expect(plain(intro[0].text)).not.toMatch(SECRET);
+    expect(plain(sections[8].blocks[0].text)).not.toMatch(SECRET);
     for (const block of sections.flatMap((section) => section.blocks).filter((item) => item.svg)) expect(decodeURIComponent(block.svg)).not.toMatch(SECRET);
+  });
+});
+
+describe("the Context Diagram page", () => {
+  it("has the title, the two levels, the tables and the last sentence of the .md; the address of the API is hidden", async () => {
+    render(<ContextDiagramPage />);
+    expect(screen.getByRole("heading", { level: 1, name: "Context Diagram" })).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(CONTEXT.map((section) => section.title));
+    const charts = await screen.findAllByRole("img");
+    expect(charts).toHaveLength(2);
+    expect(codeOf(charts[0])).toBe(chartsOf(CONTEXT)[0]);
+    expect(codeOf(charts[1])).toContain(`API[REST API ${HIDDEN}<br/>auth, master,`);
+    expect(codeOf(charts[1])).toContain("PDF[PDF print: QT form, PO,<br/>invoice, receipt]");
+    const tables = screen.getAllByRole("table");
+    expect(within(tables[0]).getAllByRole("row")).toHaveLength(1 + 5);
+    expect(within(tables[0]).getAllByRole("row")[4]).toHaveTextContent("Customer (outside)customer PO, paymentQT form, invoice, receipt (handed over by users)");
+    expect(within(tables[1]).getAllByRole("row")).toHaveLength(1 + 2);
+    expect(screen.getByText("Sales orders, delivery, supplier invoices in Accounting, serial numbers and tax.")).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(DOCS);
+  });
+
+  it("shows the words in Japanese, the names kept", async () => {
+    await i18n.changeLanguage("ja");
+    const { unmount } = render(<ContextDiagramPage />);
+    try {
+      expect(screen.getByRole("heading", { level: 1, name: "コンテキスト図" })).toBeInTheDocument();
+      const charts = await screen.findAllByRole("img");
+      expect(codeOf(charts[0])).toContain('ERP[["Mini ERP 2.0"]]');
+      expect(codeOf(charts[0])).toContain('Fac -. "仕入先に支払う" .-> Sup');
+      expect(codeOf(charts[1])).toContain('subgraph Client["フロントエンド"]');
+      expect(within(screen.getAllByRole("table")[0]).getAllByRole("row")[0]).toHaveTextContent("エンティティシステムに渡すものシステムから受け取るもの");
+    } finally {
+      unmount(); // before the language changes back, so the page does not draw again after the test
+      await i18n.changeLanguage("en");
+    }
   });
 });

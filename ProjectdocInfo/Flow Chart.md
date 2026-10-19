@@ -1,6 +1,6 @@
 # Flow Chart
 
-The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)) are in. This replaces the older single-version description.
+
 
 ## Main flow
 
@@ -12,8 +12,7 @@ flowchart TD
     D --> E[Upload the customer PO<br/>PO No., date, file]
     E --> F[Confirm QT]
     F --> G[System creates a Draft Factory Order<br/>from the QT lines]
-    G --> G2[Sale: add the processes<br/>of each line]
-    G2 --> H{Enough stock<br/>for the BOM?}
+    G --> H{Enough stock<br/>for the BOM?}
     H -- No --> P1[Purchase flow below] --> H
     H -- Yes --> I[Factory: start production<br/>BOM deducted, oldest lot first]
     I --> J[Factory: record progress,<br/>upload evidence images / documents]
@@ -70,7 +69,6 @@ stateDiagram-v2
     [*] --> Draft: made by Confirm QT
     Draft --> InProgress: first process started
     InProgress --> Completed: every process Completed
-    InProgress --> Draft: every process back to Not Started
     Completed --> InProgress: a process reopened (Admin, note required)
     Completed --> [*]: invoiced
 ```
@@ -83,11 +81,8 @@ The status of an order is computed from its processes, not set by hand. `Draft` 
 stateDiagram-v2
     [*] --> NotStarted
     NotStarted --> InProgress
-    NotStarted --> Completed: full quantity at once
     InProgress --> Completed
-    InProgress --> NotStarted: quantity back to 0
     Completed --> InProgress: Admin only, note required
-    Completed --> NotStarted: Admin only, note required
 ```
 
 ## Invoice status

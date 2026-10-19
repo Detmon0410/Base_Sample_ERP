@@ -44,9 +44,9 @@ const inside = ([x, y], box) => x > box.x && x < box.x + box.w && y > box.y && y
 describe("the ER model is ER Diagram.md", () => {
   const source = readMd();
 
-  it("reads the .md (23 tables, 32 relationships, 7 notes)", () => {
+  it("reads the .md (23 tables, 29 relationships, 7 notes)", () => {
     expect(source.entities).toHaveLength(23);
-    expect(source.relationships).toHaveLength(32);
+    expect(source.relationships).toHaveLength(29);
     expect(source.notes).toHaveLength(7);
   });
 

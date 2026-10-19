@@ -17,7 +17,7 @@ import { renderChart } from "./flowRender";
 /**
  * A page that is one .md of charts (Flow Chart.md, User Flow.md, APIs Diagram.md), with the same content: the title of the .md, its
  * intro when it has one, then each of its sections with its blocks in order: a chart (the mermaid code of the .md, drawn by
- * mermaid), a sub-heading, a table, a paragraph. The words follow the language of the page (i18n/mdJa.js); the names and values stay
+ * mermaid), a sub-heading, a list, a table, a paragraph. The words follow the language of the page (i18n/mdJa.js); the names and values stay
  * as they are. What is never shown (utils/censor.js) is hidden, in the charts too. "Download PDF" saves the same, A4 or A3, portrait.
  * `title`, `intro` and `sections` come from the data of the .md; `fileName` names the PDF.
  */
@@ -56,6 +56,7 @@ export function MermaidDocPage({ title, intro = [], sections, fileName }) {
     blocks: section.blocks.map((block) => {
       if (block.chart) return { svg: drawn.svgs[chartIndex++] };
       if (block.heading) return { heading: tr(block.heading) };
+      if (block.items) return { items: block.items.map(tr) };
       if (block.table) return { table: { head: block.table.head.map(tr), rows: block.table.rows.map((row) => row.map(tr)), align: block.table.align } };
       return { text: tr(block.text) };
     }),
@@ -110,6 +111,17 @@ export function MermaidDocPage({ title, intro = [], sections, fileName }) {
                 <h3 key={blockIndex} className="mt-5 mb-2 font-bold">
                   {block.heading}
                 </h3>
+              );
+            }
+            if (block.items) {
+              return (
+                <ul key={blockIndex} className="mb-3 list-disc space-y-1 pl-6">
+                  {block.items.map((item) => (
+                    <li key={item}>
+                      <Md text={item} />
+                    </li>
+                  ))}
+                </ul>
               );
             }
             if (block.table) {

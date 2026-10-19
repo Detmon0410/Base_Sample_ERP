@@ -1,7 +1,7 @@
 /**
  * The words inside the mermaid code of the charts, by kind of chart:
- *   - a flow chart: the text of a box ([text], ["text"], ([text]), [(text)], {text}) and the label of an arrow (-- text -->,
- *     -->|text|, -. text .->);
+ *   - a flow chart: the text of a box ([text], ["text"], [["text"]], ([text]), [(text)], {text}), the title of a group
+ *     (subgraph A["text"]) and the label of an arrow (-- text -->, -- "text" -->, -->|text|, -. text .->, -. "text" .- or .->);
  *   - a state chart: the label of a change of state (A --> B: text) and the name given to a state (state "text" as A);
  *   - a sequence chart: the message of an arrow (A->>B: text), a note (Note over A: text) and the name given to an actor or a
  *     participant (actor A as text);
@@ -12,7 +12,7 @@
  * chart keeps its shape.
  */
 const PATTERNS = {
-  flowchart: [/\(\[(.+?)\]\)|\[\((.+?)\)\]|\["([^"]+)"\]|\[(?![(*"])([^\]]+)\]|\{([^}]+)\}|-- (.+?) -->|-\. (.+?) \.->|-->\|([^|]+)\|/g],
+  flowchart: [/\[\["([^"]+)"\]\]|\(\[(.+?)\]\)|\[\((.+?)\)\]|\["([^"]+)"\]|\[(?![(*"[])([^\]]+)\]|\{([^}]+)\}|-- "([^"]+)" -->|-- (.+?) -->|-\. "([^"]+)" \.->?|-\. (.+?) \.->|-->\|([^|]+)\|/g],
   stateDiagram: [/^\s*\S+ --> \S+: (.+)$/gm, /^\s*state "([^"]+)" as /gm],
   sequenceDiagram: [/^\s*[^\s:]+?--?>>[^\s:]+?: (.+)$/gm, /^\s*Note (?:over|left of|right of) [^:]+: (.+)$/gm, /^\s*(?:actor|participant) \S+ as (.+)$/gm],
   erDiagram: [/^\s*\S+ \S+ \S+ : (?:"([^"]+)"|(\S+))$/gm],

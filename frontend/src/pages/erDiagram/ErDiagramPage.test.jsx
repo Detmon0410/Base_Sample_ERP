@@ -38,7 +38,7 @@ describe("the ER Diagram page", () => {
       expect(screen.getByRole("heading", { level: 1, name: "ER図" })).toBeInTheDocument();
       const drawing = screen.getByRole("img", { name: `ER図：テーブル${ENTITIES.length}個、リレーション${RELATIONSHIPS.length}個` });
       expect(within(drawing).getByText("確定で作成する")).toBeInTheDocument(); // the label "confirm creates"
-      expect(within(drawing).getByText("アップロードする")).toBeInTheDocument(); // the label "uploads"
+      expect(within(drawing).getByText("証跡")).toBeInTheDocument(); // the label "evidence"
       expect(within(drawing).getByText("PRODUCTION_ORDER")).toBeInTheDocument();
       expect(within(drawing).getByText("Admin | Worker")).toBeInTheDocument();
       expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(["バージョン2.0で追加されたもの", "補足"]);

@@ -2,7 +2,7 @@ import fs from "node:fs";
 
 import { expect, test } from "@playwright/test";
 
-import { USERS, rawKeys, settle, signIn, watchErrors, withoutRefusals } from "./helpers.js";
+import { USERS, rawKeys, settle, signIn, watchErrors } from "./helpers.js";
 
 // The acceptance case of the requirements (docs/BaseRequirement_md/simplified_factory_system_requirements.md, section 10): the ten steps
 // of the example, in one run, with the Admin and a Worker whose account is made in step 1. Desktop only.
@@ -34,7 +34,7 @@ const processRow = (page, name) => page.getByRole("row", { name: new RegExp(Stri
 const open = async (page, path, link) => {
   await page.goto(path);
   await settle(page);
-  if (link) await page.getByRole("link", { name: link }).first().click(); // an empty list has a second "New ..." button in its body
+  if (link) await page.getByRole("link", { name: link }).click();
 };
 
 test("the example of the requirements, from the customer to the receipt", async ({ page }) => {
@@ -85,52 +85,44 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("link", { name: WORKER.name })).toBeVisible();
 
-  // 2. a QT with its lines and the customer's PO file, Download PDF and Print at the top, then Confirm QT makes the order
+  // 2. a QT with its lines and the customer's PO file, printed form there, then Confirm QT makes the order
   await open(page, "/sale/quotations", "New QT");
   await page.getByLabel("QT number").fill("QT-001");
   await page.getByLabel("Customer", { exact: true }).selectOption({ label: "Tokyo Cold Chain" });
   await page.getByLabel("Notes").fill("Ten refrigerators");
-  // a new QT starts with one product line
+  await page.getByRole("button", { name: "Add a product" }).click();
   await page.getByLabel("Product", { exact: true }).selectOption({ label: "FR-100 Refrigerator 100L" });
   await expect(page.getByLabel("Unit price")).toHaveValue("45000"); // the price of the product
   await page.getByLabel("Quantity").fill("10");
   await page.getByLabel("Customer PO number").fill("PO-77");
   await page.getByRole("button", { name: "Save" }).click();
 
-  // the same QT opens: the steps of the job, the PO file, Download PDF and Print at the top (the paper itself is not shown), and Confirm QT
+  // the same QT opens: the PO file, the printed form and Confirm QT
   await expect(page).toHaveURL(/\/sale\/quotations\/\d+$/);
-  const steps = page.getByRole("list", { name: "Steps of this job" });
-  await expect(steps.locator('[aria-current="step"]')).toHaveText("Draft");
   await page.getByLabel(/Choose a file/).setInputFiles({ name: "po-77.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 customer PO 77") });
   await page.getByRole("button", { name: "Upload" }).click();
-  await expect(page.getByRole("button", { name: "Delete: po-77.pdf" })).toBeVisible(); // it is in the list of the files
+  await expect(page.getByText("po-77.pdf")).toBeVisible();
   await expect(page.locator('[data-print-doc="qt"]')).toContainText("QT-001");
-  await expect(page.getByRole("heading", { name: "QT form" })).toHaveCount(0);
-  await downloadPdf(page, 0, "QT-001.pdf"); // the QT as a PDF file
-  await page.getByRole("button", { name: "Print", exact: true }).click();
-  expect(await page.evaluate(() => window.__printed)).toBe("qt");
   await page.getByRole("button", { name: "Confirm QT" }).click();
   await page.getByRole("button", { name: "Confirm", exact: true }).click();
 
-  // 3 and 4. the production order is on the same page (made from the QT, with its price); its processes are added by hand
-  const production = page.locator('section[aria-labelledby="qt-production"]');
-  await expect(page.locator("#qt-production")).toContainText(/ORD-\d{4}-0001/);
-  await expect(steps.locator('[aria-current="step"]')).toHaveText("Confirmed");
-  const orderNumber = (await page.locator("#qt-production").textContent()).match(/ORD-\d{4}-0001/)[0];
-  await expect(production.getByLabel("Quantity")).toHaveValue("10");
-  await expect(production.getByLabel("Agreed unit price")).toHaveValue("45000");
-  await production.getByRole("button", { name: "Add a process" }).click();
-  await production.getByRole("button", { name: "Add a process" }).click();
-  await production.getByLabel("Process", { exact: true }).nth(0).fill("Cutting");
-  await production.getByLabel("Process", { exact: true }).nth(1).fill("Welding");
-  await production.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Saved.").last()).toBeVisible(); // the toast of the QT save may still be on the screen
+  // 3 and 4. the order of 10 units is there (made from the QT, with its price); its processes are added by hand
+  await expect(page).toHaveURL(/\/sale\/orders\/\d+$/);
+  await expect(page.getByLabel("Quantity")).toHaveValue("10");
+  await expect(page.getByLabel("Agreed unit price")).toHaveValue("45000");
+  await page.getByRole("button", { name: "Add a process" }).click();
+  await page.getByRole("button", { name: "Add a process" }).click();
+  await page.getByLabel("Process", { exact: true }).nth(0).fill("Cutting");
+  await page.getByLabel("Process", { exact: true }).nth(1).fill("Welding");
+  await page.getByRole("button", { name: "Save" }).click();
 
-  // the Admin starts the production from the same page: the QT is "In production"
-  await production.getByRole("button", { name: "Start production" }).click();
+  const orderLink = page.getByRole("link", { name: /^ORD-\d{4}-0001$/ });
+  await expect(orderLink).toBeVisible();
+  const orderNumber = (await orderLink.textContent()).trim();
+  await orderLink.click();
+  await page.getByRole("button", { name: "Start production" }).click();
   await page.getByRole("button", { name: "Confirm", exact: true }).click();
-  await expect(steps.locator('[aria-current="step"]')).toHaveText("In production");
-  await expect(production.getByRole("button", { name: "Add a process" })).toHaveCount(0); // the processes are locked after the start
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Draft"); // started, but no process has started yet
   await logOut(page, "Admin");
 
   // 5. a Worker records progress and completes 10 units on every process
@@ -180,19 +172,16 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(steelRow).toContainText("Steel sheet");
   await expect(steelRow).toContainText("75");
   await expect(steelRow).toContainText("Low"); // 75 is at or below the minimum level of 80
-  await page.getByRole("tab", { name: "Normal" }).click();
+  await page.getByLabel("Status").selectOption("Normal");
   await expect(page.getByRole("link", { name: "STEEL-01" })).toHaveCount(0);
 
-  // 8. the Accounting page: the completed order waits to be invoiced; Issue invoice asks the date; the invoice document goes to print / PDF
-  await open(page, "/accounting");
-  await expect(page.getByRole("row", { name: new RegExp(orderNumber) })).toContainText("Tokyo Cold Chain");
-  await page.getByRole("row", { name: new RegExp(orderNumber) }).getByRole("button", { name: /^Issue invoice/ }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "Issue invoice" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-  await page.getByRole("tab", { name: /Waiting for payment/ }).click();
-  const invoiceRow = page.getByRole("row", { name: /Tokyo Cold Chain/ });
-  await expect(invoiceRow).toContainText("¥450,000");
-  const invoiceLink = invoiceRow.getByRole("link", { name: /^INV-\d{4}-0001$/ });
+  // 8. an invoice for the completed order, and its document sent to print / PDF
+  await open(page, "/accounting/invoices", "New invoice");
+  await page.getByLabel("Production order").selectOption({ label: `${orderNumber} Tokyo Cold Chain` });
+  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
+  const invoiceLink = page.getByRole("link", { name: /^INV-\d{4}-0001$/ });
+  await expect(invoiceLink).toBeVisible();
   const invoiceNumber = (await invoiceLink.textContent()).trim();
   await invoiceLink.click();
   await expect(page.getByText("Total: ¥450,000", { exact: true })).toBeVisible();
@@ -200,42 +189,34 @@ test("the example of the requirements, from the customer to the receipt", async 
   await page.getByRole("button", { name: "Print", exact: true }).click();
   expect(await page.evaluate(() => window.__printed)).toBe("invoice");
 
-  // 9. the full payment, from the work list: a wrong amount is refused, then Paid, and the receipt
-  await open(page, "/accounting");
-  await page.getByRole("tab", { name: /Waiting for payment/ }).click();
-  await page.getByRole("row", { name: /Tokyo Cold Chain/ }).getByRole("button", { name: /^Record payment/ }).click();
-  const pay = page.getByRole("dialog");
-  await expect(pay.getByLabel("Amount paid")).toHaveValue("450000"); // it starts as the total
-  await pay.getByLabel("Amount paid").fill("449999");
-  await pay.getByRole("button", { name: "Record payment" }).click();
-  await expect(pay.getByText("The payment must be equal to the total of the invoice.")).toBeVisible();
-  await pay.getByLabel("Amount paid").fill("450000");
-  await pay.getByRole("button", { name: "Record payment" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-  await page.getByRole("tab", { name: /^Paid/ }).click();
-  const paidRow = page.getByRole("row", { name: /Tokyo Cold Chain/ });
-  await expect(paidRow).toContainText("Paid");
-  await expect(paidRow).toContainText("¥450,000");
-
-  // the invoice document shows the payment made
-  await paidRow.getByRole("link", { name: invoiceNumber }).click();
+  // 9. the full payment: Paid, and the receipt
+  await page.getByLabel("Amount paid").fill("449999");
+  await page.getByRole("button", { name: "Record the payment" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
+  await expect(page.getByText("The payment must be equal to the total of the invoice.")).toBeVisible();
+  await page.getByLabel("Amount paid").fill("450000");
+  await page.getByRole("button", { name: "Record the payment" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Paid");
   await expect(page.getByText(/^Paid on \d{4}-\d{2}-\d{2}: ¥450,000$/)).toBeVisible(); // the payment made
 
-  // the receipt has its own page, opened from the Paid tab (or from the invoice)
+  // the receipt has its own page (the group Accounting), reached from the invoice
   await page.getByRole("link", { name: /^RC-\d{4}-0001$/ }).click();
   await expect(page).toHaveURL(/\/receipts\/\d+$/);
   await expect(page.getByRole("heading", { level: 2, name: "Receipt" })).toBeVisible();
   await expect(page.getByText(/Payment method/)).toHaveCount(0); // there is no payment method
-  const receiptNumber = (await page.locator("[data-print-doc=receipt] h2 + p").first().textContent()).trim();
+  const receiptNumber = (await page.locator("[data-print-doc=receipt] dd").first().textContent()).trim();
   await downloadPdf(page, 0, `${receiptNumber}.pdf`); // the receipt as a PDF file
   await page.getByRole("button", { name: "Print", exact: true }).click();
   expect(await page.evaluate(() => window.__printed)).toBe("receipt");
   await expect(page.getByRole("link", { name: invoiceNumber })).toBeVisible(); // the way back to the invoice
 
-  // the old addresses of the lists open the work list
+  // the list of the receipts: this one, with its customer and amount; a click on the row opens it
   await open(page, "/accounting/receipts");
-  await expect(page).toHaveURL(/\/accounting$/);
+  await expect(page.getByRole("row", { name: new RegExp(receiptNumber) })).toContainText("Tokyo Cold Chain");
+  await expect(page.getByRole("row", { name: new RegExp(receiptNumber) })).toContainText("¥450,000");
+  await page.getByRole("row", { name: new RegExp(receiptNumber) }).getByText("Tokyo Cold Chain").click();
+  await expect(page).toHaveURL(/\/receipts\/\d+$/);
 
   // 10. the order shows its QT reference, the progress, the invoice and the receipt
   await open(page, "/sale/orders", orderNumber);
@@ -284,10 +265,10 @@ test("the example of the requirements, from the customer to the receipt", async 
   await expect(page.getByRole("link", { name: /^Paid this month\s*¥450,000$/ })).toBeVisible();
 
   // the pages that now hold real data show no untranslated key
-  for (const path of ["/sale/orders", "/stock", "/stock/materials", "/accounting", "/sale/quotations", "/master/products", "/master/customers", "/master/users"]) {
+  for (const path of ["/sale/orders", "/stock", "/stock/materials", "/accounting/invoices", "/sale/quotations", "/master/products", "/master/customers", "/master/users"]) {
     await open(page, path);
     expect(await rawKeys(page), `${path}: text that looks like an untranslated key`).toEqual([]);
   }
 
-  expect(withoutRefusals(errors.take())).toEqual([]);
+  expect(errors.take()).toEqual([]);
 });

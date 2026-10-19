@@ -8,6 +8,8 @@ import { can } from "@/utils/permissions";
  */
 export const DASHBOARD_ITEM = { key: "dashboard", to: "/", labelKey: "dashboard", icon: "dashboard", action: "dashboard.view" };
 
+/** The first page of a Factory Worker is the work of today, not the numbers, so its menu entry says so. */
+const isFactoryWorker = (user) => user?.role === "Worker" && user.department === "Factory";
 
 export const NAV = [
   DASHBOARD_ITEM,
@@ -45,6 +47,7 @@ export const NAV = [
       { key: "flowChart", to: "/master/flow-chart", labelKey: "flowChart", icon: "flowChart", action: "flowChart.view" },
       { key: "userFlow", to: "/master/user-flow", labelKey: "userFlow", icon: "userFlow", action: "userFlow.view" },
       { key: "apisDiagram", to: "/master/apis-diagram", labelKey: "apisDiagram", icon: "apisDiagram", action: "apisDiagram.view" },
+      { key: "contextDiagram", to: "/master/context-diagram", labelKey: "contextDiagram", icon: "contextDiagram", action: "contextDiagram.view" },
     ],
   },
 ];
@@ -57,7 +60,7 @@ export function getVisibleNav(user) {
   const visible = [];
   for (const entry of NAV) {
     if (!entry.items) {
-      if (can(user, entry.action)) visible.push({ type: "link", item: entry });
+      if (can(user, entry.action)) visible.push({ type: "link", item: entry.key === "dashboard" && isFactoryWorker(user) ? { ...entry, labelKey: "today" } : entry });
       continue;
     }
     const items = entry.items.filter((item) => can(user, item.action));

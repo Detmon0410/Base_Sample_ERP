@@ -1,7 +1,7 @@
 /**
  * The ER diagram of the page /master/er-diagram and of its PDF. It is **ProjectdocInfo/ER Diagram.md**, written as data: the same
- * tables, columns (in the same order), keys, notes, relationships, ends, labels and notes; the .md lists every column of the
- * database (backend/prisma/schema.prisma). erLayout.test.js reads the .md and fails when the two differ, so a change of the diagram
+ * tables, columns (in the same order), keys, notes, relationships, ends, labels and notes.
+ * erLayout.test.js reads the .md and fails when the two differ, so a change of the diagram
  * starts in the .md.
  *
  * A column: [name, type, keys, note]. `keys` is "PK", "FK", "UK" or several ("PK,FK", "FK,UK"); `note` is the comment of the .md.
@@ -21,10 +21,6 @@ export const ENTITIES = [
       ["email", "string", "UK"],
       ["password_hash", "string"],
       ["role", "string", "", "Admin | Worker"],
-      ["token_version", "int"],
-      ["last_login_at", "datetime"],
-      ["created_at", "datetime"],
-      ["updated_at", "datetime"],
     ],
   },
   {
@@ -37,8 +33,6 @@ export const ENTITIES = [
       ["address", "string"],
       ["email", "string"],
       ["telephone", "string"],
-      ["created_at", "datetime"],
-      ["updated_at", "datetime"],
     ],
   },
   {
@@ -52,8 +46,6 @@ export const ENTITIES = [
       ["contact", "string"],
       ["address", "string"],
       ["active", "bool"],
-      ["created_at", "datetime"],
-      ["updated_at", "datetime"],
     ],
   },
   {
@@ -61,8 +53,8 @@ export const ENTITIES = [
     x: 1440,
     y: 220,
     columns: [
-      ["supplier_id", "int", "PK,FK"],
-      ["material_id", "int", "PK,FK"],
+      ["supplier_id", "int", "FK"],
+      ["material_id", "int", "FK"],
       ["unit_price", "int", "", "initial price"],
     ],
   },
@@ -75,8 +67,6 @@ export const ENTITIES = [
       ["code", "string", "UK"],
       ["name", "string"],
       ["price", "int"],
-      ["created_at", "datetime"],
-      ["updated_at", "datetime"],
     ],
   },
   {
@@ -89,8 +79,6 @@ export const ENTITIES = [
       ["name", "string"],
       ["unit", "string"],
       ["min_level", "decimal"],
-      ["created_at", "datetime"],
-      ["updated_at", "datetime"],
     ],
   },
   {
@@ -98,8 +86,8 @@ export const ENTITIES = [
     x: 1090,
     y: 260,
     columns: [
-      ["product_id", "int", "PK,FK"],
-      ["material_id", "int", "PK,FK"],
+      ["product_id", "int", "FK"],
+      ["material_id", "int", "FK"],
       ["quantity", "decimal"],
     ],
   },
@@ -108,11 +96,9 @@ export const ENTITIES = [
     x: 1090,
     y: 660,
     columns: [
-      ["id", "int", "PK"],
       ["material_id", "int", "FK"],
       ["lot_number", "string"],
       ["quantity", "decimal"],
-      ["created_at", "datetime"],
     ],
   },
   {
@@ -126,13 +112,9 @@ export const ENTITIES = [
       ["kind", "string", "", "Add | Deduct | Adjust"],
       ["change", "decimal"],
       ["balance", "decimal"],
-      ["change_date", "date"],
-      ["note", "string"],
-      ["initial", "bool"],
       ["order_id", "int", "FK", "start production"],
       ["purchase_order_id", "int", "FK", "PO received"],
       ["user_id", "int", "FK"],
-      ["at", "datetime"],
     ],
   },
   {
@@ -144,13 +126,11 @@ export const ENTITIES = [
       ["qt_number", "string", "UK"],
       ["qt_date", "date"],
       ["customer_id", "int", "FK"],
-      ["notes", "string"],
+      ["status", "string", "", "Draft | Confirmed"],
       ["customer_po_number", "string"],
       ["customer_po_date", "date"],
-      ["status", "string", "", "Draft | Confirmed"],
-      ["production_order_id", "int", "FK,UK", "set on confirm"],
-      ["created_at", "datetime"],
-      ["updated_at", "datetime"],
+      ["production_order_id", "int", "FK", "set on confirm"],
+      ["notes", "string"],
     ],
   },
   {
@@ -163,6 +143,7 @@ export const ENTITIES = [
       ["product_id", "int", "FK"],
       ["quantity", "int"],
       ["unit_price", "int"],
+      ["amount", "int"],
     ],
   },
   {
@@ -175,10 +156,7 @@ export const ENTITIES = [
       ["qt_id", "int", "FK"],
       ["customer_id", "int", "FK"],
       ["order_date", "date"],
-      ["notes", "string"],
       ["started_at", "datetime"],
-      ["created_at", "datetime"],
-      ["updated_at", "datetime"],
     ],
   },
   {
@@ -200,11 +178,8 @@ export const ENTITIES = [
     columns: [
       ["id", "int", "PK"],
       ["line_id", "int", "FK"],
-      ["sequence", "int"],
       ["name", "string"],
-      ["instructions", "string"],
       ["status", "string"],
-      ["completed_quantity", "int"],
     ],
   },
   {
@@ -215,11 +190,7 @@ export const ENTITIES = [
       ["id", "int", "PK"],
       ["process_id", "int", "FK"],
       ["status", "string"],
-      ["completed_quantity", "int"],
-      ["work_date", "date"],
-      ["note", "string"],
       ["user_id", "int", "FK"],
-      ["at", "datetime"],
     ],
   },
   {
@@ -232,13 +203,10 @@ export const ENTITIES = [
       ["supplier_id", "int", "FK"],
       ["department", "string", "", "Sales | Factory | ..."],
       ["required_date", "date"],
-      ["notes", "string"],
       ["status", "string", "", "Draft | Sent | Received"],
       ["total", "int"],
       ["received_at", "datetime"],
       ["created_by", "int", "FK"],
-      ["created_at", "datetime"],
-      ["updated_at", "datetime"],
     ],
   },
   {
@@ -253,7 +221,6 @@ export const ENTITIES = [
       ["unit", "string"],
       ["unit_price", "int"],
       ["amount", "int"],
-      ["lot_number", "string"],
     ],
   },
   {
@@ -261,7 +228,6 @@ export const ENTITIES = [
     x: 1790,
     y: 664,
     columns: [
-      ["id", "int", "PK"],
       ["po_id", "int", "FK,UK"],
       ["payment_date", "date"],
       ["amount", "int"],
@@ -281,7 +247,6 @@ export const ENTITIES = [
       ["kind", "string", "", "PO_FILE | QUOTATION | EVIDENCE | OTHER"],
       ["file_name", "string"],
       ["file_type", "string"],
-      ["size", "int"],
       ["file_path", "string"],
       ["uploaded_by", "int", "FK"],
       ["at", "datetime"],
@@ -294,26 +259,19 @@ export const ENTITIES = [
     columns: [
       ["id", "int", "PK"],
       ["invoice_number", "string", "UK"],
-      ["invoice_date", "date"],
       ["order_id", "int", "FK,UK"],
-      ["customer_name", "string"],
-      ["customer_address", "string"],
       ["total", "int"],
       ["status", "string"],
-      ["created_at", "datetime"],
     ],
   },
   {
     name: "INVOICE_LINE",
     x: 40,
-    y: 644,
+    y: 664,
     columns: [
-      ["id", "int", "PK"],
       ["invoice_id", "int", "FK"],
       ["product_code", "string"],
-      ["product_name", "string"],
       ["quantity", "int"],
-      ["unit_price", "int"],
       ["amount", "int"],
     ],
   },
@@ -322,7 +280,6 @@ export const ENTITIES = [
     x: 390,
     y: 944,
     columns: [
-      ["id", "int", "PK"],
       ["invoice_id", "int", "FK,UK"],
       ["payment_date", "date"],
       ["amount", "int"],
@@ -336,9 +293,6 @@ export const ENTITIES = [
       ["id", "int", "PK"],
       ["receipt_number", "string", "UK"],
       ["invoice_id", "int", "FK,UK"],
-      ["receipt_date", "date"],
-      ["customer_name", "string"],
-      ["customer_address", "string"],
       ["amount", "int"],
     ],
   },
@@ -367,8 +321,6 @@ export const RELATIONSHIPS = [
   { parent: "MATERIAL", child: "PRODUCT_BOM", fk: "material_id", parentEnd: "one", childEnd: "zeroMany", label: "used in", route: { from: "top", to: "bottom" } },
   { parent: "MATERIAL", child: "MATERIAL_LOT", fk: "material_id", parentEnd: "one", childEnd: "zeroMany", label: "kept in", route: { from: "bottom", to: "top" } },
   { parent: "MATERIAL", child: "STOCK_CHANGE", fk: "material_id", parentEnd: "one", childEnd: "zeroMany", label: "history", route: { from: "right", fromY: 560, to: "left", lane: 1405 } },
-  { parent: "PRODUCTION_ORDER", child: "STOCK_CHANGE", fk: "order_id", parentEnd: "zeroOne", childEnd: "zeroMany", label: "start deducts", route: { from: "right", fromY: 548, to: "bottom", via: [[725, 548], [725, 1250], [1570, 1250]] } },
-  { parent: "USER", child: "STOCK_CHANGE", fk: "user_id", parentEnd: "one", childEnd: "zeroMany", label: "makes", route: { from: "right", fromY: 954, to: "left" } },
   { parent: "SUPPLIER", child: "SUPPLIER_MATERIAL", fk: "supplier_id", parentEnd: "one", childEnd: "zeroMany", label: "sells", route: { from: "left", to: "right", lane: 1745 } },
   { parent: "MATERIAL", child: "SUPPLIER_MATERIAL", fk: "material_id", parentEnd: "one", childEnd: "zeroMany", label: "sold by", route: { from: "right", to: "left", lane: 1395 } },
   { parent: "SUPPLIER", child: "PURCHASE_ORDER", fk: "supplier_id", parentEnd: "one", childEnd: "zeroMany", label: "receives", route: { from: "bottom", to: "top" } },
@@ -380,7 +332,6 @@ export const RELATIONSHIPS = [
   { parent: "PURCHASE_ORDER", child: "ATTACHMENT", fk: "owner_id", parentEnd: "one", childEnd: "zeroMany", label: "files", route: { from: "right", fromY: 330, to: "right", via: [[2075, 330], [2075, 20], [1025, 20]] } },
   { parent: "QT_REFERENCE", child: "ATTACHMENT", fk: "owner_id", parentEnd: "one", childEnd: "zeroMany", label: "files", route: { from: "right", fromY: 220, to: "top", toX: 780, via: [[780, 220]] } },
   { parent: "PRODUCTION_ORDER", child: "ATTACHMENT", fk: "owner_id", parentEnd: "one", childEnd: "zeroMany", label: "evidence", labelAt: [695, 387], route: { from: "right", to: "left", lane: 695 } },
-  { parent: "USER", child: "ATTACHMENT", fk: "uploaded_by", parentEnd: "one", childEnd: "zeroMany", label: "uploads", labelAt: [1065, 826], route: { from: "left", fromY: 875, to: "right", lane: 1065 } },
   { parent: "PRODUCTION_ORDER", child: "INVOICE", fk: "order_id", parentEnd: "one", childEnd: "zeroOne", label: "billed by", route: { from: "bottom", to: "top" } },
   { parent: "INVOICE", child: "INVOICE_LINE", fk: "invoice_id", parentEnd: "one", childEnd: "oneMany", label: "contains", route: { from: "left", to: "right" } },
   { parent: "INVOICE", child: "PAYMENT", fk: "invoice_id", parentEnd: "one", childEnd: "zeroOne", label: "paid by", route: { from: "bottom", to: "top" } },
@@ -392,7 +343,7 @@ export const NOTES = [
   "`Attachment` is polymorphic (`owner_type` + `owner_id`), so there is no database foreign key to the owner; the service checks it.",
   "`PurchasePayment` is stored on the PO and does not go through the Accounting tables.",
   "`QT_REFERENCE.production_order_id` is unique: one QT creates one Factory Order.",
-  "Invoice, Payment and Receipt are unchanged and keep their snapshot fields.",
+  "Invoice, Payment and Receipt are unchanged and keep their snapshot fields (not repeated here).",
   "`Order status` (`Draft`, `In Progress`, `Completed`) is **computed** from the processes; it is not a column. The stock status (`Normal`, `Low`, `Out`) is computed from the lot totals and `min_level`.",
   "`Invoice` and `Receipt` copy the customer and the product data when they are issued (a snapshot). An order is billed once, and an invoice has at most one payment and one receipt.",
   "An order is made only by Confirm QT, so `ProductionOrder.qt_id` is always set and each QT has at most one order.",

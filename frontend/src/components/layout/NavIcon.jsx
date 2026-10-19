@@ -7,20 +7,21 @@ import {
   Database,
   Factory,
   FileText,
-  KeyRound,
   Landmark,
   LayoutDashboard,
-  Network,
   Package,
   ReceiptText,
   ShoppingCart,
   Truck,
-  UserCog,
-  Users,
-  Warehouse,
+  KeyRound,
+  Network,
   Workflow,
   Route,
   Cable,
+  Globe,
+  UserCog,
+  Users,
+  Warehouse,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -48,6 +49,7 @@ const ICONS = {
   flowChart: Workflow,
   userFlow: Route,
   apisDiagram: Cable,
+  contextDiagram: Globe,
   down: ChevronDown,
 };
 

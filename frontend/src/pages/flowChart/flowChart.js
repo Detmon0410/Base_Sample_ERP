@@ -1,5 +1,5 @@
 /**
- * ProjectdocInfo/Flow Chart.md as data, word for word: its title, and each section with its blocks in order (a mermaid chart, a
+ * ProjectdocInfo/Flow Chart.md as data, word for word: its title, and each section with its blocks in order (a mermaid chart, a list, a
  * table, a paragraph). The intro of the .md only points to other documents and is left out. The page /master/flow-chart shows it
  * (pages/mermaidDoc); mermaidDoc.test.js reads the .md and fails when the two differ, so a change starts in the .md.
  */
@@ -9,7 +9,7 @@ export const SECTIONS = [
   {
     title: "Main flow",
     blocks: [
-      { chart: "flowchart TD\n    A([Start]) --> B[Admin: master data<br/>customers, products + BOM,<br/>materials, suppliers + their items, users]\n    B --> C[Sale: create QT with lines<br/>status Draft]\n    C --> D[Print QT form as PDF<br/>send to customer]\n    D --> E[Upload the customer PO<br/>PO No., date, file]\n    E --> F[Confirm QT]\n    F --> G[System creates a Draft Factory Order<br/>from the QT lines]\n    G --> G2[Sale: add the processes<br/>of each line]\n    G2 --> H{Enough stock<br/>for the BOM?}\n    H -- No --> P1[Purchase flow below] --> H\n    H -- Yes --> I[Factory: start production<br/>BOM deducted, oldest lot first]\n    I --> J[Factory: record progress,<br/>upload evidence images / documents]\n    J --> K{All processes<br/>Completed?}\n    K -- No --> J\n    K -- Yes --> L[Admin: issue invoice]\n    L --> M[Admin: full payment -> Paid + receipt]\n    M --> N([End])" },
+      { chart: "flowchart TD\n    A([Start]) --> B[Admin: master data<br/>customers, products + BOM,<br/>materials, suppliers + their items, users]\n    B --> C[Sale: create QT with lines<br/>status Draft]\n    C --> D[Print QT form as PDF<br/>send to customer]\n    D --> E[Upload the customer PO<br/>PO No., date, file]\n    E --> F[Confirm QT]\n    F --> G[System creates a Draft Factory Order<br/>from the QT lines]\n    G --> H{Enough stock<br/>for the BOM?}\n    H -- No --> P1[Purchase flow below] --> H\n    H -- Yes --> I[Factory: start production<br/>BOM deducted, oldest lot first]\n    I --> J[Factory: record progress,<br/>upload evidence images / documents]\n    J --> K{All processes<br/>Completed?}\n    K -- No --> J\n    K -- Yes --> L[Admin: issue invoice]\n    L --> M[Admin: full payment -> Paid + receipt]\n    M --> N([End])" },
     ],
   },
   {
@@ -34,14 +34,14 @@ export const SECTIONS = [
   {
     title: "Order status",
     blocks: [
-      { chart: "stateDiagram-v2\n    [*] --> Draft: made by Confirm QT\n    Draft --> InProgress: first process started\n    InProgress --> Completed: every process Completed\n    InProgress --> Draft: every process back to Not Started\n    Completed --> InProgress: a process reopened (Admin, note required)\n    Completed --> [*]: invoiced" },
+      { chart: "stateDiagram-v2\n    [*] --> Draft: made by Confirm QT\n    Draft --> InProgress: first process started\n    InProgress --> Completed: every process Completed\n    Completed --> InProgress: a process reopened (Admin, note required)\n    Completed --> [*]: invoiced" },
       { text: "The status of an order is computed from its processes, not set by hand. `Draft` also covers an order that was started but has no progress yet (the page says \"Production started\")." },
     ],
   },
   {
     title: "Process status",
     blocks: [
-      { chart: "stateDiagram-v2\n    [*] --> NotStarted\n    NotStarted --> InProgress\n    NotStarted --> Completed: full quantity at once\n    InProgress --> Completed\n    InProgress --> NotStarted: quantity back to 0\n    Completed --> InProgress: Admin only, note required\n    Completed --> NotStarted: Admin only, note required" },
+      { chart: "stateDiagram-v2\n    [*] --> NotStarted\n    NotStarted --> InProgress\n    InProgress --> Completed\n    Completed --> InProgress: Admin only, note required" },
     ],
   },
   {

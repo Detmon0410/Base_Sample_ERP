@@ -251,7 +251,7 @@
     "actions": "Actions",
     "download": "Download",
     "delete": "Delete",
-    "chooseFile": "Choose a file",
+    "chooseFile": "Choose a file (PDF, PNG or JPG, up to 10 MB)",
     "upload": "Upload",
     "uploading": "Uploading...",
     "uploaded": "The file was added.",
@@ -263,7 +263,6 @@
       "QUOTATION": "Quotation",
       "EVIDENCE": "Evidence",
       "OTHER": "Other"
-    },
-    "fileHint": "PDF, PNG or JPG, up to 10 MB"
+    }
   }
 }

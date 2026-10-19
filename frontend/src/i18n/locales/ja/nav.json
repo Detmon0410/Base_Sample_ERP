@@ -8,7 +8,6 @@
   "customers": "顧客",
   "products": "製品・部品表",
   "users": "ユーザー",
-  "erDiagram": "ER図",
   "menu": "メニュー",
   "skipToContent": "本文へ移動",
   "mainMenu": "メインメニュー",
@@ -28,8 +27,11 @@
   "department": "部署",
   "purchase": "発注",
   "suppliers": "仕入先",
+  "today": "今日の作業",
+  "erDiagram": "ER図",
   "dbRelations": "DBリレーション",
   "flowChart": "フローチャート",
   "userFlow": "ユーザーフロー",
-  "apisDiagram": "API図"
+  "apisDiagram": "API図",
+  "contextDiagram": "コンテキスト図"
 }

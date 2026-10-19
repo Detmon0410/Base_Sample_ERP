@@ -1,7 +1,5 @@
 # Site Map
 
-The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)) are in. This replaces the older single-version description.
-
 ```mermaid
 flowchart TD
     Root[App] --> Login["/login"]
@@ -31,7 +29,7 @@ flowchart TD
     Mst --> CUS["/master/customers"]
     Mst --> PRD["/master/products"]
     Mst --> SUP["/master/suppliers<br/>suppliers + their items and prices<br/>Admin"]
-    Mst --> USR["/master/users<br/>(changed: Worker department rule)"]
+    Mst --> USR["/master/users<br/>Admin"]
 
     Root --> Sys["/403, * not found"]
 ```
@@ -54,16 +52,28 @@ flowchart TD
 | Master data | Users | `/master/users` | yes | no | no |
 | – | Sign in, Forbidden, Not found | `/login`, `/403`, `*` | any | any | any |
 
-## What is on the pages that QT 2.0 and the roles changed
+## What is on each page
 
-| Page | Change |
+| Page | Content |
 |---|---|
-| QT page | the steps of the job (Draft, Confirmed, In production, Done), lines and total, Print button, customer PO upload (number, date, file), Confirm button; after Confirm the production order of the job on the same page: processes before the start, progress after it |
-| Production order | shows the customer PO file, QT link, and an evidence upload area |
+| Sign in | email and password |
+| Dashboard (Admin, Sale) | order tiles (Draft, In progress, Completed); for the Admin also the invoice tiles and a chart of orders by status |
 | Today (Factory) | orders to start, orders in production with a big "Record progress" button, purchase orders to receive, a strip for low stock |
+| Sales work list | one row per job with its step (Draft, Confirmed, In production, Done) |
+| QT page (one page for a job) | the steps of the job, customer, lines and total, Print button, customer PO upload (number, date, file), Confirm button; after Confirm the production order of the job on the same page: processes before the start, progress after it |
+| Production orders | list of orders with their status |
+| Production order | processes, start, progress, the customer PO file, QT link, evidence upload (images and documents) |
+| Purchase orders | stock with low flags, the PO form, the PO list (see below) |
 | Accounting | tabs To invoice / Waiting for payment / Paid; Issue invoice and Record payment in small dialogs; Open receipt |
-| Users | a Worker must choose `Sales` or `Factory` |
-| Menus | each entry has `roles` and `departments`; a menu with one visible entry shows as that entry |
+| Invoice, receipt | the document, ready to print |
+| Materials | materials with lots, total and stock status; Add / Deduct / Adjust a lot |
+| Movements | the history of every stock change |
+| Customers, Products | list, search, add / edit / delete (products with their BOM) |
+| Suppliers | suppliers with their items and prices |
+| Users | list, add / edit / delete; a Worker must choose the department `Sales` or `Factory` |
+| Forbidden, Not found | message and a way back |
+
+Menus: each entry shows only for the roles and departments that may use it; a menu with one visible entry is shown as that entry alone. The language (English / Japanese) can be switched on every page.
 
 ## The Purchase page (one page)
 
@@ -80,4 +90,3 @@ flowchart TD
 - `/sale/orders/new` opens `/sale/quotations`: an order is made by Confirm QT, never by hand.
 - `/accounting/invoices`, `/accounting/invoices/new` and `/accounting/receipts` open `/accounting`; the invoice and the receipt keep `/:id` as documents.
 - Old addresses of pages that moved (`/qt`, `/orders`, `/invoices`, ...) are redirected to their new place.
-- A menu with one visible entry is shown as that entry alone.

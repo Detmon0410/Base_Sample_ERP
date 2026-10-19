@@ -4,14 +4,15 @@ import { expect, test } from "@playwright/test";
 
 import { USERS, settle, signIn, watchErrors } from "./helpers.js";
 
-// The chart pages in a real browser (Flow Chart, User Flow, APIs Diagram): mermaid draws every chart of the .md, in English and in
+// The chart pages in a real browser (Flow Chart, User Flow, APIs Diagram, Context Diagram): mermaid draws every chart of the .md, in English and in
 // Japanese, and the PDF holds them. Neither the page nor the PDF shows what would help to get in (the database, the addresses, the
 // paths of the API, the logins). A Worker (Sale or Factory) does not have the pages.
 
 const PAGES = [
   { path: "/master/flow-chart", file: "flow-chart", charts: 9, en: "Flow Chart", ja: "フローチャート", words: ["Main flow", "Confirm QT: checks", "Lines can be edited only in Draft."] },
-  { path: "/master/user-flow", file: "user-flow", charts: 4, en: "User Flow", ja: "ユーザーフロー", words: ["Sale Worker", "Who can do what", "The Admin can do everything the two Workers can.", "view only"] },
-  { path: "/master/apis-diagram", file: "apis-diagram", charts: 6, en: "APIs Diagram", ja: "API図", words: ["1. Layers", "Purchase flow", "7. Error codes", "STOCK_SHORT", "Summary of the backend API built in", "\x95\x95\x95\x95\x95"] },
+  { path: "/master/user-flow", file: "user-flow", charts: 8, en: "User Flow", ja: "ユーザーフロー", words: ["Sale Worker", "Who can do what", "The Admin can do everything the two Workers can.", "view only"] },
+  { path: "/master/apis-diagram", file: "apis-diagram", charts: 6, en: "APIs Diagram", ja: "API図", words: ["1. Layers", "Purchase flow", "7. Error codes", "STOCK_SHORT", "All endpoints above are implemented in", "\x95\x95\x95\x95\x95"] },
+  { path: "/master/context-diagram", file: "context-diagram", charts: 2, en: "Context Diagram", ja: "コンテキスト図", words: ["Level 0: system context", "External entities", "Not in this system", "Sales orders, delivery, supplier invoices in Accounting, serial numbers and tax."] },
 ];
 const SECRET = /kanou_mini_erp|localhost|:5173|:3000|DATABASE_URL|@gmail\.com|\/orders\/:id|\/auth\/|routes\/|backend\/|pnpm/;
 

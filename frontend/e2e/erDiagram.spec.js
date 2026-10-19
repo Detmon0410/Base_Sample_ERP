@@ -14,7 +14,7 @@ test("the Admin opens the ER diagram and downloads it as a PDF", async ({ page }
   await page.goto("/master/er-diagram");
   await settle(page);
   await expect(page.getByRole("heading", { name: "ER Diagram", level: 1 })).toBeVisible();
-  await expect(page.getByRole("img", { name: /^ER Diagram: 23 tables and 32 relationships$/ })).toBeVisible();
+  await expect(page.getByRole("img", { name: /^ER Diagram: 23 tables and 29 relationships$/ })).toBeVisible();
   if (process.env.ER_SHOT) await page.screenshot({ path: process.env.ER_SHOT, fullPage: true });
 
   const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download PDF" }).click()]);

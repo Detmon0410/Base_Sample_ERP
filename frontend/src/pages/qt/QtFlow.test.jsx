@@ -73,7 +73,7 @@ describe("the QT page", () => {
     const files = screen.getByRole("heading", { name: "Files" }).closest("section");
     await user.upload(within(files).getByLabelText(/Choose a file/), pdf("po-100.pdf"));
     await user.click(within(files).getByRole("button", { name: "Upload" }));
-    expect(await within(files).findByRole("button", { name: "Delete: po-100.pdf" })).toBeInTheDocument(); // it is in the list
+    expect(await within(files).findByText("po-100.pdf")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Confirm QT" }));
     expect(await screen.findByText(/a production order is made from its products/)).toBeInTheDocument();

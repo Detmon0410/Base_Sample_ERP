@@ -1,8 +1,6 @@
 # APIs Diagram
 
-Summary of the backend API built in `backend/` (Node.js, Express, Prisma, MySQL). Contract: [docs/api](../docs/api/README.md). Base URL `http://localhost:3000/api`. Every route except `/health` and `POST /auth/login` needs `Authorization: Bearer <token>`.
 
-Envelope: success `{ success: true, data, meta? }`, error `{ success: false, message, error: "CODE", errors? }`.
 
 ## 1. Layers
 
@@ -21,7 +19,7 @@ flowchart LR
 ## 2. Endpoints by module
 
 ```mermaid
-flowchart LR
+flowchart TB
     API["/api"]
     API --> AUTHM["Auth"]
     API --> MASTER["Master data"]
@@ -142,6 +140,7 @@ sequenceDiagram
 
 ```mermaid
 stateDiagram-v2
+    direction LR
     [*] --> QT_Draft
     QT_Draft --> QT_Confirmed: POST /qt/:id/confirm (once)
     QT_Confirmed --> Order_Draft: order created

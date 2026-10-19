@@ -13,7 +13,8 @@ export const PAGES = [
   { path: "/sale/quotations", name: "Quotations", roles: ["admin", "sale"] },
   { path: "/sale/orders", name: "Production orders", roles: ["admin", "sale", "factory"] },
   { path: "/purchase/orders", name: "Purchase orders", roles: ["admin", "factory"] },
-  { path: "/accounting", name: "Accounting", roles: ["admin"] },
+  { path: "/accounting/invoices", name: "Invoices", roles: ["admin"] },
+  { path: "/accounting/receipts", name: "Receipts", roles: ["admin"] },
   { path: "/stock/materials", name: "Materials and stock", roles: ["admin", "sale", "factory"] },
   { path: "/stock/movements", name: "Movements", roles: ["admin", "sale", "factory"] },
   { path: "/master/customers", name: "Customers", roles: ["admin", "sale"] },
@@ -25,6 +26,7 @@ export const PAGES = [
   { path: "/master/flow-chart", name: "Flow Chart", roles: ["admin"] },
   { path: "/master/user-flow", name: "User Flow", roles: ["admin"] },
   { path: "/master/apis-diagram", name: "APIs Diagram", roles: ["admin"] },
+  { path: "/master/context-diagram", name: "Context Diagram", roles: ["admin"] },
 ];
 
 /** The words of the menu in the header, per user (a menu with one visible entry is that entry alone). */
@@ -100,9 +102,3 @@ export async function rawKeys(page) {
 export async function overflowX(page) {
   return page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - window.innerWidth));
 }
-
-/**
- * Takes out of a list of collected errors the refusals the tests make on purpose (a wrong payment, a short stock, a page of another role):
- * a real backend answers them with 400, 403 or 409, and the browser logs each one as a console error. The mock has no HTTP, so it logs none.
- */
-export const withoutRefusals = (lines) => lines.filter((line) => !/^HTTP (400|403|409):/.test(line) && !/^console: Failed to load resource: the server responded with a status of (400|403|409)/.test(line));

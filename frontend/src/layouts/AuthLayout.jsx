@@ -6,7 +6,7 @@ import { AuthBackground } from "@/components/common/AuthBackground";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 
 /**
- * Login screen frame: the bar with the logo and the language, the form (with the logo in its box) centred below it.
+ * Login screen frame: the bar with the logo and the language, the logo again above the form, the form centred below it.
  * It is exactly one screen tall (h-dvh); the content only scrolls on an unusually short window.
  */
 export function AuthLayout() {
@@ -22,8 +22,11 @@ export function AuthLayout() {
       </header>
 
       <div className="relative flex min-h-0 flex-1 overflow-y-auto px-8 py-4">
-        <main id="main-content" className="m-auto w-full max-w-[26rem]">
-          <Outlet />
+        <main id="main-content" className="m-auto flex w-full max-w-[24rem] flex-col items-center gap-4">
+          <AppLogo className="size-24" />
+          <div className="w-full">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

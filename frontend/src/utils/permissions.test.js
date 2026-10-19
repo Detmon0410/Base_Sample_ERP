@@ -34,6 +34,7 @@ const TABLE = {
   "flowChart.view": { admin: true, sale: false, factory: false },
   "userFlow.view": { admin: true, sale: false, factory: false },
   "apisDiagram.view": { admin: true, sale: false, factory: false },
+  "contextDiagram.view": { admin: true, sale: false, factory: false },
 };
 
 describe("can(user, action)", () => {

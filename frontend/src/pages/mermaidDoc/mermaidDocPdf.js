@@ -7,8 +7,8 @@ const SCALE = 3; // the charts are pictures in the PDF: three times their size o
 /**
  * Saves a page of charts (Flow Chart, User Flow, APIs Diagram) as a PDF, A4 or A3 (`paper`), portrait (the charts run from top to
  * bottom), in the language of the page, with the content of the page: the title, the intro (paragraphs), then each section with its
- * blocks in order (a chart, a sub-heading, a table, a paragraph). `intro` and `sections` come from the page, already drawn and in
- * that language: [{ text }] and [{ title, blocks: [{ svg } | { heading } | { table } | { text }] }]. `texts` is { system, footer }.
+ * blocks in order (a chart, a sub-heading, a list, a table, a paragraph). `intro` and `sections` come from the page, already drawn and in
+ * that language: [{ text }] and [{ title, blocks: [{ svg } | { heading } | { items } | { table } | { text }] }]. `texts` is { system, footer }.
  * What is never shown is hidden by the texts of the PDF (utils/textPdf.js) and is already hidden in the drawings.
  */
 export async function downloadMermaidDocPdf({ language, paper = "a4", title, intro = [], sections, texts, fileName }) {
@@ -37,7 +37,8 @@ export async function downloadMermaidDocPdf({ language, paper = "a4", title, int
         const next = section.blocks[section.blocks.indexOf(block) + 1];
         if (next && pictures.has(next) && doc.rest - 10 < doc.imageSize(pictures.get(next), SCALE).height * 0.55) doc.newPage();
         doc.heading(block.heading, { numbered: false });
-      } else if (block.table) doc.table(block.table.head, block.table.rows);
+      } else if (block.items) doc.bullets(block.items);
+      else if (block.table) doc.table(block.table.head, block.table.rows);
       else doc.paragraph(block.text);
     }
     doc.space(4);

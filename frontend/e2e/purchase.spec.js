@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { USERS, settle, signIn, watchErrors, withoutRefusals } from "./helpers.js";
+import { USERS, settle, signIn, watchErrors } from "./helpers.js";
 
 // Purchase: the Admin makes a material that is low and a supplier that sells it; a Factory Worker buys it: Create PO from the stock that
 // is low, Save, Sent, Received (a lot, the stock grows), the payment. Desktop only, like the master data case.
@@ -37,7 +37,6 @@ test("from a material that is low to a purchase order that is paid", async ({ pa
   // the Factory Worker buys it
   await page.getByRole("button", { name: "Admin", exact: true }).click(); // the user menu
   await page.getByRole("button", { name: "Log out" }).click();
-  await expect(page).toHaveURL(/\/login/); // wait for the sign-out to finish before the next sign-in
   await signIn(page, USERS.factory);
   await page.goto("/purchase/orders");
   await settle(page);
@@ -70,21 +69,5 @@ test("from a material that is low to a purchase order that is paid", async ({ pa
   await settle(page);
   await expect(page.getByRole("row", { name: /FOAM-01/ }).first()).toContainText(/PO-\d{4}-\d{4}/);
 
-  // the Accounting page (Admin) shows the same purchase order on the side of the money that goes out: paid out, not "to pay"
-  const poNumber = (await page.goto("/purchase/orders").then(() => page.getByRole("link", { name: /^PO-\d{4}-\d{4}$/ }).first().textContent())).trim();
-  await page.getByRole("button", { name: "Factory Worker", exact: true }).or(page.getByRole("button", { name: /Worker/ })).first().click();
-  await page.getByRole("button", { name: "Log out" }).click();
-  await expect(page).toHaveURL(/\/login/);
-  await signIn(page, USERS.admin);
-  await page.goto("/accounting");
-  await settle(page);
-  await page.getByRole("button", { name: "We pay suppliers" }).click();
-  await expect(page.getByRole("row", { name: new RegExp(poNumber) })).toHaveCount(0); // it is paid: not among the ones to pay (the demo data has other POs)
-  await page.getByRole("tab", { name: /Paid out/ }).click();
-  const paidOut = page.getByRole("row", { name: new RegExp(poNumber) });
-  await expect(paidOut).toContainText("Foam Supplier");
-  await expect(paidOut).toContainText("¥36,000");
-  await expect(paidOut).toContainText("2026-"); // the payment date
-
-  expect(withoutRefusals(errors.take())).toEqual([]);
+  expect(errors.take().filter((line) => !/HTTP (400|409)/.test(line))).toEqual([]);
 });

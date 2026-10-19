@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { INTRO as APIS_INTRO, SECTIONS as APIS, TITLE as APIS_TITLE } from "@/pages/apisDiagram/apisDiagram";
+import { SECTIONS as CONTEXT, TITLE as CONTEXT_TITLE } from "@/pages/contextDiagram/contextDiagram";
 import { PARTS, TITLE as DB_TITLE } from "@/pages/dbRelations/dbRelations";
 import { ENTITIES, NOTES, RELATIONSHIPS, TITLE as ER_TITLE, VERSION_ADDED } from "@/pages/erDiagram/erModel";
 import { SECTIONS as FLOW, TITLE as FLOW_TITLE } from "@/pages/flowChart/flowChart";
@@ -11,7 +12,7 @@ import { censor, HIDDEN } from "@/utils/censor";
 
 import { inLanguage, JA } from "./mdJa";
 
-// The five pages made from the .md files (ER Diagram, DB Relations, Flow Chart, User Flow, APIs Diagram) in Japanese: every word of the .md they
+// The six pages made from the .md files (ER Diagram, DB Relations, Flow Chart, User Flow, APIs Diagram, Context Diagram) in Japanese: every word of the .md they
 // show has its Japanese, and the names, values, codes and paths are kept.
 
 const LEGEND = ["Notation (crow's foot)", "exactly one", "zero or one", "one or many", "zero or many", "no database key", "primary key", "foreign key", "unique", "note", "note of the column"];
@@ -22,7 +23,7 @@ const WORD_COLUMNS = ["Cardinality", "Delete rule", "Change", "Event", "Rule", "
 /** The cells of the name columns that also have words. */
 const WORDS_AMONG_NAMES = ["PurchaseOrder, QtReference or ProductionOrder", "email (lower-cased)", "order_number (`ORD-yyyy-0001`, given by the server)", "as before"];
 /** The names in a chart that are not words: a table, a tool, a class, the fields of an answer. */
-const NAMES = ["MaterialLot", "Prisma", "ApiError", "JSON + Bearer JWT", "{ qt, order, alreadyConfirmed, warnings }"];
+const NAMES = ["MaterialLot", "Prisma", "ApiError", "JSON + Bearer JWT", "{ qt, order, alreadyConfirmed, warnings }", "Mini ERP 2.0", "MySQL", "JSON + Bearer token"];
 /**
  * A text of APIs Diagram.md with no word in it: a number (403), codes (`IN_USE`), a file, or a call of the API that is hidden
  * (POST /auth/login). It stays as it is.
@@ -59,15 +60,15 @@ const charts = (title, sections, intro = []) =>
     ...intro.map((block) => block.text),
     ...sections.flatMap((section) => [
       section.title,
-      ...section.blocks.flatMap((block) => (block.chart ? labelsOf(block.chart) : block.heading ? [block.heading] : block.table ? [...block.table.head, ...block.table.rows.flat()] : [block.text])),
+      ...section.blocks.flatMap((block) => (block.chart ? labelsOf(block.chart) : block.heading ? [block.heading] : block.items ? block.items : block.table ? [...block.table.head, ...block.table.rows.flat()] : [block.text])),
     ]),
   ].filter((word) => !NAMES.includes(word));
 /** The codes of a text, in any order (Japanese puts the words in another order). */
 const codes = (text) => [...text.matchAll(/`([^`]*)`/g)].map((match) => match[1]).sort();
 
 describe("the Japanese of the .md texts", () => {
-  it("has a Japanese text for every text of the .md files the five pages show, and no other", () => {
-    expect(Object.keys(JA).sort()).toEqual([...new Set([...er, ...db, ...charts(FLOW_TITLE, FLOW), ...charts(USER_FLOW_TITLE, USER_FLOW), ...charts(APIS_TITLE, APIS, APIS_INTRO).filter(hasWords)])].sort());
+  it("has a Japanese text for every text of the .md files the six pages show, and no other", () => {
+    expect(Object.keys(JA).sort()).toEqual([...new Set([...er, ...db, ...charts(FLOW_TITLE, FLOW), ...charts(USER_FLOW_TITLE, USER_FLOW), ...charts(APIS_TITLE, APIS, APIS_INTRO).filter(hasWords), ...charts(CONTEXT_TITLE, CONTEXT)])].sort());
     for (const [english, japanese] of Object.entries(JA)) expect(japanese.trim(), english).not.toBe("");
   });
 

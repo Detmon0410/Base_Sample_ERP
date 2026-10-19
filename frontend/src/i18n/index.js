@@ -8,22 +8,22 @@ import enMaster from "./locales/en/master.json";
 import enInvoices from "./locales/en/invoices.json";
 import enNav from "./locales/en/nav.json";
 import enDashboard from "./locales/en/dashboard.json";
+import enErDiagram from "./locales/en/erDiagram.json";
+import enDbRelations from "./locales/en/dbRelations.json";
 import enExamples from "./locales/en/examples.json";
 import enOrders from "./locales/en/orders.json";
 import enPurchase from "./locales/en/purchase.json";
-import enErDiagram from "./locales/en/erDiagram.json";
-import enDbRelations from "./locales/en/dbRelations.json";
 import jaAuth from "./locales/ja/auth.json";
 import jaCommon from "./locales/ja/common.json";
 import jaMaster from "./locales/ja/master.json";
 import jaInvoices from "./locales/ja/invoices.json";
 import jaNav from "./locales/ja/nav.json";
 import jaDashboard from "./locales/ja/dashboard.json";
+import jaErDiagram from "./locales/ja/erDiagram.json";
+import jaDbRelations from "./locales/ja/dbRelations.json";
 import jaExamples from "./locales/ja/examples.json";
 import jaOrders from "./locales/ja/orders.json";
 import jaPurchase from "./locales/ja/purchase.json";
-import jaErDiagram from "./locales/ja/erDiagram.json";
-import jaDbRelations from "./locales/ja/dbRelations.json";
 
 export const SUPPORTED_LANGUAGES = [
   { code: "en", label: "English", short: "EN" },

@@ -31,17 +31,17 @@
     "next": "Next"
   },
   "toasts": "Notifications",
-  "pdf": {
-    "system": "Refrigerator Factory Mini ERP",
-    "madeOn": "Made on {{date}}",
-    "paper": "Paper size"
-  },
   "paper": {
     "number": "No.",
     "details": "Details",
     "notes": "Notes",
     "terms": "Terms",
     "dateLine": "Date"
+  },
+  "pdf": {
+    "system": "Refrigerator Factory Mini ERP",
+    "madeOn": "Made on {{date}}",
+    "paper": "Paper size"
   },
   "doc": {
     "downloadPdf": "Download PDF",

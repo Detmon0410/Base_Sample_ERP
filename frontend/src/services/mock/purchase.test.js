@@ -61,7 +61,7 @@ describe("purchase orders of the mock", () => {
     const year = new Date().getFullYear();
     const po = makePo();
     expect(po.poNumber).toMatch(new RegExp(`^PO-${year}-\\d{4}$`));
-    expect(po).toMatchObject({ status: "Draft", supplierName: "Acme Steel", supplierAddress: "1 Steel Road", department: "Factory", requiredDate: "2026-11-01", total: 36000, paid: false, payment: null, receivedAt: null, createdByName: "Factory Worker" });
+    expect(po).toMatchObject({ status: "Draft", supplierName: "Acme Steel", supplierAddress: "1 Steel Road", department: "Factory", requiredDate: "2026-11-01", total: 36000, paid: false, payment: null, receivedAt: null, createdByName: "Worker" });
     expect(po.lines.map((line) => [line.materialCode, line.unit, line.quantity, line.unitPrice, line.amount, line.lotNumber])).toEqual([
       ["PU-STEEL", "kg", 100, 300, 30000, null],
       ["PU-FOAM", "pcs", 5, 1200, 6000, null],

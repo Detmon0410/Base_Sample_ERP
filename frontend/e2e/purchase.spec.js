@@ -37,6 +37,7 @@ test("from a material that is low to a purchase order that is paid", async ({ pa
   // the Factory Worker buys it
   await page.getByRole("button", { name: "Admin", exact: true }).click(); // the user menu
   await page.getByRole("button", { name: "Log out" }).click();
+  await expect(page).toHaveURL(/\/login/); // wait for the sign-out to finish before the next sign-in
   await signIn(page, USERS.factory);
   await page.goto("/purchase/orders");
   await settle(page);

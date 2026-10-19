@@ -44,6 +44,7 @@ export const NAV = [
       { key: "dbRelations", to: "/master/db-relations", labelKey: "dbRelations", icon: "dbRelations", action: "dbRelations.view" },
       { key: "flowChart", to: "/master/flow-chart", labelKey: "flowChart", icon: "flowChart", action: "flowChart.view" },
       { key: "userFlow", to: "/master/user-flow", labelKey: "userFlow", icon: "userFlow", action: "userFlow.view" },
+      { key: "apisDiagram", to: "/master/apis-diagram", labelKey: "apisDiagram", icon: "apisDiagram", action: "apisDiagram.view" },
     ],
   },
 ];

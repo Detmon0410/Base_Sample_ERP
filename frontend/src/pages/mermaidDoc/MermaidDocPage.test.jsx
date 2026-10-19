@@ -7,15 +7,19 @@ vi.mock("./flowRender", () => ({ renderChart: vi.fn(async (code) => `<svg data-c
 vi.mock("./mermaidDocPdf", () => ({ downloadMermaidDocPdf: vi.fn(async () => {}) }));
 
 import i18n from "@/i18n";
+import { ApisDiagramPage } from "@/pages/apisDiagram/ApisDiagramPage";
+import { INTRO as APIS_INTRO, SECTIONS as APIS } from "@/pages/apisDiagram/apisDiagram";
 import { FlowChartPage } from "@/pages/flowChart/FlowChartPage";
 import { SECTIONS as FLOW } from "@/pages/flowChart/flowChart";
 import { UserFlowPage } from "@/pages/userFlow/UserFlowPage";
 import { SECTIONS as USER_FLOW } from "@/pages/userFlow/userFlow";
+import { HIDDEN } from "@/utils/censor";
+import { plain } from "@/utils/textPdf";
 
 import { renderChart } from "./flowRender";
 import { downloadMermaidDocPdf } from "./mermaidDocPdf";
 
-// The chart pages (Flow Chart, User Flow): the title of the .md, every section with its chart, table and paragraph in order, the
+// The chart pages (Flow Chart, User Flow, APIs Diagram): the title of the .md, every section with its chart, table and paragraph in order, the
 // words in the language of the page, and the PDF with the same. The pages never name the documents they come from.
 
 const DOCS = /\.md\b|ProjectdocInfo|docs\//i;
@@ -106,5 +110,69 @@ describe("the User Flow page", () => {
     expect(sections.map((section) => section.title)).toEqual(USER_FLOW.map((section) => section.title));
     expect(sections[2].blocks[1]).toEqual({ text: "The Admin can do everything the two Workers can." });
     expect(sections[3].blocks[0].table.rows).toEqual(USER_FLOW[3].blocks[0].table.rows);
+  });
+});
+
+// what the APIs Diagram page never shows: the database, the addresses, the paths of the API, the logins, the files of the server
+const SECRET = /kanou_mini_erp|localhost|:5173|:3000|DATABASE_URL|@gmail\.com|\/orders\/:id|\/auth\/|\/api\b|routes\/|backend\/|pnpm|Bearer <token>/;
+
+describe("the APIs Diagram page", () => {
+  it("has the title, the intro, every section, the sub-heading and the tables of the .md, with the details hidden", async () => {
+    const { container } = render(<ApisDiagramPage />);
+    expect(screen.getByRole("heading", { level: 1, name: "APIs Diagram" })).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(APIS.map((section) => section.title));
+    expect(screen.getByRole("heading", { level: 3, name: "Purchase flow" })).toBeInTheDocument();
+    const charts = await screen.findAllByRole("img");
+    expect(charts).toHaveLength(6);
+    // the intro: its words stay, the base address, the paths and the header are dark bars
+    expect(screen.getByText(/Summary of the backend API built in/).closest("p")).toHaveTextContent(`Summary of the backend API built in ${HIDDEN} (Node.js, Express, Prisma, MySQL). Base URL ${HIDDEN}. Every route except ${HIDDEN} and ${HIDDEN} needs ${HIDDEN}.`);
+    expect(container.querySelectorAll("[data-hidden]").length).toBeGreaterThan(20);
+    const tables = screen.getAllByRole("table");
+    expect(tables).toHaveLength(3);
+    expect(within(tables[0]).getAllByRole("row")[6]).toHaveTextContent(`${HIDDEN} (before start)yesyes403`);
+    expect(within(tables[1]).getAllByRole("row")[5]).toHaveTextContent("409DUPLICATE_VALUEUnique code, email, qtNumber used");
+    // the error codes, the tables and the status values stay; nothing that would help to get in is in the page or in a chart
+    expect(document.body.textContent).toContain("STOCK_SHORT");
+    expect(document.body.textContent).not.toMatch(SECRET);
+    for (const chart of charts) expect(codeOf(chart)).not.toMatch(SECRET);
+    expect(codeOf(charts[0])).toContain(`DB[(MySQL<br/>${HIDDEN})]`);
+    expect(codeOf(charts[2])).toContain(`Fac->>API: ${HIDDEN}\n`);
+    expect(codeOf(charts[5])).toContain("QtReference ||--o| ProductionOrder : \"confirm creates\"");
+    expect(document.body.textContent).not.toMatch(DOCS);
+  });
+
+  it("hides the same in Japanese", async () => {
+    await i18n.changeLanguage("ja");
+    const { unmount } = render(<ApisDiagramPage />);
+    try {
+      expect(screen.getByRole("heading", { level: 1, name: "API図" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { level: 2, name: "7. エラーコード" })).toBeInTheDocument();
+      const charts = await screen.findAllByRole("img");
+      expect(codeOf(charts[2])).toContain(`Sale->>API: ${HIDDEN} （Draft、明細）`);
+      expect(codeOf(charts[4])).toContain(`state "指示書 Draft" as Order_Draft`);
+      expect(document.body.textContent).not.toMatch(SECRET);
+      for (const chart of charts) expect(codeOf(chart)).not.toMatch(SECRET);
+    } finally {
+      unmount(); // before the language changes back, so the page does not draw again after the test
+      await i18n.changeLanguage("en");
+    }
+  });
+
+  it("gives the PDF the intro and the sections; the PDF hides the same", async () => {
+    const user = userEvent.setup();
+    downloadMermaidDocPdf.mockClear();
+    render(<ApisDiagramPage />);
+    await screen.findAllByRole("img");
+    await user.click(screen.getByRole("button", { name: "Download PDF" }));
+    await waitFor(() => expect(downloadMermaidDocPdf).toHaveBeenCalledTimes(1));
+    const [{ title, intro, sections, fileName }] = downloadMermaidDocPdf.mock.calls[0];
+    expect(title).toBe("APIs Diagram");
+    expect(fileName).toMatch(/^apis-diagram-\d{4}-\d{2}-\d{2}\.pdf$/);
+    expect(intro).toEqual(APIS_INTRO);
+    expect(sections[3].blocks[1]).toEqual({ heading: "Purchase flow" });
+    expect(sections[6].blocks[0].table.align).toEqual(["right", "left", "left"]);
+    // the texts are hidden where the PDF writes them (utils/textPdf.js: plain); the charts are already drawn hidden
+    expect(plain(intro[0].text)).not.toMatch(SECRET);
+    for (const block of sections.flatMap((section) => section.blocks).filter((item) => item.svg)) expect(decodeURIComponent(block.svg)).not.toMatch(SECRET);
   });
 });

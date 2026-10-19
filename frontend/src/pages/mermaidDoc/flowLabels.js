@@ -1,27 +1,41 @@
 /**
- * The words inside the mermaid code of the flow charts: the text of a box ([text], ([text]), [(text)], {text}), the label of an
- * arrow (-- text -->) and the label of a change of state (A --> B: text). The names of the states (Draft, Sent, ...) and a box
- * named only by its id (Normal, Low, Out) are values of the system and are not words here. `translateCode` puts the words in the
- * language of the page and leaves the rest of the code as it is, so the chart keeps its shape.
+ * The words inside the mermaid code of the charts, by kind of chart:
+ *   - a flow chart: the text of a box ([text], ["text"], ([text]), [(text)], {text}) and the label of an arrow (-- text -->,
+ *     -->|text|, -. text .->);
+ *   - a state chart: the label of a change of state (A --> B: text) and the name given to a state (state "text" as A);
+ *   - a sequence chart: the message of an arrow (A->>B: text), a note (Note over A: text) and the name given to an actor or a
+ *     participant (actor A as text);
+ *   - an ER chart: the label of a relationship (A ||--o{ B : text, or "text").
+ * An ER label without quotes may be only letters and digits: a translated one is put in quotes.
+ * The ids, the names of the states (Draft, Sent, ...) and a box named only by its id (Normal, Low, Out) are values of the system and
+ * are not words here. `translateCode` puts the words in the language of the page and leaves the rest of the code as it is, so the
+ * chart keeps its shape.
  */
-const FLOW = /\(\[(.+?)\]\)|\[\((.+?)\)\]|\[(?![(*])([^\]]+)\]|\{([^}]+)\}|-- (.+?) -->/g;
-const STATE = /^(\s*\S+ --> \S+): (.+)$/gm;
-/** The open and close marks of each kind of FLOW match, in the order of its groups. */
-const MARKS = [
-  ["([", "])"],
-  ["[(", ")]"],
-  ["[", "]"],
-  ["{", "}"],
-  ["-- ", " -->"],
-];
+const PATTERNS = {
+  flowchart: [/\(\[(.+?)\]\)|\[\((.+?)\)\]|\["([^"]+)"\]|\[(?![(*"])([^\]]+)\]|\{([^}]+)\}|-- (.+?) -->|-\. (.+?) \.->|-->\|([^|]+)\|/g],
+  stateDiagram: [/^\s*\S+ --> \S+: (.+)$/gm, /^\s*state "([^"]+)" as /gm],
+  sequenceDiagram: [/^\s*[^\s:]+?--?>>[^\s:]+?: (.+)$/gm, /^\s*Note (?:over|left of|right of) [^:]+: (.+)$/gm, /^\s*(?:actor|participant) \S+ as (.+)$/gm],
+  erDiagram: [/^\s*\S+ \S+ \S+ : (?:"([^"]+)"|(\S+))$/gm],
+};
 
-const isState = (code) => code.trimStart().startsWith("stateDiagram");
+const kindOf = (code) => Object.keys(PATTERNS).find((kind) => code.trimStart().startsWith(kind)) ?? "flowchart";
+
+/** Each word of a chart with where it is: [{ start, end, word, bare }], in the order they are written. */
+function wordsOf(code) {
+  const found = [];
+  const kind = kindOf(code);
+  for (const pattern of PATTERNS[kind]) {
+    for (const match of code.matchAll(new RegExp(pattern.source, `${pattern.flags}d`))) {
+      const group = match.indices.findIndex((indices, index) => index > 0 && indices);
+      const [start, end] = match.indices[group];
+      found.push({ start, end, word: match[group], bare: kind === "erDiagram" && group === 2 });
+    }
+  }
+  return found.sort((a, b) => a.start - b.start);
+}
 
 /** The words of a chart, in the order they are written. */
-export function labelsOf(code) {
-  if (isState(code)) return [...code.matchAll(STATE)].map((match) => match[2]);
-  return [...code.matchAll(FLOW)].map((match) => match.slice(1).find((group) => group !== undefined));
-}
+export const labelsOf = (code) => wordsOf(code).map((item) => item.word);
 
 /**
  * A word as a chart shows it: " -> " as an arrow "→" (mermaid escapes ">" in an SVG label, and the box would show "-&gt;").
@@ -30,11 +44,12 @@ export const forChart = (word) => word.replaceAll(" -> ", " → ");
 
 /** The chart with each word given by `tr` (the same text when there is no other language). */
 export function translateCode(code, tr) {
-  if (isState(code)) return code.replace(STATE, (_match, head, label) => `${head}: ${tr(label)}`);
-  return code.replace(FLOW, (...match) => {
-    const groups = match.slice(1, 6);
-    const index = groups.findIndex((group) => group !== undefined);
-    const [open, close] = MARKS[index];
-    return `${open}${tr(groups[index])}${close}`;
-  });
+  let out = "";
+  let at = 0;
+  for (const { start, end, word, bare } of wordsOf(code)) {
+    const shown = tr(word);
+    out += code.slice(at, start) + (bare && !/^\w+$/.test(shown) ? `"${shown}"` : shown);
+    at = end;
+  }
+  return out + code.slice(at);
 }

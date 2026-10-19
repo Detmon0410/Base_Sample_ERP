@@ -6,6 +6,7 @@ import { Md, TextTable } from "@/components/common/MdText";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PdfDownload } from "@/components/common/PdfDownload";
 import { inLanguage } from "@/i18n/mdJa";
+import { censor } from "@/utils/censor";
 import { todayIso } from "@/utils/dates";
 
 import { PARTS, TITLE } from "./dbRelations";
@@ -116,7 +117,7 @@ export function DbRelationsPage() {
             <div key={`${section.title}-${index}`} className="mb-5">
               {section.title ? <h3 className="mb-2 text-lg font-bold">{section.title}</h3> : null}
               {section.chain ? (
-                <pre className="overflow-x-auto border border-border bg-card p-4 font-mono text-sm leading-relaxed">{section.chain}</pre>
+                <pre className="overflow-x-auto border border-border bg-card p-4 font-mono text-sm leading-relaxed">{censor(section.chain)}</pre>
               ) : section.items ? (
                 <ul className="list-disc space-y-1 pl-6">
                   {section.items.map((item) => (

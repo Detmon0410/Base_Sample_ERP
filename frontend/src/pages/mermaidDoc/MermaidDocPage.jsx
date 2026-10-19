@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PdfDownload } from "@/components/common/PdfDownload";
 import { Skeleton } from "@/components/ui/skeleton";
 import { inLanguage } from "@/i18n/mdJa";
+import { censor } from "@/utils/censor";
 import { todayIso } from "@/utils/dates";
 
 import { forChart, translateCode } from "./flowLabels";
@@ -14,12 +15,13 @@ import { downloadMermaidDocPdf } from "./mermaidDocPdf";
 import { renderChart } from "./flowRender";
 
 /**
- * A page that is one .md of charts (Flow Chart.md, User Flow.md), with the same content: the title of the .md, then each of its
- * sections with its blocks in order: a chart (the mermaid code of the .md, drawn by mermaid), a table, a paragraph. The words follow
- * the language of the page (i18n/mdJa.js); the names and values stay as they are. "Download PDF" saves the same, A4 or A3, portrait.
- * `title` and `sections` come from the data of the .md; `fileName` names the PDF.
+ * A page that is one .md of charts (Flow Chart.md, User Flow.md, APIs Diagram.md), with the same content: the title of the .md, its
+ * intro when it has one, then each of its sections with its blocks in order: a chart (the mermaid code of the .md, drawn by
+ * mermaid), a sub-heading, a table, a paragraph. The words follow the language of the page (i18n/mdJa.js); the names and values stay
+ * as they are. What is never shown (utils/censor.js) is hidden, in the charts too. "Download PDF" saves the same, A4 or A3, portrait.
+ * `title`, `intro` and `sections` come from the data of the .md; `fileName` names the PDF.
  */
-export function MermaidDocPage({ title, sections, fileName }) {
+export function MermaidDocPage({ title, intro = [], sections, fileName }) {
   const { t, i18n } = useTranslation("common");
   const language = i18n.language;
   const tr = (text) => inLanguage(text, language);
@@ -35,7 +37,7 @@ export function MermaidDocPage({ title, sections, fileName }) {
     (async () => {
       try {
         const svgs = [];
-        for (const code of JSON.parse(codes)) svgs.push(await renderChart(translateCode(code, (text) => forChart(inLanguage(text, language)))));
+        for (const code of JSON.parse(codes)) svgs.push(await renderChart(translateCode(code, (text) => forChart(censor(inLanguage(text, language))))));
         if (current) setDrawn({ language, svgs, failed: false });
       } catch {
         if (current) setDrawn({ language, svgs: [], failed: true });
@@ -53,7 +55,8 @@ export function MermaidDocPage({ title, sections, fileName }) {
     title: tr(section.title),
     blocks: section.blocks.map((block) => {
       if (block.chart) return { svg: drawn.svgs[chartIndex++] };
-      if (block.table) return { table: { head: block.table.head.map(tr), rows: block.table.rows.map((row) => row.map(tr)) } };
+      if (block.heading) return { heading: tr(block.heading) };
+      if (block.table) return { table: { head: block.table.head.map(tr), rows: block.table.rows.map((row) => row.map(tr)), align: block.table.align } };
       return { text: tr(block.text) };
     }),
   }));
@@ -61,7 +64,7 @@ export function MermaidDocPage({ title, sections, fileName }) {
   const download = async () => {
     setBusy(true);
     try {
-      await downloadMermaidDocPdf({ language, paper, title: tr(title), sections: shown, texts: { system: t("pdf.system"), footer: t("pdf.madeOn", { date: todayIso() }) }, fileName: `${fileName}-${todayIso()}.pdf` });
+      await downloadMermaidDocPdf({ language, paper, title: tr(title), intro: intro.map((block) => ({ text: tr(block.text) })), sections: shown, texts: { system: t("pdf.system"), footer: t("pdf.madeOn", { date: todayIso() }) }, fileName: `${fileName}-${todayIso()}.pdf` });
     } catch {
       toast.error(t("doc.pdfFailed"));
     } finally {
@@ -78,6 +81,12 @@ export function MermaidDocPage({ title, sections, fileName }) {
           {t("doc.chartsFailed")}
         </p>
       ) : null}
+
+      {intro.map((block, index) => (
+        <p key={index} className="mb-3">
+          <Md text={tr(block.text)} />
+        </p>
+      ))}
 
       {shown.map((section, index) => (
         <section key={section.title} className="mb-8" aria-labelledby={`doc-section-${index}`}>
@@ -96,10 +105,17 @@ export function MermaidDocPage({ title, sections, fileName }) {
                 </div>
               );
             }
+            if (block.heading) {
+              return (
+                <h3 key={blockIndex} className="mt-5 mb-2 font-bold">
+                  {block.heading}
+                </h3>
+              );
+            }
             if (block.table) {
               return (
                 <div key={blockIndex} className="mb-3">
-                  <TextTable heads={block.table.head} rows={block.table.rows} />
+                  <TextTable heads={block.table.head} rows={block.table.rows} align={block.table.align} />
                 </div>
               );
             }

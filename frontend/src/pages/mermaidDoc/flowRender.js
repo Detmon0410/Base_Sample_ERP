@@ -45,7 +45,7 @@ function fitToDrawing(svg) {
   document.body.append(holder);
   try {
     const node = holder.querySelector("svg");
-    const box = node.querySelector("g").getBBox();
+    const box = node.getBBox(); // all of the drawing (a sequence or ER chart is not in one first group)
     const pad = 8;
     const width = box.width + pad * 2;
     const height = box.height + pad * 2;

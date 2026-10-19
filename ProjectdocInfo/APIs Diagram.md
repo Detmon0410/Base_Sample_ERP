@@ -21,7 +21,7 @@ flowchart LR
 ## 2. Endpoints by module
 
 ```mermaid
-flowchart TB
+flowchart LR
     API["/api"]
     API --> AUTHM["Auth"]
     API --> MASTER["Master data"]
@@ -142,7 +142,6 @@ sequenceDiagram
 
 ```mermaid
 stateDiagram-v2
-    direction LR
     [*] --> QT_Draft
     QT_Draft --> QT_Confirmed: POST /qt/:id/confirm (once)
     QT_Confirmed --> Order_Draft: order created

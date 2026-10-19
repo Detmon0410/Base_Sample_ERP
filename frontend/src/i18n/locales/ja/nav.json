@@ -30,5 +30,6 @@
   "suppliers": "仕入先",
   "dbRelations": "DBリレーション",
   "flowChart": "フローチャート",
-  "userFlow": "ユーザーフロー"
+  "userFlow": "ユーザーフロー",
+  "apisDiagram": "API図"
 }

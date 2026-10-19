@@ -30,5 +30,6 @@
   "suppliers": "Suppliers",
   "dbRelations": "DB Relations",
   "flowChart": "Flow Chart",
-  "userFlow": "User Flow"
+  "userFlow": "User Flow",
+  "apisDiagram": "APIs Diagram"
 }

@@ -9,6 +9,8 @@
  * have no Japanese, so in Japanese the same pages are drawn by the browser and put in as pictures (canvasPdf.js); the page numbers
  * are written over them as text. jsPDF is loaded only when it is used. The `code` and **bold** marks of the .md texts are left out.
  */
+import { censor } from "./censor";
+
 const PT_PER_MM = 72 / 25.4;
 const BRAND = "#6a69a0"; // the main purple of the app
 const BRAND_DARK = "#4f4e80";
@@ -24,8 +26,8 @@ const SMALL = 8;
 const LINE_FACTOR = 1.35;
 const mm = (pt) => pt / PT_PER_MM;
 
-/** A text of the .md without its marks: `code` and **bold**. */
-export const plain = (text) => String(text).replace(/\*\*/g, "").replace(/`/g, "");
+/** A text of the .md without its marks (`code` and **bold**), and without what is never shown (utils/censor.js). */
+export const plain = (text) => censor(text).replace(/\*\*/g, "").replace(/`/g, "");
 
 const fontStyle = (shape) => (shape.bold && shape.italic ? "bolditalic" : shape.bold ? "bold" : shape.italic ? "italic" : "normal");
 
@@ -264,7 +266,7 @@ export async function createTextPdf(language, { paper = "a4", orientation = "lan
     /** A sketch in a monospaced font, line by line as written, in a light box. */
     pre(text) {
       const size = 8.5;
-      const lines = text.split("\n");
+      const lines = censor(text).split("\n");
       const height = lines.length * lineHeight(size) + 6;
       doc.room(height);
       pdf.setFillColor(BOX);

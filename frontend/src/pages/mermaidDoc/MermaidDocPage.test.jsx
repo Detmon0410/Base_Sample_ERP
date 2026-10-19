@@ -37,8 +37,8 @@ describe("the Flow Chart page", () => {
 
   it("draws the charts with Japanese words on the Japanese page, the states and names kept", async () => {
     await i18n.changeLanguage("ja");
+    const { unmount } = render(<FlowChartPage />);
     try {
-      render(<FlowChartPage />);
       expect(screen.getByRole("heading", { level: 1, name: "フローチャート" })).toBeInTheDocument();
       const charts = await screen.findAllByRole("img");
       expect(codeOf(charts[0])).toContain("F[QTの確定]");
@@ -46,6 +46,7 @@ describe("the Flow Chart page", () => {
       expect(codeOf(charts[7])).toContain("S3[(MaterialLot)]");
       expect(document.body.textContent).not.toMatch(DOCS);
     } finally {
+      unmount(); // before the language changes back, so the page does not draw again after the test
       await i18n.changeLanguage("en");
     }
   });
@@ -74,8 +75,8 @@ describe("the User Flow page", () => {
 
   it("shows the words in Japanese on the Japanese page", async () => {
     await i18n.changeLanguage("ja");
+    const { unmount } = render(<UserFlowPage />);
     try {
-      render(<UserFlowPage />);
       expect(screen.getByRole("heading", { level: 1, name: "ユーザーフロー" })).toBeInTheDocument();
       expect(screen.getAllByRole("heading", { level: 2 })[1]).toHaveTextContent("工場担当");
       const charts = await screen.findAllByRole("img");
@@ -85,6 +86,7 @@ describe("the User Flow page", () => {
       expect(rows[0]).toHaveTextContent("機能管理者営業担当工場担当");
       expect(rows[8]).toHaveTextContent("仕入先可不可閲覧のみ");
     } finally {
+      unmount(); // before the language changes back, so the page does not draw again after the test
       await i18n.changeLanguage("en");
     }
   });

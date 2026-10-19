@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { inLanguage } from "@/i18n/mdJa";
 
-import { CURRENT } from "./current";
+import { PARTS } from "./dbRelations";
 import { isGroupTable, splitRelations, splitTables } from "./relations";
 
 // The groups of the summary, one relation a line: nothing of the cell of the .md is lost or cut in the wrong place, in English and
 // in Japanese.
 
-const groups = CURRENT[0].sections.find((section) => section.rows && isGroupTable(section.head));
+const groups = PARTS[0].sections.find((section) => section.rows && isGroupTable(section.head));
 
 describe("the main relations of a group, one a line", () => {
   it("finds the summary table of the .md", () => {

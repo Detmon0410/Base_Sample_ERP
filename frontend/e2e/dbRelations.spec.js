@@ -12,8 +12,8 @@ test("the Admin opens the DB relations and downloads them as a PDF", async ({ pa
   await signIn(page, USERS.admin);
   await page.goto("/master/db-relations");
   await settle(page);
-  await expect(page.getByRole("heading", { name: "DB relations", level: 1 })).toBeVisible();
-  await expect(page.getByRole("table")).toHaveCount(4);
+  await expect(page.getByRole("heading", { name: "DB Relations", level: 1 })).toBeVisible();
+  await expect(page.getByRole("table")).toHaveCount(7);
   await expect(page.getByRole("article")).toHaveCount(5); // the groups of the summary, a card each
   if (process.env.DB_SHOT) await page.screenshot({ path: process.env.DB_SHOT, fullPage: true });
 
@@ -23,7 +23,7 @@ test("the Admin opens the DB relations and downloads them as a PDF", async ({ pa
   if (process.env.DB_PDF) fs.copyFileSync(file, process.env.DB_PDF);
   const pdf = fs.readFileSync(file, "latin1");
   expect(pdf.startsWith("%PDF-")).toBe(true);
-  for (const word of ["1. Current version summary", "1.1 Rules to remember", "2. All keys and rules", "2.1 Foreign keys", "customer in use -> 409 IN_USE", "2.6 Chain of the new flows", "PurchasePayment", "1 / "] /* a PDF writes ( and ) as \( and \) */) expect(pdf).toContain(`(${word}`);
+  for (const word of ["Current version summary", "Rules to remember", "Part 1: The base tables", "Part 2: Added or changed in Version 2.0", "customer in use -> 409 IN_USE", "Chain of the new flows", "Changed columns", "1 / "] /* a PDF writes ( and ) as \( and \) */) expect(pdf).toContain(`(${word}`);
   expect(errors.take()).toEqual([]);
 });
 

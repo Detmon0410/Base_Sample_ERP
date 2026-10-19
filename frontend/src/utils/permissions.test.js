@@ -32,6 +32,7 @@ const TABLE = {
   "erDiagram.view": { admin: true, sale: false, factory: false },
   "dbRelations.view": { admin: true, sale: false, factory: false },
   "flowChart.view": { admin: true, sale: false, factory: false },
+  "userFlow.view": { admin: true, sale: false, factory: false },
 };
 
 describe("can(user, action)", () => {

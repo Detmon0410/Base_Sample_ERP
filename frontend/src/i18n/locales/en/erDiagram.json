@@ -1,22 +1,6 @@
 {
-  "title": "ER diagram",
-  "description": "The tables of the system, their keys and how they are tied together.",
-  "pdfSubtitle": "{{tables}} tables, {{relationships}} relationships, crow's foot notation",
   "downloadPdf": "Download PDF",
   "makingPdf": "Making the PDF...",
   "pdfFailed": "The PDF could not be made. Please try again.",
-  "diagramLabel": "ER diagram: {{tables}} tables and {{relationships}} relationships",
-  "relationships": "Relationships",
-  "colParent": "Parent",
-  "colChild": "Child",
-  "colKey": "Foreign key",
-  "colCardinality": "Parent : child",
-  "colMeaning": "Meaning",
-  "ends": {
-    "one": "exactly one",
-    "zeroOne": "zero or one",
-    "oneMany": "one or many",
-    "zeroMany": "zero or many"
-  },
-  "notesTitle": "Notes"
+  "diagramLabel": "ER Diagram: {{tables}} tables and {{relationships}} relationships"
 }

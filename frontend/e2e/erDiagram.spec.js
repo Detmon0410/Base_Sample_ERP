@@ -13,8 +13,8 @@ test("the Admin opens the ER diagram and downloads it as a PDF", async ({ page }
   await signIn(page, USERS.admin);
   await page.goto("/master/er-diagram");
   await settle(page);
-  await expect(page.getByRole("heading", { name: "ER diagram", level: 1 })).toBeVisible();
-  await expect(page.getByRole("img", { name: /^ER diagram: 23 tables and 32 relationships$/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "ER Diagram", level: 1 })).toBeVisible();
+  await expect(page.getByRole("img", { name: /^ER Diagram: 23 tables and 32 relationships$/ })).toBeVisible();
   if (process.env.ER_SHOT) await page.screenshot({ path: process.env.ER_SHOT, fullPage: true });
 
   const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download PDF" }).click()]);
@@ -24,7 +24,7 @@ test("the Admin opens the ER diagram and downloads it as a PDF", async ({ page }
   const pdf = fs.readFileSync(file, "latin1");
   expect(pdf.startsWith("%PDF-")).toBe(true);
   expect(pdf.match(/\/Type \/Page\b/g).length).toBeGreaterThanOrEqual(2); // the drawing, then the notes and the relationships
-  for (const word of ["PRODUCTION_ORDER", "PURCHASE_ORDER", "confirm creates", "Draft | Sent | Received", "owner_type + owner_id", "2. Relationships", "1. Notes"]) expect(pdf).toContain(`(${word}`);
+  for (const word of ["PRODUCTION_ORDER", "PURCHASE_ORDER", "confirm creates", "Draft | Sent | Received", "What Version 2.0 added", "Notes", "Attachment is polymorphic"]) expect(pdf).toContain(`(${word}`);
   expect(errors.take()).toEqual([]);
 });
 

@@ -109,15 +109,17 @@ export async function createTextPdf(language, { paper = "a4", orientation = "lan
     get rest() {
       return bottom - y;
     },
-    /** The title block of the first page: a purple mark, the title and the line under it. */
+    /** The title block of the first page: a purple mark, the title and, when there is one, the line under it. */
     titleBlock(title, subtitle) {
       pdf.setFillColor(BRAND);
-      pdf.rect(margin, y, 2.2, 13, "F");
+      pdf.rect(margin, y, 2.2, subtitle ? 13 : 9, "F");
       font(20, "bold");
       pdf.text(title, margin + 6, y + 4.5, { baseline: "middle" });
-      font(BODY, "normal", MUTED);
-      pdf.text(subtitle, margin + 6, y + 10.8, { baseline: "middle" });
-      y += 21;
+      if (subtitle) {
+        font(BODY, "normal", MUTED);
+        pdf.text(subtitle, margin + 6, y + 10.8, { baseline: "middle" });
+      }
+      y += subtitle ? 21 : 17;
     },
     /**
      * A section (1, 2, ...): purple, with a rule under it, kept on the page with a good start of what follows. `numbered: false` when

@@ -7,6 +7,8 @@
  * A column: [name, type, keys, note]. `keys` is "PK", "FK", "UK" or several ("PK,FK", "FK,UK"); `note` is the comment of the .md.
  * `x`, `y` place the table on the drawing (the size comes from the columns, see erLayout.js).
  */
+export const TITLE = "ER Diagram";
+
 export const ENTITIES = [
   {
     name: "USER",
@@ -395,6 +397,9 @@ export const NOTES = [
   "`Invoice` and `Receipt` copy the customer and the product data when they are issued (a snapshot). An order is billed once, and an invoice has at most one payment and one receipt.",
   "An order is made only by Confirm QT, so `ProductionOrder.qt_id` is always set and each QT has at most one order.",
 ];
+
+/** The section "What Version 2.0 added" of the .md: its table, word for word. */
+export const VERSION_ADDED = {"title": "What Version 2.0 added", "head": ["Source", "Change"], "rows": [["Purchase", "New tables `Supplier`, `SupplierMaterial`, `PurchaseOrder`, `PurchaseOrderLine`, `PurchasePayment`. `StockChange.purchase_order_id` links a received PO to the stock it added"], ["QT 2.0", "`QtReference` gets `status`, `customer_po_number`, `customer_po_date`, `production_order_id`. New `QtLine`. The old QT file and the customer PO file move to `Attachment`"], ["Files", "New `Attachment` table, shared by PO, QT and production order (evidence). Replaces `file_name`, `file_type`, `file_path` on `QtReference`"], ["User 2.0", "No new column. A Worker's `department` must be `Sales` or `Factory` and decides access"], ["Material", "`unit` added (the PO lines need a unit)"]]};
 
 /** A line with no database key (to ATTACHMENT from its owner): its column is not an FK. Drawn dashed. */
 export const hasNoKey = (relationship) => {

@@ -42,5 +42,12 @@
     "notes": "Notes",
     "terms": "Terms",
     "dateLine": "Date"
+  },
+  "doc": {
+    "downloadPdf": "Download PDF",
+    "makingPdf": "Making the PDF...",
+    "pdfFailed": "The PDF could not be made. Please try again.",
+    "chartsFailed": "The charts could not be drawn. Please reload the page.",
+    "drawing": "Drawing the chart"
   }
 }

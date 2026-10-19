@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { CURRENT } from "@/pages/dbRelations/current";
-import { ENTITIES, NOTES, RELATIONSHIPS } from "@/pages/erDiagram/erModel";
-import { SECTIONS } from "@/pages/flowChart/flowChart";
-import { labelsOf } from "@/pages/flowChart/flowLabels";
+import { PARTS, TITLE as DB_TITLE } from "@/pages/dbRelations/dbRelations";
+import { ENTITIES, NOTES, RELATIONSHIPS, TITLE as ER_TITLE, VERSION_ADDED } from "@/pages/erDiagram/erModel";
+import { SECTIONS as FLOW, TITLE as FLOW_TITLE } from "@/pages/flowChart/flowChart";
+import { labelsOf } from "@/pages/mermaidDoc/flowLabels";
+import { SECTIONS as USER_FLOW, TITLE as USER_FLOW_TITLE } from "@/pages/userFlow/userFlow";
 
 import { inLanguage, JA } from "./mdJa";
 
-// The ER diagram, DB relations and flow chart pages in Japanese: every word of the .md files they show has its Japanese, and the names, values,
-// codes and paths are kept.
+// The four pages made from the .md files (ER Diagram, DB Relations, Flow Chart, User Flow) in Japanese: every word of the .md they
+// show has its Japanese, and the names, values, codes and paths are kept.
 
 const LEGEND = ["Notation (crow's foot)", "exactly one", "zero or one", "one or many", "zero or many", "no database key", "primary key", "foreign key", "unique", "note", "note of the column"];
 /** The values of a column ("Admin | Worker") are values of the database: they stay as they are. */
@@ -16,32 +17,48 @@ const isValues = (note) => note.includes(" | ");
 /** The columns of DB Relations.md whose cells are words; the other columns hold names (Table, Column, ...). */
 const WORD_COLUMNS = ["Cardinality", "Delete rule", "Change", "Event", "Rule", "Group", "Main relations"];
 /** The cells of the name columns that also have words. */
-const WORDS_AMONG_NAMES = ["PurchaseOrder, QtReference or ProductionOrder", "email (lower-cased)", "order_number (`ORD-yyyy-0001`, given by the server)"];
+const WORDS_AMONG_NAMES = ["PurchaseOrder, QtReference or ProductionOrder", "email (lower-cased)", "order_number (`ORD-yyyy-0001`, given by the server)", "as before"];
+/** The names in a chart that are not words: a table. */
+const NAMES = ["MaterialLot"];
 
 const er = [
+  ER_TITLE,
   ...RELATIONSHIPS.map((relationship) => relationship.label),
   ...ENTITIES.flatMap((entity) => entity.columns.map((column) => column[3]).filter((note) => note && !isValues(note))),
+  VERSION_ADDED.title,
+  ...VERSION_ADDED.head,
+  ...VERSION_ADDED.rows.flat(),
+  "Notes",
   ...NOTES,
   ...LEGEND,
 ];
-const db = CURRENT.flatMap((part) => [
-  part.title,
-  ...part.intro,
-  ...part.sections.flatMap((section) => [
-    ...(section.title ? [section.title] : []),
-    ...(section.items ?? []),
-    ...(section.head ?? []),
-    ...(section.rows ?? []).flatMap((row) => row.filter((cell, index) => WORD_COLUMNS.includes(section.head[index]) || WORDS_AMONG_NAMES.includes(cell))),
+const db = [
+  DB_TITLE,
+  ...PARTS.flatMap((part) => [
+    part.title,
+    ...part.intro,
+    ...part.sections.flatMap((section) => [
+      ...(section.title ? [section.title] : []),
+      ...(section.items ?? []),
+      ...(section.head ?? []),
+      ...(section.rows ?? []).flatMap((row) => row.filter((cell, index) => WORD_COLUMNS.includes(section.head[index]) || WORDS_AMONG_NAMES.includes(cell))),
+    ]),
   ]),
-]);
+];
+const charts = (title, sections) =>
+  [
+    title,
+    ...sections.flatMap((section) => [
+      section.title,
+      ...section.blocks.flatMap((block) => (block.chart ? labelsOf(block.chart) : block.table ? [...block.table.head, ...block.table.rows.flat()] : [block.text])),
+    ]),
+  ].filter((word) => !NAMES.includes(word));
 /** The codes of a text, in any order (Japanese puts the words in another order). */
-/** The flow charts: titles, notes and the words of the charts (MaterialLot is a table). */
-const flow = SECTIONS.flatMap((section) => [section.title, ...section.notes, ...labelsOf(section.code)]).filter((word) => word !== "MaterialLot");
 const codes = (text) => [...text.matchAll(/`([^`]*)`/g)].map((match) => match[1]).sort();
 
 describe("the Japanese of the .md texts", () => {
-  it("has a Japanese text for every text of the .md files the three pages show, and no other", () => {
-    expect(Object.keys(JA).sort()).toEqual([...new Set([...er, ...db, ...flow])].sort());
+  it("has a Japanese text for every text of the .md files the four pages show, and no other", () => {
+    expect(Object.keys(JA).sort()).toEqual([...new Set([...er, ...db, ...charts(FLOW_TITLE, FLOW), ...charts(USER_FLOW_TITLE, USER_FLOW)])].sort());
     for (const [english, japanese] of Object.entries(JA)) expect(japanese.trim(), english).not.toBe("");
   });
 

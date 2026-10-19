@@ -9,8 +9,8 @@ import { inLanguage } from "@/i18n/mdJa";
 import { todayIso } from "@/utils/dates";
 
 import { buildDiagram } from "./erLayout";
-import { ENTITIES, hasNoKey, NOTES, RELATIONSHIPS } from "./erModel";
-import { CARDINALITY, downloadErDiagramPdf } from "./erPdf";
+import { ENTITIES, NOTES, RELATIONSHIPS, TITLE, VERSION_ADDED } from "./erModel";
+import { downloadErDiagramPdf } from "./erPdf";
 
 const ANCHOR = { start: "start", middle: "middle", end: "end" };
 
@@ -48,15 +48,13 @@ function Shape({ shape }) {
   );
 }
 
-/** The column of the child a line stands for; a line with no database key stands for the pair owner_type + owner_id. */
-const keyOf = (relationship) => (hasNoKey(relationship) ? "owner_type + owner_id" : relationship.fk);
-
 /**
- * The ER diagram of the system (Admin), as written in ProjectdocInfo/ER Diagram.md: every table with its columns, keys and notes,
- * the relationships in crow's foot notation (a dashed line has no database key), the notes, and the relationships as a table.
- * "Download PDF" saves the same content as a PDF in the language of the page, on landscape A3 (the default: the drawing is large)
- * or A4: the drawing on page 1, then the notes and the relationships.
- * The model is in erModel.js; the drawing comes from erLayout.js and is the same on the page and in the PDF.
+ * The ER Diagram page (Admin): ProjectdocInfo/ER Diagram.md, the same content in the same order: the title of the .md, the diagram
+ * (every table with its columns, keys and notes; the relationships in crow's foot notation, a dashed line has no database key, a
+ * bridge where two lines cross), the section "What Version 2.0 added" and the "Notes". The words follow the language of the page
+ * (i18n/mdJa.js); the names of the tables and columns stay as they are. "Download PDF" saves the same, A3 (the default: the drawing
+ * is large) or A4, landscape: the drawing on page 1, then the two sections. The model is in erModel.js (made from the .md); the
+ * drawing comes from erLayout.js and is the same on the page and in the PDF.
  */
 export function ErDiagramPage() {
   const { t, i18n } = useTranslation("erDiagram");
@@ -67,7 +65,7 @@ export function ErDiagramPage() {
   const tr = (text) => inLanguage(text, language);
   const diagram = useMemo(() => buildDiagram(language), [language]);
   const counts = { tables: ENTITIES.length, relationships: RELATIONSHIPS.length };
-  const heads = [t("colParent"), t("colChild"), t("colKey"), t("colCardinality"), t("colMeaning")];
+  const added = { title: tr(VERSION_ADDED.title), head: VERSION_ADDED.head.map(tr), rows: VERSION_ADDED.rows.map((row) => row.map(tr)) };
 
   const download = async () => {
     setBusy(true);
@@ -77,22 +75,8 @@ export function ErDiagramPage() {
         paper,
         diagram,
         fileName: `er-diagram-${todayIso()}.pdf`,
-        texts: {
-          system: t("common:pdf.system"),
-          title: t("title"),
-          subtitle: t("pdfSubtitle", counts),
-          footer: t("common:pdf.madeOn", { date: todayIso() }),
-          notesTitle: t("notesTitle"),
-          relationshipsTitle: t("relationships"),
-          columns: heads,
-        },
-        relationshipRows: RELATIONSHIPS.map((relationship) => [
-          relationship.parent,
-          relationship.child,
-          keyOf(relationship),
-          `${CARDINALITY[relationship.parentEnd]} : ${CARDINALITY[relationship.childEnd]}`,
-          tr(relationship.label),
-        ]),
+        texts: { system: t("common:pdf.system"), title: tr(TITLE), footer: t("common:pdf.madeOn", { date: todayIso() }), notesTitle: tr("Notes") },
+        added,
         notes: NOTES.map(tr),
       });
     } catch {
@@ -105,8 +89,7 @@ export function ErDiagramPage() {
   return (
     <>
       <PageHeader
-        title={t("title")}
-        description={t("description")}
+        title={tr(TITLE)}
         actions={<PdfDownload paper={paper} onPaperChange={setPaper} busy={busy} onDownload={download} label={t("downloadPdf")} busyLabel={t("makingPdf")} />}
       />
 
@@ -125,7 +108,10 @@ export function ErDiagramPage() {
         </svg>
       </div>
 
-      <h2 className="mt-6 mb-2 text-lg font-bold">{t("notesTitle")}</h2>
+      <h2 className="mt-6 mb-2 text-lg font-bold">{added.title}</h2>
+      <TextTable heads={added.head} rows={added.rows} />
+
+      <h2 className="mt-6 mb-2 text-lg font-bold">{tr("Notes")}</h2>
       <ul className="list-disc space-y-1 pl-6">
         {NOTES.map((note) => (
           <li key={note}>
@@ -133,19 +119,6 @@ export function ErDiagramPage() {
           </li>
         ))}
       </ul>
-
-      <h2 className="mt-6 mb-2 text-lg font-bold">{t("relationships")}</h2>
-      <TextTable
-        heads={heads}
-        mono={[0, 1, 2]}
-        rows={RELATIONSHIPS.map((relationship) => [
-          relationship.parent,
-          relationship.child,
-          keyOf(relationship),
-          `${t(`ends.${relationship.parentEnd}`)} : ${t(`ends.${relationship.childEnd}`)}`,
-          tr(relationship.label),
-        ])}
-      />
     </>
   );
 }

@@ -29,5 +29,6 @@
   "purchase": "発注",
   "suppliers": "仕入先",
   "dbRelations": "DBリレーション",
-  "flowChart": "フローチャート"
+  "flowChart": "フローチャート",
+  "userFlow": "ユーザーフロー"
 }

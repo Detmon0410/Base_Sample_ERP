@@ -17,7 +17,9 @@ const sentences = (paragraph) =>
   paragraph
     .trim()
     .split(/(?<=\.)\s+(?=[A-Z0-9])/)
-    .filter((sentence) => sentence && !sentence.includes("]("));
+    // not the sentences that point to a document; a link to another page of the app (the ER Diagram) keeps its words
+    .filter((sentence) => sentence && !sentence.includes("docs/") && !sentence.startsWith("Source"))
+    .map((sentence) => sentence.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1"));
 const table = (lines) => {
   const cells = lines.map((line) =>
     line
@@ -107,7 +109,11 @@ describe("the DB relations are DB Relations.md", () => {
     expect(PARTS[0].intro).toEqual(["23 tables in 5 groups.", "Parts 1 and 2 below give every key and rule; this is the short form."]);
     // the summary counts what its groups list, which is what the ER diagram has
     expect(PARTS[0].sections[0].rows.flatMap((row) => row[1].split(", "))).toHaveLength(ENTITIES.length);
-    expect(PARTS[1].intro).toEqual(["Table-by-table list of keys, relations and delete rules.", "The rows of QtReference, Material and User are changed by Part 2 below."]);
+    expect(PARTS[1].intro).toEqual([
+      "Table-by-table list of keys, relations and delete rules.",
+      "The whole model, as built, is in the ER Diagram.",
+      "The rows of QtReference, Material and User are changed by Part 2 below.",
+    ]);
     expect(PARTS[2].intro).toHaveLength(4);
   });
 

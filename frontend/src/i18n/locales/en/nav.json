@@ -8,7 +8,7 @@
   "customers": "Customers",
   "products": "Products and BOM",
   "users": "Users",
-  "erDiagram": "ER diagram",
+  "erDiagram": "ER Diagram",
   "menu": "Menu",
   "skipToContent": "Skip to main content",
   "mainMenu": "Main menu",
@@ -28,6 +28,7 @@
   "department": "Department",
   "purchase": "Purchase",
   "suppliers": "Suppliers",
-  "dbRelations": "DB relations",
-  "flowChart": "Flow chart"
+  "dbRelations": "DB Relations",
+  "flowChart": "Flow Chart",
+  "userFlow": "User Flow"
 }

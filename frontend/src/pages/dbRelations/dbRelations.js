@@ -6,6 +6,8 @@
  * shows them, the PDF leaves the marks out. dbRelations.test.js reads the .md and fails when the two differ, so a change starts in
  * the .md.
  */
+export const TITLE = "DB Relations";
+
 export const PARTS = [
   {
     title: "Current version summary (as built)",
@@ -36,7 +38,7 @@ export const PARTS = [
   },
   {
     title: "Part 1: The base tables (the Mini ERP before Version 2.0)",
-    intro: ["Table-by-table list of keys, relations and delete rules.", "The rows of QtReference, Material and User are changed by Part 2 below."],
+    intro: ["Table-by-table list of keys, relations and delete rules.", "The whole model, as built, is in the ER Diagram.", "The rows of QtReference, Material and User are changed by Part 2 below."],
     sections: [
       {
         title: "Foreign keys",

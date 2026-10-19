@@ -1,22 +1,6 @@
 {
-  "title": "ER図",
-  "description": "システムのテーブル、キー、テーブル同士の関係です。",
-  "pdfSubtitle": "テーブル{{tables}}個、リレーション{{relationships}}個、クロウズフット表記",
   "downloadPdf": "PDFをダウンロード",
   "makingPdf": "PDFを作成中...",
   "pdfFailed": "PDFを作成できませんでした。もう一度お試しください。",
-  "diagramLabel": "ER図：テーブル{{tables}}個、リレーション{{relationships}}個",
-  "relationships": "リレーション",
-  "colParent": "親",
-  "colChild": "子",
-  "colKey": "外部キー",
-  "colCardinality": "親：子",
-  "colMeaning": "意味",
-  "ends": {
-    "one": "必ず1",
-    "zeroOne": "0または1",
-    "oneMany": "1以上",
-    "zeroMany": "0以上"
-  },
-  "notesTitle": "補足"
+  "diagramLabel": "ER図：テーブル{{tables}}個、リレーション{{relationships}}個"
 }

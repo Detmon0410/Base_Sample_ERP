@@ -58,8 +58,8 @@ pnpm run e2e:real     # the same specs on the real backend (needs MySQL and back
 
 1. MySQL is running. In `backend/.env` (copy `backend/.env.example`; the file is not in git) set `DATABASE_URL` (the database `kanou_mini_erp`), a long `JWT_SECRET`, `CORS_ORIGIN` (the address of the frontend, for example `http://localhost:5173`) and `UPLOAD_DIR=uploads` (the files are kept in `backend/uploads`, outside git).
 2. `pnpm install` at the root, then `cd backend` and `pnpm run db:setup`: it **deletes every table of that database** and makes them again with the three users (`admin@gmail.com` / `admin`, `worker@gmail.com` / `worker` for a Factory Worker, `sale@gmail.com` / `sale` for a Sale Worker). Use it only on a database with nothing to keep; on a database with data use `npx prisma migrate deploy` and `node prisma/seed.js`.
-3. In `frontend/.env`: `VITE_USE_MOCK=false` and `VITE_API_URL=http://localhost:3000/api`.
-4. `pnpm run kanou` from the root starts the backend (`http://localhost:3000/api`) and the frontend (`http://localhost:5173`, or the next free port: add it to `CORS_ORIGIN`).
+3. In `frontend/.env`: `VITE_USE_MOCK=false` and `VITE_API_URL=http://localhost:<the PORT of backend/.env>/api`. The port 3000 of the example is often taken by another program (on this computer it was a Next.js app): if `/api/health` does not answer JSON, set another `PORT` in `backend/.env` (this computer: 3001) and the same number in `VITE_API_URL`.
+4. `pnpm run kanou` from the root starts the backend (`http://localhost:<PORT>/api`) and the frontend (`http://localhost:5173`, or the next free port: add it to `CORS_ORIGIN`).
 
 One address for the site and the API: `pnpm --dir frontend build` (it reads `frontend/.env.production`: the real backend at `/api`), then set `FRONTEND_DIR="../frontend/dist"` in `backend/.env` and start only the backend (`node src/server.js`): it serves the pages and `/api` on its port. (Do not pass `VITE_API_URL=/api` on the command line in Git Bash: it turns `/api` into a Windows path.) Backup and restore of the database and the files: `pnpm run backup` and `pnpm run restore` (see the plan).
 

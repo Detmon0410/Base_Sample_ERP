@@ -20,6 +20,8 @@ export const JA = {
   "used in": "使われる",
   "kept in": "保管される",
   history: "履歴",
+  "start deducts": "開始時に引き落とす",
+  makes: "行う",
   sells: "販売する",
   "sold by": "販売される",
   receives: "発注を受ける",
@@ -29,6 +31,7 @@ export const JA = {
   creates: "作成する",
   files: "ファイル",
   evidence: "証跡",
+  uploads: "アップロードする",
   "billed by": "請求される",
   "proved by": "証明される",
 
@@ -43,7 +46,7 @@ export const JA = {
     "`Attachment` はポリモーフィック（`owner_type` + `owner_id`）なので、持ち主へのデータベースの外部キーはありません。サービスが確認します。",
   "`PurchasePayment` is stored on the PO and does not go through the Accounting tables.": "`PurchasePayment` は PO に保存され、経理のテーブルを通りません。",
   "`QT_REFERENCE.production_order_id` is unique: one QT creates one Factory Order.": "`QT_REFERENCE.production_order_id` は一意です。1件のQTから製造指示書が1件作られます。",
-  "Invoice, Payment and Receipt are unchanged and keep their snapshot fields (not repeated here).": "Invoice、Payment、Receipt は変わらず、スナップショットの項目を持ちます（ここでは省略）。",
+  "Invoice, Payment and Receipt are unchanged and keep their snapshot fields.": "Invoice、Payment、Receipt は変わらず、スナップショットの項目を持ちます。",
   "`Order status` (`Draft`, `In Progress`, `Completed`) is **computed** from the processes; it is not a column. The stock status (`Normal`, `Low`, `Out`) is computed from the lot totals and `min_level`.":
     "`Order status`（`Draft`・`In Progress`・`Completed`）は工程から**計算**され、列ではありません。在庫ステータス（`Normal`・`Low`・`Out`）はロットの合計と `min_level` から計算されます。",
   "`Invoice` and `Receipt` copy the customer and the product data when they are issued (a snapshot). An order is billed once, and an invoice has at most one payment and one receipt.":

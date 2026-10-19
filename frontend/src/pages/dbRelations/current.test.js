@@ -30,12 +30,13 @@ describe("the current DB relations", () => {
 
   it("has every foreign key of Part 1 and of Part 2 once, the row of Part 2 where a key is in both, by table in the order of the groups", () => {
     const rows = current("Foreign keys").rows;
-    const newer = sectionOf(added, "New or changed foreign keys").rows;
+    const newer = sectionOf(added, "New foreign keys").rows;
     const older = sectionOf(base, "Foreign keys").rows.filter((row) => !newer.some((other) => other[0] === row[0] && other[1] === row[1]));
     expect(rows.map(key).sort()).toEqual([...older, ...newer].map(key).sort());
     expect(rows).toHaveLength(31);
-    // Version 2.0: a QT makes one order (Confirm QT), so an order has one QT and a QT at most one order
-    expect(rows.filter((row) => row[0] === "ProductionOrder" && row[1] === "qt_id")).toEqual([["ProductionOrder", "qt_id", "QtReference.id", "one to one", "QT used by an order -> `409 IN_USE`"]]);
+    // as the database: ProductionOrder.qt_id is not unique (many to one); one QT - one order is held by QtReference.production_order_id
+    expect(rows.find((row) => row[0] === "ProductionOrder" && row[1] === "qt_id")[3]).toBe("many to one");
+    expect(rows.find((row) => row[0] === "QtReference" && row[1] === "production_order_id")[3]).toBe("one to one, optional");
     expect(new Set(rows.map((row) => `${row[0]}.${row[1]}`)).size).toBe(rows.length);
     const order = rows.map((row) => TABLE_ORDER.indexOf(row[0]));
     expect(order.every((value) => value >= 0)).toBe(true);

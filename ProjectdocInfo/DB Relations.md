@@ -93,11 +93,10 @@ Customer -> QtReference -> ProductionOrder -> OrderLine -> OrderProcess -> Progr
 
 Keys, relations and rules after the Purchase, QT 2.0 and User 2.0 changes. Only the **new or changed** rows are listed; everything else stays as in Part 1. The order status is `Draft`, `In Progress`, `Completed` (computed; `Draft` replaces `New`). An order is made only by Confirm QT.
 
-### New or changed foreign keys
+### New foreign keys
 
 | Table | Column | References | Cardinality | Delete rule |
 |---|---|---|---|---|
-| ProductionOrder | qt_id | QtReference.id | one to one | QT used by an order -> `409 IN_USE` |
 | SupplierMaterial | supplier_id | Supplier.id | many to one | goes with the supplier |
 | SupplierMaterial | material_id | Material.id | many to one | material sold by a supplier -> `409 IN_USE` |
 | PurchaseOrder | supplier_id | Supplier.id | many to one | supplier with a PO -> `409 IN_USE` |

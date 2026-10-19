@@ -28,7 +28,11 @@ describe("the ER diagram page", () => {
     expect(rows).toHaveLength(RELATIONSHIPS.length);
     // as in ER Diagram.md: QT_REFERENCE ||--o| PRODUCTION_ORDER : "confirm creates"; a line to ATTACHMENT has no database key
     expect(rows[3]).toHaveTextContent("QT_REFERENCEPRODUCTION_ORDERqt_idexactly one : zero or oneconfirm creates");
-    expect(rows[22]).toHaveTextContent("PURCHASE_ORDERATTACHMENTowner_type + owner_idexactly one : zero or manyfiles");
+    const filesOf = rows.find((row) => /^PURCHASE_ORDERATTACHMENT/.test(row.textContent));
+    expect(filesOf).toHaveTextContent("PURCHASE_ORDERATTACHMENTowner_type + owner_idexactly one : zero or manyfiles");
+    // the keys of the database drawn too: the order and the user of a stock change, the user who uploads a file
+    expect(rows.find((row) => /^USERATTACHMENT/.test(row.textContent))).toHaveTextContent("USERATTACHMENTuploaded_byexactly one : zero or manyuploads");
+    expect(rows.find((row) => /^PRODUCTION_ORDERSTOCK_CHANGE/.test(row.textContent))).toHaveTextContent("order_idzero or one : zero or manystart deducts");
     expect(document.body.textContent).not.toMatch(DOCS);
   });
 
@@ -46,6 +50,7 @@ describe("the ER diagram page", () => {
       expect(screen.getAllByRole("listitem")[0]).toHaveTextContent("Attachment はポリモーフィック");
       expect(within(screen.getAllByRole("listitem")[0]).getByText("owner_type").tagName).toBe("CODE");
       expect(within(screen.getByRole("table")).getAllByRole("row")[4]).toHaveTextContent("必ず1 : 0または1確定で作成する");
+      expect(within(drawing).getByText("アップロードする")).toBeInTheDocument(); // the label "uploads"
       expect(document.body.textContent).not.toMatch(DOCS);
     } finally {
       await i18n.changeLanguage("en");
@@ -65,7 +70,7 @@ describe("the ER diagram page", () => {
     expect(fileName).toMatch(/^er-diagram-\d{4}-\d{2}-\d{2}\.pdf$/);
     expect(texts.system).toBe("Refrigerator Factory Mini ERP");
     expect(texts.title).toBe("ER diagram");
-    expect(texts.subtitle).toBe("23 tables, 29 relationships, crow's foot notation");
+    expect(texts.subtitle).toBe("23 tables, 32 relationships, crow's foot notation");
     expect(texts.footer).toMatch(/^Made on \d{4}-\d{2}-\d{2}$/);
     expect(texts.columns).toEqual(["Parent", "Child", "Foreign key", "Parent : child", "Meaning"]);
     expect(relationshipRows).toHaveLength(RELATIONSHIPS.length);
@@ -89,7 +94,7 @@ describe("the ER diagram page", () => {
       expect(diagram).toEqual(buildDiagram("ja"));
       expect(texts.system).toBe("冷蔵庫工場 Mini ERP");
       expect(texts.title).toBe("ER図");
-      expect(texts.subtitle).toBe("テーブル23個、リレーション29個、クロウズフット表記");
+      expect(texts.subtitle).toBe("テーブル23個、リレーション32個、クロウズフット表記");
       expect(texts.footer).toMatch(/^\d{4}-\d{2}-\d{2} 作成$/);
       expect(texts.columns).toEqual(["親", "子", "外部キー", "親：子", "意味"]);
       expect(relationshipRows[0]).toEqual(["CUSTOMER", "QT_REFERENCE", "customer_id", "1 : 0..N", "持つ"]);

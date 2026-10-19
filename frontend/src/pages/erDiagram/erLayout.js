@@ -7,7 +7,8 @@ import { inLanguage } from "@/i18n/mdJa";
  *
  * Text `y` is the middle of the line of text (SVG dominant-baseline "central", jsPDF baseline "middle"). The words of the .md (labels,
  * notes of the columns, the key of the notation) follow the language of the page (mdJa.js); the names stay as they are.
- * A line with no database key (to ATTACHMENT) is dashed.
+ * A line with no database key (to ATTACHMENT) is dashed. Where two lines cross, the vertical one has a gap and the horizontal one
+ * goes through it (a bridge), so the reader sees that they do not meet.
  */
 export const BOX_WIDTH = 260;
 export const HEADER = 28;
@@ -18,7 +19,7 @@ const NOTE_FONT = 9;
 const NOTE_WIDTH = BOX_WIDTH - 58;
 const PAD = 4;
 export const WIDTH = 2090;
-export const HEIGHT = 1100;
+export const HEIGHT = 1290;
 const DASH = [6, 4];
 
 export const COLORS = {
@@ -220,17 +221,44 @@ function legendShapes(x, y, tr) {
   return shapes;
 }
 
+/** Every point where a horizontal part of one line crosses a vertical part of another, inside both: [{ x, y, horizontal }]. */
+export function crossings(routes) {
+  const parts = routes.flatMap((route, line) => route.points.slice(1).map((point, index) => ({ line, a: route.points[index], b: point, dash: route.dash })));
+  const inside = (value, a, b) => value > Math.min(a, b) && value < Math.max(a, b);
+  const found = [];
+  for (const h of parts) {
+    if (h.a[1] !== h.b[1]) continue;
+    for (const v of parts) {
+      if (v.line === h.line || v.a[0] !== v.b[0]) continue;
+      if (inside(v.a[0], h.a[0], h.b[0]) && inside(h.a[1], v.a[1], v.b[1])) found.push({ x: v.a[0], y: h.a[1], horizontal: h });
+    }
+  }
+  return found;
+}
+
+/** A bridge: a gap in the vertical line, the horizontal line drawn again through it. */
+function bridge({ x, y, horizontal }) {
+  return [
+    { kind: "rect", x: x - 3, y: y - 6, w: 6, h: 12, fill: COLORS.paper, bridge: true },
+    { kind: "line", points: [[x - 7, y], [x + 7, y]], stroke: COLORS.line, width: 1.3, ...(horizontal.dash ? { dash: horizontal.dash } : {}) },
+  ];
+}
+
 /** The whole drawing in `language` ("en" or "ja"): { width, height, shapes }. Lines first, then the tables on them, then the labels on top. */
 export function buildDiagram(language = "en") {
   const tr = (text) => inLanguage(text, language);
   const lines = [];
   const labels = [];
+  const routes = [];
   for (const relationship of RELATIONSHIPS) {
     const { start, end, points } = routeOf(relationship);
-    lines.push({ kind: "line", points, stroke: COLORS.line, width: 1.3, ...(hasNoKey(relationship) ? { dash: DASH } : {}) });
+    const dash = hasNoKey(relationship) ? DASH : undefined;
+    routes.push({ points, dash });
+    lines.push({ kind: "line", points, stroke: COLORS.line, width: 1.3, ...(dash ? { dash } : {}) });
     lines.push(...endMarks(start.point, start.out, relationship.parentEnd), ...endMarks(end.point, end.out, relationship.childEnd));
     labels.push(...labelOf(points, tr(relationship.label), relationship.labelAt));
   }
+  lines.push(...crossings(routes).flatMap(bridge));
   return {
     width: WIDTH,
     height: HEIGHT,

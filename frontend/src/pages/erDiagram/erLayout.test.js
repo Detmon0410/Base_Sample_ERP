@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { buildDiagram, entityBox, entityOf, HEIGHT, noteLines, routeOf, WIDTH, wrap } from "./erLayout";
+import { buildDiagram, crossings, entityBox, entityOf, HEIGHT, noteLines, routeOf, WIDTH, wrap } from "./erLayout";
 import { ENTITIES, hasNoKey, NOTES, RELATIONSHIPS } from "./erModel";
 import { inLanguage } from "@/i18n/mdJa";
 
@@ -44,9 +44,9 @@ const inside = ([x, y], box) => x > box.x && x < box.x + box.w && y > box.y && y
 describe("the ER model is ER Diagram.md", () => {
   const source = readMd();
 
-  it("reads the .md (23 tables, 29 relationships, 7 notes)", () => {
+  it("reads the .md (23 tables, 32 relationships, 7 notes)", () => {
     expect(source.entities).toHaveLength(23);
-    expect(source.relationships).toHaveLength(29);
+    expect(source.relationships).toHaveLength(32);
     expect(source.notes).toHaveLength(7);
   });
 
@@ -64,11 +64,11 @@ describe("the ER model is ER Diagram.md", () => {
     expect(NOTES).toEqual(source.notes);
   });
 
-  it("draws each relationship to a column of the child: a foreign key, or owner_id of ATTACHMENT (no database key, dashed)", () => {
+  it("draws each relationship to a column of the child: a foreign key, or owner_id of ATTACHMENT for its owner (no database key, dashed)", () => {
     for (const relationship of RELATIONSHIPS) {
       const column = entityOf(relationship.child).columns.find(([name]) => name === relationship.fk);
       expect(column, `${relationship.child}.${relationship.fk}`).toBeDefined();
-      if (relationship.child === "ATTACHMENT") expect(relationship.fk).toBe("owner_id");
+      if (hasNoKey(relationship)) expect(relationship.fk).toBe("owner_id");
       expect(hasNoKey(relationship), `${relationship.child}.${relationship.fk}`).toBe(!keysOf(column).includes("FK"));
     }
     expect(RELATIONSHIPS.filter(hasNoKey).map((relationship) => relationship.child)).toEqual(["ATTACHMENT", "ATTACHMENT", "ATTACHMENT"]);
@@ -127,29 +127,26 @@ describe("the drawing", () => {
     }
   });
 
-  it("has no two lines that cross or run on each other (a dashed line, with no database key, may cross but not run on another)", () => {
-    const all = RELATIONSHIPS.map((relationship) => ({ name: `${relationship.parent} -> ${relationship.child}`, dashed: hasNoKey(relationship), parts: segments(routeOf(relationship).points) }));
-    const between = (value, a, b) => value > Math.min(a, b) && value < Math.max(a, b);
+  it("has no two lines that run on each other, and a bridge at each of the few crossings", () => {
+    const all = RELATIONSHIPS.map((relationship) => ({ name: `${relationship.parent} -> ${relationship.child}`, parts: segments(routeOf(relationship).points) }));
     const overlapRange = (a1, a2, b1, b2) => Math.max(Math.min(a1, a2), Math.min(b1, b2)) < Math.min(Math.max(a1, a2), Math.max(b1, b2));
-    const meet = ([a1, a2], [b1, b2], mayCross) => {
-      const aVertical = a1[0] === a2[0];
-      const bVertical = b1[0] === b2[0];
-      if (aVertical !== bVertical) {
-        if (mayCross) return false;
-        const [v1, v2, h1, h2] = aVertical ? [a1, a2, b1, b2] : [b1, b2, a1, a2];
-        return between(v1[0], h1[0], h2[0]) && between(h1[1], v1[1], v2[1]);
-      }
-      if (aVertical) return a1[0] === b1[0] && overlapRange(a1[1], a2[1], b1[1], b2[1]);
-      return a1[1] === b1[1] && overlapRange(a1[0], a2[0], b1[0], b2[0]);
+    const runOn = ([a1, a2], [b1, b2]) => {
+      if (a1[0] === a2[0] && b1[0] === b2[0]) return a1[0] === b1[0] && overlapRange(a1[1], a2[1], b1[1], b2[1]);
+      if (a1[1] === a2[1] && b1[1] === b2[1]) return a1[1] === b1[1] && overlapRange(a1[0], a2[0], b1[0], b2[0]);
+      return false;
     };
     const problems = [];
     for (let i = 0; i < all.length; i += 1) {
       for (let j = i + 1; j < all.length; j += 1) {
-        const mayCross = all[i].dashed || all[j].dashed;
-        if (all[i].parts.some((a) => all[j].parts.some((b) => meet(a, b, mayCross)))) problems.push(`${all[i].name} x ${all[j].name}`);
+        if (all[i].parts.some((a) => all[j].parts.some((b) => runOn(a, b)))) problems.push(`${all[i].name} runs on ${all[j].name}`);
       }
     }
     expect(problems).toEqual([]);
+    // where two lines must cross, the drawing has a bridge there (a gap in the vertical line); the crossings stay few
+    const found = crossings(RELATIONSHIPS.map((relationship) => ({ points: routeOf(relationship).points })));
+    expect(found.length).toBeLessThanOrEqual(4);
+    const bridges = buildDiagram().shapes.filter((shape) => shape.bridge);
+    expect(bridges.map((shape) => [shape.x + 3, shape.y + 6]).sort()).toEqual(found.map(({ x, y }) => [x, y]).sort());
   });
 
   it.each(["en", "ja"])("puts every label on its own: off the tables, off the other labels and off the other lines (%s)", (language) => {

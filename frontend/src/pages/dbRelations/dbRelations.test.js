@@ -91,14 +91,14 @@ describe("the DB relations are DB Relations.md", () => {
     expect(PARTS.map((part) => [part.title, part.sections.map((section) => section.title)])).toEqual([
       ["Current version summary (as built)", ["", "Rules to remember"]],
       ["Part 1: The base tables (the Mini ERP before Version 2.0)", ["Foreign keys", "Unique keys", "Lifecycle rules that touch several tables", "Chain of one sale"]],
-      ["Part 2: Added or changed in Version 2.0 (as built)", ["New or changed foreign keys", "Changed columns", "Unique keys", "Lifecycle rules that touch several tables", "Chain of the new flows"]],
+      ["Part 2: Added or changed in Version 2.0 (as built)", ["New foreign keys", "Changed columns", "Unique keys", "Lifecycle rules that touch several tables", "Chain of the new flows"]],
     ]);
   });
 
   it("has every table row for row, every list item and every chain, word for word", () => {
     expect(PARTS).toEqual(source);
     const rows = PARTS.flatMap((part) => part.sections.filter((section) => section.rows).map((section) => section.rows.length));
-    expect(rows).toEqual([5, 18, 9, 5, 14, 3, 6, 8]);
+    expect(rows).toEqual([5, 18, 9, 5, 13, 3, 6, 8]);
     expect(PARTS[0].sections[1].items).toHaveLength(5);
   });
 

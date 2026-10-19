@@ -4,8 +4,8 @@ import { PARTS } from "./dbRelations";
  * The database as it is now, made from DB Relations.md (PARTS): the .md keeps the base tables (Part 1) and the changes of
  * Version 2.0 (Part 2) apart, the page shows one current list.
  *   - The summary of the current version, as in the .md, without the sentence that sends to Parts 1 and 2.
- *   - Foreign keys: those of Part 1 and the new or changed ones of Part 2, by table in the order of the groups of the summary; a key in
- *     both (the same table and column) has the row of Part 2 (it is the newer one).
+ *   - Foreign keys: those of Part 1 and the new ones of Part 2, by table in the order of the groups of the summary; a key in both (the
+ *     same table and column) would have the row of Part 2 (the newer one).
  *   - Unique keys: those of Part 1 and Part 2; a table in both has the row of Part 2 (it is the newer one).
  *   - Rules on columns: the rows of "Changed columns" that are a rule ("rule: ..."); the columns themselves are in the ER diagram.
  *   - Rules that touch several tables: those of Part 1 and Part 2, but not a row of Part 2 that only says the rule is unchanged; the
@@ -26,7 +26,7 @@ const UNCHANGED = (row) => row[2] === "Unchanged";
 const MAKES_ORDER = (row) => row[1].split(", ").includes("ProductionOrder");
 
 const foreignKeys = section(base, "Foreign keys");
-const newForeignKeys = section(added, "New or changed foreign keys");
+const newForeignKeys = section(added, "New foreign keys");
 /** The same key in Part 1 and Part 2: the same table and the same column. */
 const sameKey = (a, b) => a[0] === b[0] && a[1] === b[1];
 const baseUnique = section(base, "Unique keys");

@@ -50,7 +50,7 @@ describe("the QT page", () => {
     await waitFor(() => expect(screen.getByRole("option", { name: "Qt Page Customer" })).toBeInTheDocument());
     await user.selectOptions(screen.getByLabelText("Customer"), "Qt Page Customer");
 
-    await user.click(screen.getByRole("button", { name: "Add a product" }));
+    // a new QT starts with one product line
     await waitFor(() => expect(screen.getByRole("option", { name: "QTP-FR Page fridge" })).toBeInTheDocument());
     await user.selectOptions(screen.getByLabelText("Product"), "QTP-FR Page fridge");
     expect(screen.getByLabelText("Unit price")).toHaveValue(45000); // the price of the product
@@ -58,9 +58,11 @@ describe("the QT page", () => {
     expect(screen.getByText("Total: ¥450,000")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    // after Save the same QT opens again, now with Files, the printed form and Confirm QT
+    // after Save the same QT opens again, now with Files, Download PDF and Print at the top, and Confirm QT; the paper itself is not shown
     expect(await screen.findByRole("heading", { name: "Files" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "QT form" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Download PDF" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Print" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "QT form" })).not.toBeInTheDocument();
     const paper = document.querySelector('[data-print-doc="qt"]');
     expect(paper).toHaveTextContent("QT-PAGE-1");
     expect(paper).toHaveTextContent("5 Cold Street");
@@ -86,6 +88,11 @@ describe("the QT page", () => {
     expect(qt).toMatchObject({ status: "Confirmed", total: 450000 });
     const order = await ordersApi.get(qt.productionOrderId);
     expect(order.lines.map((line) => [line.productCode, line.quantity, line.unitPrice])).toEqual([["QTP-FR", 10, 45000]]);
+  });
+
+  it("needs a QT number: an empty one is refused (REQUIRED)", async () => {
+    setToken(tokenOf(mockUsers[2]));
+    await expect(qtApi.create({ qtNumber: "", qtDate: "2026-10-01", customerId: customer.id, lines: [{ productId: door.id, quantity: 1, unitPrice: 9000 }] })).rejects.toMatchObject({ status: 400 });
   });
 
   it("warns when the customer PO file is missing, and still confirms", async () => {

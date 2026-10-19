@@ -30,5 +30,12 @@
     "previous": "前へ",
     "next": "次へ"
   },
-  "toasts": "通知"
+  "toasts": "通知",
+  "paper": {
+    "number": "No.",
+    "details": "詳細",
+    "notes": "備考",
+    "terms": "お支払い条件",
+    "dateLine": "日付"
+  }
 }

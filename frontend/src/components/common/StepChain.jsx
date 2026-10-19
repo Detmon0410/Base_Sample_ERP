@@ -18,7 +18,7 @@ export function StepChain({ steps, current, label }) {
             {index > 0 ? <span aria-hidden="true" className="h-px w-5 bg-border" /> : null}
             <span
               className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-1 text-sm",
+                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm",
                 state === "done" && "bg-[#e1f2e8] font-medium text-success",
                 state === "current" && "bg-primary font-bold text-primary-foreground",
                 state === "todo" && "bg-[#eceef1] text-muted-foreground",

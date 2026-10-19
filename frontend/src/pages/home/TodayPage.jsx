@@ -45,7 +45,7 @@ function StartCard({ order, onChanged }) {
   const starter = useStartProduction(order, onChanged);
   const processes = order.lines.reduce((sum, line) => sum + line.processes.length, 0);
   return (
-    <article className="flex flex-col gap-3 border border-border bg-card p-4">
+    <article className="flex flex-col gap-3 rounded-md border border-border bg-card p-4">
       <div className="flex flex-wrap items-baseline gap-x-3">
         <Link to={`/sale/orders/${order.id}`} className="text-lg font-bold">
           {order.orderNumber}
@@ -78,7 +78,7 @@ function RunningCard({ order, onChanged }) {
     onChanged();
   };
   return (
-    <article className="flex flex-col gap-4 border border-border bg-card p-4">
+    <article className="flex flex-col gap-4 rounded-md border border-border bg-card p-4">
       <div className="flex flex-wrap items-baseline gap-x-3">
         <Link to={`/sale/orders/${order.id}`} className="text-lg font-bold">
           {order.orderNumber}
@@ -160,7 +160,7 @@ export function TodayPage() {
       ) : (
         <div className="flex max-w-5xl flex-col gap-8">
           {data.low.length > 0 ? (
-            <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-2 border border-border bg-[#fbefd2] p-3">
+            <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-border bg-[#fbefd2] p-3">
               <AlertTriangle aria-hidden="true" className="size-5 shrink-0 text-warning" />
               <span className="font-semibold">{t("dashboard:today.low", { count: data.low.length })}</span>
               <span className="text-sm">{data.low.slice(0, 4).map((material) => `${material.code} (${formatNumber(material.total, i18n.language)} ${material.unit})`).join(", ")}</span>
@@ -189,7 +189,7 @@ export function TodayPage() {
                 <p className="text-muted-foreground">{t("dashboard:today.noneToReceive")}</p>
               ) : (
                 data.toReceive.map((po) => (
-                  <article key={po.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 border border-border bg-card p-4">
+                  <article key={po.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-border bg-card p-4">
                     <span className="text-lg font-bold">{po.poNumber}</span>
                     <span className="text-muted-foreground">{po.supplierName}</span>
                     <StatusBadge tone="progress">{t("purchase:status.Sent")}</StatusBadge>

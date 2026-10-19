@@ -5,7 +5,7 @@
   "search": "Search (PO No., supplier, notes)",
   "poNumber": "PO No.",
   "supplier": "Supplier",
-  "requiredDate": "Required date (YYYY-MM-DD)",
+  "requiredDate": "Required date",
   "requiredShort": "Required",
   "department": "Department",
   "chooseDepartment": "Choose a department",
@@ -80,7 +80,7 @@
   "payment": {
     "title": "Payment",
     "none": "The payment can be recorded when the PO is received.",
-    "date": "Payment date (YYYY-MM-DD)",
+    "date": "Payment date",
     "amount": "Amount paid",
     "method": "Payment method",
     "chooseMethod": "Choose a payment method",

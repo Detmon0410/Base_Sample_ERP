@@ -27,7 +27,16 @@
     "unitPrice": "Unit price",
     "amount": "Amount",
     "total": "Total",
-    "noTax": "No tax is charged."
+    "noTax": "No tax is charged.",
+    "billTo": "Bill to",
+    "status": "Status",
+    "description": "Description",
+    "paymentOf": "Payment of invoice",
+    "receivedFrom": "Received from",
+    "issuedBy": "Issued by",
+    "customerSign": "Customer",
+    "receivedBy": "Received by",
+    "terms": "Please pay the total of this invoice in full. A receipt is issued when the payment is received."
   },
   "print": "Print",
   "payment": {
@@ -65,7 +74,9 @@
     "tabs": {
       "toInvoice": "To invoice",
       "unpaid": "Waiting for payment",
-      "paid": "Paid"
+      "paid": "Paid",
+      "toPay": "To pay",
+      "paidOut": "Paid out"
     },
     "toInvoiceCount": "Orders to invoice",
     "unpaidTotal": "Waiting for payment",
@@ -77,8 +88,19 @@
     "empty": {
       "toInvoice": "No completed order is waiting for an invoice.",
       "unpaid": "No invoice is waiting for payment.",
-      "paid": "No invoice has been paid yet."
+      "paid": "No invoice has been paid yet.",
+      "toPay": "No received purchase order is waiting for payment.",
+      "paidOut": "No purchase order has been paid yet."
     },
-    "failed": "The accounting lists could not be loaded."
+    "failed": "The accounting lists could not be loaded.",
+    "sideLabel": "Money in or out",
+    "sides": {
+      "in": "Customers pay us",
+      "out": "We pay suppliers"
+    },
+    "toPayTotal": "To pay suppliers",
+    "requiredDate": "Required date",
+    "paidOn": "Paid on",
+    "payPo": "Pay"
   }
 }

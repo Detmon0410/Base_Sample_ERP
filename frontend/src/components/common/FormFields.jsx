@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /** A section of a form: a grey band with the title, the fields below it. */
 export function Section({ title, icon: Icon, children, className }) {
   return (
-    <section className={cn("border border-border bg-card", className)}>
+    <section className={cn("overflow-hidden rounded-md border border-border bg-card", className)}>
       <h2 className="flex items-center gap-2 bg-muted px-4 py-2 text-base font-bold">
         {Icon ? <Icon aria-hidden="true" className="size-4 shrink-0 text-primary" /> : null}
         {title}

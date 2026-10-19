@@ -51,7 +51,7 @@ export function StockMovementsPage() {
       <div className="mb-4 flex flex-wrap items-end gap-6">
         <label className="flex min-w-60 flex-1 flex-col gap-1 text-sm font-semibold">
           {t("master:stock.searchLabel")}
-          <Input type="search" value={q} onChange={change(setQ)} />
+          <Input type="search" placeholder={t("examples:search")} value={q} onChange={change(setQ)} />
         </label>
         <label className="flex w-44 flex-col gap-1 text-sm font-semibold">
           {t("master:stock.colType")}
@@ -63,11 +63,11 @@ export function StockMovementsPage() {
         </label>
         <label className="flex w-48 flex-col gap-1 text-sm font-semibold">
           {t("master:stock.from")}
-          <Input value={from} onChange={change(setFrom)} placeholder="YYYY-MM-DD" inputMode="numeric" />
+          <Input value={from} onChange={change(setFrom)} placeholder={t("examples:date")} inputMode="numeric" />
         </label>
         <label className="flex w-48 flex-col gap-1 text-sm font-semibold">
           {t("master:stock.to")}
-          <Input value={to} onChange={change(setTo)} placeholder="YYYY-MM-DD" inputMode="numeric" />
+          <Input value={to} onChange={change(setTo)} placeholder={t("examples:date")} inputMode="numeric" />
         </label>
       </div>
 
@@ -76,7 +76,7 @@ export function StockMovementsPage() {
           {t("master:errors.LOAD_FAILED")}
         </p>
       ) : (
-        <div className="border border-border bg-card" aria-busy={loading}>
+        <div className="overflow-hidden rounded-md border border-border bg-card" aria-busy={loading}>
           <Table data-stack>
             <TableHeader>
               <TableRow>

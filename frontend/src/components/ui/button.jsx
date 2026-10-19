@@ -3,16 +3,16 @@ import { cva } from "class-variance-authority";
 import { cn } from "cn"
 import { Slot } from "radix-ui"
 
-// Flat, square, no icons.
+// Flat, with small rounded corners.
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center border border-transparent text-base font-medium whitespace-nowrap outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex shrink-0 items-center justify-center rounded-md border border-transparent text-base font-medium whitespace-nowrap outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-[#006fa8]",
-        outline: "border-[#c9ccd1] bg-secondary text-secondary-foreground hover:bg-[#e4e4e4]",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-[#e4e4e4]",
-        ghost: "hover:bg-muted",
+        outline: "border-[#cfd4da] bg-white text-foreground hover:border-primary hover:bg-[#f1f8fc] hover:text-primary",
+        secondary: "bg-[#e6f2f9] text-primary hover:bg-[#d9eefa]",
+        ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
         destructive: "bg-destructive text-white hover:bg-[#9a1d13]",
         link: "text-link underline-offset-4 hover:underline",
       },
@@ -21,6 +21,7 @@ const buttonVariants = cva(
         xs: "h-8 gap-1 px-3 text-sm",
         sm: "h-9 gap-1.5 px-4 text-sm",
         lg: "h-11 gap-2 px-6",
+        icon: "size-9 p-0 [&_svg]:size-5", // an icon alone, no frame (use with variant ghost)
       },
     },
     defaultVariants: {

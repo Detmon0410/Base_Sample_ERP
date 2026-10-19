@@ -134,11 +134,11 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
                 <TableCell data-label={t("master:attachments.at")}>{formatDateTime(row.at, i18n.language)}</TableCell>
                 <TableCell>
                   <span className="flex gap-2">
-                    <Button type="button" variant="outline" size="icon" aria-label={`${t("master:attachments.download")}: ${row.fileName}`} title={t("master:attachments.download")} onClick={() => download(row.id).catch(() => setError(say("UNKNOWN_ERROR")))}>
+                    <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.download")}: ${row.fileName}`} title={t("master:attachments.download")} onClick={() => download(row.id).catch(() => setError(say("UNKNOWN_ERROR")))}>
                       <Download aria-hidden="true" />
                     </Button>
                     {canChange && !lockedKinds.includes(row.kind) ? (
-                      <Button type="button" variant="outline" size="icon" aria-label={`${t("master:attachments.delete")}: ${row.fileName}`} title={t("master:attachments.delete")} onClick={() => setDeleting(row)}>
+                      <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.delete")}: ${row.fileName}`} title={t("master:attachments.delete")} onClick={() => setDeleting(row)}>
                         <Trash2 aria-hidden="true" />
                       </Button>
                     ) : null}

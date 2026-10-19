@@ -130,9 +130,9 @@
     "po": {
       "title": "顧客のPO",
       "number": "顧客PO番号",
-      "date": "顧客PO日付（YYYY-MM-DD）",
+      "date": "顧客PO日付",
       "hint": "顧客POのファイルは下の「ファイル」でアップロードしてください（種類：POファイル）。新しいPOファイルは古いものと置き換わります。",
-      "saveFirst": "先に見積を保存してください。保存後にファイル、印刷用フォーム、見積確定が使えます。"
+      "saveFirst": "先に見積を保存してください。保存後にファイル、PDF出力、見積確定が使えます。"
     },
     "confirm": {
       "button": "見積を確定",
@@ -151,7 +151,8 @@
       "preparedBy": "作成者",
       "approvedBy": "承認者",
       "customerSign": "顧客",
-      "dateLine": "日付"
+      "dateLine": "日付",
+      "noTax": "税は加算されません。"
     },
     "step": {
       "Draft": "下書き",
@@ -206,8 +207,8 @@
     "colBy": "入力者",
     "movementsTitle": "入出庫履歴",
     "searchLabel": "検索（材料・ロット・指示書・備考）",
-    "from": "開始日（YYYY-MM-DD）",
-    "to": "終了日（YYYY-MM-DD）",
+    "from": "開始日",
+    "to": "終了日",
     "colMaterial": "材料",
     "noMovements": "在庫の変更はまだありません。",
     "noMatch": "該当する在庫の変更がありません。",

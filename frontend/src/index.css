@@ -7,7 +7,7 @@
 
 /*
   Design tokens - Refrigerator Factory, Mini ERP look.
-  Theme colour #0085C8, blue (white text on it is 4:1: use it for buttons, large or bold text), square corners (radius 0), flat: no shadows, no rings.
+  Theme colour #0085C8, blue (white text on it is 4:1: use it for buttons, large or bold text), small rounded corners (6px on buttons and boxes, 8px on windows), flat: no heavy shadows.
   The root size stays 18px, so every rem-based Tailwind size scales with it.
 */
 :root {
@@ -33,7 +33,7 @@
   --border: #d5d8dc;
   --input: #8a9099; /* the underline of a field */
   --ring: #0085c8;
-  --radius: 0;
+  --radius: 0.375rem;
 }
 
 /*
@@ -127,13 +127,13 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
-  --radius-2xl: 0;
-  --radius-3xl: 0;
-  --radius-4xl: 0;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.25rem;
+  --radius-4xl: 1.5rem;
 }
 
 @layer base {
@@ -227,6 +227,10 @@
 
 /* Print / save as PDF of one document (utils/print.js sets body[data-printing] to the name of the document): only that document is shown. */
 @media print {
+  [data-print-holder] {
+    position: static !important;
+    width: auto !important;
+  }
   body[data-printing] * {
     visibility: hidden;
   }
@@ -235,12 +239,15 @@
   body[data-printing="receipt"] [data-print-doc="receipt"],
   body[data-printing="receipt"] [data-print-doc="receipt"] *,
   body[data-printing="qt"] [data-print-doc="qt"],
-  body[data-printing="qt"] [data-print-doc="qt"] * {
+  body[data-printing="qt"] [data-print-doc="qt"] *,
+  body[data-printing="po"] [data-print-doc="po"],
+  body[data-printing="po"] [data-print-doc="po"] * {
     visibility: visible;
   }
   body[data-printing="invoice"] [data-print-doc="invoice"],
   body[data-printing="receipt"] [data-print-doc="receipt"],
-  body[data-printing="qt"] [data-print-doc="qt"] {
+  body[data-printing="qt"] [data-print-doc="qt"],
+  body[data-printing="po"] [data-print-doc="po"] {
     position: absolute;
     top: 0;
     left: 0;

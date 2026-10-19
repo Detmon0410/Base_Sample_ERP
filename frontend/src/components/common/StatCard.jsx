@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /** One key number with its small grey label: the number is always the larger of the two. `tone` colours it only when it means something. */
 export function StatCard({ label, value, tone, className }) {
   return (
-    <div className={cn("flex flex-col gap-1 border border-border bg-card px-4 py-3", className)}>
+    <div className={cn("flex flex-col gap-1 rounded-md border border-border bg-card px-4 py-3", className)}>
       <span className="text-sm text-muted-foreground">{label}</span>
       <span className={cn("text-3xl font-bold tabular-nums", tone === "warn" && "text-warning", tone === "bad" && "text-destructive", tone === "good" && "text-success")}>{value}</span>
     </div>

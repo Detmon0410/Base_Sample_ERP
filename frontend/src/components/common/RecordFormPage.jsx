@@ -25,10 +25,12 @@ import { applyServerErrors } from "@/utils/serverErrors";
  *   readOnly   no Save (a Worker looking at products or materials, a QT that is confirmed)
  *   afterSave  (saved) => path: where the page goes after Save (default: the list), for a page that has more to do on the record
  *   actions    ({ record, reload }) => the extra buttons of a saved record (for example Confirm); `reload` loads the record again
+ *   headerActions ({ record }) => the buttons at the right of the title of a saved record (for example Download PDF and Print)
+ *   wide       the form may use the whole width of the page (the page puts two columns in it)
  *   after      ({ record, reload }) => what follows the form of a saved record, outside the <form> (a part with a form of its own)
  *   children   ({ form, record, readOnly, reload }) => the fields
  */
-export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, afterSave, actions, after, children }) {
+export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toForm, toBody, readOnly = false, afterSave, actions, after, headerActions, wide = false, children }) {
   const { id } = useParams();
   const isNew = !id;
   const navigate = useNavigate();
@@ -84,9 +86,9 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
 
   return (
     <>
-      <PageHeader title={isNew ? newTitle : titleOf(record)} />
+      <PageHeader title={isNew ? newTitle : titleOf(record)} actions={record && headerActions ? headerActions({ record }) : null} />
 
-      <form noValidate onSubmit={onSubmit} className="flex max-w-3xl flex-col gap-5">
+      <form noValidate onSubmit={onSubmit} className={`flex flex-col gap-5 ${wide ? "max-w-7xl" : "max-w-3xl"}`}>
         {summary ? (
           <Alert variant="destructive">
             <AlertDescription className="text-base">{summary}</AlertDescription>

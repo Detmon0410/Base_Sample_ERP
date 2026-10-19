@@ -30,5 +30,12 @@
     "previous": "Previous",
     "next": "Next"
   },
-  "toasts": "Notifications"
+  "toasts": "Notifications",
+  "paper": {
+    "number": "No.",
+    "details": "Details",
+    "notes": "Notes",
+    "terms": "Terms",
+    "dateLine": "Date"
+  }
 }

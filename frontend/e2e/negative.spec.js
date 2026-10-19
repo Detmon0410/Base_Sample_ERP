@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { USERS, settle, signIn, watchErrors } from "./helpers.js";
+import { USERS, settle, signIn, watchErrors, withoutRefusals } from "./helpers.js";
 
 // The roads beside the main workflow: a production order that cannot start because a material is short (nothing changes, the page says what
 // is missing and the way to add it, then the start works), an order that is not Completed is not offered for an invoice, and what a Sale
@@ -11,24 +11,25 @@ test.setTimeout(3 * 60 * 1000);
 
 /** A customer, a material with 5 in stock, a product that needs 2 of it for each unit, and an order of 10 with one process (so 20 are needed). */
 async function makeShortOrder(page) {
-  return page.evaluate(async () => {
+  const tag = Date.now().toString(36).toUpperCase(); // a real backend keeps its records: every call makes codes of its own
+  return page.evaluate(async (tag) => {
     const master = await import("/src/services/master.service.js");
     const qt = await import("/src/services/qt.service.js");
     const orders = await import("/src/services/orders.service.js");
-    const customer = await master.customersApi.create({ name: "Short Customer", address: "1 Short Street" });
-    const material = await master.materialsApi.create({ code: "SHORT-1", name: "Short steel", unit: "kg", lots: [{ lotNumber: "S1", quantity: 5 }] });
-    const product = await master.productsApi.create({ code: "SH-P", name: "Short fridge", price: 100, bom: [{ materialId: material.id, quantity: 2 }] });
-    const made = await qt.qtApi.create({ qtNumber: "QT-SHORT", qtDate: "2026-10-16", customerId: customer.id, lines: [{ productId: product.id, quantity: 10, unitPrice: 100 }] });
+    const customer = await master.customersApi.create({ name: `Short Customer ${tag}`, address: "1 Short Street" });
+    const material = await master.materialsApi.create({ code: `SHORT-${tag}`, name: "Short steel", unit: "kg", lots: [{ lotNumber: "S1", quantity: 5 }] });
+    const product = await master.productsApi.create({ code: `SH-${tag}`, name: "Short fridge", price: 100, bom: [{ materialId: material.id, quantity: 2 }] });
+    const made = await qt.qtApi.create({ qtNumber: `QT-SHORT-${tag}`, qtDate: "2026-10-16", customerId: customer.id, lines: [{ productId: product.id, quantity: 10, unitPrice: 100 }] });
     const { order } = await qt.qtApi.confirm(made.id);
     await orders.ordersApi.update(order.id, { orderDate: order.orderDate, notes: "", lines: [{ productId: product.id, quantity: 10, unitPrice: 100, processes: [{ name: "Cutting", instructions: "" }] }] });
-    return { orderId: order.id, orderNumber: order.orderNumber, materialId: material.id };
-  });
+    return { orderId: order.id, orderNumber: order.orderNumber, materialId: material.id, materialCode: material.code };
+  }, tag);
 }
 
 test("a production order that cannot start says what is short, nothing changes, and it starts after the stock is added", async ({ page }) => {
   const errors = watchErrors(page);
   await signIn(page, USERS.admin);
-  const { orderId, orderNumber, materialId } = await makeShortOrder(page);
+  const { orderId, orderNumber, materialId, materialCode } = await makeShortOrder(page);
 
   // the start is refused: 20 are needed, 5 are there
   await page.goto(`/sale/orders/${orderId}`);
@@ -36,7 +37,7 @@ test("a production order that cannot start says what is short, nothing changes, 
   await page.getByRole("button", { name: "Start production" }).click();
   await page.getByRole("button", { name: "Confirm", exact: true }).click();
   const alert = page.getByRole("alert");
-  await expect(alert).toContainText("SHORT-1 Short steel");
+  await expect(alert).toContainText(`${materialCode} Short steel`);
   await expect(alert).toContainText("20");
   await expect(alert).toContainText("5");
   await expect(page.getByRole("button", { name: "Start production" })).toBeVisible(); // not started: the button is still there
@@ -68,7 +69,7 @@ test("a production order that cannot start says what is short, nothing changes, 
   await expect(page.getByText("Production started")).toBeVisible();
   await page.goto("/stock/materials");
   await settle(page);
-  await expect(page.getByRole("row", { name: /SHORT-1/ })).toContainText("0");
+  await expect(page.getByRole("row", { name: new RegExp(materialCode) })).toContainText("0");
   await page.goto(`/stock/materials/${materialId}`);
   await settle(page);
   await expect(page.getByRole("row", { name: /Deduct/ })).toContainText("-20");
@@ -79,7 +80,7 @@ test("a production order that cannot start says what is short, nothing changes, 
   await settle(page);
   await expect(page.getByRole("row", { name: new RegExp(orderNumber) })).toHaveCount(0);
 
-  expect(errors.take().filter((line) => !/HTTP (400|409)/.test(line))).toEqual([]);
+  expect(withoutRefusals(errors.take())).toEqual([]);
 });
 
 test("a Sale Worker and a Factory Worker are refused what is not theirs", async ({ page }) => {
@@ -100,7 +101,7 @@ test("a Sale Worker and a Factory Worker are refused what is not theirs", async 
     await page.goto(path);
     await expect(page).toHaveURL(/\/403$/);
   }
-  await page.getByRole("button", { name: "Sale", exact: true }).click();
+  await page.getByRole("button", { name: /^(Sale|Sale Worker)$/ }).click();
   await page.getByRole("button", { name: "Log out" }).click();
   await expect(page).toHaveURL(/\/login/);
 
@@ -115,5 +116,5 @@ test("a Sale Worker and a Factory Worker are refused what is not theirs", async 
     await expect(page).toHaveURL(/\/403$/);
   }
 
-  expect(errors.take().filter((line) => !/HTTP (400|403|409)/.test(line))).toEqual([]);
+  expect(withoutRefusals(errors.take())).toEqual([]);
 });

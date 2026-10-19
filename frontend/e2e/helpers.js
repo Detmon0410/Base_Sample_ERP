@@ -95,3 +95,9 @@ export async function rawKeys(page) {
 export async function overflowX(page) {
   return page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - window.innerWidth));
 }
+
+/**
+ * Takes out of a list of collected errors the refusals the tests make on purpose (a wrong payment, a short stock, a page of another role):
+ * a real backend answers them with 400, 403 or 409, and the browser logs each one as a console error. The mock has no HTTP, so it logs none.
+ */
+export const withoutRefusals = (lines) => lines.filter((line) => !/^HTTP (400|403|409):/.test(line) && !/^console: Failed to load resource: the server responded with a status of (400|403|409)/.test(line));

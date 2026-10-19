@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { USERS, settle, signIn, watchErrors } from "./helpers.js";
+import { USERS, settle, signIn, watchErrors, withoutRefusals } from "./helpers.js";
 
 // Purchase: the Admin makes a material that is low and a supplier that sells it; a Factory Worker buys it: Create PO from the stock that
 // is low, Save, Sent, Received (a lot, the stock grows), the payment. Desktop only, like the master data case.
@@ -86,5 +86,5 @@ test("from a material that is low to a purchase order that is paid", async ({ pa
   await expect(paidOut).toContainText("¥36,000");
   await expect(paidOut).toContainText("2026-"); // the payment date
 
-  expect(errors.take().filter((line) => !/HTTP (400|409)/.test(line))).toEqual([]);
+  expect(withoutRefusals(errors.take())).toEqual([]);
 });

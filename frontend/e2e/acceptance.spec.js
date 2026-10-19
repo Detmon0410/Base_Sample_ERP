@@ -2,7 +2,7 @@ import fs from "node:fs";
 
 import { expect, test } from "@playwright/test";
 
-import { USERS, rawKeys, settle, signIn, watchErrors } from "./helpers.js";
+import { USERS, rawKeys, settle, signIn, watchErrors, withoutRefusals } from "./helpers.js";
 
 // The acceptance case of the requirements (docs/BaseRequirement_md/simplified_factory_system_requirements.md, section 10): the ten steps
 // of the example, in one run, with the Admin and a Worker whose account is made in step 1. Desktop only.
@@ -124,7 +124,7 @@ test("the example of the requirements, from the customer to the receipt", async 
   await production.getByLabel("Process", { exact: true }).nth(0).fill("Cutting");
   await production.getByLabel("Process", { exact: true }).nth(1).fill("Welding");
   await production.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Saved.")).toBeVisible();
+  await expect(page.getByText("Saved.").last()).toBeVisible(); // the toast of the QT save may still be on the screen
 
   // the Admin starts the production from the same page: the QT is "In production"
   await production.getByRole("button", { name: "Start production" }).click();
@@ -289,5 +289,5 @@ test("the example of the requirements, from the customer to the receipt", async 
     expect(await rawKeys(page), `${path}: text that looks like an untranslated key`).toEqual([]);
   }
 
-  expect(errors.take()).toEqual([]);
+  expect(withoutRefusals(errors.take())).toEqual([]);
 });

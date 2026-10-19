@@ -59,7 +59,7 @@ describe("the user menu", () => {
     renderLayout(mockUsers[1]);
     expect(screen.queryByRole("button", { name: "Log out" })).not.toBeInTheDocument(); // closed
 
-    await user.click(screen.getByRole("button", { name: "Worker" }));
+    await user.click(screen.getByRole("button", { name: "Factory Worker" }));
     const panel = screen.getByRole("group", { name: "User menu" });
     expect(panel).toHaveTextContent("worker@gmail.com");
     expect(within(panel).getByText("Role").nextSibling).toHaveTextContent("Worker");

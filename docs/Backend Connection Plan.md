@@ -2,6 +2,8 @@
 
 How the frontend, now running on its **mock API**, is connected to the real **backend** (`backend/`: Node.js, Express, Prisma, MySQL) so that the whole system works on one database. This is a plan; nothing here has been changed yet.
 
+**Progress (2026-10-19):** B0, B1, B3 (the user names) and B4 are done; B2 is covered by the end-to-end run on the real backend (below); B5 and B6 are written down and not done. The decisions D1 to D6 were answered: the database `kanou_mini_erp` (wiped and made again, three users only), the mock is kept, the files are in `backend/uploads`, one computer first.
+
 Related: [docs/api](api/README.md) (the contract), [Test Report](Test%20Report.md) (what was already run against the real backend), [APIs Diagram](../ProjectdocInfo/APIs%20Diagram.md), [DB Relations](../ProjectdocInfo/DB%20Relations.md), [felinkmissingpage](felinkmissingpage.md) (the notes of the backend author).
 
 ## 1. Where we are
@@ -22,7 +24,7 @@ The switch is one line: `VITE_USE_MOCK` in `frontend/.env` (`services/api.js` pi
 | D1 | Which database? The old name in `backend/.env` is `kanou_sim`; the example says `kanou_mini_erp`; the notes of the backend author use `kanou_mini_erp` | `kanou_mini_erp`, a new database. `kanou_sim` is not touched |
 | D2 | Is `db:setup` allowed to wipe that database? (`prisma migrate reset` deletes every table; the tool refuses it without the owner's explicit consent) | Only on the new empty `kanou_mini_erp`; asked in writing before it is run |
 | D3 | Demo data: only the 3 users, or the demo set (`seed-demo.js`: customers, products, stock, orders) | 3 users for the real database; the demo set only on a database made for showing the system |
-| D4 | Is the mock kept? | Yes. `VITE_USE_MOCK=true` stays the default for tests, for a demo without a server and for the first run of a new developer |
+| D4 | Is the mock kept? | **Decided: yes.** `VITE_USE_MOCK=true` stays the default for tests, for a demo without a server and for the first run of a new developer |
 | D5 | Where are the uploaded files kept in use? (`UPLOAD_DIR=uploads` on the disk of the server) | The folder `backend/uploads`, outside git, backed up with the database |
 | D6 | Who runs it: one computer (the dev script) or a server | One computer first (phase B1 to B4); a server is phase B6 |
 

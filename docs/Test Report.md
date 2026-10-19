@@ -39,9 +39,13 @@ The result of the [Test Plan](Test%20Plan.md). Date of the run: 2026-10-19. Bran
 | F5 | `purchase.spec` signed in again before the sign-out had finished (a race that failed in 2 of 5 runs) | test | **fixed** |
 | F6 | A real backend logs every refusal (400, 403, 409) as a console error in the browser; the specs that check "no console errors" counted them | test | **fixed**: `withoutRefusals` in `helpers.js` removes the refusals the tests make on purpose; real errors still fail the test |
 | F7 | The backend script `pnpm test` fails on Node 24 (`node --test test/` is a folder; Node 24 needs a glob) | low | **open, on the backend branch** (not changed; the fix is `"test/*.test.js"`) |
-| F8 | The demo users of the mock are named "Worker" and "Sale"; the backend seed names them "Factory Worker" and "Sale Worker" | low | **open**: only the tests and the demo notice it; the spec of the refusals accepts both names |
+| F8 | The demo users of the mock were named "Worker" and "Sale"; the backend seed names them "Factory Worker" and "Sale Worker" | low | **fixed**: the mock uses the names of the seed |
 | F9 | Lists are cut at a fixed size: 200 rows for each Accounting tab and for the selects of materials and products, 50 purchase orders on the Dashboard | info | **open, by design**; a real company needs paging or a search there |
 | F10 | An empty list shows a "New ..." button in the header and another in its body | info | by design; the specs use the first one |
+
+## 3b. After the report: the real backend as a command
+
+`pnpm e2e:real` (in `frontend/`) runs every spec file on the real backend, **one new database for each file** (`kanou_e2e_<time>_<n>`, dropped after it), with a backend on port 3310 and a frontend on port 5330 of its own. It does not touch the developer's database or servers. Result of the first full run: all 6 spec files pass (acceptance, master, negative, purchase, rawscan, smoke). `E2E_ONLY=acceptance.spec.js pnpm e2e:real` runs one file. The mock specs (`pnpm e2e`) always start the app on the mock, whatever `frontend/.env` says.
 
 ## 4. What was not covered
 

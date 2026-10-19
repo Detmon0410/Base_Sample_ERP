@@ -101,7 +101,7 @@ test("a Sale Worker and a Factory Worker are refused what is not theirs", async 
     await page.goto(path);
     await expect(page).toHaveURL(/\/403$/);
   }
-  await page.getByRole("button", { name: /^(Sale|Sale Worker)$/ }).click();
+  await page.getByRole("button", { name: "Sale Worker", exact: true }).click();
   await page.getByRole("button", { name: "Log out" }).click();
   await expect(page).toHaveURL(/\/login/);
 

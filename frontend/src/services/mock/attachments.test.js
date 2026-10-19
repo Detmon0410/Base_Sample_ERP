@@ -29,7 +29,7 @@ const list = (who, ownerType, ownerId) => call("GET /attachments", who, { query:
 describe("files of the mock", () => {
   it("keeps the evidence of an order with who and when, lists it without the file, and gives the file on its own", () => {
     const made = upload(factory, "ProductionOrder", order.id, "EVIDENCE", { name: "weld.png", dataUrl: "data:image/png;base64,AAAAAAAA" }).data;
-    expect(made).toMatchObject({ ownerType: "ProductionOrder", ownerId: order.id, kind: "EVIDENCE", fileName: "weld.png", fileType: "image/png", size: 6, uploadedByName: "Worker" });
+    expect(made).toMatchObject({ ownerType: "ProductionOrder", ownerId: order.id, kind: "EVIDENCE", fileName: "weld.png", fileType: "image/png", size: 6, uploadedByName: "Factory Worker" });
     expect(made.dataUrl).toBeUndefined();
     expect(made.at).toMatch(/^\d{4}-\d{2}-\d{2}T/);
 

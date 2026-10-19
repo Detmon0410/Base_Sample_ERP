@@ -61,6 +61,8 @@ pnpm run e2e:real     # the same specs on the real backend (needs MySQL and back
 3. In `frontend/.env`: `VITE_USE_MOCK=false` and `VITE_API_URL=http://localhost:3000/api`.
 4. `pnpm run kanou` from the root starts the backend (`http://localhost:3000/api`) and the frontend (`http://localhost:5173`, or the next free port: add it to `CORS_ORIGIN`).
 
+One address for the site and the API: `pnpm --dir frontend build` (it reads `frontend/.env.production`: the real backend at `/api`), then set `FRONTEND_DIR="../frontend/dist"` in `backend/.env` and start only the backend (`node src/server.js`): it serves the pages and `/api` on its port. (Do not pass `VITE_API_URL=/api` on the command line in Git Bash: it turns `/api` into a Windows path.) Backup and restore of the database and the files: `pnpm run backup` and `pnpm run restore` (see the plan).
+
 Change the demo passwords before real users. The plan is in [docs/Backend Connection Plan.md](docs/Backend%20Connection%20Plan.md).
 
 Tests on the real backend: `pnpm e2e:real` in `frontend/` (every spec file on a new database of its own, dropped after the run; the backend on port 3310 and the frontend on 5330). `pnpm --dir backend test` runs the backend tests on a database whose name ends with `_test` (on Node 24 use `node --test --test-concurrency=1 "test/*.test.js"`).

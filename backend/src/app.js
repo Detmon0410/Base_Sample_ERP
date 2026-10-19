@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -17,6 +20,17 @@ app.use(coerceNumbers);
 if (env.nodeEnv !== "test") app.use(morgan("dev"));
 
 app.use("/api", routes);
+
+// The built frontend (FRONTEND_DIR): the files, and index.html for every other address that is not /api (the pages of the app are routes of the browser)
+if (env.frontendDir) {
+  const dir = path.resolve(env.frontendDir);
+  if (fs.existsSync(path.join(dir, "index.html"))) {
+    app.use(express.static(dir));
+    app.get(/^\/(?!api(\/|$)).*/, (req, res) => res.sendFile(path.join(dir, "index.html")));
+  } else {
+    console.warn(`FRONTEND_DIR ${dir} has no index.html: the frontend is not served`);
+  }
+}
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

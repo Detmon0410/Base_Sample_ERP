@@ -2,7 +2,7 @@
 
 How the frontend, now running on its **mock API**, is connected to the real **backend** (`backend/`: Node.js, Express, Prisma, MySQL) so that the whole system works on one database. This is a plan; nothing here has been changed yet.
 
-**Progress (2026-10-19):** B0, B1, B3 (the user names) and B4 are done; B2 is covered by the end-to-end run on the real backend (below); B5 and B6 are written down and not done. The decisions D1 to D6 were answered: the database `kanou_mini_erp` (wiped and made again, three users only), the mock is kept, the files are in `backend/uploads`, one computer first.
+**Progress (2026-10-19):** B0, B1, B3 (the user names), B4 and B5 are done (B5: `pnpm run backup` and `pnpm run restore`, tried once: a backup of `kanou_mini_erp` restored into another database gave the same users); B6 is done as far as one computer goes (the backend serves the built site with `FRONTEND_DIR`: tried with a real sign-in and a deep link on one address; no server was set up). B2 is covered by the end-to-end run on the real backend (below); the end-to-end specs are run once at the end of all the work. The decisions D1 to D6 were answered: the database `kanou_mini_erp` (wiped and made again, three users only), the mock is kept, the files are in `backend/uploads`, one computer first.
 
 Related: [docs/api](api/README.md) (the contract), [Test Report](Test%20Report.md) (what was already run against the real backend), [APIs Diagram](../ProjectdocInfo/APIs%20Diagram.md), [DB Relations](../ProjectdocInfo/DB%20Relations.md), [felinkmissingpage](felinkmissingpage.md) (the notes of the backend author).
 
@@ -93,8 +93,8 @@ Each row: the page, the calls it makes, and what to look at. Done by hand once a
 
 ### B5. Data and files
 
-* Backup: `mysqldump kanou_mini_erp` and a copy of `backend/uploads`, once a day, kept for 14 days.
-* Restore: tried once on another database name before it is trusted.
+* Backup: `pnpm run backup` (root) makes `backups/<database>_<time>/` with `database.sql` (mysqldump, single transaction, utf8mb4) and a copy of the folder of files; it keeps the last 14. Run it once a day (Task Scheduler on Windows, cron on Linux). The MySQL programs are found in `MYSQL_BIN`, the PATH or `C:/Program Files/MySQL`. `backups/` is not in git.
+* Restore: `pnpm run restore backups/<folder> --into <new database name> [--uploads-to <folder>]`. It refuses the database of `backend/.env` unless `--force`, so a restore can be tried without risk. Tried once: the users came back the same.
 * Before any change of the schema: a backup, then `prisma migrate dev`; never `migrate reset` on a database with data.
 * The secret (`JWT_SECRET`), the database password and the real address are in `.env` only, never in git.
 
@@ -102,7 +102,7 @@ Each row: the page, the calls it makes, and what to look at. Done by hand once a
 
 | Item | Plan |
 |---|---|
-| Build | `pnpm --dir frontend build` makes static files; a web server (nginx or the backend itself) serves them and passes `/api` to the backend, so there is no CORS and one address |
+| Build | `pnpm --dir frontend build` makes `frontend/dist` with `VITE_USE_MOCK=false` and `VITE_API_URL=/api` (the same address). **The backend serves it itself** when `FRONTEND_DIR=../frontend/dist` is set in `backend/.env` (done, with a test); a web server such as nginx in front adds HTTPS |
 | Backend | `node src/server.js` under a process manager (restarts, logs); `NODE_ENV=production`; `CORS_ORIGIN` set to the address of the site |
 | Security | a long `JWT_SECRET`; HTTPS; passwords of the first three users changed (the demo passwords are public); the sign-in limit; the Admin account is not shared |
 | Time and language | the server clock and time zone are Japan time; the texts are in the frontend (English and Japanese) |

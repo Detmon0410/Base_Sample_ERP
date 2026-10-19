@@ -15,7 +15,7 @@ export const SECTIONS = [
   {
     title: "Factory Worker",
     blocks: [
-      { chart: "flowchart TD\n    D[Today: the work of the day] --> O2[Start production on the card<br/>409 STOCK_SHORT if material short]\n    D --> O3[Record progress on the card]\n    O3 --> O4[Open the order: upload evidence,<br/>images and documents]\n    D --> R[Purchase orders to receive]\n    D --> S[Stock]\n    S --> S1[Add / Deduct / Adjust a lot]\n    D --> P[Purchase]\n    P --> P1[See low stock]\n    P1 --> P2[Create PO]\n    P2 --> P3[Print PDF]\n    P3 --> P4[Sent -> Received]\n    P4 --> P5[Record payment]" },
+      { chart: "flowchart TD\n    D[Today: the work of the day] --> L[Production orders]\n    L --> O2[Open the order: start production<br/>409 STOCK_SHORT if material short]\n    D --> O3[Record progress on the card]\n    O3 --> O4[Open the order: upload evidence,<br/>images and documents]\n    D --> R[Purchase orders to receive]\n    D --> S[Stock]\n    S --> S1[Add / Deduct / Adjust a lot]\n    D --> P[Purchase]\n    P --> P1[See low stock]\n    P1 --> P2[Create PO]\n    P2 --> P3[Print PDF]\n    P3 --> P4[Sent -> Received]\n    P4 --> P5[Record payment]" },
     ],
   },
   {

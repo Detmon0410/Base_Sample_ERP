@@ -1,9 +1,11 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { AuthContext } from "@/lib/auth-context";
+import { invoicesApi } from "@/services/invoices.service";
+import { ordersApi } from "@/services/orders.service";
 import { customersApi, materialsApi, productsApi } from "@/services/master.service";
 import { mockUsers, tokenOf, toPublicUser } from "@/services/mock/users";
 import { qtApi } from "@/services/qt.service";
@@ -154,5 +156,27 @@ describe("production orders, page by page", () => {
     await user.click(await screen.findByRole("button", { name: "Start production" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
     await waitFor(() => expect(screen.queryByRole("button", { name: "Start production" })).not.toBeInTheDocument()); // it started
+  });
+});
+
+describe("an invoiced order", () => {
+  it("offers no Record progress or Reopen, not even to the Admin (the server would refuse with ORDER_INVOICED)", async () => {
+    setToken(tokenOf(mockUsers[0]));
+    const customer = await customersApi.create({ name: "Invoiced Customer" });
+    const product = await productsApi.create({ code: "INVD-P", name: "Invoiced fridge", price: 10, bom: [] });
+    const order = await makeOrder({ customerId: customer.id, lines: [{ productId: product.id, quantity: 2, unitPrice: 10, processes: [{ name: "Only step" }] }] });
+    await ordersApi.start(order.id);
+    await ordersApi.recordProgress(order.id, { processId: order.lines[0].processes[0].id, status: "Completed", completedQuantity: 2, workDate: "2026-10-05", note: "" });
+    renderAs(mockUsers[0], `/sale/orders/${order.id}`);
+    expect((await screen.findAllByRole("row", { name: /Only step/ })).length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: "Reopen" })).toBeInTheDocument(); // not invoiced yet: the Admin may reopen
+
+    setToken(tokenOf(mockUsers[0]));
+    await invoicesApi.create({ orderId: order.id, invoiceDate: "2026-10-06" });
+    cleanup();
+    renderAs(mockUsers[0], `/sale/orders/${order.id}`);
+    expect((await screen.findAllByRole("row", { name: /Only step/ })).length).toBeGreaterThan(0);
+    expect(screen.queryByRole("button", { name: "Reopen" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Record progress" })).not.toBeInTheDocument();
   });
 });

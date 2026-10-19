@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { USERS, settle, signIn, watchErrors } from "./helpers.js";
+import { USERS, settle, signIn, watchErrors, withoutRefusals } from "./helpers.js";
 
 // P1: the master data: customers, products with the BOM, materials with lots, users.
 // Desktop only: the narrow screens are covered by the smoke test (every page, no sideways scroll).
@@ -10,7 +10,7 @@ test.skip(({ viewport }) => (viewport?.width ?? 1280) < 1000, "desktop flow");
 const newRecord = async (page, entry, button) => {
   await page.goto(entry);
   await settle(page);
-  await page.getByRole("link", { name: button }).click();
+  await page.getByRole("link", { name: button }).first().click(); // an empty list has a second "New ..." button in its body
 };
 
 test("Admin makes a customer, a material with a lot, a product with a BOM and a user, then changes one", async ({ page }) => {
@@ -83,7 +83,7 @@ test("Admin makes a customer, a material with a lot, a product with a BOM and a 
   await expect(page.getByLabel("Status")).toHaveCount(0);
 
   // a refused save is an answer of the mock, not errors of the page
-  expect(errors.take().filter((line) => !/HTTP (400|409)/.test(line))).toEqual([]);
+  expect(withoutRefusals(errors.take())).toEqual([]);
 });
 
 test("a Factory Worker reads the products and the materials but cannot change them, and has no access to the customers", async ({ page }) => {

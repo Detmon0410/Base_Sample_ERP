@@ -44,21 +44,27 @@ pnpm install
 pnpm run dev          # http://localhost:5173
 ```
 
-`VITE_USE_MOCK=true` (in `frontend/.env.development`) answers every API call from `frontend/src/services/mock/`; what a person does is kept in the browser. The users: `admin@gmail.com` / `admin` (Admin) and `worker@gmail.com` / `worker` (Worker).
+`VITE_USE_MOCK=true` (in `frontend/.env`) answers every API call from `frontend/src/services/mock/`; what a person does is kept in the browser. The users: `admin@gmail.com` / `admin` (Admin), `worker@gmail.com` / `worker` (Factory Worker) and `sale@gmail.com` / `sale` (Sale Worker).
 
 ```bash
 pnpm run test         # vitest
 pnpm run lint
 pnpm run build
-pnpm run e2e          # Playwright (a browser is installed once: pnpm exec playwright install chromium)
+pnpm run e2e          # Playwright on the mock (a browser is installed once: pnpm exec playwright install chromium)
+pnpm run e2e:real     # the same specs on the real backend (needs MySQL and backend/.env)
 ```
 
-## Run the full stack
+## Run the full stack (the real backend, MySQL)
 
-```bash
-pnpm run setup        # installs both, creates .env from .env.example, generates the Prisma client
-pnpm run db:migrate   # after you fill DATABASE_URL in backend/.env
-pnpm run kanou        # backend http://localhost:3000/api and frontend http://localhost:5173
-```
+1. MySQL is running. In `backend/.env` (copy `backend/.env.example`; the file is not in git) set `DATABASE_URL` (the database `kanou_mini_erp`), a long `JWT_SECRET`, `CORS_ORIGIN` (the address of the frontend, for example `http://localhost:5173`) and `UPLOAD_DIR=uploads` (the files are kept in `backend/uploads`, outside git).
+2. `pnpm install` at the root, then `cd backend` and `pnpm run db:setup`: it **deletes every table of that database** and makes them again with the three users (`admin@gmail.com` / `admin`, `worker@gmail.com` / `worker` for a Factory Worker, `sale@gmail.com` / `sale` for a Sale Worker). Use it only on a database with nothing to keep; on a database with data use `npx prisma migrate deploy` and `node prisma/seed.js`.
+3. In `frontend/.env`: `VITE_USE_MOCK=false` and `VITE_API_URL=http://localhost:3000/api`.
+4. `pnpm run kanou` from the root starts the backend (`http://localhost:3000/api`) and the frontend (`http://localhost:5173`, or the next free port: add it to `CORS_ORIGIN`).
+
+One address for the site and the API: `pnpm --dir frontend build` (it reads `frontend/.env.production`: the real backend at `/api`), then set `FRONTEND_DIR="../frontend/dist"` in `backend/.env` and start only the backend (`node src/server.js`): it serves the pages and `/api` on its port. (Do not pass `VITE_API_URL=/api` on the command line in Git Bash: it turns `/api` into a Windows path.) Backup and restore of the database and the files: `pnpm run backup` and `pnpm run restore` (see the plan).
+
+Change the demo passwords before real users. The plan is in [docs/Backend Connection Plan.md](docs/Backend%20Connection%20Plan.md).
+
+Tests on the real backend: `pnpm e2e:real` in `frontend/` (every spec file on a new database of its own, dropped after the run; the backend on port 3310 and the frontend on 5330). `pnpm --dir backend test` runs the backend tests on a database whose name ends with `_test` (on Node 24 use `node --test --test-concurrency=1 "test/*.test.js"`).
 
 Never commit real credentials: commit `.env.example`, not `.env`.

@@ -89,7 +89,7 @@ describe("production orders of the mock", () => {
     progress(worker, order, cut, { completedQuantity: 4 });
     let view = progress(worker, order, cut, { completedQuantity: 7 });
     expect(view.lines[0].processes[0].completedQuantity).toBe(7); // the latest total, not 4 + 7
-    expect(view.history.map((entry) => [entry.completedQuantity, entry.userName])).toEqual([[7, "Worker"], [4, "Worker"]]);
+    expect(view.history.map((entry) => [entry.completedQuantity, entry.userName])).toEqual([[7, "Factory Worker"], [4, "Factory Worker"]]);
 
     progress(worker, order, cut, { status: "Completed", completedQuantity: 10 });
     expect(call("GET /orders/:id", admin, { params: { id: order.id } }).status).toBe("In Progress");

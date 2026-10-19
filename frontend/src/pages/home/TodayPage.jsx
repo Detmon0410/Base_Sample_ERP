@@ -107,13 +107,15 @@ export function TodayPage() {
   const { t, i18n } = useTranslation(["dashboard", "nav", "common", "orders", "purchase"]);
   const { user } = useAuth();
   const { data, error, reload } = useLoad(async () => {
-    const [numbers, orders, materials, purchases] = await Promise.all([
+    const [numbers, inProgress, drafts, materials, purchases] = await Promise.all([
       getDashboard(),
-      ordersApi.list({ pageSize: 200 }),
+      ordersApi.list({ status: "In Progress", pageSize: 200 }),
+      ordersApi.list({ status: "Draft", pageSize: 200 }), // a started order with no progress yet is still a Draft
       materialsApi.list({ pageSize: 200 }),
       can(user, "purchase.use") ? purchaseApi.list({ status: "Sent", pageSize: 50 }) : Promise.resolve({ items: [] }),
     ]);
-    const open = await Promise.all(orders.items.filter((order) => order.status !== "Completed").slice(0, 20).map((order) => ordersApi.get(order.id)));
+    // the orders in production, all of them (an old one is not hidden behind newer ones that have not started); the detail of each is read for its processes
+    const open = await Promise.all([...inProgress.items, ...drafts.items.filter((order) => order.started)].map((order) => ordersApi.get(order.id)));
     return {
       numbers: numbers.orders,
       running: open.filter((order) => order.started),

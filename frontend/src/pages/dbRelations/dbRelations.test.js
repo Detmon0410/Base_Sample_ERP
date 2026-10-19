@@ -43,7 +43,7 @@ function blocks(text) {
         .filter((line) => line.trim());
       if (!lines.length || (lines.length === 1 && lines[0] === "---")) continue;
       if (lines[0].startsWith("|")) out.push(["table", table(lines)]);
-      else if (lines[0].startsWith("- ")) out.push(["list", lines.map((line) => line.slice(2).trim())]);
+      else if (/^[-*] /.test(lines[0])) out.push(["list", lines.map((line) => line.slice(2).trim())]); // a list: "- " or "* "
       else out.push(["text", lines.map((line) => line.trim()).join(" ")]);
     }
   }

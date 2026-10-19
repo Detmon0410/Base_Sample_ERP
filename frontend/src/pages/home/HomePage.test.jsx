@@ -86,3 +86,17 @@ describe("the first page", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "Dashboard" })).toBeInTheDocument();
   });
 });
+
+describe("the work of today, with many orders", () => {
+  it("shows an order in production even when many newer orders have not started", async () => {
+    setToken(tokenOf(mockUsers[0]));
+    const customer = await customersApi.create({ name: "Many Customer" });
+    const product = await productsApi.create({ code: "MANY-P", name: "Many fridge", price: 1, bom: [] });
+    const old = await makeOrder({ customerId: customer.id, lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [{ name: "Oldest process" }] }] });
+    await ordersApi.start(old.id);
+    for (let index = 0; index < 25; index += 1) await makeOrder({ customerId: customer.id, lines: [{ productId: product.id, quantity: 1, unitPrice: 1, processes: [{ name: "Waiting" }] }] }); // newer, not started
+    renderAs(mockUsers[1]);
+    expect(await screen.findByText(old.orderNumber)).toBeInTheDocument();
+    expect(screen.getByText("1. Oldest process")).toBeInTheDocument();
+  }, 30000);
+});

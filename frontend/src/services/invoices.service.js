@@ -2,8 +2,12 @@ import { api, unwrap, unwrapList } from "./api.js";
 import { createCrud } from "./crud.js";
 
 // Invoices, payments and receipts. An invoice is never changed or deleted.
+const { list, get, create } = createCrud("/invoices");
+
 export const invoicesApi = {
-  ...createCrud("/invoices"),
+  list,
+  get,
+  create,
   /** The full payment: { paymentDate, amount }. The invoice becomes Paid and its receipt is issued. */
   pay: async (id, body) => unwrap(await api.post(`/invoices/${id}/payment`, body)),
 };

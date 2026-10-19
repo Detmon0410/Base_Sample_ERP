@@ -13,7 +13,7 @@ export default defineConfig({
   },
   server: {
     // Playwright writes its videos, traces and downloads here while a test runs; watching them crashed the dev server (EBUSY on a .crdownload)
-    watch: { ignored: ["**/e2e-results/**", "**/e2e-report/**"] },
+    watch: { ignored: ["**/e2e-results/**", "**/e2e-results-real/**", "**/e2e-report/**"] },
   },
   test: {
     environment: 'jsdom',

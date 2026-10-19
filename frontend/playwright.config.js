@@ -31,6 +31,7 @@ export default defineConfig({
     command: `node node_modules/vite/bin/vite.js --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: true,
+    env: { VITE_USE_MOCK: "true" }, // these specs run on the mock whatever frontend/.env says (the real backend is for the specs of pnpm e2e:real, later)
     timeout: 120 * 1000,
   },
 });

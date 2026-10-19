@@ -177,7 +177,7 @@ export function OrderView({ order, onChanged, embedded = false }) {
               </TableHeader>
               <TableBody>
                 {line.processes.map((process) => {
-                  const canRecord = order.started && can(user, "orders.progress") && (process.status !== "Completed" || can(user, "orders.reopen"));
+                  const canRecord = order.started && !order.invoice && can(user, "orders.progress") && (process.status !== "Completed" || can(user, "orders.reopen")); // an invoiced order is locked (ORDER_INVOICED)
                   return (
                     <TableRow key={process.id}>
                       <TableCell data-label={t("orders:processes.step")}>{process.sequence}</TableCell>

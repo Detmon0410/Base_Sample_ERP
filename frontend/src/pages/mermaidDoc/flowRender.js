@@ -2,7 +2,7 @@
  * Draws the mermaid code of a flow chart as SVG, in the colours of the app, and turns an SVG into a canvas for the PDF. mermaid is
  * loaded only when the first chart is drawn. The labels are SVG text (not HTML), so the browser can draw the SVG onto a canvas.
  */
-import { lineLabelsOf } from "./flowLabels";
+import { drawable, lineLabelsOf } from "./flowLabels";
 
 const FONT = '"Helvetica Neue", Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans JP", sans-serif';
 
@@ -95,7 +95,7 @@ let count = 0;
 export async function renderChart(code) {
   const mermaid = await mermaidApi();
   count += 1;
-  const { svg } = await mermaid.render(`flow-chart-${count}`, code);
+  const { svg } = await mermaid.render(`flow-chart-${count}`, drawable(code));
   return fitToDrawing(svg, lineLabelsOf(code));
 }
 

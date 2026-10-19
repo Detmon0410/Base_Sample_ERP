@@ -11,7 +11,7 @@ import { SECTIONS as USER_FLOW, TITLE as USER_FLOW_TITLE } from "@/pages/userFlo
 
 import { censor } from "@/utils/censor";
 
-import { forChart, labelsOf, lineLabelsOf, translateCode } from "./flowLabels";
+import { drawable, forChart, labelsOf, lineLabelsOf, translateCode } from "./flowLabels";
 
 // The chart pages are their .md: Flow Chart.md, User Flow.md, APIs Diagram.md and Context Diagram.md, the same title and every section with its blocks
 // (chart, sub-heading, table, paragraph) in order, word for word. In Japanese only the words of a chart change, never its shape.
@@ -116,7 +116,7 @@ describe.each([
     const { default: mermaid } = await import("mermaid");
     for (const language of ["en", "ja"]) {
       for (const block of sections.flatMap((section) => section.blocks).filter((item) => item.chart)) {
-        await expect(mermaid.parse(translateCode(block.chart, (word) => forChart(censor(inLanguage(word, language))))), `${language}: ${block.chart.slice(0, 40)}`).resolves.toBeTruthy();
+        await expect(mermaid.parse(drawable(translateCode(block.chart, (word) => forChart(censor(inLanguage(word, language)))))), `${language}: ${block.chart.slice(0, 40)}`).resolves.toBeTruthy();
       }
     }
   }, 60000);
@@ -153,5 +153,12 @@ describe("the User Flow page", () => {
 
   it("has the sentence under the chart of the Admin", () => {
     expect(USER_FLOW.find((section) => section.title === "Admin").blocks).toEqual([expect.objectContaining({ chart: expect.any(String) }), { text: "The Admin can do everything the two Workers can." }]);
+  });
+});
+
+describe("a chart as mermaid can read it", () => {
+  it("quotes only a box with brackets in its text; the words and the rest of the chart stay", () => {
+    expect(drawable("flowchart LR\n    UI[Pages: Sales (QT),<br/>Orders] --> PDF[PDF print]\n    A([Start]) --> D[(MySQL)]")).toBe('flowchart LR\n    UI["Pages: Sales (QT),<br/>Orders"] --> PDF[PDF print]\n    A([Start]) --> D[(MySQL)]');
+    expect(drawable("stateDiagram-v2\n    A --> B: start (once)")).toBe("stateDiagram-v2\n    A --> B: start (once)");
   });
 });

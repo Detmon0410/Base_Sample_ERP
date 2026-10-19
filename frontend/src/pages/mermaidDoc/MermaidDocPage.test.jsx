@@ -195,7 +195,7 @@ describe("the Context Diagram page", () => {
     expect(charts).toHaveLength(2);
     expect(codeOf(charts[0])).toBe(chartsOf(CONTEXT)[0]);
     expect(codeOf(charts[1])).toContain(`API[REST API ${HIDDEN}<br/>auth, master,`);
-    expect(codeOf(charts[1])).toContain("PDF[PDF print: QT form, PO,<br/>invoice, receipt]");
+    expect(codeOf(charts[1])).toContain("PDF[PDF print: QT form, PO]");
     const tables = screen.getAllByRole("table");
     expect(within(tables[0]).getAllByRole("row")).toHaveLength(1 + 5);
     expect(within(tables[0]).getAllByRole("row")[4]).toHaveTextContent("Customer (outside)customer PO, paymentQT form, invoice, receipt (handed over by users)");

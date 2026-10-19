@@ -57,5 +57,11 @@ export function translateCode(code, tr) {
   return out + code.slice(at);
 }
 
+/**
+ * The chart as mermaid can read it: a box of a flow chart written [text] with brackets in its text ("Sales (QT)") is put in
+ * quotes, ["text"], which mermaid needs; the words do not change. The .md stays as it is written.
+ */
+export const drawable = (code) => (kindOf(code) === "flowchart" ? code.replace(/(\w)\[(?![(*"[])([^\]"]*[()][^\]"]*)\]/g, '$1["$2"]') : code);
+
 /** The labels of the lines of a flow chart, each as its lines (split at <br/>). */
 export const lineLabelsOf = (code) => wordsOf(code).filter((item) => item.line).map((item) => item.word.split("<br/>"));

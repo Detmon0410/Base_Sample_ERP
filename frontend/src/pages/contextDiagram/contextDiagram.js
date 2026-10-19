@@ -15,7 +15,7 @@ export const SECTIONS = [
   {
     title: "Level 1: inside the system",
     blocks: [
-      { chart: "flowchart LR\n    subgraph Client[\"Frontend\"]\n        UI[\"Pages: Dashboard, Today, Sales (QT),<br/>Orders, Purchase, Accounting,<br/>Stock, Master\"]\n        PDF[PDF print: QT form, PO,<br/>invoice, receipt]\n        Mock[(Mock API)]\n    end\n    subgraph Server[\"Backend\"]\n        API[REST API /api<br/>auth, master, suppliers, stock, qt,<br/>orders, purchase, files, invoices,<br/>receipts, dashboard]\n        FS[(File storage<br/>attachments)]\n        DB[(MySQL)]\n    end\n\n    UI --> PDF\n    UI -- \"mock mode\" --> Mock\n    UI -- \"JSON + Bearer token\" --> API\n    API --> DB\n    API --> FS" },
+      { chart: "flowchart LR\n    subgraph Client[\"Frontend\"]\n        UI[Pages: Dashboard, Today, Sales (QT),<br/>Orders, Purchase, Accounting,<br/>Stock, Master]\n        PDF[PDF print: QT form, PO]\n        Mock[(Mock API)]\n    end\n    subgraph Server[\"Backend\"]\n        API[REST API /api<br/>auth, master, suppliers, stock, qt,<br/>orders, purchase, files, invoices,<br/>receipts, dashboard]\n        FS[(File storage<br/>attachments)]\n        DB[(MySQL)]\n    end\n\n    UI --> PDF\n    UI -- \"mock mode\" --> Mock\n    UI -- \"JSON + Bearer token\" --> API\n    API --> DB\n    API --> FS" },
     ],
   },
   {

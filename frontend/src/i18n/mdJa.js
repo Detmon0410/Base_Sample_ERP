@@ -514,7 +514,7 @@ export const JA = {
   "Level 1: inside the system": "レベル1：システムの内部",
   Frontend: "フロントエンド",
   "Pages: Dashboard, Today, Sales (QT),<br/>Orders, Purchase, Accounting,<br/>Stock, Master": "ページ：ダッシュボード、今日、営業（QT）、<br/>指示書、購買、経理、<br/>在庫、マスター",
-  "PDF print: QT form, PO,<br/>invoice, receipt": "PDF印刷：QTフォーム、PO、<br/>請求書、領収書",
+  "PDF print: QT form, PO": "PDF印刷：QTフォーム、PO",
   "Mock API": "モックAPI",
   Backend: "バックエンド",
   "REST API /api<br/>auth, master, suppliers, stock, qt,<br/>orders, purchase, files, invoices,<br/>receipts, dashboard": "REST API /api<br/>認証、マスター、仕入先、在庫、QT、<br/>指示書、購買、ファイル、請求書、<br/>領収書、ダッシュボード",

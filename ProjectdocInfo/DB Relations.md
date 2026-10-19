@@ -2,6 +2,28 @@
 
 The system as built on branch `mini-erp` (Version 2.0): the base tables first, then what Purchase, QT 2.0 and User 2.0 added or changed. Sources ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)).
 
+## Current version summary (as built)
+
+22 tables in 5 groups. Parts 1 and 2 below give every key and rule; this is the short form.
+
+| Group | Tables | Main relations |
+|---|---|---|
+| Users and files | User, Attachment | Attachment.uploaded_by -> User. Attachment points to its owner (PurchaseOrder, QtReference or ProductionOrder) by `owner_type` + `owner_id`, with no database key |
+| Master data | Customer, Product, Material, MaterialLot, ProductBom, Supplier, SupplierMaterial | Product -> ProductBom -> Material (a BOM line). Material -> MaterialLot (stock by lot). Supplier -> SupplierMaterial -> Material (what a supplier sells, with its price) |
+| Sale | QtReference, QtLine, ProductionOrder, OrderLine, OrderProcess, ProgressEntry | Customer -> QtReference -> QtLine -> Product. Confirm QT makes one ProductionOrder (QtReference.production_order_id, one to one). Order -> OrderLine -> OrderProcess -> ProgressEntry (by User) |
+| Accounting | Invoice, InvoiceLine, Payment, Receipt | One Invoice per ProductionOrder; one Payment and one Receipt per Invoice |
+| Purchase and stock | PurchaseOrder, PurchaseOrderLine, PurchasePayment, StockChange | Supplier -> PurchaseOrder -> PurchaseOrderLine -> Material. One PurchasePayment per PO. StockChange (material, user, and optionally the order or the PO) is the history of every lot change |
+
+Rules to remember:
+
+* **Delete:** children go with their parent (lines, processes, BOM, lots, supplier items, attachments). Anything else that is referenced answers `409 IN_USE`. Only a `Draft` QT or `Draft` PO can be deleted. Invoices, receipts and stock history are never deleted.
+* **One to one:** Invoice per order, Payment and Receipt per invoice, PurchasePayment per PO, ProductionOrder per confirmed QT.
+* **Unique:** User.email, and the codes and numbers of Product, Material, Supplier, QT, order, invoice, receipt and PO; (material, lot number); (supplier, material); (QT, product).
+* **Status:** QT `Draft` -> `Confirmed`. Order `Draft` -> `In Progress` -> `Completed` (computed). Invoice `Unpaid` -> `Paid`. PO `Draft` -> `Sent` -> `Received`.
+* **Stock moves** only in StockChange + MaterialLot: Start production deducts the BOM (oldest lot first), Receive PO adds once, and a person can Add, Deduct or Adjust a lot by hand.
+
+---
+
 ## Part 1: The base tables (the Mini ERP before Version 2.0)
 
 Table-by-table list of keys, relations and delete rules. The whole model, as built, is in the [ER Diagram](ER%20Diagram.md). The rows of QtReference, Material and User are changed by Part 2 below. Source: [docs/api](../docs/api/README.md) (`master-data.md`, `stock.md`, `qt.md`, `orders.md`, `invoices.md`, `receipts.md`).
@@ -106,6 +128,7 @@ Keys, relations and rules after the Purchase, QT 2.0 and User 2.0 changes. Only 
 | PurchaseOrder | po_number |
 | PurchasePayment | po_id |
 | QtReference | qt_number, production_order_id |
+| QtLine | (qt_id, product_id) |
 
 ### Lifecycle rules that touch several tables
 

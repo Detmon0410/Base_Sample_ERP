@@ -18,9 +18,12 @@ const PATTERNS = {
   erDiagram: [/^\s*\S+ \S+ \S+ : (?:"([^"]+)"|(\S+))$/gm],
 };
 
+/** The first group of the flow chart pattern that is the label of a line (-- "text" --> and the ones after it). */
+const FIRST_LINE_GROUP = 7;
+
 const kindOf = (code) => Object.keys(PATTERNS).find((kind) => code.trimStart().startsWith(kind)) ?? "flowchart";
 
-/** Each word of a chart with where it is: [{ start, end, word, bare }], in the order they are written. */
+/** Each word of a chart with where it is: [{ start, end, word, bare, line }], in the order they are written. */
 function wordsOf(code) {
   const found = [];
   const kind = kindOf(code);
@@ -28,7 +31,7 @@ function wordsOf(code) {
     for (const match of code.matchAll(new RegExp(pattern.source, `${pattern.flags}d`))) {
       const group = match.indices.findIndex((indices, index) => index > 0 && indices);
       const [start, end] = match.indices[group];
-      found.push({ start, end, word: match[group], bare: kind === "erDiagram" && group === 2 });
+      found.push({ start, end, word: match[group], bare: kind === "erDiagram" && group === 2, line: kind === "flowchart" && group >= FIRST_LINE_GROUP });
     }
   }
   return found.sort((a, b) => a.start - b.start);
@@ -53,3 +56,6 @@ export function translateCode(code, tr) {
   }
   return out + code.slice(at);
 }
+
+/** The labels of the lines of a flow chart, each as its lines (split at <br/>). */
+export const lineLabelsOf = (code) => wordsOf(code).filter((item) => item.line).map((item) => item.word.split("<br/>"));

@@ -11,7 +11,7 @@ import { SECTIONS as USER_FLOW, TITLE as USER_FLOW_TITLE } from "@/pages/userFlo
 
 import { censor } from "@/utils/censor";
 
-import { forChart, labelsOf, translateCode } from "./flowLabels";
+import { forChart, labelsOf, lineLabelsOf, translateCode } from "./flowLabels";
 
 // The chart pages are their .md: Flow Chart.md, User Flow.md, APIs Diagram.md and Context Diagram.md, the same title and every section with its blocks
 // (chart, sub-heading, table, paragraph) in order, word for word. In Japanese only the words of a chart change, never its shape.
@@ -128,6 +128,7 @@ describe("the words of a chart", () => {
     expect(labelsOf('stateDiagram-v2\n    [*] --> A\n    state "Order Draft" as A\n    A --> B: first moves')).toEqual(["Order Draft", "first moves"]);
     expect(labelsOf("sequenceDiagram\n    actor Sale as Sale Worker / Admin\n    participant API\n    Sale->>API: POST /qt\n    API-->>Sale: answer\n    Note over API: computed")).toEqual(["Sale Worker / Admin", "POST /qt", "answer", "computed"]);
     expect(labelsOf('flowchart LR\n    ERP[["Mini ERP 2.0"]]\n    A -- "all actions" --> ERP\n    S -. "sends QT" .- C\n    F -. "pays" .-> P\n    subgraph Client["Frontend"]')).toEqual(["Mini ERP 2.0", "all actions", "sends QT", "pays", "Frontend"]);
+    expect(lineLabelsOf('flowchart LR\n    A -- "a,<br/>b c" --> B[box]\n    B -->|d| C')).toEqual([["a,", "b c"], ["d"]]);
     expect(labelsOf('erDiagram\n    User ||--o{ ProgressEntry : writes\n    OrderLine ||--|{ OrderProcess : "made by"')).toEqual(["writes", "made by"]);
   });
 });

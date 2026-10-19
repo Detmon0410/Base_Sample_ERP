@@ -10,6 +10,43 @@ import { todayIso } from "@/utils/dates";
 
 import { CURRENT } from "./current";
 import { downloadDbRelationsPdf } from "./dbRelationsPdf";
+import { isGroupTable, splitRelations, splitTables } from "./relations";
+
+/**
+ * The groups of the summary, a card each: the name of the group, its tables as tags, its main relations one a line (the .md writes
+ * them as sentences in one cell, which is hard to read). `head` gives the words "Tables" and "Main relations" in the page language.
+ */
+function GroupCards({ head, rows }) {
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      {rows.map(([group, tables, relations]) => (
+        <article key={group} aria-label={group} className="border border-border border-l-4 border-l-primary bg-card p-4">
+          <h4 className="mb-3 text-base font-bold text-primary">{group}</h4>
+          <dl className="grid gap-x-4 gap-y-3 sm:grid-cols-[9rem_1fr]">
+            <dt className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{head[1]}</dt>
+            <dd className="flex flex-wrap gap-1.5">
+              {splitTables(tables).map((name) => (
+                <span key={name} className="border border-border bg-muted px-1.5 py-0.5 font-mono text-xs">
+                  {name}
+                </span>
+              ))}
+            </dd>
+            <dt className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{head[2]}</dt>
+            <dd>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                {splitRelations(relations).map((relation) => (
+                  <li key={relation}>
+                    <Md text={relation} />
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          </dl>
+        </article>
+      ))}
+    </div>
+  );
+}
 
 /** The columns that hold names of the database: a monospaced font. */
 const NAME_COLUMNS = ["Table", "Column"];
@@ -40,6 +77,7 @@ export function DbRelationsPage() {
         head: section.head.map(tr),
         rows: section.rows.map((row) => row.map(tr)),
         mono: section.head.map((head, index) => (NAME_COLUMNS.includes(head) ? index : -1)).filter((index) => index >= 0),
+        groups: isGroupTable(section.head), // the summary: a card a group (page and PDF)
       };
     }),
   }));
@@ -88,6 +126,8 @@ export function DbRelationsPage() {
                     </li>
                   ))}
                 </ul>
+              ) : section.groups ? (
+                <GroupCards head={section.head} rows={section.rows} />
               ) : (
                 <TextTable heads={section.head} rows={section.rows} mono={section.mono} />
               )}

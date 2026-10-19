@@ -14,8 +14,8 @@ import { DbRelationsPage } from "./DbRelationsPage";
 // the page, and "Download PDF" sends the same. The page and the PDF never name the documents they come from, nor their parts.
 
 const DOCS = /\.md\b|ProjectdocInfo|docs\/|\bPart [12]\b/i;
-const TABLES = CURRENT.flatMap((part) => part.sections.filter((section) => section.rows));
-const [SUMMARY, FK, UNIQUE, COLUMN_RULES, RULES] = [0, 1, 2, 3, 4]; // the tables of the page, in order
+const TABLES = CURRENT.flatMap((part) => part.sections.filter((section) => section.rows)).slice(1); // the summary is cards, not a table
+const [FK, UNIQUE, COLUMN_RULES, RULES] = [0, 1, 2, 3]; // the tables of the page, in order
 
 describe("the DB relations page", () => {
   it("shows the summary, then every key and rule of the current database", () => {
@@ -25,7 +25,15 @@ describe("the DB relations page", () => {
     const tables = screen.getAllByRole("table");
     expect(tables).toHaveLength(TABLES.length);
     tables.forEach((table, index) => expect(within(table).getAllByRole("row")).toHaveLength(1 + TABLES[index].rows.length));
-    expect(within(tables[SUMMARY]).getAllByRole("row")[1]).toHaveTextContent(/^Users and filesUser, Attachment/);
+    // the summary: a card a group, its tables as tags and its relations one a line, the arrows shown as arrows
+    const cards = screen.getAllByRole("article");
+    expect(cards.map((card) => card.getAttribute("aria-label"))).toEqual(["Users and files", "Master data", "Sale", "Accounting", "Purchase and stock"]);
+    expect(within(cards[0]).getByText("User").className).toMatch(/font-mono/);
+    expect(within(cards[0]).getAllByRole("listitem").map((item) => item.textContent)).toEqual([
+      "Attachment.uploaded_by → User",
+      "Attachment points to its owner (PurchaseOrder, QtReference or ProductionOrder) by owner_type + owner_id, with no database key",
+    ]);
+    expect(within(cards[2]).getAllByRole("listitem")).toHaveLength(3);
     expect(screen.getByRole("heading", { level: 3, name: "Rules to remember" }).nextElementSibling.querySelectorAll("li")).toHaveLength(5);
     // the foreign keys of the base and of Version 2.0 in one list, by table
     expect(within(tables[FK]).getAllByRole("row")[1]).toHaveTextContent("Attachmentuploaded_byUser.idmany to onenever deleted");
@@ -46,7 +54,10 @@ describe("the DB relations page", () => {
       expect(screen.getByRole("heading", { level: 1, name: "DBリレーション" })).toBeInTheDocument();
       expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(["現在のバージョンの概要（実装済み）", "すべてのキーとルール（実装済み）"]);
       const tables = screen.getAllByRole("table");
-      expect(within(tables[SUMMARY]).getAllByRole("columnheader").map((head) => head.textContent)).toEqual(["グループ", "テーブル", "主なリレーション"]);
+      const cards = screen.getAllByRole("article");
+      expect(cards[0].getAttribute("aria-label")).toBe("ユーザーとファイル");
+      expect(within(cards[0]).getByText("主なリレーション")).toBeInTheDocument();
+      expect(within(cards[0]).getAllByRole("listitem")[0]).toHaveTextContent("Attachment.uploaded_by → User");
       expect(within(tables[FK]).getAllByRole("columnheader").map((head) => head.textContent)).toEqual(["テーブル", "列", "参照先", "多重度", "削除ルール"]);
       expect(within(tables[FK]).getAllByRole("row")[2]).toHaveTextContent("Attachment(owner_type, owner_id)PurchaseOrder・QtReference・ProductionOrder のいずれか多対一（データベースのキーなし）");
       expect(screen.getByRole("heading", { level: 3, name: "列のルール" })).toBeInTheDocument();

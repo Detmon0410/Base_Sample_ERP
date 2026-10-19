@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 /**
  * A text of the .md files (ER Diagram.md, DB Relations.md): the parts between `backticks` are code, the parts between **stars** are
- * bold. One span, so a stacked table cell (phone) keeps it as one text.
+ * bold, and an arrow written " -> " is shown as an arrow "→". One span, so a stacked table cell (phone) keeps it as one text.
  */
 export function Md({ text }) {
   const parts = String(text).split(/(`[^`]*`|\*\*[^*]+\*\*)/);
@@ -19,7 +19,7 @@ export function Md({ text }) {
           );
         }
         if (part.startsWith("**") && part.endsWith("**")) return <strong key={index}>{part.slice(2, -2)}</strong>;
-        return <Fragment key={index}>{part}</Fragment>;
+        return <Fragment key={index}>{part.replaceAll(" -> ", " → ")}</Fragment>;
       })}
     </span>
   );

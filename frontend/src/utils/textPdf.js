@@ -215,6 +215,50 @@ export async function createTextPdf(language, { paper = "a4", orientation = "lan
       rows.forEach((values, index) => draw(values, false, index % 2 === 1));
       y += 6;
     },
+    /**
+     * Blocks, one a group: a tinted bar with the name, then two labelled lines: the tables (Courier) and the relations, one a line
+     * with a bullet. `head` gives the labels ([_, "Tables", "Main relations"]); `groups` is [{ group, tables, relations: [..] }].
+     * A block never breaks over two pages.
+     */
+    groups(head, groups) {
+      const label = 34;
+      const step = lineHeight(BODY);
+      for (const { group, tables, relations } of groups) {
+        font(BODY, "normal", TEXT, "courier");
+        const tableLines = pdf.splitTextToSize(plain(tables), roomWidth - label - 4);
+        font(BODY);
+        const relationLines = relations.map((relation) => pdf.splitTextToSize(plain(relation), roomWidth - label - 8));
+        const height = 8 + 3 + tableLines.length * step + 2.5 + relationLines.reduce((sum, lines) => sum + lines.length * step + 1.2, 0) + 4;
+        doc.room(height);
+        pdf.setFillColor(TINT);
+        pdf.rect(margin, y, roomWidth, 8, "F");
+        pdf.setFillColor(BRAND);
+        pdf.rect(margin, y, 1.4, 8, "F");
+        font(10.5, "bold", BRAND_DARK);
+        pdf.text(plain(group), margin + 5, y + 4, { baseline: "middle" });
+        y += 8 + 3;
+        font(SMALL, "bold", MUTED);
+        pdf.text(plain(head[1]).toUpperCase(), margin + 5, y + step / 2, { baseline: "middle" });
+        font(BODY, "normal", TEXT, "courier");
+        pdf.text(tableLines, margin + label, y + step / 2, { baseline: "middle", lineHeightFactor: LINE_FACTOR });
+        y += tableLines.length * step + 2.5;
+        font(SMALL, "bold", MUTED);
+        pdf.text(plain(head[2]).toUpperCase(), margin + 5, y + step / 2, { baseline: "middle" });
+        relationLines.forEach((lines) => {
+          pdf.setFillColor(BRAND);
+          pdf.circle(margin + label + 1.2, y + step / 2, 0.7, "F");
+          font(BODY);
+          pdf.text(lines, margin + label + 4.5, y + step / 2, { baseline: "middle", lineHeightFactor: LINE_FACTOR });
+          y += lines.length * step + 1.2;
+        });
+        y += 1;
+        pdf.setDrawColor(RULE);
+        pdf.setLineWidth(0.2);
+        pdf.line(margin, y, margin + roomWidth, y);
+        y += 4;
+      }
+      y += 3;
+    },
     /** A sketch in a monospaced font, line by line as written, in a light box. */
     pre(text) {
       const size = 8.5;

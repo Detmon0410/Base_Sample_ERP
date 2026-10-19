@@ -81,7 +81,7 @@ export const JA = {
     "Product -> ProductBom -> Material（部品表の行）。Material -> MaterialLot（ロットごとの在庫）。Supplier -> SupplierMaterial -> Material（仕入先が販売するものと単価）",
   "Customer -> QtReference -> QtLine -> Product. Confirm QT makes one ProductionOrder (QtReference.production_order_id, one to one). Order -> OrderLine -> OrderProcess -> ProgressEntry (by User)":
     "Customer -> QtReference -> QtLine -> Product。QTの確定で ProductionOrder を1件作成（QtReference.production_order_id、一対一）。Order -> OrderLine -> OrderProcess -> ProgressEntry（User が入力）",
-  "One Invoice per ProductionOrder; one Payment and one Receipt per Invoice": "ProductionOrder 1件に Invoice 1件。Invoice 1件に Payment と Receipt が1件ずつ",
+  "One Invoice per ProductionOrder; one Payment and one Receipt per Invoice": "ProductionOrder 1件に Invoice 1件、Invoice 1件に Payment と Receipt が1件ずつ",
   "Supplier -> PurchaseOrder -> PurchaseOrderLine -> Material. One PurchasePayment per PO. StockChange (material, user, and optionally the order or the PO) is the history of every lot change":
     "Supplier -> PurchaseOrder -> PurchaseOrderLine -> Material。PO 1件に PurchasePayment 1件。StockChange（材料、ユーザー、任意で指示書またはPO）はロットのすべての変動の履歴",
   "Rules to remember": "覚えておくルール",

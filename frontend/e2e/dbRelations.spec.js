@@ -13,7 +13,8 @@ test("the Admin opens the DB relations and downloads them as a PDF", async ({ pa
   await page.goto("/master/db-relations");
   await settle(page);
   await expect(page.getByRole("heading", { name: "DB relations", level: 1 })).toBeVisible();
-  await expect(page.getByRole("table")).toHaveCount(5);
+  await expect(page.getByRole("table")).toHaveCount(4);
+  await expect(page.getByRole("article")).toHaveCount(5); // the groups of the summary, a card each
   if (process.env.DB_SHOT) await page.screenshot({ path: process.env.DB_SHOT, fullPage: true });
 
   const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download PDF" }).click()]);

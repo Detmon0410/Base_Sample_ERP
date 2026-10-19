@@ -6,7 +6,7 @@ What the frontend expects from the backend, module by module. The frontend calls
 
 | Item | Rule |
 |---|---|
-| Base URL | `VITE_API_URL`, default `http://localhost:3000/api` |
+| Base URL | `VITE_API_URL`, default `http://localhost:3001/api` |
 | Format | JSON, `Content-Type: application/json`, UTF-8 |
 | Auth | `Authorization: Bearer <token>` on every request except `POST /auth/login` |
 | Success envelope | `{ "success": true, "data": <payload \| null>, "message"?: string }` |

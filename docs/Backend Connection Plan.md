@@ -46,12 +46,12 @@ The switch is one line: `VITE_USE_MOCK` in `frontend/.env` (`services/api.js` pi
 2. MySQL is running on `localhost:3306`. Make the database `kanou_mini_erp` (a new, empty one: D1).
 3. `backend/.env` (copy `backend/.env.example`; the file is not in git): `DATABASE_URL`, a new `JWT_SECRET` (a long random text, never `change-me`), `JWT_EXPIRES_IN`, `CORS_ORIGIN=http://localhost:5173`, `UPLOAD_DIR=uploads`, `PORT=3000`. A password with `@` or `$` must be URL-encoded.
 4. The tables and the three users: `pnpm --dir backend run db:setup`. **This command resets the database first** (D2). On a database that already has data, use `prisma migrate deploy` and `node prisma/seed.js` instead; they do not delete.
-5. Start the backend alone and check `GET http://localhost:3000/api/health`.
+5. Start the backend alone and check `GET http://localhost:3001/api/health`.
 
 ### B1. First connection
 
-1. `frontend/.env`: `VITE_USE_MOCK=false`, `VITE_API_URL=http://localhost:3000/api`.
-2. `node scripts/dev.js` from the root starts both (backend on 3000, frontend on 5173).
+1. `frontend/.env`: `VITE_USE_MOCK=false`, `VITE_API_URL=http://localhost:3001/api`.
+2. `node scripts/dev.js` from the root starts both (backend on 3001, frontend on 5173).
 3. Sign in as `admin@gmail.com`, `worker@gmail.com` (Factory) and `sale@gmail.com` (Sales). The token is sent as `Authorization: Bearer`. A wrong password shows the text under the e-mail field; more than a few wrong tries answer `429` (the text exists in both languages).
 4. Check: the Dashboard opens, the menu is the menu of the role, a page of another role opens the 403 page, Log out returns to the sign-in page, and an expired or wrong token returns to the sign-in page (the event `kanou:unauthorized`).
 

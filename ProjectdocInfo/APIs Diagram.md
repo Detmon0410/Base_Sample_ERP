@@ -1,6 +1,6 @@
 # APIs Diagram
 
-Summary of the backend API built in `backend/` (Node.js, Express, Prisma, MySQL). Contract: [docs/api](../docs/api/README.md). Base URL `http://localhost:3000/api`. Every route except `/health` and `POST /auth/login` needs `Authorization: Bearer <token>`.
+Summary of the backend API built in `backend/` (Node.js, Express, Prisma, MySQL). Contract: [docs/api](../docs/api/README.md). Base URL `http://localhost:3001/api`. Every route except `/health` and `POST /auth/login` needs `Authorization: Bearer <token>`.
 
 Envelope: success `{ success: true, data, meta? }`, error `{ success: false, message, error: "CODE", errors? }`.
 

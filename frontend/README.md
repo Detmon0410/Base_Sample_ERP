@@ -16,7 +16,7 @@ pnpm run e2e      # Playwright
 
 | Variable | Meaning |
 |---|---|
-| `VITE_API_URL` | base URL of the real API (default `http://localhost:3000/api`) |
+| `VITE_API_URL` | base URL of the real API (default `http://localhost:3001/api`) |
 | `VITE_USE_MOCK` | `true` answers every call from `src/services/mock/`; `false` calls the real API |
 
 ## Structure

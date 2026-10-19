@@ -1,20 +1,22 @@
 import { describe, expect, it } from "vitest";
 
-import { PARTS } from "@/pages/dbRelations/dbRelations";
+import { CURRENT } from "@/pages/dbRelations/current";
 import { ENTITIES, NOTES, RELATIONSHIPS } from "@/pages/erDiagram/erModel";
+import { SECTIONS } from "@/pages/flowChart/flowChart";
+import { labelsOf } from "@/pages/flowChart/flowLabels";
 
 import { inLanguage, JA } from "./mdJa";
 
-// The ER diagram and DB relations pages in Japanese: every word of the .md files they show has its Japanese, and the names, values,
+// The ER diagram, DB relations and flow chart pages in Japanese: every word of the .md files they show has its Japanese, and the names, values,
 // codes and paths are kept.
 
 const LEGEND = ["Notation (crow's foot)", "exactly one", "zero or one", "one or many", "zero or many", "no database key", "primary key", "foreign key", "unique", "note", "note of the column"];
 /** The values of a column ("Admin | Worker") are values of the database: they stay as they are. */
 const isValues = (note) => note.includes(" | ");
 /** The columns of DB Relations.md whose cells are words; the other columns hold names (Table, Column, ...). */
-const WORD_COLUMNS = ["Cardinality", "Delete rule", "Change", "Event", "Rule"];
+const WORD_COLUMNS = ["Cardinality", "Delete rule", "Change", "Event", "Rule", "Group", "Main relations"];
 /** The cells of the name columns that also have words. */
-const WORDS_AMONG_NAMES = ["PurchaseOrder, QtReference or ProductionOrder", "email (lower-cased)", "order_number (`ORD-yyyy-0001`, given by the server)", "as before"];
+const WORDS_AMONG_NAMES = ["PurchaseOrder, QtReference or ProductionOrder", "email (lower-cased)", "order_number (`ORD-yyyy-0001`, given by the server)"];
 
 const er = [
   ...RELATIONSHIPS.map((relationship) => relationship.label),
@@ -22,21 +24,24 @@ const er = [
   ...NOTES,
   ...LEGEND,
 ];
-const db = PARTS.flatMap((part) => [
+const db = CURRENT.flatMap((part) => [
   part.title,
   ...part.intro,
   ...part.sections.flatMap((section) => [
-    section.title,
+    ...(section.title ? [section.title] : []),
+    ...(section.items ?? []),
     ...(section.head ?? []),
     ...(section.rows ?? []).flatMap((row) => row.filter((cell, index) => WORD_COLUMNS.includes(section.head[index]) || WORDS_AMONG_NAMES.includes(cell))),
   ]),
 ]);
 /** The codes of a text, in any order (Japanese puts the words in another order). */
+/** The flow charts: titles, notes and the words of the charts (MaterialLot is a table). */
+const flow = SECTIONS.flatMap((section) => [section.title, ...section.notes, ...labelsOf(section.code)]).filter((word) => word !== "MaterialLot");
 const codes = (text) => [...text.matchAll(/`([^`]*)`/g)].map((match) => match[1]).sort();
 
 describe("the Japanese of the .md texts", () => {
-  it("has a Japanese text for every text of the .md files the two pages show, and no other", () => {
-    expect(Object.keys(JA).sort()).toEqual([...new Set([...er, ...db])].sort());
+  it("has a Japanese text for every text of the .md files the three pages show, and no other", () => {
+    expect(Object.keys(JA).sort()).toEqual([...new Set([...er, ...db, ...flow])].sort());
     for (const [english, japanese] of Object.entries(JA)) expect(japanese.trim(), english).not.toBe("");
   });
 

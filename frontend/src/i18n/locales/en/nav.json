@@ -28,5 +28,6 @@
   "department": "Department",
   "purchase": "Purchase",
   "suppliers": "Suppliers",
-  "dbRelations": "DB relations"
+  "dbRelations": "DB relations",
+  "flowChart": "Flow chart"
 }

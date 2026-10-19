@@ -42,6 +42,7 @@ export const NAV = [
       { key: "users", to: "/master/users", labelKey: "users", icon: "users", action: "users.use" },
       { key: "erDiagram", to: "/master/er-diagram", labelKey: "erDiagram", icon: "erDiagram", action: "erDiagram.view" },
       { key: "dbRelations", to: "/master/db-relations", labelKey: "dbRelations", icon: "dbRelations", action: "dbRelations.view" },
+      { key: "flowChart", to: "/master/flow-chart", labelKey: "flowChart", icon: "flowChart", action: "flowChart.view" },
     ],
   },
 ];

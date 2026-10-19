@@ -1,5 +1,6 @@
 /**
- * The PDF documents of the ER diagram and of the DB relations, landscape A4 or A3, in the language of the page. Every page has a
+ * The PDF documents of the ER diagram, the DB relations and the flow chart, A4 or A3 (landscape, or portrait for the flow chart), in
+ * the language of the page. Every page has a
  * running header (the system on the left, the document on the right) and a footer (the date on the left, "page / pages" on the
  * right); the first page has the title block. The body is made of numbered sections, headings, paragraphs, bullet lists, tables
  * (tinted header, striped rows; a long table goes on over the next page with its header again), boxed sketches and the framed
@@ -29,18 +30,18 @@ export const plain = (text) => String(text).replace(/\*\*/g, "").replace(/`/g, "
 const fontStyle = (shape) => (shape.bold && shape.italic ? "bolditalic" : shape.bold ? "bold" : shape.italic ? "italic" : "normal");
 
 /**
- * `paper` is "a4" or "a3". `frame` is { system, document, footer }: the running header and the footer of every page, in the
- * language of the page.
+ * `paper` is "a4" or "a3", `orientation` "landscape" or "portrait". `frame` is { system, document, footer }: the running header and
+ * the footer of every page, in the language of the page.
  */
-export async function createTextPdf(language, { paper = "a4", frame }) {
+export async function createTextPdf(language, { paper = "a4", orientation = "landscape", frame }) {
   const { jsPDF } = await import("jspdf");
   const japanese = String(language).startsWith("ja");
   let pdf;
   if (japanese) {
     const { createCanvasPdf } = await import("./canvasPdf");
-    pdf = createCanvasPdf(jsPDF, { format: paper, orientation: "landscape", pxPerMm: paper === "a4" ? 16 : 12 });
+    pdf = createCanvasPdf(jsPDF, { format: paper, orientation, pxPerMm: paper === "a4" ? 16 : 12 });
   } else {
-    pdf = new jsPDF({ unit: "mm", format: paper, orientation: "landscape" });
+    pdf = new jsPDF({ unit: "mm", format: paper, orientation });
   }
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
@@ -92,7 +93,7 @@ export async function createTextPdf(language, { paper = "a4", frame }) {
     },
     setProperties: (properties) => pdf.setProperties(properties),
     newPage() {
-      pdf.addPage(paper, "landscape");
+      pdf.addPage(paper, orientation);
       pages += 1;
       y = top;
       decorate();
@@ -103,6 +104,10 @@ export async function createTextPdf(language, { paper = "a4", frame }) {
     },
     space(height) {
       y += height;
+    },
+    /** The room (mm) left on this page. */
+    get rest() {
+      return bottom - y;
     },
     /** The title block of the first page: a purple mark, the title and the line under it. */
     titleBlock(title, subtitle) {
@@ -129,11 +134,14 @@ export async function createTextPdf(language, { paper = "a4", frame }) {
       pdf.line(margin, y + 3.6, margin + roomWidth, y + 3.6);
       y += 10;
     },
-    /** A heading: numbered under its section (1.1, 1.2, ...) when there is one. Kept on the page with the start of what follows. */
-    heading(text) {
+    /**
+     * A heading: numbered under its section (1.1, 1.2, ...) when there is one, unless `numbered: false`. Kept on the page with the
+     * start of what follows.
+     */
+    heading(text, { numbered = true } = {}) {
       doc.room(26);
       headingNumber += 1;
-      const number = sectionNumber ? `${sectionNumber}.${headingNumber} ` : "";
+      const number = numbered && sectionNumber ? `${sectionNumber}.${headingNumber} ` : "";
       font(11, "bold");
       pdf.text(`${number}${plain(text)}`, margin, y, { baseline: "middle" });
       y += 6.5;
@@ -220,6 +228,33 @@ export async function createTextPdf(language, { paper = "a4", frame }) {
       font(size, "normal", TEXT, "courier");
       pdf.text(lines, margin + 4, y + 3 + lineHeight(size) / 2, { baseline: "middle", lineHeightFactor: LINE_FACTOR });
       y += height + 6;
+    },
+    /**
+     * A picture (a canvas `scale` times the size of the drawing in CSS px, 96 per inch), centred, never larger than drawn and never
+     * wider than the page. It goes on a new page when it does not fit the rest of this one; a picture taller than a whole page is
+     * made smaller to fit one.
+     */
+    image(picture, scale, maxHeight = Infinity) {
+      let { width, height } = doc.imageSize(picture, scale);
+      if (height > maxHeight) {
+        width = (width * maxHeight) / height;
+        height = maxHeight;
+      }
+      if (y + height > bottom) doc.newPage();
+      const x = margin + (roomWidth - width) / 2;
+      if (pdf.addCanvas) pdf.addCanvas(picture, x, y, width, height);
+      else pdf.addImage(picture.toDataURL("image/jpeg", 0.95), "JPEG", x, y, width, height);
+      y += height + 4;
+    },
+    /** The size (mm) `image` gives a picture: as drawn, at most the width of the page and the height of a whole page. */
+    imageSize(picture, scale) {
+      let width = Math.min((picture.width / scale) * (25.4 / 96), roomWidth);
+      let height = (width * picture.height) / picture.width;
+      if (height > bottom - top) {
+        height = bottom - top;
+        width = (height * picture.width) / picture.height;
+      }
+      return { width, height };
     },
     /** The shapes of erLayout.js in a thin frame, as large as the rest of the page allows. */
     drawing(diagram) {

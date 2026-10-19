@@ -28,5 +28,6 @@
   "department": "部署",
   "purchase": "発注",
   "suppliers": "仕入先",
-  "dbRelations": "DBリレーション"
+  "dbRelations": "DBリレーション",
+  "flowChart": "フローチャート"
 }

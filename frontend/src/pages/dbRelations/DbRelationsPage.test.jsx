@@ -6,28 +6,34 @@ vi.mock("./dbRelationsPdf", () => ({ downloadDbRelationsPdf: vi.fn(async () => {
 
 import i18n from "@/i18n";
 
-import { PARTS } from "./dbRelations";
+import { CURRENT } from "./current";
 import { downloadDbRelationsPdf } from "./dbRelationsPdf";
 import { DbRelationsPage } from "./DbRelationsPage";
 
-// The DB relations page: both parts with all their tables and chains, in the language of the page, and "Download PDF" sends the same
-// parts. The page and the PDF never name the documents they come from.
+// The DB relations page: the database as it is now (the summary, then all the keys and rules in one list), in the language of
+// the page, and "Download PDF" sends the same. The page and the PDF never name the documents they come from, nor their parts.
 
-const DOCS = /\.md\b|ProjectdocInfo|docs\//i;
-const TABLES = PARTS.flatMap((part) => part.sections.filter((section) => section.rows));
+const DOCS = /\.md\b|ProjectdocInfo|docs\/|\bPart [12]\b/i;
+const TABLES = CURRENT.flatMap((part) => part.sections.filter((section) => section.rows));
+const [SUMMARY, FK, UNIQUE, COLUMN_RULES, RULES] = [0, 1, 2, 3, 4]; // the tables of the page, in order
 
 describe("the DB relations page", () => {
-  it("shows both parts, every table with its rows and both chains", () => {
+  it("shows the summary, then every key and rule of the current database", () => {
     render(<DbRelationsPage />);
     expect(screen.getByRole("heading", { level: 1, name: "DB relations" })).toBeInTheDocument();
-    expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(PARTS.map((part) => part.title));
+    expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(["Current version summary (as built)", "All keys and rules (as built)"]);
     const tables = screen.getAllByRole("table");
     expect(tables).toHaveLength(TABLES.length);
     tables.forEach((table, index) => expect(within(table).getAllByRole("row")).toHaveLength(1 + TABLES[index].rows.length));
-    // the delete rule of a foreign key, its code shown as code; the bold of the .md shown bold
-    expect(within(tables[0]).getAllByRole("row")[1]).toHaveTextContent("QtReferencecustomer_idCustomer.idmany to onecustomer in use -> 409 IN_USE");
-    expect(within(tables[0]).getAllByText("409 IN_USE")[0].tagName).toBe("CODE");
-    expect(within(tables[3]).getByText("no database key").tagName).toBe("STRONG");
+    expect(within(tables[SUMMARY]).getAllByRole("row")[1]).toHaveTextContent(/^Users and filesUser, Attachment/);
+    expect(screen.getByRole("heading", { level: 3, name: "Rules to remember" }).nextElementSibling.querySelectorAll("li")).toHaveLength(5);
+    // the foreign keys of the base and of Version 2.0 in one list, by table
+    expect(within(tables[FK]).getAllByRole("row")[1]).toHaveTextContent("Attachmentuploaded_byUser.idmany to onenever deleted");
+    expect(within(tables[FK]).getAllByText("409 IN_USE")[0].tagName).toBe("CODE");
+    expect(within(tables[FK]).getByText("no database key").tagName).toBe("STRONG");
+    expect(within(tables[UNIQUE]).getByText("qt_number, production_order_id")).toBeInTheDocument();
+    expect(within(tables[COLUMN_RULES]).getAllByRole("row")).toHaveLength(2);
+    expect(within(tables[RULES]).getAllByRole("row")[1]).toHaveTextContent(/^Confirm QT/);
     expect(screen.getByText(/\+-> Payment -> Receipt/)).toBeInTheDocument();
     expect(screen.getByText(/Purchase: Supplier -> SupplierMaterial/)).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(DOCS);
@@ -38,11 +44,13 @@ describe("the DB relations page", () => {
     try {
       render(<DbRelationsPage />);
       expect(screen.getByRole("heading", { level: 1, name: "DBリレーション" })).toBeInTheDocument();
-      expect(screen.getAllByRole("heading", { level: 2 })[1]).toHaveTextContent("パート2：バージョン2.0で追加・変更されたもの（実装済み）");
+      expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(["現在のバージョンの概要（実装済み）", "すべてのキーとルール（実装済み）"]);
       const tables = screen.getAllByRole("table");
-      expect(within(tables[0]).getAllByRole("columnheader").map((head) => head.textContent)).toEqual(["テーブル", "列", "参照先", "多重度", "削除ルール"]);
-      expect(within(tables[0]).getAllByRole("row")[1]).toHaveTextContent("QtReferencecustomer_idCustomer.id多対一顧客が使用中なら 409 IN_USE");
-      expect(within(tables[3]).getAllByRole("row").at(-1)).toHaveTextContent("Attachment(owner_type, owner_id)PurchaseOrder・QtReference・ProductionOrder のいずれか多対一（データベースのキーなし）");
+      expect(within(tables[SUMMARY]).getAllByRole("columnheader").map((head) => head.textContent)).toEqual(["グループ", "テーブル", "主なリレーション"]);
+      expect(within(tables[FK]).getAllByRole("columnheader").map((head) => head.textContent)).toEqual(["テーブル", "列", "参照先", "多重度", "削除ルール"]);
+      expect(within(tables[FK]).getAllByRole("row")[2]).toHaveTextContent("Attachment(owner_type, owner_id)PurchaseOrder・QtReference・ProductionOrder のいずれか多対一（データベースのキーなし）");
+      expect(screen.getByRole("heading", { level: 3, name: "列のルール" })).toBeInTheDocument();
+      expect(within(tables[RULES]).getAllByRole("row")[1]).toHaveTextContent(/^QTの確定/);
       expect(screen.getByText(/\+-> Payment -> Receipt/)).toBeInTheDocument();
       expect(document.body.textContent).not.toMatch(DOCS);
     } finally {
@@ -50,7 +58,7 @@ describe("the DB relations page", () => {
     }
   });
 
-  it("downloads the PDF in the language of the page, with the parts of the page", async () => {
+  it("downloads the PDF in the language of the page, with what the page shows", async () => {
     const user = userEvent.setup();
     downloadDbRelationsPdf.mockClear();
     const { unmount } = render(<DbRelationsPage />);
@@ -58,13 +66,13 @@ describe("the DB relations page", () => {
     await waitFor(() => expect(downloadDbRelationsPdf).toHaveBeenCalledTimes(1));
     const english = downloadDbRelationsPdf.mock.calls[0][0];
     expect(english.language).toBe("en");
-    expect(english.fileName).toMatch(/^db-relations-\d{4}-\d{2}-\d{2}\.pdf$/);
     expect(english.paper).toBe("a4");
+    expect(english.fileName).toMatch(/^db-relations-\d{4}-\d{2}-\d{2}\.pdf$/);
     expect(english.texts).toEqual({ system: "Refrigerator Factory Mini ERP", title: "DB relations", subtitle: "Keys, relations and delete rules, and the rules that touch several tables", footer: expect.stringMatching(/^Made on \d{4}-\d{2}-\d{2}$/) });
-    expect(english.parts[0].sections[0].mono).toEqual([0, 1]); // Table and Column hold names
-    expect(english.parts.map((part) => part.title)).toEqual(PARTS.map((part) => part.title));
-    expect(english.parts[0].sections[0].rows[0]).toEqual(PARTS[0].sections[0].rows[0]);
-    expect(english.parts[0].sections[3].chain).toBe(PARTS[0].sections[3].chain);
+    expect(english.parts.map((part) => part.title)).toEqual(CURRENT.map((part) => part.title));
+    expect(english.parts[1].sections[0].rows).toEqual(CURRENT[1].sections[0].rows);
+    expect(english.parts[1].sections[0].mono).toEqual([0, 1]); // Table and Column hold names
+    expect(english.parts[0].sections[1]).toEqual({ title: "Rules to remember", items: CURRENT[0].sections[1].items });
     unmount();
 
     await i18n.changeLanguage("ja");
@@ -75,11 +83,9 @@ describe("the DB relations page", () => {
       await waitFor(() => expect(downloadDbRelationsPdf).toHaveBeenCalledTimes(1));
       const japanese = downloadDbRelationsPdf.mock.calls[0][0];
       expect(japanese.language).toBe("ja");
-      expect(japanese.texts.system).toBe("冷蔵庫工場 Mini ERP");
       expect(japanese.texts.title).toBe("DBリレーション");
-      expect(japanese.parts[0].title).toBe("パート1：基本のテーブル（バージョン2.0より前の Mini ERP）");
-      expect(japanese.parts[0].sections[0].rows[0]).toEqual(["QtReference", "customer_id", "Customer.id", "多対一", "顧客が使用中なら `409 IN_USE`"]);
-      const words = japanese.parts.flatMap((part) => [part.title, part.intro, ...part.sections.flatMap((section) => [section.title, ...(section.rows ?? []).flat()])]);
+      expect(japanese.parts[1].title).toBe("すべてのキーとルール（実装済み）");
+      const words = japanese.parts.flatMap((part) => [part.title, part.intro, ...part.sections.flatMap((section) => [section.title, ...(section.items ?? []), ...(section.rows ?? []).flat()])]);
       for (const text of [...Object.values(japanese.texts), ...words]) expect(text).not.toMatch(DOCS);
     } finally {
       await i18n.changeLanguage("en");

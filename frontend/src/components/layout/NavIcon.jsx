@@ -18,6 +18,7 @@ import {
   UserCog,
   Users,
   Warehouse,
+  Workflow,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ const ICONS = {
   suppliers: Truck,
   erDiagram: Network,
   dbRelations: KeyRound,
+  flowChart: Workflow,
   down: ChevronDown,
 };
 

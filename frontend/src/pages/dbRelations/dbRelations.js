@@ -1,10 +1,39 @@
 /**
- * ProjectdocInfo/DB Relations.md as data, word for word: its two parts, the intro of each part (without the sentences that only point
- * to a document), and every table and chain of a part. The page /master/db-relations and its PDF show it. The cells keep the
- * `code` and **bold** marks of the .md; the page shows them, the PDF leaves the marks out. dbRelations.test.js reads the .md and
- * fails when the two differ, so a change starts in the .md.
+ * ProjectdocInfo/DB Relations.md as data, word for word: its parts (the summary of the current version, then Part 1 and Part 2), the
+ * intro of each part (without the sentences that only point to a document), and every table, list and chain of a part, in order.
+ * A section is { title, head, rows } (a table), { title, items } (a list) or { title, chain } (a sketch); a table of the summary
+ * has no title. The page /master/db-relations and its PDF show it. The cells keep the `code` and **bold** marks of the .md; the page
+ * shows them, the PDF leaves the marks out. dbRelations.test.js reads the .md and fails when the two differ, so a change starts in
+ * the .md.
  */
 export const PARTS = [
+  {
+    title: "Current version summary (as built)",
+    intro: ["23 tables in 5 groups.", "Parts 1 and 2 below give every key and rule; this is the short form."],
+    sections: [
+      {
+        title: "",
+        head: ["Group", "Tables", "Main relations"],
+        rows: [
+          ["Users and files", "User, Attachment", "Attachment.uploaded_by -> User. Attachment points to its owner (PurchaseOrder, QtReference or ProductionOrder) by `owner_type` + `owner_id`, with no database key"],
+          ["Master data", "Customer, Product, Material, MaterialLot, ProductBom, Supplier, SupplierMaterial", "Product -> ProductBom -> Material (a BOM line). Material -> MaterialLot (stock by lot). Supplier -> SupplierMaterial -> Material (what a supplier sells, with its price)"],
+          ["Sale", "QtReference, QtLine, ProductionOrder, OrderLine, OrderProcess, ProgressEntry", "Customer -> QtReference -> QtLine -> Product. Confirm QT makes one ProductionOrder (QtReference.production_order_id, one to one). Order -> OrderLine -> OrderProcess -> ProgressEntry (by User)"],
+          ["Accounting", "Invoice, InvoiceLine, Payment, Receipt", "One Invoice per ProductionOrder; one Payment and one Receipt per Invoice"],
+          ["Purchase and stock", "PurchaseOrder, PurchaseOrderLine, PurchasePayment, StockChange", "Supplier -> PurchaseOrder -> PurchaseOrderLine -> Material. One PurchasePayment per PO. StockChange (material, user, and optionally the order or the PO) is the history of every lot change"],
+        ],
+      },
+      {
+        title: "Rules to remember",
+        items: [
+          "**Delete:** children go with their parent (lines, processes, BOM, lots, supplier items, attachments). Anything else that is referenced answers `409 IN_USE`. Only a `Draft` QT or `Draft` PO can be deleted. Invoices, receipts and stock history are never deleted.",
+          "**One to one:** Invoice per order, Payment and Receipt per invoice, PurchasePayment per PO, ProductionOrder per confirmed QT.",
+          "**Unique:** User.email, and the codes and numbers of Product, Material, Supplier, QT, order, invoice, receipt and PO; (material, lot number); (supplier, material); (QT, product).",
+          "**Status:** QT `Draft` -> `Confirmed`. Order `Draft` -> `In Progress` -> `Completed` (computed). Invoice `Unpaid` -> `Paid`. PO `Draft` -> `Sent` -> `Received`.",
+          "**Stock moves** only in StockChange + MaterialLot: Start production deducts the BOM (oldest lot first), Receive PO adds once, and a person can Add, Deduct or Adjust a lot by hand.",
+        ],
+      },
+    ],
+  },
   {
     title: "Part 1: The base tables (the Mini ERP before Version 2.0)",
     intro: ["Table-by-table list of keys, relations and delete rules.", "The rows of QtReference, Material and User are changed by Part 2 below."],
@@ -59,7 +88,10 @@ export const PARTS = [
           ["Manual stock change", "MaterialLot, StockChange", "`Add`, `Deduct` or `Adjust` a lot at any time. The history is never changed or deleted"],
         ],
       },
-      { title: "Chain of one sale", chain: "Customer -> QtReference -> ProductionOrder -> OrderLine -> OrderProcess -> ProgressEntry\n                                  |                |\n                                  |                +-> Product -> ProductBom -> Material -> MaterialLot / StockChange\n                                  v\n                               Invoice -> InvoiceLine\n                                  |\n                                  +-> Payment -> Receipt" },
+      {
+        title: "Chain of one sale",
+        chain: "Customer -> QtReference -> ProductionOrder -> OrderLine -> OrderProcess -> ProgressEntry\n                                  |                |\n                                  |                +-> Product -> ProductBom -> Material -> MaterialLot / StockChange\n                                  v\n                               Invoice -> InvoiceLine\n                                  |\n                                  +-> Payment -> Receipt",
+      },
     ],
   },
   {
@@ -67,9 +99,10 @@ export const PARTS = [
     intro: ["Keys, relations and rules after the Purchase, QT 2.0 and User 2.0 changes.", "Only the **new or changed** rows are listed; everything else stays as in Part 1.", "The order status is `Draft`, `In Progress`, `Completed` (computed; `Draft` replaces `New`).", "An order is made only by Confirm QT."],
     sections: [
       {
-        title: "New foreign keys",
+        title: "New or changed foreign keys",
         head: ["Table", "Column", "References", "Cardinality", "Delete rule"],
         rows: [
+          ["ProductionOrder", "qt_id", "QtReference.id", "one to one", "QT used by an order -> `409 IN_USE`"],
           ["SupplierMaterial", "supplier_id", "Supplier.id", "many to one", "goes with the supplier"],
           ["SupplierMaterial", "material_id", "Material.id", "many to one", "material sold by a supplier -> `409 IN_USE`"],
           ["PurchaseOrder", "supplier_id", "Supplier.id", "many to one", "supplier with a PO -> `409 IN_USE`"],
@@ -103,6 +136,7 @@ export const PARTS = [
           ["PurchaseOrder", "po_number"],
           ["PurchasePayment", "po_id"],
           ["QtReference", "qt_number, production_order_id"],
+          ["QtLine", "(qt_id, product_id)"],
         ],
       },
       {
@@ -119,7 +153,10 @@ export const PARTS = [
           ["Start production", "as before", "Unchanged"],
         ],
       },
-      { title: "Chain of the new flows", chain: "Purchase: Supplier -> SupplierMaterial -> PurchaseOrder -> PurchaseOrderLine\n                                              |-> PurchasePayment\n                                              |-> Attachment\n                                              '-> StockChange -> MaterialLot   (on Received)\n\nSale:     Customer -> QtReference -> QtLine -> (Confirm) -> ProductionOrder -> OrderLine -> ...\n                          '-> Attachment (QT form, customer PO)" },
+      {
+        title: "Chain of the new flows",
+        chain: "Purchase: Supplier -> SupplierMaterial -> PurchaseOrder -> PurchaseOrderLine\n                                              |-> PurchasePayment\n                                              |-> Attachment\n                                              '-> StockChange -> MaterialLot   (on Received)\n\nSale:     Customer -> QtReference -> QtLine -> (Confirm) -> ProductionOrder -> OrderLine -> ...\n                          '-> Attachment (QT form, customer PO)",
+      },
     ],
   },
 ];

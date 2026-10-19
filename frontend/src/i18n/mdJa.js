@@ -1,6 +1,6 @@
 /**
- * The Japanese of the words of ProjectdocInfo/ER Diagram.md and ProjectdocInfo/DB Relations.md, for the ER diagram and the DB
- * relations pages in Japanese: English text of the .md -> Japanese. The names of the tables and columns, the values of a column
+ * The Japanese of the words of ProjectdocInfo/ER Diagram.md, DB Relations.md and Flow Chart.md, for the ER diagram, DB relations
+ * and flow chart pages in Japanese: English text of the .md -> Japanese. The names of the tables and columns, the values of a column
  * ("Admin | Worker"), the error codes, the paths and the chain sketches stay as they are (they are the names of the database and of
  * the API), so they are not here. mdJa.test.js fails when a text the pages show has no Japanese here, when a Japanese text is left
  * over, or when a Japanese text changes a `code`.
@@ -64,21 +64,49 @@ export const JA = {
   note: "注記",
   "note of the column": "列の注記",
 
+  // DB Relations.md: the summary of the current version
+  "Current version summary (as built)": "現在のバージョンの概要（実装済み）",
+  "23 tables in 5 groups.": "5つのグループに23個のテーブル。",
+  Group: "グループ",
+  Tables: "テーブル",
+  "Main relations": "主なリレーション",
+  "Users and files": "ユーザーとファイル",
+  "Master data": "マスターデータ",
+  Sale: "販売",
+  Accounting: "経理",
+  "Purchase and stock": "購買と在庫",
+  "Attachment.uploaded_by -> User. Attachment points to its owner (PurchaseOrder, QtReference or ProductionOrder) by `owner_type` + `owner_id`, with no database key":
+    "Attachment.uploaded_by -> User。Attachment は `owner_type` + `owner_id` で持ち主（PurchaseOrder・QtReference・ProductionOrder）を指し、データベースのキーはありません",
+  "Product -> ProductBom -> Material (a BOM line). Material -> MaterialLot (stock by lot). Supplier -> SupplierMaterial -> Material (what a supplier sells, with its price)":
+    "Product -> ProductBom -> Material（部品表の行）。Material -> MaterialLot（ロットごとの在庫）。Supplier -> SupplierMaterial -> Material（仕入先が販売するものと単価）",
+  "Customer -> QtReference -> QtLine -> Product. Confirm QT makes one ProductionOrder (QtReference.production_order_id, one to one). Order -> OrderLine -> OrderProcess -> ProgressEntry (by User)":
+    "Customer -> QtReference -> QtLine -> Product。QTの確定で ProductionOrder を1件作成（QtReference.production_order_id、一対一）。Order -> OrderLine -> OrderProcess -> ProgressEntry（User が入力）",
+  "One Invoice per ProductionOrder; one Payment and one Receipt per Invoice": "ProductionOrder 1件に Invoice 1件。Invoice 1件に Payment と Receipt が1件ずつ",
+  "Supplier -> PurchaseOrder -> PurchaseOrderLine -> Material. One PurchasePayment per PO. StockChange (material, user, and optionally the order or the PO) is the history of every lot change":
+    "Supplier -> PurchaseOrder -> PurchaseOrderLine -> Material。PO 1件に PurchasePayment 1件。StockChange（材料、ユーザー、任意で指示書またはPO）はロットのすべての変動の履歴",
+  "Rules to remember": "覚えておくルール",
+  // the page joins the parts of DB Relations.md into one list: its title, and the title of the rules on columns
+  "All keys and rules (as built)": "すべてのキーとルール（実装済み）",
+  "Rules on columns": "列のルール",
+  "**Delete:** children go with their parent (lines, processes, BOM, lots, supplier items, attachments). Anything else that is referenced answers `409 IN_USE`. Only a `Draft` QT or `Draft` PO can be deleted. Invoices, receipts and stock history are never deleted.":
+    "**削除：**子は親と一緒に削除されます（明細、工程、部品表、ロット、仕入先の品目、添付）。それ以外で参照されているものは `409 IN_USE` を返します。削除できるのは `Draft` のQTと `Draft` のPOだけです。請求書、領収書、在庫の履歴は削除されません。",
+  "**One to one:** Invoice per order, Payment and Receipt per invoice, PurchasePayment per PO, ProductionOrder per confirmed QT.":
+    "**一対一：**指示書ごとの Invoice、請求書ごとの Payment と Receipt、POごとの PurchasePayment、確定したQTごとの ProductionOrder。",
+  "**Unique:** User.email, and the codes and numbers of Product, Material, Supplier, QT, order, invoice, receipt and PO; (material, lot number); (supplier, material); (QT, product).":
+    "**一意：**User.email、Product・Material・Supplier・QT・指示書・請求書・領収書・POのコードと番号、（材料、ロット番号）、（仕入先、材料）、（QT、製品）。",
+  "**Status:** QT `Draft` -> `Confirmed`. Order `Draft` -> `In Progress` -> `Completed` (computed). Invoice `Unpaid` -> `Paid`. PO `Draft` -> `Sent` -> `Received`.":
+    "**ステータス：**QT `Draft` -> `Confirmed`。指示書 `Draft` -> `In Progress` -> `Completed`（計算値）。請求書 `Unpaid` -> `Paid`。PO `Draft` -> `Sent` -> `Received`。",
+  "**Stock moves** only in StockChange + MaterialLot: Start production deducts the BOM (oldest lot first), Receive PO adds once, and a person can Add, Deduct or Adjust a lot by hand.":
+    "**在庫が動く**のは StockChange と MaterialLot だけです：製造開始で部品表の分を古いロットから引き落とし、POの入荷で1回だけ追加し、人が手でロットを Add・Deduct・Adjust できます。",
+
   // DB Relations.md: the parts, their intros and the titles of their sections
-  "Part 1: The base tables (the Mini ERP before Version 2.0)": "パート1：基本のテーブル（バージョン2.0より前の Mini ERP）",
-  "Part 2: Added or changed in Version 2.0 (as built)": "パート2：バージョン2.0で追加・変更されたもの（実装済み）",
   "Table-by-table list of keys, relations and delete rules.": "テーブルごとのキー・リレーション・削除ルールの一覧です。",
-  "The rows of QtReference, Material and User are changed by Part 2 below.": "QtReference、Material、User の行は下のパート2で変更されます。",
-  "Keys, relations and rules after the Purchase, QT 2.0 and User 2.0 changes.": "購買・QT 2.0・User 2.0 の変更後のキー・リレーション・ルールです。",
-  "Only the **new or changed** rows are listed; everything else stays as in Part 1.": "**新規または変更**の行だけを載せています。それ以外はパート1のとおりです。",
   "The order status is `Draft`, `In Progress`, `Completed` (computed; `Draft` replaces `New`).": "指示書のステータスは `Draft`・`In Progress`・`Completed` です（計算値。`Draft` が `New` に代わります）。",
   "An order is made only by Confirm QT.": "指示書は QT の確定でのみ作られます。",
   "Foreign keys": "外部キー",
   "Unique keys": "一意キー",
   "Lifecycle rules that touch several tables": "複数のテーブルにまたがるライフサイクルのルール",
   "Chain of one sale": "1件の販売の流れ",
-  "New foreign keys": "新しい外部キー",
-  "Changed columns": "変更された列",
   "Chain of the new flows": "新しい流れ",
 
   // DB Relations.md: the headers of the tables
@@ -133,12 +161,8 @@ export const JA = {
   "PurchaseOrder, QtReference or ProductionOrder": "PurchaseOrder・QtReference・ProductionOrder のいずれか",
   "email (lower-cased)": "email（小文字で比較）",
   "order_number (`ORD-yyyy-0001`, given by the server)": "order_number（`ORD-yyyy-0001`、サーバーが採番）",
-  "as before": "従来どおり",
 
   // DB Relations.md: the changed columns
-  "adds `status` (`Draft`, `Confirmed`), `customer_po_number`, `customer_po_date`, `production_order_id`; drops `file_name`, `file_type`, `file_path` (moved to Attachment)":
-    "`status`（`Draft`・`Confirmed`）、`customer_po_number`、`customer_po_date`、`production_order_id` を追加。`file_name`、`file_type`、`file_path` を削除（Attachment へ移動）",
-  "adds `unit`": "`unit` を追加",
   "rule: `role = Worker` needs `department` in (`Sales`, `Factory`)": "ルール：`role = Worker` は `department` が（`Sales`・`Factory`）のいずれか",
 
   // DB Relations.md: the events and the rules that touch several tables
@@ -154,7 +178,6 @@ export const JA = {
   "Pay PO": "POの支払い",
   "Upload file": "ファイルのアップロード",
   "Confirm QT": "QTの確定",
-  "Start production": "製造開始",
   "Deducts the BOM of every line, oldest lot first. `409 STOCK_SHORT` if a material is short. Locks products and processes":
     "全明細の部品表の分を古いロットから引き落とす。材料が足りなければ `409 STOCK_SHORT`。製品と工程を固定する",
   "Updates the status and completed quantity of the process. An order is Completed when all processes are": "工程のステータスと完了数を更新する。全工程が完了すると指示書は完了",
@@ -172,7 +195,73 @@ export const JA = {
     "種類は `PO_FILE`・`QUOTATION`・`EVIDENCE`・`OTHER`。PDF・PNG・JPG、10 MBまで。新しい `PO_FILE` は古いものと置き換わる",
   "Needs a customer and at least one line. Creates one Draft Factory Order from the QT lines. Once only. The customer PO file is attached to the order. Locks the QT lines":
     "顧客と1行以上の明細が必要。QTの明細から Draft の製造指示書を1件作る。1回だけ。顧客のPOファイルを指示書に添付する。QTの明細を固定する",
-  Unchanged: "変更なし",
+  // Flow Chart.md: the titles of the sections and the notes under the charts
+  "Main flow": "メインフロー",
+  "Purchase flow": "購買フロー",
+  "PO status": "POのステータス",
+  "QT status": "QTのステータス",
+  "Order status": "指示書のステータス",
+  "Process status": "工程のステータス",
+  "Invoice status": "請求書のステータス",
+  "Stock changes": "在庫の変動",
+  "Confirm QT: checks": "QTの確定：チェック",
+  "Lines can be edited only in `Draft`. A `Draft` PO can be deleted.": "明細を編集できるのは `Draft` のときだけです。`Draft` のPOは削除できます。",
+  'The status of an order is computed from its processes, not set by hand. `Draft` also covers an order that was started but has no progress yet (the page says "Production started").':
+    "指示書のステータスは工程から計算され、手で設定しません。`Draft` には、開始したがまだ進捗のない指示書も含まれます（画面には「生産を開始済み」と表示されます）。",
+  // Flow Chart.md: the words inside the charts (in a box no ASCII brackets: mermaid reads them as code)
+  Start: "開始",
+  "Admin: master data<br/>customers, products + BOM,<br/>materials, suppliers + their items, users": "管理者：マスターデータ<br/>顧客、製品と部品表、<br/>材料、仕入先とその品目、ユーザー",
+  "Sale: create QT with lines<br/>status Draft": "営業：明細付きのQTを作成<br/>ステータス Draft",
+  "Print QT form as PDF<br/>send to customer": "QT帳票をPDFで印刷<br/>顧客へ送付",
+  "Upload the customer PO<br/>PO No., date, file": "顧客のPOをアップロード<br/>PO番号、日付、ファイル",
+  "System creates a Draft Factory Order<br/>from the QT lines": "システムがQTの明細から<br/>Draft の製造指示書を作成",
+  "Enough stock<br/>for the BOM?": "部品表の分の<br/>在庫は足りる？",
+  No: "いいえ",
+  Yes: "はい",
+  "Purchase flow below": "下の購買フローへ",
+  "Factory: start production<br/>BOM deducted, oldest lot first": "工場：製造開始<br/>部品表の分を古いロットから引き落とし",
+  "Factory: record progress,<br/>upload evidence images / documents": "工場：進捗を記録、<br/>証跡の画像・書類をアップロード",
+  "All processes<br/>Completed?": "全工程が<br/>完了？",
+  "Admin: issue invoice": "管理者：請求書を発行",
+  "Admin: full payment -> Paid + receipt": "管理者：全額入金 → Paid と領収書",
+  End: "終了",
+  "Check the low stock<br/>on Today or the Purchase page": "在庫不足を<br/>今日の画面か購買ページで確認",
+  "Item low?": "在庫が少ない？",
+  "Create PO:<br/>supplier, required date, department,<br/>items of that supplier, quantity,<br/>initial price from the system": "POを作成：<br/>仕入先、必要日、部署、<br/>その仕入先の品目、数量、<br/>システムからの初期単価",
+  "Save: status Draft": "保存：ステータス Draft",
+  "Print PO as PDF<br/>name and signature spaces": "POをPDFで印刷<br/>氏名と署名の欄",
+  "User sets status Sent": "ユーザーがステータスを Sent に",
+  "User sets status Received": "ユーザーがステータスを Received に",
+  "Stock + quantities, once only": "在庫に数量を追加、1回だけ",
+  "Record payment<br/>date, amount, method, reference": "支払いを記録<br/>日付、金額、方法、参照番号",
+  "Upload PO file / quotation / other files": "POファイル・見積書・その他のファイルをアップロード",
+  saved: "保存",
+  user: "ユーザー",
+  "user, stock added once": "ユーザー、在庫を1回だけ追加",
+  "payment recorded": "支払いを記録",
+  "Confirm QT, Factory Order created once": "QTの確定、製造指示書を1回だけ作成",
+  "locked, cannot be deleted": "固定、削除できない",
+  "made by Confirm QT": "QTの確定で作成",
+  "first process started": "最初の工程を開始",
+  "every process Completed": "全工程が Completed",
+  "a process reopened (Admin, note required)": "工程を再開（管理者、メモ必須）",
+  invoiced: "請求済み",
+  "Admin only, note required": "管理者のみ、メモ必須",
+  issued: "発行",
+  "full payment, receipt issued": "全額入金、領収書を発行",
+  "Admin or Factory Worker: Add / Deduct / Adjust a lot": "管理者または工場担当者：ロットを Add・Deduct・Adjust",
+  "Start production: BOM deducted, oldest lot first": "製造開始：部品表の分を古いロットから引き落とし",
+  "PO received: Add to the lot typed for each line, once": "PO入荷：各明細に入力したロットへ Add、1回だけ",
+  "StockChange history": "StockChange の履歴",
+  "Total vs min level": "合計と最低在庫の比較",
+  "Press Confirm": "確定を押す",
+  "Customer and<br/>at least one line?": "顧客と<br/>1行以上の明細がある？",
+  "Validation error": "入力エラー",
+  "Already confirmed?": "確定済み？",
+  "Show the existing order": "既存の指示書を表示",
+  "Customer PO file?": "顧客のPOファイルがある？",
+  "Warning, user may continue": "警告、続行してもよい",
+  "Create Draft Factory Order,<br/>attach PO file, lock QT": "Draft の製造指示書を作成、<br/>POファイルを添付、QTを固定",
 };
 
 /** A text of the .md files in the language of the page: Japanese when there is one, else the text as it is. */

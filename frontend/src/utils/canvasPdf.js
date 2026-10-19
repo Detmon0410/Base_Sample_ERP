@@ -61,6 +61,10 @@ export function createCanvasPdf(JsPDF, { format = "a4", orientation = "landscape
     setDrawColor: (color) => void (state.draw = color),
     setFillColor: (color) => void (state.fill = color),
     setLineWidth: (lineWidth) => void (state.lineWidth = lineWidth),
+    /** A picture (a canvas) at x, y, w, h mm: drawn into the page itself. */
+    addCanvas(picture, x, y, w, h) {
+      context.drawImage(picture, x, y, w, h);
+    },
     /** A dashed line, as jsPDF: [dash, gap] in mm; [] is a full line. */
     setLineDashPattern: (pattern) => void (state.dash = pattern),
 

@@ -13,7 +13,7 @@ Create QT (Draft) -> Print the QT form -> Upload the customer PO -> Confirm QT -
 
 | Method | Path | Notes |
 |---|---|---|
-| `GET` | `/qt` | query `q` (QT number, notes, customer PO number, customer name), `status` (`Draft`, `Confirmed`), `page`, `pageSize`. Rows have no `lines` |
+| `GET` | `/qt` | query `q` (QT number, notes, customer PO number, customer name), `status` (`Draft`, `Confirmed`), `step` (`Draft`, `Confirmed`, `InProduction`, `Done`), `page`, `pageSize`. Rows have no `lines` |
 | `GET` | `/qt/:id` | the whole QT (below) |
 | `POST` | `/qt` | `201`, the QT. Status `Draft` |
 | `PUT` | `/qt/:id` | the QT. A confirmed QT keeps its customer and its lines (`409 QT_LOCKED`); the rest may change |
@@ -43,10 +43,11 @@ Errors: `400 VALIDATION_ERROR` with codes `REQUIRED`, `INVALID`, `INVALID_DATE`,
 
 ## The QT
 
-`{ id, qtNumber, qtDate, customerId, customerName, customerAddress, notes, customerPoNumber, customerPoDate, status, lines, total, productionOrderId, productionOrderNumber, createdAt, updatedAt }`
+`{ id, qtNumber, qtDate, customerId, customerName, customerAddress, notes, customerPoNumber, customerPoDate, status, lines, total, productionOrderId, productionOrderNumber, step, createdAt, updatedAt }`
 
 * `status`: `Draft` or `Confirmed`. Nothing else (no `Sent`, `Rejected`, `Expired`). The user moves it by hand with Confirm; there is no approval step.
 * `lines[]`: `{ productId, productCode, productName, quantity, unitPrice, amount }`; `amount` = `quantity` x `unitPrice`; `total` = the sum of the amounts (both computed by the server).
+* `step` is computed: `Draft` (not confirmed), `Confirmed` (the order has not started), `InProduction` (started, not every process completed), `Done` (every process completed). The Sales page shows it as the steps of the job.
 * `productionOrderId` and `productionOrderNumber` are `null` until the QT is confirmed, then the order made from it. One order per QT.
 * There is no `file` field any more: the files are in [files.md](files.md) (`ownerType` `QtReference`; kinds `PO_FILE`, `QUOTATION`, `OTHER`).
 * The QT form is printed by the frontend from this data (QT number, date, customer and address, the lines and the total, the notes, blank spaces for prepared by, approved by and customer). It can be printed at any status.

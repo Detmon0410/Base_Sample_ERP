@@ -1,4 +1,4 @@
-import { Download, Paperclip, Trash2, Upload } from "lucide-react";
+import { Download, FileUp, Paperclip, Trash2, Upload } from "lucide-react";
 import { useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -7,7 +7,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { NativeSelect, Section } from "@/components/common/FormFields";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Field, FieldLabel } from "@/components/ui/field";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLoad } from "@/hooks/useLoad";
 import { attachmentsApi } from "@/services/attachments.service";
@@ -58,6 +58,7 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
   const [kind, setKind] = useState(kinds[0]);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [chosenName, setChosenName] = useState(""); // the name of the file that waits to be uploaded
   const [deleting, setDeleting] = useState(null); // the file asked about
 
   const say = (code) => t(`master:errors.${code}`, { defaultValue: t("master:errors.UNKNOWN_ERROR") });
@@ -74,6 +75,7 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
       await attachmentsApi.create({ ownerType, ownerId, kind, file });
       toast.success(t("master:attachments.uploaded"));
       input.current.value = "";
+      setChosenName("");
       reload();
     } catch (failure) {
       setError(say(failure?.details?.[0]?.code ?? failure?.code));
@@ -134,11 +136,11 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
                 <TableCell data-label={t("master:attachments.at")}>{formatDateTime(row.at, i18n.language)}</TableCell>
                 <TableCell>
                   <span className="flex gap-2">
-                    <Button type="button" variant="outline" size="icon" aria-label={`${t("master:attachments.download")}: ${row.fileName}`} title={t("master:attachments.download")} onClick={() => download(row.id).catch(() => setError(say("UNKNOWN_ERROR")))}>
+                    <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.download")}: ${row.fileName}`} title={t("master:attachments.download")} onClick={() => download(row.id).catch(() => setError(say("UNKNOWN_ERROR")))}>
                       <Download aria-hidden="true" />
                     </Button>
                     {canChange && !lockedKinds.includes(row.kind) ? (
-                      <Button type="button" variant="outline" size="icon" aria-label={`${t("master:attachments.delete")}: ${row.fileName}`} title={t("master:attachments.delete")} onClick={() => setDeleting(row)}>
+                      <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.delete")}: ${row.fileName}`} title={t("master:attachments.delete")} onClick={() => setDeleting(row)}>
                         <Trash2 aria-hidden="true" />
                       </Button>
                     ) : null}
@@ -151,26 +153,28 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
       )}
 
       {canChange ? (
-        <div className="mt-5 grid items-end gap-4 border-t border-border pt-4 sm:grid-cols-[12rem_1fr_auto]">
-          <Field>
-            <FieldLabel className="text-sm font-semibold">{t("master:attachments.kind")}</FieldLabel>
+        <div className="mt-5 flex flex-col gap-3 border-t border-border pt-4">
+          <div className="flex flex-wrap items-center gap-3">
             <NativeSelect
               aria-label={t("master:attachments.kind")}
+              className="w-40"
               value={kind}
               onChange={(event) => setKind(event.target.value)}
               options={kinds.map((value) => ({ value, label: t(`master:attachments.kinds.${value}`) }))}
             />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor={fileId} className="text-sm font-semibold">
+            {/* the real file field is hidden; this label is the button that opens it, and the name of the chosen file is shown beside it */}
+            <input id={fileId} ref={input} type="file" accept="application/pdf,image/png,image/jpeg" className="sr-only" onChange={(event) => setChosenName(event.target.files?.[0]?.name ?? "")} />
+            <label htmlFor={fileId} className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-dashed border-[#9aa3ad] bg-white px-4 text-base font-medium hover:border-primary hover:bg-[#f1f8fc] hover:text-primary has-[:focus-visible]:ring-2">
+              <FileUp aria-hidden="true" className="size-5" />
               {t("master:attachments.chooseFile")}
-            </FieldLabel>
-            <input id={fileId} ref={input} type="file" accept="application/pdf,image/png,image/jpeg" className="text-base" />
-          </Field>
-          <Button type="button" disabled={busy} onClick={upload}>
-            <Upload aria-hidden="true" />
-            {busy ? t("master:attachments.uploading") : t("master:attachments.upload")}
-          </Button>
+            </label>
+            {chosenName ? <span className="min-w-0 max-w-64 truncate font-medium">{chosenName}</span> : null}
+            <Button type="button" className="ml-auto" disabled={busy || !chosenName} onClick={upload}>
+              <Upload aria-hidden="true" />
+              {busy ? t("master:attachments.uploading") : t("master:attachments.upload")}
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">{t("master:attachments.fileHint")}</p>
         </div>
       ) : null}
 

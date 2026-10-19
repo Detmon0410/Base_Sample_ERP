@@ -35,5 +35,12 @@
     "system": "冷蔵庫工場 Mini ERP",
     "madeOn": "{{date}} 作成",
     "paper": "用紙サイズ"
+  },
+  "paper": {
+    "number": "No.",
+    "details": "詳細",
+    "notes": "備考",
+    "terms": "お支払い条件",
+    "dateLine": "日付"
   }
 }

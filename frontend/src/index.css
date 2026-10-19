@@ -7,7 +7,7 @@
 
 /*
   Design tokens - Refrigerator Factory, Mini ERP look.
-  Theme colour #6A69A0 (white text on it is 5:1), square corners (radius 0), flat: no shadows, no rings, no icons.
+  Theme colour #0085C8, blue (white text on it is 4:1: use it for buttons, large or bold text), small rounded corners (6px on buttons and boxes, 8px on windows), flat: no heavy shadows.
   The root size stays 18px, so every rem-based Tailwind size scales with it.
 */
 :root {
@@ -17,23 +17,23 @@
   --card-foreground: #212529;
   --popover: #ffffff;
   --popover-foreground: #212529;
-  --primary: #6a69a0;
+  --primary: #0085c8;
   --primary-foreground: #ffffff;
   --secondary: #f0f0f0;
   --secondary-foreground: #212529;
   --muted: #f0f0f0;
   --muted-foreground: #5b6168;
-  --accent: #ececf4;
+  --accent: #e6f3fa;
   --accent-foreground: #212529;
   --destructive: #b42318;
   --success: #1b6e3c;
   --warning: #8a5a00;
-  --link: #017e84; /* teal, for links inside the page */
+  --link: #006ba3; /* dark blue, for links inside the page */
   --page: #f9f9f9; /* the grey behind the pages */
   --border: #d5d8dc;
   --input: #8a9099; /* the underline of a field */
-  --ring: #6a69a0;
-  --radius: 0;
+  --ring: #0085c8;
+  --radius: 0.375rem;
 }
 
 /*
@@ -63,10 +63,47 @@
   --text-3xl--line-height: 1.2;
 }
 
+/*
+  Graphik is a licensed font, so its files are not in this project. The faces below use a copy that is installed on the computer.
+  To ship it with the app, put the licensed files in public/fonts/ and add a url("/fonts/Graphik-Regular.woff2") to each src.
+  Until then the next font of the stack (Geist) is used.
+*/
+@font-face {
+  font-family: "Graphik";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: local("Graphik"), local("Graphik Regular"), local("Graphik-Regular");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: local("Graphik Medium"), local("Graphik-Medium");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: local("Graphik Semibold"), local("Graphik-Semibold");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: local("Graphik Bold"), local("Graphik-Bold");
+}
+
 @theme inline {
   /* Geist has no Japanese glyphs, so JA text falls through to these fonts */
   --font-sans:
-    "Geist Variable", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+    "Graphik", "Geist Variable", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
   --font-heading: var(--font-sans);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -90,13 +127,13 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
-  --radius-2xl: 0;
-  --radius-3xl: 0;
-  --radius-4xl: 0;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.25rem;
+  --radius-4xl: 1.5rem;
 }
 
 @layer base {
@@ -190,6 +227,10 @@
 
 /* Print / save as PDF of one document (utils/print.js sets body[data-printing] to the name of the document): only that document is shown. */
 @media print {
+  [data-print-holder] {
+    position: static !important;
+    width: auto !important;
+  }
   body[data-printing] * {
     visibility: hidden;
   }
@@ -198,12 +239,15 @@
   body[data-printing="receipt"] [data-print-doc="receipt"],
   body[data-printing="receipt"] [data-print-doc="receipt"] *,
   body[data-printing="qt"] [data-print-doc="qt"],
-  body[data-printing="qt"] [data-print-doc="qt"] * {
+  body[data-printing="qt"] [data-print-doc="qt"] *,
+  body[data-printing="po"] [data-print-doc="po"],
+  body[data-printing="po"] [data-print-doc="po"] * {
     visibility: visible;
   }
   body[data-printing="invoice"] [data-print-doc="invoice"],
   body[data-printing="receipt"] [data-print-doc="receipt"],
-  body[data-printing="qt"] [data-print-doc="qt"] {
+  body[data-printing="qt"] [data-print-doc="qt"],
+  body[data-printing="po"] [data-print-doc="po"] {
     position: absolute;
     top: 0;
     left: 0;

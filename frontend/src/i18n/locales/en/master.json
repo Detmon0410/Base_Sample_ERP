@@ -130,9 +130,9 @@
     "po": {
       "title": "Customer PO",
       "number": "Customer PO number",
-      "date": "Customer PO date (YYYY-MM-DD)",
+      "date": "Customer PO date",
       "hint": "Upload the file of the customer PO in Files below (kind: PO file). A new PO file replaces the old one.",
-      "saveFirst": "Save the QT first: then the files, the printed form and Confirm QT are here."
+      "saveFirst": "Save the QT first: then the files, Download PDF and Confirm QT are here."
     },
     "confirm": {
       "button": "Confirm QT",
@@ -151,7 +151,22 @@
       "preparedBy": "Prepared by",
       "approvedBy": "Approved by",
       "customerSign": "Customer",
-      "dateLine": "Date"
+      "dateLine": "Date",
+      "noTax": "No tax is charged."
+    },
+    "step": {
+      "Draft": "Draft",
+      "Confirmed": "Confirmed",
+      "InProduction": "In production",
+      "Done": "Done"
+    },
+    "steps": {
+      "label": "Steps of this job"
+    },
+    "production": {
+      "title": "Production order {{number}}",
+      "open": "Open the order page",
+      "failed": "The production order could not be loaded."
     }
   },
   "stock": {
@@ -192,8 +207,8 @@
     "colBy": "By",
     "movementsTitle": "Stock movements",
     "searchLabel": "Search (material, lot, order, note)",
-    "from": "From (YYYY-MM-DD)",
-    "to": "To (YYYY-MM-DD)",
+    "from": "From",
+    "to": "To",
     "colMaterial": "Material",
     "noMovements": "No stock change yet.",
     "noMatch": "No stock change matches.",
@@ -236,7 +251,7 @@
     "actions": "Actions",
     "download": "Download",
     "delete": "Delete",
-    "chooseFile": "Choose a file (PDF, PNG or JPG, up to 10 MB)",
+    "chooseFile": "Choose a file",
     "upload": "Upload",
     "uploading": "Uploading...",
     "uploaded": "The file was added.",
@@ -248,6 +263,7 @@
       "QUOTATION": "Quotation",
       "EVIDENCE": "Evidence",
       "OTHER": "Other"
-    }
+    },
+    "fileHint": "PDF, PNG or JPG, up to 10 MB"
   }
 }

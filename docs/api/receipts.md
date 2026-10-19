@@ -1,6 +1,6 @@
 # API - Receipts
 
-Pages: `/accounting/receipts`, `/accounting/receipts/:id` (the group Accounting of the menu) · Frontend: `frontend/src/pages/receipts`, `pages/invoices/Documents.jsx`, `services/invoices.service.js` (`receiptsApi`) · Mock: `services/mock/invoices.js`
+Pages: `/accounting/receipts/:id` (the receipt as a document, opened from the Paid tab of `/accounting`; `/accounting/receipts` opens `/accounting`) · Frontend: `frontend/src/pages/receipts`, `pages/invoices/Documents.jsx`, `services/invoices.service.js` (`receiptsApi`) · Mock: `services/mock/invoices.js`
 Conventions: [README.md](README.md) · Admin only (others: `403 FORBIDDEN`) · The payment that makes a receipt: [invoices.md](invoices.md)
 
 A receipt is made **by the full payment of an invoice** (`POST /invoices/:id/payment`), once per invoice. It is never changed or deleted, so there is no `POST`, `PUT` or `DELETE` on `/receipts`.

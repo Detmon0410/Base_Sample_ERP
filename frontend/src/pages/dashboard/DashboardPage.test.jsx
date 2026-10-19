@@ -48,7 +48,7 @@ describe("the Dashboard", () => {
     expect(await tile(/^Draft\s*1$/)).toHaveAttribute("href", "/sale/orders");
     expect(await tile(/^In progress\s*1$/)).toBeInTheDocument();
     expect(await tile(/^Completed\s*1$/)).toBeInTheDocument();
-    expect(await tile(/^Unpaid invoices\s*1$/)).toHaveAttribute("href", "/accounting/invoices");
+    expect(await tile(/^Unpaid invoices\s*1$/)).toHaveAttribute("href", "/accounting");
     expect(await tile(/^Unpaid total\s*¥1,600$/)).toBeInTheDocument();
     expect(await tile(/^Paid this month\s*¥0$/)).toBeInTheDocument();
 

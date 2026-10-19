@@ -8,6 +8,9 @@
   "notes": "Notes",
   "startedAt": "Started",
   "notStarted": "Not started yet",
+  "steps": {
+    "label": "Steps of this order"
+  },
   "status": {
     "Draft": "Draft",
     "InProgress": "In progress",

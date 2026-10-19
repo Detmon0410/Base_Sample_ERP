@@ -46,12 +46,13 @@ function UserForm() {
         return (
           <Section icon={UserCog} title={t("master:users.section")}>
             <div className="grid gap-5 sm:grid-cols-2">
-              <TextField label={t("master:users.name")} error={errors.name?.message} {...form.register("name")} />
-              <TextField label={t("master:users.email")} type="email" autoComplete="off" error={errors.email?.message} {...form.register("email")} />
+              <TextField label={t("master:users.name")} placeholder={t("examples:userName")} error={errors.name?.message} {...form.register("name")} />
+              <TextField label={t("master:users.email")} placeholder={t("examples:userEmail")} type="email" autoComplete="off" error={errors.email?.message} {...form.register("email")} />
               <DepartmentAndRole form={form} errors={errors} />
               <TextField
                 label={record ? t("master:users.newPassword") : t("master:users.password")}
                 type="password"
+                placeholder={t("examples:password")}
                 autoComplete="new-password"
                 error={errors.password?.message}
                 className="sm:col-span-2"

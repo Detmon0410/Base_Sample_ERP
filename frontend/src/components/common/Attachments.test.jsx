@@ -53,7 +53,7 @@ describe("the evidence of a production order", () => {
 
     await user.upload(within(section).getByLabelText(/Choose a file/), pdf("weld-check.pdf"));
     await user.click(within(section).getByRole("button", { name: "Upload" }));
-    expect(await within(section).findByText("weld-check.pdf")).toBeInTheDocument();
+    expect(await within(section).findByRole("button", { name: "Delete: weld-check.pdf" })).toBeInTheDocument(); // it is in the list (not only beside the chooser)
     expect(section).toHaveTextContent("Evidence"); // the kind
     expect(section).toHaveTextContent("Worker"); // who
 

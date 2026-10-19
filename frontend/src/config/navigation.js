@@ -8,6 +8,7 @@ import { can } from "@/utils/permissions";
  */
 export const DASHBOARD_ITEM = { key: "dashboard", to: "/", labelKey: "dashboard", icon: "dashboard", action: "dashboard.view" };
 
+
 export const NAV = [
   DASHBOARD_ITEM,
   {
@@ -20,15 +21,7 @@ export const NAV = [
     ],
   },
   { key: "purchase", to: "/purchase/orders", labelKey: "purchase", icon: "purchase", action: "purchase.use" },
-  {
-    key: "accounting",
-    labelKey: "accounting",
-    icon: "accounting",
-    items: [
-      { key: "invoices", to: "/accounting/invoices", labelKey: "invoices", icon: "invoices", action: "invoices.use" },
-      { key: "receipts", to: "/accounting/receipts", labelKey: "receipts", icon: "receipts", action: "receipts.use" },
-    ],
-  },
+  { key: "accounting", to: "/accounting", labelKey: "accounting", icon: "accounting", action: "invoices.use" }, // invoices, payments and receipts on one page
   {
     key: "stockGroup",
     labelKey: "stock",

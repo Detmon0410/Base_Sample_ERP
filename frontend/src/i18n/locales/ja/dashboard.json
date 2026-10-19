@@ -7,5 +7,17 @@
   "unpaidTotal": "未入金の合計",
   "paidThisMonth": "今月の入金",
   "failed": "数値を読み込めませんでした。もう一度お試しください。",
-  "ordersChart": "状態別の製造指示書"
+  "ordersChart": "状態別の製造指示書",
+  "today": {
+    "failed": "今日の作業を読み込めませんでした。もう一度お試しください。",
+    "running": "製造中",
+    "toReceive": "受け入れ待ち",
+    "noneRunning": "製造中の指示書はありません。",
+    "noneToReceive": "受け入れ待ちの発注書はありません。",
+    "record": "進捗を記録",
+    "receive": "受け入れ",
+    "low_other": "在庫が少ない、または無い材料：{{count}}件",
+    "buy": "発注へ",
+    "low_one": "在庫が少ない、または無い材料：{{count}}件"
+  }
 }

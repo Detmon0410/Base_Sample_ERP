@@ -11,8 +11,8 @@ const shape = (user) =>
   getVisibleNav(user).map((entry) => (entry.type === "link" ? entry.item.labelKey : `${entry.labelKey} > ${entry.items.map((item) => item.labelKey).join(", ")}`));
 
 describe("the menu of the header", () => {
-  it("shows an Admin everything: the two menus with their entries, the others as links", () => {
-    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "purchase", "accounting > invoices, receipts", "stock > materialsStock, movements", "master > customers, products, suppliers, users, erDiagram, dbRelations"]);
+  it("shows an Admin everything: the menus with their entries, the others as links", () => {
+    expect(shape(admin)).toEqual(["dashboard", "orders > qt, productionOrders", "purchase", "accounting", "stock > materialsStock, movements", "master > customers, products, suppliers, users, erDiagram, dbRelations"]);
   });
 
   it("shows a Factory Worker the production orders, Purchase, the Stock menu and the products and suppliers to look at", () => {
@@ -35,8 +35,8 @@ describe("the menu of the header", () => {
     expect(findActive("/")?.key).toBe("dashboard");
     expect(findActive("/sale/orders/12")?.key).toBe("productionOrders");
     expect(findActive("/sale/orders/new")?.key).toBe("productionOrders");
-    expect(findActive("/accounting/invoices/4")?.key).toBe("invoices");
-    expect(findActive("/accounting/receipts/2")?.key).toBe("receipts");
+    expect(findActive("/accounting/invoices/4")?.key).toBe("accounting");
+    expect(findActive("/accounting/receipts/2")?.key).toBe("accounting");
     expect(findActive("/stock/materials/3")?.key).toBe("materials");
     expect(findActive("/stock/movements")?.key).toBe("movements");
     expect(findActive("/master/er-diagram")?.key).toBe("erDiagram");

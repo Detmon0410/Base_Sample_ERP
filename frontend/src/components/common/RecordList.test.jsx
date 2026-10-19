@@ -35,7 +35,7 @@ describe("a list of records", () => {
     expect(await screen.findByLabelText("Name")).toHaveValue("Row Customer");
   });
 
-  it("opens a record with the link of the first cell too, and shows a pointer and alternating colours on the rows", async () => {
+  it("opens a record with the link of the first cell too, and shows a pointer and a hover colour on the rows", async () => {
     const user = userEvent.setup();
     setToken(tokenOf(mockUsers[0]));
     await customersApi.create({ name: "Second Customer" });
@@ -46,8 +46,7 @@ describe("a list of records", () => {
     const rows = screen.getAllByRole("row").slice(1); // without the header
     for (const row of rows) {
       expect(row.className).toContain("cursor-pointer");
-      expect(row.className).toContain("odd:bg-card");
-      expect(row.className).toContain("even:bg-");
+      expect(row.className).toContain("hover:bg-");
     }
     await user.click(screen.getByRole("link", { name: "Second Customer" }));
     expect(await screen.findByLabelText("Name")).toHaveValue("Second Customer");

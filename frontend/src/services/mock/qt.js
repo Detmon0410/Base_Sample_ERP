@@ -7,7 +7,7 @@
 
 import { MockHttpError } from "./errors.js";
 import { customers, invalid, issue, number, products, resource, text } from "./master.js";
-import { orders } from "./orders.js";
+import { orderStatus, orders } from "./orders.js";
 
 export const qtReferences = [];
 
@@ -21,6 +21,14 @@ const isDay = (value) => {
 
 const customerName = (record) => customers.find((customer) => customer.id === record.customerId)?.name ?? "";
 const orderOf = (record) => orders.find((order) => order.id === record.productionOrderId);
+
+/** Where the job is: Draft (not confirmed), Confirmed (the order has not started), InProduction, or Done (every process completed). */
+const stepOf = (record) => {
+  const order = orderOf(record);
+  if (record.status !== "Confirmed" || !order) return "Draft";
+  if (!order.started) return "Confirmed";
+  return orderStatus(order) === "Completed" ? "Done" : "InProduction";
+};
 
 const lineView = (line) => {
   const product = products.find((item) => item.id === line.productId);
@@ -36,6 +44,7 @@ const toView = (record) => ({
   lines: record.lines.map(lineView),
   total: totalOf(record),
   productionOrderNumber: orderOf(record)?.orderNumber ?? null,
+  step: stepOf(record),
 });
 
 /** A row of the list: no lines. */
@@ -55,7 +64,7 @@ export const qtRoutes = resource({
   searchIn: ["qtNumber", "notes", "customerPoNumber", customerName],
   toView,
   toListView,
-  filter: (record, query) => !query.status || record.status === query.status, // the list can be filtered by Draft or Confirmed
+  filter: (record, query) => (!query.status || record.status === query.status) && (!query.step || stepOf(record) === query.step), // by Draft or Confirmed, and by the step of the job
   normalize: (body, record) => {
     const data = {
       qtNumber: text(body.qtNumber),

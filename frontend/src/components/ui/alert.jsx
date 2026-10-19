@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "cn"
 
 const alertVariants = cva(
-  "group/alert relative grid w-full gap-0.5 border px-3 py-2 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18",
+  "group/alert relative grid w-full gap-0.5 rounded-md border px-3 py-2 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18",
   {
     variants: {
       variant: {

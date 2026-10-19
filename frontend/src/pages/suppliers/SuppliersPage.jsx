@@ -34,9 +34,9 @@ function ItemLines({ form, readOnly }) {
         {fields.map((field, index) => (
           <div key={field.id} className="grid items-start gap-4 sm:grid-cols-[1fr_10rem_auto]">
             <SelectField label={t("suppliers.items.material")} options={options} disabled={readOnly} error={errors?.[index]?.materialId?.message} {...form.register(`items.${index}.materialId`)} />
-            <TextField label={t("suppliers.items.price")} type="number" min="0" step="1" disabled={readOnly} error={errors?.[index]?.unitPrice?.message} {...form.register(`items.${index}.unitPrice`)} />
+            <TextField label={t("suppliers.items.price")} placeholder={t("examples:smallPrice")} type="number" min="0" step="1" disabled={readOnly} error={errors?.[index]?.unitPrice?.message} {...form.register(`items.${index}.unitPrice`)} />
             {readOnly ? null : (
-              <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("suppliers.items.remove")} title={t("suppliers.items.remove")} onClick={() => remove(index)}>
+              <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("suppliers.items.remove")} title={t("suppliers.items.remove")} onClick={() => remove(index)}>
                 <Trash2 aria-hidden="true" />
               </Button>
             )}
@@ -82,10 +82,10 @@ function SupplierForm() {
           <>
             <Section icon={Truck} title={t("suppliers.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("suppliers.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
-                <TextField label={t("suppliers.name")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />
-                <TextField label={t("suppliers.contact")} disabled={readOnly} error={errors.contact?.message} {...form.register("contact")} />
-                <TextField label={t("suppliers.address")} disabled={readOnly} error={errors.address?.message} {...form.register("address")} />
+                <TextField label={t("suppliers.code")} placeholder={t("examples:supplierCode")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
+                <TextField label={t("suppliers.name")} placeholder={t("examples:supplierName")} disabled={readOnly} error={errors.name?.message} {...form.register("name")} />
+                <TextField label={t("suppliers.contact")} placeholder={t("examples:contact")} disabled={readOnly} error={errors.contact?.message} {...form.register("contact")} />
+                <TextField label={t("suppliers.address")} placeholder={t("examples:customerAddress")} disabled={readOnly} error={errors.address?.message} {...form.register("address")} />
                 <label className="flex flex-wrap items-center gap-3 sm:col-span-2">
                   <input type="checkbox" className="size-5" aria-label={t("suppliers.active")} disabled={readOnly} {...form.register("active")} />
                   <span className="font-semibold">{t("suppliers.active")}</span>
@@ -120,7 +120,7 @@ export function SuppliersPage() {
               { key: "code", header: t("suppliers.code") },
               { key: "name", header: t("suppliers.name") },
               { key: "contact", header: t("suppliers.contact") },
-              { key: "itemCount", header: t("suppliers.itemCount"), cell: (row) => formatNumber(row.itemCount, i18n.language) },
+              { key: "itemCount", header: t("suppliers.itemCount"), numeric: true, cell: (row) => formatNumber(row.itemCount, i18n.language) },
               { key: "active", header: t("suppliers.active"), cell: (row) => <StatusBadge tone={row.active ? "good" : "neutral"}>{row.active ? t("suppliers.activeYes") : t("suppliers.activeNo")}</StatusBadge> },
             ]}
           />

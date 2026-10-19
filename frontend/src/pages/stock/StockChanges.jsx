@@ -89,11 +89,11 @@ function ChangeForm({ material, onDone }) {
             {errors.kind ? <FieldError>{errors.kind.message}</FieldError> : null}
           </Field>
           <SelectField label={t("master:stock.lot")} options={lotOptions} error={errors.lot?.message} {...form.register("lot")} />
-          {lot === NEW_LOT ? <TextField label={t("master:stock.newLotNumber")} error={errors.newLot?.message} {...form.register("newLot")} /> : null}
-          <TextField label={t("master:stock.changeQuantity")} type="number" step="0.001" error={errors.quantity?.message} {...form.register("quantity")} />
-          <TextField label={t("master:stock.changeDate")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.changeDate?.message} {...form.register("changeDate")} />
+          {lot === NEW_LOT ? <TextField label={t("master:stock.newLotNumber")} placeholder={t("examples:lotNumber")} error={errors.newLot?.message} {...form.register("newLot")} /> : null}
+          <TextField label={t("master:stock.changeQuantity")} placeholder={t("examples:lotQuantity")} type="number" step="0.001" error={errors.quantity?.message} {...form.register("quantity")} />
+          <TextField label={t("master:stock.changeDate")} placeholder={t("examples:date")} inputMode="numeric" error={errors.changeDate?.message} {...form.register("changeDate")} />
           <SelectField label={t("master:stock.order")} options={orderOptions} error={errors.orderId?.message} {...form.register("orderId")} />
-          <TextField label={t("master:stock.note")} error={errors.note?.message} className="sm:col-span-2" {...form.register("note")} />
+          <TextField label={t("master:stock.note")} placeholder={t("examples:changeNote")} error={errors.note?.message} className="sm:col-span-2" {...form.register("note")} />
           {kind === "Adjust" ? <p className="text-sm text-muted-foreground sm:col-span-2">{t("master:stock.adjustHint")}</p> : null}
         </div>
         <div>

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
 import { formatCurrency, formatNumber } from "@/utils/format";
 import { downloadPdf } from "@/utils/pdf";
 import { printDocument } from "@/utils/print";
@@ -13,87 +13,65 @@ import { printDocument } from "@/utils/print";
 
 /** The paper of the invoice (printed when `data-print-doc="invoice"` is the chosen document). */
 export function InvoiceDocument({ invoice, language }) {
-  const { t } = useTranslation("invoices");
+  const { t } = useTranslation(["invoices", "common"]);
   return (
-    <article data-print-doc="invoice" className="max-w-3xl border border-border bg-white p-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <h2 className="text-2xl font-bold">{t("doc.invoice")}</h2>
-        <dl className="text-right">
-          <dt className="sr-only">{t("number")}</dt>
-          <dd className="text-lg font-bold">{invoice.invoiceNumber}</dd>
-          <dt className="sr-only">{t("date")}</dt>
-          <dd>{invoice.invoiceDate}</dd>
-          <dt className="sr-only">{t("doc.orderRef")}</dt>
-          <dd>
-            {t("doc.orderRef")}: {invoice.orderNumber}
-          </dd>
-        </dl>
-      </header>
-      <p className="mt-6 text-sm font-semibold text-muted-foreground">{t("doc.to")}</p>
-      <p className="font-bold">{invoice.customerName}</p>
-      <p className="whitespace-pre-line">{invoice.customerAddress}</p>
-
-      <Table className="mt-6" data-stack>
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t("doc.product")}</TableHead>
-            <TableHead className="text-right">{t("doc.quantity")}</TableHead>
-            <TableHead className="text-right">{t("doc.unitPrice")}</TableHead>
-            <TableHead className="text-right">{t("doc.amount")}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {invoice.lines.map((line, index) => (
-            <TableRow key={index}>
-              <TableCell data-label={t("doc.product")}>
-                {line.productCode} {line.productName}
-              </TableCell>
-              <TableCell data-label={t("doc.quantity")} className="text-right">
-                {formatNumber(line.quantity, language)}
-              </TableCell>
-              <TableCell data-label={t("doc.unitPrice")} className="text-right">
-                {formatCurrency(line.unitPrice, language)}
-              </TableCell>
-              <TableCell data-label={t("doc.amount")} className="text-right">
-                {formatCurrency(line.amount, language)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <p className="mt-4 text-right text-xl font-bold">
-        {t("doc.total")}: {formatCurrency(invoice.total, language)}
-      </p>
-      <p className="mt-2 text-right text-sm text-muted-foreground">{t("doc.noTax")}</p>
-    </article>
+    <Paper name="invoice">
+      <PaperHeader title={t("invoices:doc.invoice")} number={invoice.invoiceNumber} date={invoice.invoiceDate} />
+      <PaperParties
+        partyLabel={t("invoices:doc.billTo")}
+        name={invoice.customerName}
+        address={invoice.customerAddress}
+        factsLabel={t("common:paper.details")}
+        facts={[
+          [t("invoices:date"), invoice.invoiceDate],
+          [t("invoices:doc.orderRef"), invoice.orderNumber],
+          [t("invoices:doc.status"), t(`invoices:status.${invoice.status}`)],
+        ]}
+      />
+      <PaperTable
+        rows={invoice.lines}
+        rowKey={(_, index) => index}
+        columns={[
+          { key: "product", header: t("invoices:doc.product"), cell: (line) => `${line.productCode} ${line.productName}` },
+          { key: "quantity", header: t("invoices:doc.quantity"), align: "right", cell: (line) => formatNumber(line.quantity, language) },
+          { key: "unitPrice", header: t("invoices:doc.unitPrice"), align: "right", cell: (line) => formatCurrency(line.unitPrice, language) },
+          { key: "amount", header: t("invoices:doc.amount"), align: "right", cell: (line) => formatCurrency(line.amount, language) },
+        ]}
+      />
+      <PaperTotal text={`${t("invoices:doc.total")}: ${formatCurrency(invoice.total, language)}`} note={t("invoices:doc.noTax")} />
+      <PaperNotes title={t("common:paper.terms")}>{t("invoices:doc.terms")}</PaperNotes>
+      <Signatures labels={[t("invoices:doc.issuedBy"), t("invoices:doc.customerSign")]} />
+    </Paper>
   );
 }
 
 /** The paper of the receipt. */
 export function ReceiptDocument({ receipt, language }) {
-  const { t } = useTranslation("invoices");
+  const { t } = useTranslation(["invoices", "common"]);
   return (
-    <article data-print-doc="receipt" className="max-w-3xl border border-border bg-white p-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <h2 className="text-2xl font-bold">{t("doc.receipt")}</h2>
-        <dl className="text-right">
-          <dt className="sr-only">{t("receipt.number")}</dt>
-          <dd className="text-lg font-bold">{receipt.receiptNumber}</dd>
-          <dt className="sr-only">{t("receipt.date")}</dt>
-          <dd>{receipt.receiptDate}</dd>
-        </dl>
-      </header>
-      <p className="mt-6 text-sm font-semibold text-muted-foreground">{t("doc.to")}</p>
-      <p className="font-bold">{receipt.customerName}</p>
-      <p className="whitespace-pre-line">{receipt.customerAddress}</p>
-      <p className="mt-6">
-        {t("receipt.forInvoice")}: {receipt.invoiceNumber}
-      </p>
-      <p className="mt-4 text-right text-xl font-bold">
-        {t("receipt.received")}: {formatCurrency(receipt.amount, language)}
-      </p>
-      <p className="mt-2 text-right text-sm text-muted-foreground">{t("doc.noTax")}</p>
-    </article>
+    <Paper name="receipt">
+      <PaperHeader title={t("invoices:doc.receipt")} number={receipt.receiptNumber} date={receipt.receiptDate} />
+      <PaperParties
+        partyLabel={t("invoices:doc.receivedFrom")}
+        name={receipt.customerName}
+        address={receipt.customerAddress}
+        factsLabel={t("common:paper.details")}
+        facts={[
+          [t("invoices:receipt.date"), receipt.receiptDate],
+          [t("invoices:receipt.forInvoice"), receipt.invoiceNumber],
+        ]}
+      />
+      <PaperTable
+        rows={[receipt]}
+        rowKey={() => "payment"}
+        columns={[
+          { key: "what", header: t("invoices:doc.description"), cell: () => `${t("invoices:doc.paymentOf")} ${receipt.invoiceNumber}` },
+          { key: "amount", header: t("invoices:doc.amount"), align: "right", cell: () => formatCurrency(receipt.amount, language) },
+        ]}
+      />
+      <PaperTotal text={`${t("invoices:receipt.received")}: ${formatCurrency(receipt.amount, language)}`} note={t("invoices:doc.noTax")} />
+      <Signatures labels={[t("invoices:doc.receivedBy"), t("invoices:doc.customerSign")]} />
+    </Paper>
   );
 }
 

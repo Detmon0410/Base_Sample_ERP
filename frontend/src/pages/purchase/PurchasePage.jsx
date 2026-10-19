@@ -109,7 +109,7 @@ export function PurchasePage() {
               { key: "poNumber", header: t("poNumber") },
               { key: "supplierName", header: t("supplier") },
               { key: "requiredDate", header: t("requiredShort") },
-              { key: "total", header: t("total"), cell: (row) => formatCurrency(row.total, i18n.language) },
+              { key: "total", header: t("total"), numeric: true, cell: (row) => formatCurrency(row.total, i18n.language) },
               { key: "paid", header: t("paid"), cell: (row) => <StatusBadge tone={row.paid ? "good" : "warn"}>{row.paid ? t("paidYes") : t("paidNo")}</StatusBadge> },
             ]}
           />

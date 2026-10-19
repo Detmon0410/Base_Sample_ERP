@@ -39,7 +39,7 @@ function BomLines({ form, readOnly }) {
               {...form.register(`bom.${index}.materialId`)}
             />
             <TextField
-              label={t("products.quantity")}
+              label={t("products.quantity")} placeholder={t("examples:bomQuantity")}
               type="number"
               min="0"
               step="0.001"
@@ -48,7 +48,7 @@ function BomLines({ form, readOnly }) {
               {...form.register(`bom.${index}.quantity`)}
             />
             {readOnly ? null : (
-              <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("products.removeLine")} title={t("products.removeLine")} onClick={() => remove(index)}>
+              <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("products.removeLine")} title={t("products.removeLine")} onClick={() => remove(index)}>
                 <Trash2 aria-hidden="true" />
               </Button>
             )}
@@ -87,9 +87,9 @@ function ProductForm() {
           <>
             <Section icon={Package} title={t("products.section")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("products.code")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
-                <TextField label={t("products.price")} type="number" min="0" step="1" disabled={readOnly} error={errors.price?.message} {...form.register("price")} />
-                <TextField label={t("products.name")} disabled={readOnly} error={errors.name?.message} className="sm:col-span-2" {...form.register("name")} />
+                <TextField label={t("products.code")} placeholder={t("examples:productCode")} disabled={readOnly} error={errors.code?.message} {...form.register("code")} />
+                <TextField label={t("products.price")} placeholder={t("examples:price")} type="number" min="0" step="1" disabled={readOnly} error={errors.price?.message} {...form.register("price")} />
+                <TextField label={t("products.name")} placeholder={t("examples:productName")} disabled={readOnly} error={errors.name?.message} className="sm:col-span-2" {...form.register("name")} />
               </div>
             </Section>
             <BomLines form={form} readOnly={readOnly} />
@@ -118,8 +118,8 @@ export function ProductsPage() {
             columns={[
               { key: "code", header: t("products.code") },
               { key: "name", header: t("products.name") },
-              { key: "price", header: t("products.price"), cell: (row) => formatCurrency(row.price, i18n.language) },
-              { key: "bom", header: t("products.bomLines"), cell: (row) => formatNumber(row.bom.length, i18n.language) },
+              { key: "price", header: t("products.price"), numeric: true, cell: (row) => formatCurrency(row.price, i18n.language) },
+              { key: "bom", header: t("products.bomLines"), numeric: true, cell: (row) => formatNumber(row.bom.length, i18n.language) },
             ]}
           />
         }

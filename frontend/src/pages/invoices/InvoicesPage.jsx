@@ -1,82 +1,22 @@
-import { ArrowLeft, Banknote, ReceiptText, Save, X } from "lucide-react";
+import { ArrowLeft, Banknote } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link, Route, Routes, useNavigate, useParams } from "react-router";
+import { Link, Navigate, Route, Routes, useParams } from "react-router";
 import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
-import { Section, SelectField, TextField } from "@/components/common/FormFields";
-import { StatusBadge } from "@/components/common/StatusBadge";
+import { Section, TextField } from "@/components/common/FormFields";
 import { PageHeader } from "@/components/common/PageHeader";
-import { RecordList } from "@/components/common/RecordList";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useLoad } from "@/hooks/useLoad";
 import { invoicesApi } from "@/services/invoices.service";
-import { ordersApi } from "@/services/orders.service";
 import { todayIso } from "@/utils/dates";
 import { formatCurrency } from "@/utils/format";
 import { applyServerErrors } from "@/utils/serverErrors";
 
 import { DocumentActions, InvoiceDocument } from "./Documents";
-
-const STATUSES = ["Unpaid", "Paid"];
-
-/** A new invoice: choose a Completed order that has none, and the date. The invoice copies the order as it is now. */
-function InvoiceNew() {
-  const { t } = useTranslation(["invoices", "master", "common"]);
-  const navigate = useNavigate();
-  const [summary, setSummary] = useState(null);
-  const [pending, setPending] = useState(null); // the values waiting for the confirmation
-  const orders = useLoad(() => ordersApi.list({ status: "Completed", pageSize: 200 }), []);
-  const form = useForm({ defaultValues: { orderId: "", invoiceDate: todayIso() } });
-  const errors = form.formState.errors;
-
-  const open = (orders.data?.items ?? []).filter((order) => !order.invoice);
-  const options = [{ value: "", label: t("invoices:chooseOrder") }, ...open.map((order) => ({ value: String(order.id), label: `${order.orderNumber} ${order.customerName}` }))];
-
-  const issue = async () => {
-    const values = pending;
-    setPending(null);
-    setSummary(null);
-    try {
-      await invoicesApi.create(values);
-      toast.success(t("invoices:issued"));
-      navigate("/accounting/invoices");
-    } catch (error) {
-      setSummary(applyServerErrors(form, error, t));
-    }
-  };
-
-  return (
-    <>
-      <PageHeader title={t("invoices:new")} />
-      <form noValidate onSubmit={form.handleSubmit(setPending)} className="flex max-w-3xl flex-col gap-5">
-        {summary ? (
-          <Alert variant="destructive">
-            <AlertDescription className="text-base">{summary}</AlertDescription>
-          </Alert>
-        ) : null}
-        <Section icon={ReceiptText} title={t("invoices:section")}>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <SelectField label={t("invoices:order")} options={options} error={errors.orderId?.message} className="sm:col-span-2" {...form.register("orderId")} />
-            {orders.data && open.length === 0 ? <p className="text-muted-foreground sm:col-span-2">{t("invoices:noOrders")}</p> : null}
-            <TextField label={t("invoices:date")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.invoiceDate?.message} {...form.register("invoiceDate")} />
-            <p className="self-end pb-2 text-sm text-muted-foreground">{t("invoices:numberHint")}</p>
-          </div>
-        </Section>
-        <div className="flex gap-3">
-          <Button type="submit"><Save aria-hidden="true" />{t("common:actions.save")}</Button>
-          <Button asChild variant="outline">
-            <Link to="/accounting/invoices"><X aria-hidden="true" />{t("common:actions.cancel")}</Link>
-          </Button>
-        </div>
-      </form>
-      <ConfirmDialog open={pending !== null} onOpenChange={(value) => !value && setPending(null)} title={t("invoices:issueTitle")} text={t("invoices:issueText")} onConfirm={issue} />
-    </>
-  );
-}
 
 /** The full payment of an unpaid invoice: date and amount only. It makes the invoice Paid and issues the receipt. */
 function PaymentForm({ invoice, onDone }) {
@@ -109,8 +49,8 @@ function PaymentForm({ invoice, onDone }) {
           </Alert>
         ) : null}
         <div className="grid gap-5 sm:grid-cols-2">
-          <TextField label={t("invoices:payment.date")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
-          <TextField label={t("invoices:payment.amount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
+          <TextField label={t("invoices:payment.date")} placeholder={t("examples:date")} inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
+          <TextField label={t("invoices:payment.amount")} placeholder={t("examples:paymentAmount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
           <p className="text-sm text-muted-foreground sm:col-span-2">{t("invoices:payment.hint", { total: formatCurrency(invoice.total, i18n.language) })}</p>
         </div>
         <div>
@@ -139,7 +79,7 @@ function InvoicePage() {
         <div className="flex flex-wrap gap-3">
           <DocumentActions name="invoice" number={invoice.invoiceNumber} />
           <Button asChild variant="outline">
-            <Link to="/accounting/invoices"><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
+            <Link to="/accounting"><ArrowLeft aria-hidden="true" />{t("master:form.back")}</Link>
           </Button>
         </div>
 
@@ -165,33 +105,12 @@ function InvoicePage() {
   );
 }
 
-/** Invoices (Admin, the group Accounting): the list, a new invoice, one invoice with its payment. */
+/** The invoice as a document (Admin): the paper, the payment and the link to its receipt. The list and "new invoice" are the Accounting work list. */
 export function InvoicesPage() {
-  const { t, i18n } = useTranslation(["invoices", "master"]);
   return (
     <Routes>
-      <Route
-        index
-        element={
-          <RecordList
-            api={invoicesApi}
-            base="/accounting/invoices"
-            title={t("title")}
-            canCreate
-            newLabel={t("new")}
-            statusOptions={[{ value: "", label: t("master:list.all") }, ...STATUSES.map((value) => ({ value, label: t(`status.${value}`) }))]}
-            statusOf={(row) => <StatusBadge tone={row.status === "Paid" ? "good" : "warn"}>{t(`status.${row.status}`)}</StatusBadge>}
-            columns={[
-              { key: "invoiceNumber", header: t("number") },
-              { key: "invoiceDate", header: t("date") },
-              { key: "customerName", header: t("customer") },
-              { key: "orderNumber", header: t("order") },
-              { key: "total", header: t("total"), cell: (row) => formatCurrency(row.total, i18n.language) },
-            ]}
-          />
-        }
-      />
-      <Route path="new" element={<InvoiceNew />} />
+      <Route index element={<Navigate to="/accounting" replace />} />
+      <Route path="new" element={<Navigate to="/accounting" replace />} />
       <Route path=":id" element={<InvoicePage />} />
     </Routes>
   );

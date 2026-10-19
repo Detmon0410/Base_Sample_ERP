@@ -104,8 +104,8 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
             },
           })}
         />
-        <TextField label={t("lines.quantity")} type="number" min="1" step="1" error={errors?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
-        <TextField label={t("lines.unitPrice")} type="number" min="0" step="1" error={errors?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
+        <TextField label={t("lines.quantity")} placeholder={t("examples:quantity")} type="number" min="1" step="1" error={errors?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
+        <TextField label={t("lines.unitPrice")} placeholder={t("examples:unitPrice")} type="number" min="0" step="1" error={errors?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
       </div>
 
       <BomBlock form={form} index={index} products={products} materials={materials} />
@@ -121,9 +121,9 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
             <span className="pt-7 font-bold">
               {t("processes.step")} {step + 1}
             </span>
-            <TextField label={t("processes.name")} error={errors?.processes?.[step]?.name?.message} {...form.register(`lines.${index}.processes.${step}.name`)} />
-            <TextField label={t("processes.instructions")} {...form.register(`lines.${index}.processes.${step}.instructions`)} />
-            <Button type="button" variant="outline" size="icon" className="sm:mt-6" aria-label={t("processes.remove")} title={t("processes.remove")} onClick={() => processes.remove(step)}>
+            <TextField label={t("processes.name")} placeholder={t("examples:processName")} error={errors?.processes?.[step]?.name?.message} {...form.register(`lines.${index}.processes.${step}.name`)} />
+            <TextField label={t("processes.instructions")} placeholder={t("examples:processInstructions")} {...form.register(`lines.${index}.processes.${step}.instructions`)} />
+            <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("processes.remove")} title={t("processes.remove")} onClick={() => processes.remove(step)}>
               <Trash2 aria-hidden="true" />
             </Button>
           </li>
@@ -149,8 +149,9 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
  * An order that has not started (Admin and Sale Worker): the order, the product lines and, for every line, the ordered processes.
  * The order was made by Confirm QT, so its QT and its customer are shown and cannot change. Save returns to the list. "Start production"
  * (Admin and Factory Worker, after a confirmation) locks the products and processes.
+ * `embedded` is the part of the QT page: no title band and no order box (the QT page shows them), Save stays on the page.
  */
-export function OrderForm({ order, onChanged }) {
+export function OrderForm({ order, onChanged, embedded = false }) {
   const { t } = useTranslation(["orders", "master", "common"]);
   const navigate = useNavigate();
   const notesId = useId();
@@ -170,7 +171,8 @@ export function OrderForm({ order, onChanged }) {
     try {
       await ordersApi.update(order.id, values);
       toast.success(t("master:form.saved"));
-      navigate("/sale/orders");
+      if (embedded) onChanged();
+      else navigate("/sale/orders");
     } catch (error) {
       setSummary(applyServerErrors(form, error, t));
     }
@@ -181,7 +183,7 @@ export function OrderForm({ order, onChanged }) {
 
   return (
     <>
-      <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} statusTone={{ Draft: "neutral", InProgress: "progress", Completed: "good" }[statusKey(order.status)]} />
+      {embedded ? null : <PageHeader title={order.orderNumber} status={t(`orders:status.${statusKey(order.status)}`)} statusTone={{ Draft: "neutral", InProgress: "progress", Completed: "good" }[statusKey(order.status)]} />}
 
       <form noValidate onSubmit={onSubmit} className="flex max-w-4xl flex-col gap-5">
         {summary ? (
@@ -191,7 +193,7 @@ export function OrderForm({ order, onChanged }) {
         ) : null}
         {starter.alert}
 
-        <Section icon={ClipboardList} title={t("orders:section")}>
+        {embedded ? null : <Section icon={ClipboardList} title={t("orders:section")}>
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <p className="text-sm font-semibold text-muted-foreground">{t("orders:qt")}</p>
@@ -201,7 +203,7 @@ export function OrderForm({ order, onChanged }) {
               <p className="text-sm font-semibold text-muted-foreground">{t("orders:customer")}</p>
               <p>{order.customerName}</p>
             </div>
-            <TextField label={t("orders:orderDate")} placeholder="YYYY-MM-DD" inputMode="numeric" error={errors.orderDate?.message} {...form.register("orderDate")} />
+            <TextField label={t("orders:orderDate")} placeholder={t("examples:date")} inputMode="numeric" error={errors.orderDate?.message} {...form.register("orderDate")} />
             <div>
               <p className="text-sm font-semibold text-muted-foreground">{t("orders:customerPo")}</p>
               <p>{order.customerPoNumber || "-"}</p>
@@ -210,15 +212,15 @@ export function OrderForm({ order, onChanged }) {
               <FieldLabel htmlFor={notesId} className="text-sm font-semibold">
                 {t("orders:notes")}
               </FieldLabel>
-              <Textarea id={notesId} {...form.register("notes")} />
+              <Textarea id={notesId} placeholder={t("examples:notes")} {...form.register("notes")} />
             </Field>
           </div>
-        </Section>
+        </Section>}
 
         {lines.fields.length === 0 ? <p className="text-muted-foreground">{t("orders:lines.none")}</p> : null}
-        {lines.fields.map((field, index) => (
+        {productList.data && materialList.data ? lines.fields.map((field, index) => (
           <LineEditor key={field.id} form={form} index={index} products={products} materials={materials} canRemove={lines.fields.length > 1} onRemove={() => lines.remove(index)} />
-        ))}
+        )) : <p role="status">{t("common:loading")}</p>} {/* the products are the options of the selects: wait for them */}
         <div>
           <Button type="button" variant="outline" size="sm" onClick={() => lines.append(emptyLine())}>
             <Plus aria-hidden="true" />
@@ -230,9 +232,11 @@ export function OrderForm({ order, onChanged }) {
           <Button type="submit" disabled={form.formState.isSubmitting}>
             <Save aria-hidden="true" />{form.formState.isSubmitting ? t("common:actions.saving") : t("common:actions.save")}
           </Button>
-          <Button asChild variant="outline">
-            <Link to="/sale/orders"><X aria-hidden="true" />{t("common:actions.cancel")}</Link>
-          </Button>
+          {embedded ? null : (
+            <Button asChild variant="outline">
+              <Link to="/sale/orders"><X aria-hidden="true" />{t("common:actions.cancel")}</Link>
+            </Button>
+          )}
           {can(user, "orders.start") ? (
             <span className="ml-auto flex flex-col items-end gap-1">
               {starter.button}

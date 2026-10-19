@@ -143,7 +143,7 @@ export const orderRoutes = {
   "GET /orders": ({ authorization, query }) => {
     access(authorization, "orders.view");
     const q = text(query.q).toLowerCase();
-    let rows = orders.map(toListView).filter((row) => (!query.status || row.status === query.status) && (!q || [row.orderNumber, row.customerName, row.qtNumber, row.notes, row.productCodes].some((value) => String(value).toLowerCase().includes(q))));
+    let rows = orders.map(toListView).filter((row) => (!query.status || row.status === query.status) && (query.invoiced === undefined || String(Boolean(row.invoice)) === (query.invoiced === "true" ? "true" : "false")) && (!q || [row.orderNumber, row.customerName, row.qtNumber, row.notes, row.productCodes].some((value) => String(value).toLowerCase().includes(q))));
     rows = rows.sort((a, b) => b.id - a.id);
     const pageSize = Math.max(1, Number(query.pageSize) || 20);
     const page = Math.max(1, Number(query.page) || 1);

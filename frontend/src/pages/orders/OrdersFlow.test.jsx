@@ -62,7 +62,7 @@ describe("production orders, page by page", () => {
     expect(await screen.findByText("Flow Customer")).toBeInTheDocument();
     expect(screen.getByText("QT-FLOW")).toBeInTheDocument();
     expect(screen.getByText("PO-FLOW")).toBeInTheDocument();
-    expect(screen.getByLabelText("Quantity")).toHaveValue(10);
+    expect(await screen.findByLabelText("Quantity")).toHaveValue(10);
     expect(screen.getByLabelText("Agreed unit price")).toHaveValue(5000);
     await user.click(screen.getByRole("button", { name: "Add a process" }));
     await user.type(screen.getByLabelText("Process"), "Cutting");

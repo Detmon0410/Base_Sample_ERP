@@ -100,7 +100,7 @@ Body of the payment: `{ "paymentDate": "2026-11-05", "amount": 52000, "method": 
 | Status | Only the next step (`409 INVALID_STATUS_CHANGE`): Draft to Sent, Sent to Received |
 | Received | Every line is added to the stock, **once**. The line goes to the lot typed for it (`lots`); a lot number that exists (any case) gets the quantity added, a new one makes a new lot. Each line writes a stock change `Add` with the note `Received PO-...`, the date of today and `purchaseOrderId` ([stock.md](stock.md)). Nothing is added when a lot number is missing (the whole call is refused) |
 | Once only | A second `Received` answers `409 INVALID_STATUS_CHANGE` and adds nothing |
-| Payment | Only for a `Received` PO (`409 PO_NOT_RECEIVED`), **once** (`409 ALREADY_PAID`). `paymentDate` required and real; `amount` equal to the total (`MUST_EQUAL_TOTAL`); `method` one of `Cash`, `Bank transfer`, `Cheque`, `Credit card`, `Other` (`REQUIRED` otherwise); `referenceNo` and `note` optional. The payment is kept on the PO; it does not go through the Accounting module |
+| Payment | Only for a `Received` PO (`409 PO_NOT_RECEIVED`), **once** (`409 ALREADY_PAID`). `paymentDate` required and real; `amount` equal to the total (`MUST_EQUAL_TOTAL`); `method` one of `Cash`, `Bank transfer`, `Cheque`, `Credit card`, `Other` (`REQUIRED` otherwise); `referenceNo` and `note` optional. The payment is kept on the PO; there is no invoice or receipt for it. The Accounting page ([invoices.md](invoices.md)) only lists the received POs (`status=Received&paid=false` to pay, `paid=true` paid) and links to the PO |
 | Low stock | The page uses `GET /materials` (the materials with `stockStatus` `Low` or `Out`, [stock.md](stock.md)); there is no endpoint of its own |
 
 ## Errors

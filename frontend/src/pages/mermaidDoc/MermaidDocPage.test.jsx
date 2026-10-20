@@ -92,7 +92,7 @@ describe("the User Flow page", () => {
       expect(screen.getByRole("heading", { level: 1, name: "ユーザーフロー" })).toBeInTheDocument();
       expect(screen.getAllByRole("heading", { level: 2 })[3]).toHaveTextContent("工場担当");
       const charts = await screen.findAllByRole("img");
-      expect(codeOf(charts[2])).toContain("T[今日：その日の作業]");
+      expect(codeOf(charts[2])).toContain("T[ダッシュボード：指示書のタイル<br/>Draft・In progress・Completed]");
       expect(codeOf(charts[2])).toContain("S1[ロットを Add・Deduct・Adjust<br/>理由を付けて]");
       const rows = within(screen.getAllByRole("table")[1]).getAllByRole("row");
       expect(rows[0]).toHaveTextContent("機能管理者営業担当工場担当");

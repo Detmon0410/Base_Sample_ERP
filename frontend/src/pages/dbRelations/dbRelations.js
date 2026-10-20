@@ -11,7 +11,7 @@ export const TITLE = "DB Relations";
 export const PARTS = [
   {
     title: "Current version summary (as built)",
-    intro: ["22 tables in 5 groups.", "Parts 1 and 2 below give every key and rule; this is the short form."],
+    intro: ["23 tables in 5 groups.", "Parts 1 and 2 below give every key and rule; this is the short form."],
     sections: [
       {
         title: "",

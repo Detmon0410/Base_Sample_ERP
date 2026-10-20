@@ -143,7 +143,6 @@ export const ENTITIES = [
       ["product_id", "int", "FK"],
       ["quantity", "int"],
       ["unit_price", "int"],
-      ["amount", "int"],
     ],
   },
   {
@@ -178,8 +177,11 @@ export const ENTITIES = [
     columns: [
       ["id", "int", "PK"],
       ["line_id", "int", "FK"],
+      ["sequence", "int"],
       ["name", "string"],
+      ["instructions", "string"],
       ["status", "string"],
+      ["completed_quantity", "int"],
     ],
   },
   {
@@ -190,6 +192,9 @@ export const ENTITIES = [
       ["id", "int", "PK"],
       ["process_id", "int", "FK"],
       ["status", "string"],
+      ["completed_quantity", "int"],
+      ["work_date", "date"],
+      ["note", "string"],
       ["user_id", "int", "FK"],
     ],
   },
@@ -221,6 +226,7 @@ export const ENTITIES = [
       ["unit", "string"],
       ["unit_price", "int"],
       ["amount", "int"],
+      ["lot_number", "string", "", "typed when received"],
     ],
   },
   {
@@ -247,6 +253,7 @@ export const ENTITIES = [
       ["kind", "string", "", "PO_FILE | QUOTATION | EVIDENCE | OTHER"],
       ["file_name", "string"],
       ["file_type", "string"],
+      ["size", "int"],
       ["file_path", "string"],
       ["uploaded_by", "int", "FK"],
       ["at", "datetime"],
@@ -271,7 +278,9 @@ export const ENTITIES = [
     columns: [
       ["invoice_id", "int", "FK"],
       ["product_code", "string"],
+      ["product_name", "string"],
       ["quantity", "int"],
+      ["unit_price", "int"],
       ["amount", "int"],
     ],
   },
@@ -343,6 +352,7 @@ export const NOTES = [
   "`Attachment` is polymorphic (`owner_type` + `owner_id`), so there is no database foreign key to the owner; the service checks it.",
   "`PurchasePayment` is stored on the PO and does not go through the Accounting tables.",
   "`QT_REFERENCE.production_order_id` is unique: one QT creates one Factory Order.",
+  "`QtLine` has no stored amount: `quantity x unit_price` is computed by the API. The process, progress and invoice line tables list the columns the code has.",
   "Invoice, Payment and Receipt are unchanged and keep their snapshot fields (not repeated here).",
   "`Order status` (`Draft`, `In Progress`, `Completed`) is **computed** from the processes; it is not a column. The stock status (`Normal`, `Low`, `Out`) is computed from the lot totals and `min_level`.",
   "`Invoice` and `Receipt` copy the customer and the product data when they are issued (a snapshot). An order is billed once, and an invoice has at most one payment and one receipt.",

@@ -106,7 +106,7 @@ describe("the DB relations are DB Relations.md", () => {
 
   it("keeps the intros without the sentences that point to a document", () => {
     for (const part of PARTS) for (const sentence of part.intro) expect(sentence).not.toMatch(/\]\(|\.md\b|docs\//);
-    expect(PARTS[0].intro).toEqual(["22 tables in 5 groups.", "Parts 1 and 2 below give every key and rule; this is the short form."]);
+    expect(PARTS[0].intro).toEqual(["23 tables in 5 groups.", "Parts 1 and 2 below give every key and rule; this is the short form."]);
     // the summary counts what its groups list, which is what the ER diagram has
     expect(PARTS[0].sections[0].rows.flatMap((row) => row[1].split(", "))).toHaveLength(ENTITIES.length);
     expect(PARTS[1].intro).toEqual([

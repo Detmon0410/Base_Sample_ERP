@@ -11,8 +11,8 @@ export const SECTIONS = [
     blocks: [
       { table: { head: ["Role", "Department", "Who", "First page"], rows: [
         ["Admin", "any (only a label)", "Owner / office: does everything", "Dashboard: order tiles, invoice tiles, chart"],
-        ["Worker", "Sales", "Sale Worker: quotations and production orders", "Dashboard: order tiles"],
-        ["Worker", "Factory", "Factory Worker: production, stock, purchase", "Today: the work of the day"],
+        ["Worker", "Sales", "Sale Worker: quotations (a production order is only read)", "Dashboard: order tiles"],
+        ["Worker", "Factory", "Factory Worker: the processes, production, stock, purchase", "Dashboard: order tiles"],
       ] } },
       { text: "A Worker must have the department `Sales` or `Factory`; the department decides what the Worker can do. There is no sign-up and no forgot-password: an Admin makes the accounts and sets the passwords." },
     ],
@@ -27,14 +27,14 @@ export const SECTIONS = [
   {
     title: "Sale Worker",
     blocks: [
-      { chart: "flowchart TD\n    D[Dashboard: order tiles<br/>Draft / In progress / Completed] --> Q[Sales work list:<br/>one row per job with its step]\n    Q --> N[New job]\n    Q --> Q1[Open a job]\n    N --> Q1\n    Q1 --> Q2[Choose customer<br/>add lines: product, quantity, price<br/>status Draft]\n    Q2 --> Q3[Print QT form PDF<br/>send to the customer]\n    Q3 --> Q4[Upload customer PO:<br/>PO No., date, file]\n    Q4 --> Q5[Press Confirm QT]\n    Q5 --> Q6{Customer and<br/>at least one line?}\n    Q6 -- No --> Q2\n    Q6 -- Yes --> Q7{PO file attached?}\n    Q7 -- No --> Q8[Warning: continue or go back]\n    Q8 -- Back --> Q4\n    Q8 -- Continue --> Q9\n    Q7 -- Yes --> Q9[QT locked<br/>Draft production order created]\n    Q9 --> O[Same page: the production order]\n    O --> O1[Before the start:<br/>add / edit the processes]\n    O1 --> O2[Factory starts production]\n    O2 --> O3[After the start:<br/>see the progress, read only]\n    D --> V1[View: production orders]\n    D --> V2[View: stock and movements]\n    D --> V3[View: products and customers]\n    Q2 --> Qd[Delete a Draft QT]" },
-      { text: "What the Sale Worker cannot do: start production, record progress, change stock, open Purchase, Accounting, Suppliers or Users. A confirmed QT is locked and cannot be deleted; an order cannot be made by hand, only by Confirm QT." },
+      { chart: "flowchart TD\n    D[Dashboard: order tiles<br/>Draft / In progress / Completed] --> Q[Sales work list:<br/>one row per job with its step]\n    Q --> N[New job]\n    Q --> Q1[Open a job]\n    N --> Q1\n    Q1 --> Q2[Choose customer<br/>add lines: product, quantity, price<br/>status Draft]\n    Q2 --> Q3[Print QT form PDF<br/>send to the customer]\n    Q3 --> Q4[Upload customer PO:<br/>PO No., date, file]\n    Q4 --> Q5[Press Confirm QT]\n    Q5 --> Q6{Customer and<br/>at least one line?}\n    Q6 -- No --> Q2\n    Q6 -- Yes --> Q7{PO file attached?}\n    Q7 -- No --> Q8[Warning: continue or go back]\n    Q8 -- Back --> Q4\n    Q8 -- Continue --> Q9\n    Q7 -- Yes --> Q9[QT locked<br/>Draft production order created]\n    Q9 --> O[The QT page links to the production order]\n    O --> O1[Order page: read only for Sale<br/>Factory adds the processes]\n    O1 --> O2[Factory starts production]\n    O2 --> O3[Sale sees the progress, read only]\n    D --> V1[View: production orders]\n    D --> V2[View: stock and movements]\n    D --> V3[View: products and customers]\n    Q2 --> Qd[Delete a Draft QT]" },
+      { text: "What the Sale Worker cannot do: add or change the processes of an order, start production, record progress, change stock, open Purchase, Accounting, Suppliers or Users. A confirmed QT is locked and cannot be deleted; an order cannot be made by hand, only by Confirm QT." },
     ],
   },
   {
     title: "Factory Worker",
     blocks: [
-      { chart: "flowchart TD\n    T[Today: the work of the day] --> A1[Orders to start]\n    T --> A2[Orders in production]\n    T --> A3[Purchase orders to receive]\n    T --> A4[Low stock strip]\n\n    A1 --> B1[Start production on the card]\n    B1 --> B2{Enough material<br/>for the BOM?}\n    B2 -- No --> B3[409 STOCK_SHORT:<br/>the card shows what is short]\n    B3 --> P1\n    B2 -- Yes --> B4[BOM deducted, oldest lot first<br/>order In production]\n    B4 --> A2\n\n    A2 --> C1[Big button: Record progress]\n    C1 --> C2[Choose the process<br/>Not started / In progress / Completed]\n    C2 --> C3{All processes<br/>Completed?}\n    C3 -- No --> A2\n    C3 -- Yes --> C4[Order Completed<br/>goes to Admin for the invoice]\n    A2 --> C5[Open the order:<br/>upload evidence, images and documents]\n\n    A3 --> R1[Open the PO]\n    R1 --> R2[Set status Received:<br/>type the lot for each line]\n    R2 --> R3[Stock added once]\n\n    A4 --> P1[Purchase page]\n    T --> S[Stock]\n    S --> S1[Add / Deduct / Adjust a lot<br/>with a reason]\n    S --> S2[Movements: history]\n    T --> V[View: products, suppliers, production orders]" },
+      { chart: "flowchart TD\n    T[Dashboard: order tiles<br/>Draft / In progress / Completed] --> A0[Orders list]\n    A0 --> A00[Open a Draft order:<br/>add / edit the processes]\n    A00 --> A1[Orders to start]\n    A0 --> A2[Orders in production]\n    T --> A3[Purchase: orders to receive]\n    T --> A4[Purchase: low stock list]\n\n    A1 --> B1[Start production on the order page]\n    B1 --> B2{Enough material<br/>for the BOM?}\n    B2 -- No --> B3[409 STOCK_SHORT:<br/>the card shows what is short]\n    B3 --> P1\n    B2 -- Yes --> B4[BOM deducted, oldest lot first<br/>order In production]\n    B4 --> A2\n\n    A2 --> C1[Order page: Record progress]\n    C1 --> C2[Choose the process<br/>Not started / In progress / Completed]\n    C2 --> C3{All processes<br/>Completed?}\n    C3 -- No --> A2\n    C3 -- Yes --> C4[Order Completed<br/>goes to Admin for the invoice]\n    A2 --> C5[Open the order:<br/>upload evidence, images and documents]\n\n    A3 --> R1[Open the PO]\n    R1 --> R2[Set status Received:<br/>type the lot for each line]\n    R2 --> R3[Stock added once]\n\n    A4 --> P1[Purchase page]\n    T --> S[Stock]\n    S --> S1[Add / Deduct / Adjust a lot<br/>with a reason]\n    S --> S2[Movements: history]\n    T --> V[View: products, suppliers, production orders]" },
       { text: "A Factory Worker cannot reopen a Completed process (Admin only), cannot change QT, customers, products or materials, and cannot open Accounting or Users." },
     ],
   },
@@ -55,7 +55,7 @@ export const SECTIONS = [
   {
     title: "Admin: accounting",
     blocks: [
-      { chart: "flowchart TD\n    A[Accounting page] --> T1[Tab: To invoice<br/>Completed orders]\n    A --> T2[Tab: Waiting for payment<br/>Unpaid invoices]\n    A --> T3[Tab: Paid]\n\n    T1 --> I1[Issue invoice<br/>small dialog]\n    I1 --> I2[Invoice Unpaid]\n    I2 --> T2\n    T2 --> I3[Open invoice as a document:<br/>print]\n    T2 --> I4[Record payment<br/>small dialog: date, amount, method]\n    I4 --> I5{Full amount?}\n    I5 -- No --> T2\n    I5 -- Yes --> I6[Invoice Paid<br/>receipt issued]\n    I6 --> T3\n    T3 --> I7[Open receipt as a document:<br/>print]" },
+      { chart: "flowchart TD\n    A[Accounting page] --> T1[Tab: To invoice<br/>Completed orders]\n    A --> T2[Tab: Waiting for payment<br/>Unpaid invoices]\n    A --> T3[Tab: Paid]\n\n    T1 --> I1[Issue invoice<br/>small dialog]\n    I1 --> I2[Invoice Unpaid]\n    I2 --> T2\n    T2 --> I3[Open invoice as a document:<br/>print]\n    T2 --> I4[Record payment<br/>small dialog: date, amount]\n    I4 --> I5{Full amount?}\n    I5 -- No --> T2\n    I5 -- Yes --> I6[Invoice Paid<br/>receipt issued]\n    I6 --> T3\n    T3 --> I7[Open receipt as a document:<br/>print]" },
     ],
   },
   {
@@ -69,10 +69,10 @@ export const SECTIONS = [
     title: "Who can do what",
     blocks: [
       { table: { head: ["Area", "Admin", "Sale Worker", "Factory Worker"], rows: [
-        ["Dashboard", "all tiles + chart", "order tiles", "Today page"],
+        ["Dashboard", "all tiles + chart", "order tiles", "order tiles"],
         ["QT: create, print, upload PO, confirm, delete a Draft", "yes", "yes", "no access"],
         ["Production orders: view", "yes", "yes", "yes"],
-        ["Production orders: create / edit before start", "yes", "yes", "no"],
+        ["Production orders: add / edit the processes before start", "yes", "no", "yes"],
         ["Start production, record progress", "yes", "no", "yes"],
         ["Reopen a Completed process", "yes", "no", "no"],
         ["Evidence upload (production order)", "yes", "no", "yes"],

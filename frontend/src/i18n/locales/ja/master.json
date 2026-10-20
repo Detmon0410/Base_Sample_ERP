@@ -263,6 +263,8 @@
       "QUOTATION": "見積書",
       "EVIDENCE": "証拠資料",
       "OTHER": "その他"
-    }
+    },
+    "drop": "ここにファイルをドロップ、またはクリックして選択",
+    "fileHint": "PDF、PNG、JPG（10 MBまで）"
   }
 }

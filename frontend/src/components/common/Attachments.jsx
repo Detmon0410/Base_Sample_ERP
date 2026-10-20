@@ -7,10 +7,10 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { NativeSelect, Section } from "@/components/common/FormFields";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Field, FieldLabel } from "@/components/ui/field";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLoad } from "@/hooks/useLoad";
 import { attachmentsApi } from "@/services/attachments.service";
+import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/utils/format";
 
 const FILE_TYPES = ["application/pdf", "image/png", "image/jpeg"];
@@ -58,14 +58,14 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
   const [kind, setKind] = useState(kinds[0]);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [dragging, setDragging] = useState(false); // a file is over the drop zone
   const [deleting, setDeleting] = useState(null); // the file asked about
 
   const say = (code) => t(`master:errors.${code}`, { defaultValue: t("master:errors.UNKNOWN_ERROR") });
 
-  const upload = async () => {
-    const chosen = input.current?.files?.[0];
+  const upload = async (chosen) => {
     setError(null);
-    if (!chosen) return setError(say("REQUIRED"));
+    if (!chosen) return;
     if (!FILE_TYPES.includes(chosen.type)) return setError(say("FILE_TYPE"));
     if (chosen.size > MAX_BYTES) return setError(say("FILE_TOO_BIG"));
     setBusy(true);
@@ -78,6 +78,7 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
     } catch (failure) {
       setError(say(failure?.details?.[0]?.code ?? failure?.code));
     } finally {
+      if (input.current) input.current.value = ""; // the same file can be chosen again
       setBusy(false);
     }
   };
@@ -151,26 +152,37 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
       )}
 
       {canChange ? (
-        <div className="mt-5 grid items-end gap-4 border-t border-border pt-4 sm:grid-cols-[12rem_1fr_auto]">
-          <Field>
-            <FieldLabel className="text-sm font-semibold">{t("master:attachments.kind")}</FieldLabel>
-            <NativeSelect
-              aria-label={t("master:attachments.kind")}
-              value={kind}
-              onChange={(event) => setKind(event.target.value)}
-              options={kinds.map((value) => ({ value, label: t(`master:attachments.kinds.${value}`) }))}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor={fileId} className="text-sm font-semibold">
-              {t("master:attachments.chooseFile")}
-            </FieldLabel>
-            <input id={fileId} ref={input} type="file" accept="application/pdf,image/png,image/jpeg" className="text-base" />
-          </Field>
-          <Button type="button" disabled={busy} onClick={upload}>
-            <Upload aria-hidden="true" />
-            {busy ? t("master:attachments.uploading") : t("master:attachments.upload")}
-          </Button>
+        <div className="mt-5 flex flex-col gap-3 border-t border-border pt-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-semibold text-muted-foreground">{t("master:attachments.kind")}</span>
+            <NativeSelect aria-label={t("master:attachments.kind")} className="w-44" value={kind} onChange={(event) => setKind(event.target.value)} options={kinds.map((value) => ({ value, label: t(`master:attachments.kinds.${value}`) }))} />
+          </div>
+          {/* a drop zone: drop a file on it or click it to browse; the file is uploaded as soon as it is chosen */}
+          <input id={fileId} ref={input} type="file" accept="application/pdf,image/png,image/jpeg" aria-label={t("master:attachments.chooseFile")} className="sr-only" onChange={(event) => upload(event.target.files?.[0])} />
+          <label
+            htmlFor={fileId}
+            onDragOver={(event) => {
+              event.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(event) => {
+              event.preventDefault();
+              setDragging(false);
+              upload(event.dataTransfer.files?.[0]);
+            }}
+            className={cn(
+              "flex cursor-pointer flex-col items-center gap-1 rounded-lg border-2 border-dashed px-4 py-6 text-center transition-colors has-[:focus-visible]:ring-2",
+              dragging ? "border-primary bg-[#e6f3fa]" : "border-[#c4cbd3] bg-white hover:border-primary hover:bg-[#f1f8fc]",
+              busy && "pointer-events-none opacity-60",
+            )}
+          >
+            <span className="grid size-10 place-items-center rounded-md bg-[#eef1f4] text-foreground">
+              <Upload aria-hidden="true" className="size-5" />
+            </span>
+            <span className="text-base font-semibold">{busy ? t("master:attachments.uploading") : t("master:attachments.drop")}</span>
+            <span className="text-sm text-muted-foreground">{t("master:attachments.fileHint")}</span>
+          </label>
         </div>
       ) : null}
 

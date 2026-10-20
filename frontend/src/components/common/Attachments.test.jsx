@@ -52,7 +52,6 @@ describe("the evidence of a production order", () => {
     expect(await within(section).findByText("No file yet.")).toBeInTheDocument();
 
     await user.upload(within(section).getByLabelText(/Choose a file/), pdf("weld-check.pdf"));
-    await user.click(within(section).getByRole("button", { name: "Upload" }));
     expect(await within(section).findByText("weld-check.pdf")).toBeInTheDocument();
     expect(section).toHaveTextContent("Evidence"); // the kind
     expect(section).toHaveTextContent("Worker"); // who
@@ -70,7 +69,6 @@ describe("the evidence of a production order", () => {
 
     const section = (await screen.findByRole("heading", { name: "Evidence" })).closest("section");
     await user.upload(within(section).getByLabelText(/Choose a file/), new File(["text"], "notes.txt", { type: "text/plain" }));
-    await user.click(within(section).getByRole("button", { name: "Upload" }));
     expect(await within(section).findByText("Choose a PDF, PNG or JPG file.")).toBeInTheDocument();
     expect(await attachmentsApi.list("ProductionOrder", order.id)).toEqual([]);
   });

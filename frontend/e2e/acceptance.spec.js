@@ -100,7 +100,6 @@ test("the example of the requirements, from the customer to the receipt", async 
   // the same QT opens: the PO file, the printed form and Confirm QT
   await expect(page).toHaveURL(/\/sale\/quotations\/\d+$/);
   await page.getByLabel(/Choose a file/).setInputFiles({ name: "po-77.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 customer PO 77") });
-  await page.getByRole("button", { name: "Upload" }).click();
   await expect(page.getByText("po-77.pdf")).toBeVisible();
   await expect(page.locator('[data-print-doc="qt"]')).toContainText("QT-001");
   await page.getByRole("button", { name: "Confirm QT" }).click();

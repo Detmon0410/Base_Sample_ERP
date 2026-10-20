@@ -233,7 +233,7 @@ function QtForm() {
             <div className="flex flex-col gap-5">
             <Section icon={UserCheck} title={t("qt.po.title")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("qt.po.number")} placeholder={t("examples:customerPo")} error={errors.customerPoNumber?.message} {...form.register("customerPoNumber")} />
+                <TextField label={t("qt.po.number")} placeholder={t("examples:customerPo")} error={errors.customerPoNumber?.message} {...form.register("customerPoNumber", { onChange: (event) => event.target.value.trim() && !form.getValues("customerPoDate") && form.setValue("customerPoDate", todayIso()) })} /> {/* the date of the PO starts as today */}
                 <TextField label={t("qt.po.date")} placeholder={t("examples:date")} inputMode="numeric" error={errors.customerPoDate?.message} {...form.register("customerPoDate")} />
               </div>
               <p className="mt-3 text-sm text-muted-foreground">{record ? t("qt.po.hint") : t("qt.po.saveFirst")}</p>

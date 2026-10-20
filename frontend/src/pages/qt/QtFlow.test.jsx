@@ -56,6 +56,8 @@ describe("the QT page", () => {
     expect(screen.getByLabelText("Unit price")).toHaveValue(45000); // the price of the product
     await user.type(screen.getByLabelText("Quantity"), "10");
     expect(screen.getByText("Total: ¥450,000")).toBeInTheDocument();
+    await user.type(screen.getByLabelText("Customer PO number"), "PO-100"); // the date of the PO starts as today
+    expect(screen.getByLabelText("Customer PO date")).toHaveValue(new Date().toLocaleDateString("sv-SE"));
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     // after Save the same QT opens again, now with Files, Download PDF and Print at the top, and Confirm QT; the paper itself is not shown
@@ -72,7 +74,6 @@ describe("the QT page", () => {
     // the customer PO: a file (kind PO file is the first), then Confirm
     const files = screen.getByRole("heading", { name: "Files" }).closest("section");
     await user.upload(within(files).getByLabelText(/Choose a file/), pdf("po-100.pdf"));
-    await user.click(within(files).getByRole("button", { name: "Upload" }));
     expect(await within(files).findByText("po-100.pdf")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Confirm QT" }));

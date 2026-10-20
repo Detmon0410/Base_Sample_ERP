@@ -263,6 +263,8 @@
       "QUOTATION": "Quotation",
       "EVIDENCE": "Evidence",
       "OTHER": "Other"
-    }
+    },
+    "drop": "Drop a file here or click to browse",
+    "fileHint": "PDF, PNG or JPG, up to 10 MB"
   }
 }

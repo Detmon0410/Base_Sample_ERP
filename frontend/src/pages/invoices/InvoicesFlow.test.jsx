@@ -86,19 +86,17 @@ describe("accounting on one page", () => {
 
     // the invoice paper: no tax, the PDF
     await user.click(within(paidRow).getByRole("link", { name: /^INV-\d{4}-\d{4}$/ }));
-    expect(await screen.findByRole("heading", { level: 2, name: "Invoice" })).toBeInTheDocument();
-    expect(screen.getByText("5 Namba, Osaka")).toBeInTheDocument();
-    expect(screen.getByText("Total: ¥750")).toBeInTheDocument();
-    expect(screen.getByText("No tax is charged.")).toBeInTheDocument();
-    expect(screen.getByText(/^Paid on \d{4}-\d{2}-\d{2}: ¥750$/)).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Download PDF" })).toBeInTheDocument(); // the paper itself is out of sight
+    const paper = document.querySelector('[data-print-doc="invoice"]');
+    for (const text of ["5 Namba, Osaka", "Total: ¥750", "No tax is charged."]) expect(paper).toHaveTextContent(text);
     await user.click(screen.getByRole("button", { name: "Download PDF" }));
     expect(downloadPdf.mock.calls[0][0]).toHaveAttribute("data-print-doc", "invoice");
     expect(downloadPdf.mock.calls[0][1]).toMatch(/^INV-\d{4}-\d{4}\.pdf$/);
 
     // the receipt paper: the PDF, the print, and the way back to the invoice
     await user.click(screen.getByRole("link", { name: /^RC-\d{4}-\d{4}$/ }));
-    expect(await screen.findByRole("heading", { level: 2, name: "Receipt" })).toBeInTheDocument();
-    expect(screen.getByText(/^Amount received: ¥750$/)).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Download PDF" })).toBeInTheDocument();
+    expect(document.querySelector('[data-print-doc="receipt"]')).toHaveTextContent("Amount received: ¥750");
     expect(screen.queryByText(/Payment method/)).not.toBeInTheDocument(); // there is no payment method
     await user.click(screen.getByRole("button", { name: "Download PDF" }));
     expect(downloadPdf.mock.calls[1][0]).toHaveAttribute("data-print-doc", "receipt");

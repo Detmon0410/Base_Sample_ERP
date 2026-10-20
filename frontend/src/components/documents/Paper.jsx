@@ -148,6 +148,15 @@ export function Signatures({ labels }) {
   );
 }
 
+/** The sheet kept out of sight: the page shows only the buttons Download PDF and Print, which use it. It is drawn off the screen at the width of a desktop so the PDF has the same layout on every screen. */
+export function HiddenPaper({ children }) {
+  return (
+    <div aria-hidden="true" data-print-holder className="pointer-events-none fixed top-0 -left-[10000px] w-[800px]">
+      {children}
+    </div>
+  );
+}
+
 /** The sheet itself: white, with the thin frame on the screen; `name` is its `data-print-doc`. */
 export function Paper({ name, children }) {
   return (

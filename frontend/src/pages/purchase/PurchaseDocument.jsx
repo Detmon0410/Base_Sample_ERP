@@ -1,8 +1,6 @@
-import { Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { Section } from "@/components/common/FormFields";
-import { Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
+import { HiddenPaper, Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
 import { DocumentActions } from "@/pages/invoices/Documents";
 import { formatCurrency, formatNumber } from "@/utils/format";
 
@@ -39,15 +37,14 @@ function PurchasePaper({ po, language }) {
   );
 }
 
-/** The PO form as a paper of the page, with Download PDF and Print (any status). */
+/** Download PDF and Print of the PO (any status); the paper itself is kept out of sight and used by the buttons. */
 export function PurchaseDocument({ po, language }) {
-  const { t } = useTranslation("purchase");
   return (
-    <Section icon={Printer} title={t("doc.section")}>
-      <div className="flex flex-col gap-4">
-        <DocumentActions name="po" number={po.poNumber} />
+    <>
+      <DocumentActions name="po" number={po.poNumber} />
+      <HiddenPaper>
         <PurchasePaper po={po} language={language} />
-      </div>
-    </Section>
+      </HiddenPaper>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
+import { HiddenPaper, Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
 import { formatCurrency, formatNumber } from "@/utils/format";
 import { downloadPdf } from "@/utils/pdf";
 import { printDocument } from "@/utils/print";
@@ -15,6 +15,7 @@ import { printDocument } from "@/utils/print";
 export function InvoiceDocument({ invoice, language }) {
   const { t } = useTranslation(["invoices", "common"]);
   return (
+    <HiddenPaper>
     <Paper name="invoice">
       <PaperHeader title={t("invoices:doc.invoice")} number={invoice.invoiceNumber} date={invoice.invoiceDate} />
       <PaperParties
@@ -42,6 +43,7 @@ export function InvoiceDocument({ invoice, language }) {
       <PaperNotes title={t("common:paper.terms")}>{t("invoices:doc.terms")}</PaperNotes>
       <Signatures labels={[t("invoices:doc.issuedBy"), t("invoices:doc.customerSign")]} />
     </Paper>
+    </HiddenPaper>
   );
 }
 
@@ -49,6 +51,7 @@ export function InvoiceDocument({ invoice, language }) {
 export function ReceiptDocument({ receipt, language }) {
   const { t } = useTranslation(["invoices", "common"]);
   return (
+    <HiddenPaper>
     <Paper name="receipt">
       <PaperHeader title={t("invoices:doc.receipt")} number={receipt.receiptNumber} date={receipt.receiptDate} />
       <PaperParties
@@ -72,6 +75,7 @@ export function ReceiptDocument({ receipt, language }) {
       <PaperTotal text={`${t("invoices:receipt.received")}: ${formatCurrency(receipt.amount, language)}`} note={t("invoices:doc.noTax")} />
       <Signatures labels={[t("invoices:doc.receivedBy"), t("invoices:doc.customerSign")]} />
     </Paper>
+    </HiddenPaper>
   );
 }
 

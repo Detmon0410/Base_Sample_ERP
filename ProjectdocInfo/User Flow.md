@@ -7,8 +7,8 @@ How each user works through the system, by role. The order of the work is in [Fl
 | Role | Department | Who | First page |
 |---|---|---|---|
 | Admin | any (only a label) | Owner / office: does everything | Dashboard: order tiles, invoice tiles, chart |
-| Worker | Sales | Sale Worker: quotations and production orders | Dashboard: order tiles |
-| Worker | Factory | Factory Worker: production, stock, purchase | Today: the work of the day |
+| Worker | Sales | Sale Worker: quotations (a production order is only read) | Dashboard: order tiles |
+| Worker | Factory | Factory Worker: the processes, production, stock, purchase | Dashboard: order tiles |
 
 A Worker must have the department `Sales` or `Factory`; the department decides what the Worker can do. There is no sign-up and no forgot-password: an Admin makes the accounts and sets the passwords.
 
@@ -58,35 +58,37 @@ flowchart TD
     Q8 -- Back --> Q4
     Q8 -- Continue --> Q9
     Q7 -- Yes --> Q9[QT locked<br/>Draft production order created]
-    Q9 --> O[Same page: the production order]
-    O --> O1[Before the start:<br/>add / edit the processes]
+    Q9 --> O[The QT page links to the production order]
+    O --> O1[Order page: read only for Sale<br/>Factory adds the processes]
     O1 --> O2[Factory starts production]
-    O2 --> O3[After the start:<br/>see the progress, read only]
+    O2 --> O3[Sale sees the progress, read only]
     D --> V1[View: production orders]
     D --> V2[View: stock and movements]
     D --> V3[View: products and customers]
     Q2 --> Qd[Delete a Draft QT]
 ```
 
-What the Sale Worker cannot do: start production, record progress, change stock, open Purchase, Accounting, Suppliers or Users. A confirmed QT is locked and cannot be deleted; an order cannot be made by hand, only by Confirm QT.
+What the Sale Worker cannot do: add or change the processes of an order, start production, record progress, change stock, open Purchase, Accounting, Suppliers or Users. A confirmed QT is locked and cannot be deleted; an order cannot be made by hand, only by Confirm QT.
 
 ## Factory Worker
 
 ```mermaid
 flowchart TD
-    T[Today: the work of the day] --> A1[Orders to start]
-    T --> A2[Orders in production]
-    T --> A3[Purchase orders to receive]
-    T --> A4[Low stock strip]
+    T[Dashboard: order tiles<br/>Draft / In progress / Completed] --> A0[Orders list]
+    A0 --> A00[Open a Draft order:<br/>add / edit the processes]
+    A00 --> A1[Orders to start]
+    A0 --> A2[Orders in production]
+    T --> A3[Purchase: orders to receive]
+    T --> A4[Purchase: low stock list]
 
-    A1 --> B1[Start production on the card]
+    A1 --> B1[Start production on the order page]
     B1 --> B2{Enough material<br/>for the BOM?}
     B2 -- No --> B3[409 STOCK_SHORT:<br/>the card shows what is short]
     B3 --> P1
     B2 -- Yes --> B4[BOM deducted, oldest lot first<br/>order In production]
     B4 --> A2
 
-    A2 --> C1[Big button: Record progress]
+    A2 --> C1[Order page: Record progress]
     C1 --> C2[Choose the process<br/>Not started / In progress / Completed]
     C2 --> C3{All processes<br/>Completed?}
     C3 -- No --> A2
@@ -168,7 +170,7 @@ flowchart TD
     I1 --> I2[Invoice Unpaid]
     I2 --> T2
     T2 --> I3[Open invoice as a document:<br/>print]
-    T2 --> I4[Record payment<br/>small dialog: date, amount, method]
+    T2 --> I4[Record payment<br/>small dialog: date, amount]
     I4 --> I5{Full amount?}
     I5 -- No --> T2
     I5 -- Yes --> I6[Invoice Paid<br/>receipt issued]
@@ -202,10 +204,10 @@ Sale Worker: view customers and products. Factory Worker: view products and supp
 
 | Area | Admin | Sale Worker | Factory Worker |
 |---|---|---|---|
-| Dashboard | all tiles + chart | order tiles | Today page |
+| Dashboard | all tiles + chart | order tiles | order tiles |
 | QT: create, print, upload PO, confirm, delete a Draft | yes | yes | no access |
 | Production orders: view | yes | yes | yes |
-| Production orders: create / edit before start | yes | yes | no |
+| Production orders: add / edit the processes before start | yes | no | yes |
 | Start production, record progress | yes | no | yes |
 | Reopen a Completed process | yes | no | no |
 | Evidence upload (production order) | yes | no | yes |

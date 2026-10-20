@@ -34,7 +34,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph Client["Frontend"]
-        UI[Pages: Dashboard, Today, Sales (QT),<br/>Orders, Purchase, Accounting,<br/>Stock, Master]
+        UI[Pages: Dashboard, Sales (QT),<br/>Orders, Purchase, Accounting,<br/>Stock, Master]
         PDF[PDF print: QT form, PO]
         Mock[(Mock API)]
     end

@@ -4,7 +4,7 @@ The system as built on branch `mini-erp` (Version 2.0): the base tables first, t
 
 ## Current version summary (as built)
 
-22 tables in 5 groups. Parts 1 and 2 below give every key and rule; this is the short form.
+23 tables in 5 groups. Parts 1 and 2 below give every key and rule; this is the short form.
 
 | Group | Tables | Main relations |
 |---|---|---|

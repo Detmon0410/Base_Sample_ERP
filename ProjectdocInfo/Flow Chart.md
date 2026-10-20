@@ -12,7 +12,8 @@ flowchart TD
     D --> E[Upload the customer PO<br/>PO No., date, file]
     E --> F[Confirm QT]
     F --> G[System creates a Draft Factory Order<br/>from the QT lines]
-    G --> H{Enough stock<br/>for the BOM?}
+    G --> G1[Factory: add the processes<br/>of every line on the order page]
+    G1 --> H{Enough stock<br/>for the BOM?}
     H -- No --> P1[Purchase flow below] --> H
     H -- Yes --> I[Factory: start production<br/>BOM deducted, oldest lot first]
     I --> J[Factory: record progress,<br/>upload evidence images / documents]
@@ -27,7 +28,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    S1[Check the low stock<br/>on Today or the Purchase page] --> S2{Item low?}
+    S1[Check the low stock<br/>on the Purchase page] --> S2{Item low?}
     S2 -- No --> S1
     S2 -- Yes --> S3[Create PO:<br/>supplier, required date, department,<br/>items of that supplier, quantity,<br/>initial price from the system]
     S3 --> S4[Save: status Draft]

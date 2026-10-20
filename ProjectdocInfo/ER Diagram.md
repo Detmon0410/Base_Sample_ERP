@@ -83,7 +83,6 @@ erDiagram
         int product_id FK
         int quantity
         int unit_price
-        int amount
     }
     PRODUCTION_ORDER {
         int id PK
@@ -103,13 +102,19 @@ erDiagram
     ORDER_PROCESS {
         int id PK
         int line_id FK
+        int sequence
         string name
+        string instructions
         string status
+        int completed_quantity
     }
     PROGRESS_ENTRY {
         int id PK
         int process_id FK
         string status
+        int completed_quantity
+        date work_date
+        string note
         int user_id FK
     }
     PURCHASE_ORDER {
@@ -131,6 +136,7 @@ erDiagram
         string unit
         int unit_price
         int amount
+        string lot_number "typed when received"
     }
     PURCHASE_PAYMENT {
         int po_id FK,UK
@@ -147,6 +153,7 @@ erDiagram
         string kind "PO_FILE | QUOTATION | EVIDENCE | OTHER"
         string file_name
         string file_type
+        int size
         string file_path
         int uploaded_by FK
         datetime at
@@ -161,7 +168,9 @@ erDiagram
     INVOICE_LINE {
         int invoice_id FK
         string product_code
+        string product_name
         int quantity
+        int unit_price
         int amount
     }
     PAYMENT {
@@ -222,6 +231,7 @@ erDiagram
 - `Attachment` is polymorphic (`owner_type` + `owner_id`), so there is no database foreign key to the owner; the service checks it.
 - `PurchasePayment` is stored on the PO and does not go through the Accounting tables.
 - `QT_REFERENCE.production_order_id` is unique: one QT creates one Factory Order.
+- `QtLine` has no stored amount: `quantity x unit_price` is computed by the API. The process, progress and invoice line tables list the columns the code has.
 - Invoice, Payment and Receipt are unchanged and keep their snapshot fields (not repeated here).
 - `Order status` (`Draft`, `In Progress`, `Completed`) is **computed** from the processes; it is not a column. The stock status (`Normal`, `Low`, `Out`) is computed from the lot totals and `min_level`.
 - `Invoice` and `Receipt` copy the customer and the product data when they are issued (a snapshot). An order is billed once, and an invoice has at most one payment and one receipt.

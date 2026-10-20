@@ -7,8 +7,8 @@ Two questions on one page: **who may do what** (role and department), and **what
 | Role | Department | Meaning |
 |---|---|---|
 | Admin | any (only a label) | does everything |
-| Worker | Sales | Sale Worker: quotations and production orders before the start |
-| Worker | Factory | Factory Worker: production, stock, purchase |
+| Worker | Sales | Sale Worker: quotations (a production order is read only) |
+| Worker | Factory | Factory Worker: the processes, production, stock, purchase |
 
 A Worker must have the department `Sales` or `Factory`; the department decides the access. The role check comes before the check that the record exists: a user who may not touch a record gets `403`, never `404`.
 
@@ -21,7 +21,7 @@ A Worker must have the department `Sales` or `Factory`; the department decides t
 | QT | see, create, change, print | yes | yes | no |
 | QT | upload customer PO, Confirm, delete a Draft | yes | yes | no |
 | Production order | read | yes | yes | yes |
-| Production order | create or change before the start | yes | yes | no |
+| Production order | add or change the processes before the start | yes | no | yes |
 | Production order | Start production (deducts stock) | yes | no | yes |
 | Production order | Record progress | yes | no | yes |
 | Production order | change or reopen a Completed process | yes | no | no |
@@ -57,7 +57,7 @@ Confirm needs a customer and at least one line. A missing customer PO file is on
 
 | Status | Edit lines and processes | Start | Record progress | Next |
 |---|---|---|---|---|
-| Draft, not started | yes | needs a line, a process on every line and enough stock (`409 ORDER_NOT_READY`, `409 STOCK_SHORT`) | no (`409 ORDER_NOT_STARTED`) | In progress |
+| Draft, not started | yes (Admin, Factory Worker) | needs a line, a process on every line and enough stock (`409 ORDER_NOT_READY`, `409 STOCK_SHORT`) | no (`409 ORDER_NOT_STARTED`) | In progress |
 | In progress | no (locked by the start) | already started | yes | Completed |
 | Completed | no | – | no, except an Admin reopening a process (note required) | invoiced |
 | Invoiced | no | – | no (`409 ORDER_INVOICED`) | – |

@@ -5,13 +5,13 @@ flowchart TD
     Root[App] --> Login["/login"]
     Root --> Main[Main layout]
 
-    Main --> Dash["/ First page<br/>Dashboard (Admin, Sale)<br/>Today (Factory)"]
+    Main --> Dash["/ First page<br/>Dashboard (all roles)"]
 
     Main --> Orders[Menu: Sales]
     Orders --> QT["/sale/quotations<br/>Sales work list: one row per job<br/>with its step<br/>Admin, Sale"]
-    QT --> QT1["/new, /:id<br/>One page for a job: steps, QT lines,<br/>PO, Confirm, then the production order<br/>(processes, progress)"]
+    QT --> QT1["/new, /:id<br/>One page for a job: steps, QT lines,<br/>PO, Confirm; then a link to<br/>the production order"]
     Orders --> PO["/sale/orders<br/>Production orders<br/>all"]
-    PO --> PO1["/:id<br/>Order: processes, start, progress,<br/>evidence upload"]
+    PO --> PO1["/:id<br/>Order: processes (Factory, Admin), start,<br/>progress, evidence upload"]
 
     Main --> Pur["Menu: Purchase"]
     Pur --> PUR["/purchase/orders<br/>One page: stock, PO form, PO list<br/>Admin, Factory"]
@@ -38,9 +38,9 @@ flowchart TD
 
 | Menu | Page | Path | Admin | Sale Worker | Factory Worker |
 |---|---|---|---|---|---|
-| Dashboard / Today | Dashboard (Admin, Sale), Today (Factory) | `/` | all | orders | work of today |
+| Dashboard | Dashboard | `/` | all tiles + chart | orders | orders |
 | Sales | Sales work list and one page for a job | `/sale/quotations` | yes | yes | no |
-| Sales | Production orders | `/sale/orders` | yes | view + edit before start | view + start + progress |
+| Sales | Production orders | `/sale/orders` | yes | view only | view + processes + start + progress |
 | Purchase | Purchase orders | `/purchase/orders` | yes | no | yes |
 | Accounting | Work list | `/accounting` | yes | no | no |
 | Accounting | Invoice and receipt documents | `/accounting/invoices/:id`, `/accounting/receipts/:id` | yes | no | no |
@@ -57,12 +57,11 @@ flowchart TD
 | Page | Content |
 |---|---|
 | Sign in | email and password |
-| Dashboard (Admin, Sale) | order tiles (Draft, In progress, Completed); for the Admin also the invoice tiles and a chart of orders by status |
-| Today (Factory) | orders to start, orders in production with a big "Record progress" button, purchase orders to receive, a strip for low stock |
+| Dashboard | order tiles (Draft, In progress, Completed); for the Admin also the invoice tiles and a chart of orders by status |
 | Sales work list | one row per job with its step (Draft, Confirmed, In production, Done) |
-| QT page (one page for a job) | the steps of the job, customer, lines and total, Print button, customer PO upload (number, date, file), Confirm button; after Confirm the production order of the job on the same page: processes before the start, progress after it |
+| QT page (one page for a job) | the steps of the job, customer, lines and total, Print button, customer PO upload (number, date, file), Confirm button; after Confirm a link to the production order (the factory adds the processes there) |
 | Production orders | list of orders with their status |
-| Production order | processes, start, progress, the customer PO file, QT link, evidence upload (images and documents) |
+| Production order | processes (Factory, Admin: before the start; Sale: read only), start, progress, the customer PO file, QT link, evidence upload (images and documents) |
 | Purchase orders | stock with low flags, the PO form, the PO list (see below) |
 | Accounting | tabs To invoice / Waiting for payment / Paid; Issue invoice and Record payment in small dialogs; Open receipt |
 | Invoice, receipt | the document, ready to print |

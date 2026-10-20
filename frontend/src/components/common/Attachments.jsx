@@ -7,7 +7,6 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { NativeSelect, Section } from "@/components/common/FormFields";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLoad } from "@/hooks/useLoad";
 import { attachmentsApi } from "@/services/attachments.service";
 import { cn } from "@/lib/utils";
@@ -105,54 +104,8 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
         </Alert>
       ) : null}
 
-      {loading && !data ? (
-        <p role="status">{t("common:loading")}</p>
-      ) : rows.length === 0 ? (
-        <p className="text-muted-foreground">{t("master:attachments.none")}</p>
-      ) : (
-        <Table data-stack>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t("master:attachments.kind")}</TableHead>
-              <TableHead>{t("master:attachments.file")}</TableHead>
-              <TableHead>{t("master:attachments.size")}</TableHead>
-              <TableHead>{t("master:attachments.by")}</TableHead>
-              <TableHead>{t("master:attachments.at")}</TableHead>
-              <TableHead>
-                <span className="sr-only">{t("master:attachments.actions")}</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell data-label={t("master:attachments.kind")}>{t(`master:attachments.kinds.${row.kind}`)}</TableCell>
-                <TableCell data-label={t("master:attachments.file")} className="whitespace-normal">
-                  {row.fileName}
-                </TableCell>
-                <TableCell data-label={t("master:attachments.size")}>{sizeText(row.size)}</TableCell>
-                <TableCell data-label={t("master:attachments.by")}>{row.uploadedByName}</TableCell>
-                <TableCell data-label={t("master:attachments.at")}>{formatDateTime(row.at, i18n.language)}</TableCell>
-                <TableCell>
-                  <span className="flex gap-2">
-                    <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.download")}: ${row.fileName}`} title={t("master:attachments.download")} onClick={() => download(row.id).catch(() => setError(say("UNKNOWN_ERROR")))}>
-                      <Download aria-hidden="true" />
-                    </Button>
-                    {canChange && !lockedKinds.includes(row.kind) ? (
-                      <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.delete")}: ${row.fileName}`} title={t("master:attachments.delete")} onClick={() => setDeleting(row)}>
-                        <Trash2 aria-hidden="true" />
-                      </Button>
-                    ) : null}
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
-
       {canChange ? (
-        <div className="mt-5 flex flex-col gap-3 border-t border-border pt-4">
+        <div className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-muted-foreground">{t("master:attachments.kind")}</span>
             <NativeSelect aria-label={t("master:attachments.kind")} className="w-44" value={kind} onChange={(event) => setKind(event.target.value)} options={kinds.map((value) => ({ value, label: t(`master:attachments.kinds.${value}`) }))} />
@@ -185,6 +138,35 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
           </label>
         </div>
       ) : null}
+
+      {/* the files, under the drop zone: one row each (type, name, size, kind, who and when) with Download and Delete */}
+      {loading && !data ? (
+        <p role="status" className="mt-4">{t("common:loading")}</p>
+      ) : rows.length === 0 ? (
+        <p className="mt-4 text-muted-foreground">{t("master:attachments.none")}</p>
+      ) : (
+        <ul className="m-0 mt-4 flex list-none flex-col divide-y divide-border border-t border-border p-0">
+          {rows.map((row) => (
+            <li key={row.id} className="flex items-center gap-3 py-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-md bg-[#eef1f4] text-xs font-bold">{(row.fileName.split(".").pop() ?? "").slice(0, 4).toUpperCase()}</span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold">{row.fileName}</p>
+                <p className="text-sm text-muted-foreground">
+                  {sizeText(row.size)} · {t(`master:attachments.kinds.${row.kind}`)} · {row.uploadedByName} · {formatDateTime(row.at, i18n.language)}
+                </p>
+              </div>
+              <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.download")}: ${row.fileName}`} title={t("master:attachments.download")} onClick={() => download(row.id).catch(() => setError(say("UNKNOWN_ERROR")))}>
+                <Download aria-hidden="true" />
+              </Button>
+              {canChange && !lockedKinds.includes(row.kind) ? (
+                <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.delete")}: ${row.fileName}`} title={t("master:attachments.delete")} onClick={() => setDeleting(row)}>
+                  <Trash2 aria-hidden="true" />
+                </Button>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
 
       <ConfirmDialog
         open={Boolean(deleting)}

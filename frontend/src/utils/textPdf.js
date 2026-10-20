@@ -12,11 +12,11 @@
 import { censor } from "./censor";
 
 const PT_PER_MM = 72 / 25.4;
-const BRAND = "#6a69a0"; // the main purple of the app
-const BRAND_DARK = "#4f4e80";
-const TINT = "#ecebf4"; // the header row of a table
-const STRIPE = "#f7f7fa"; // every other row
-const BOX = "#f5f5f8";
+const BRAND = "#0085c8"; // the theme blue of the app
+const BRAND_DARK = "#006ba3";
+const TINT = "#e6f3fa"; // the header row of a table
+const STRIPE = "#f3f9fc"; // every other row
+const BOX = "#f3f9fc";
 const TEXT = "#1f2328";
 const MUTED = "#5b6168";
 const RULE = "#d5d8dc";

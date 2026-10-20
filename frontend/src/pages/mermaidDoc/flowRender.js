@@ -23,15 +23,15 @@ function mermaidApi() {
       themeVariables: {
         fontFamily: FONT,
         fontSize: "14px",
-        primaryColor: "#ecebf4",
-        primaryBorderColor: "#6a69a0",
+        primaryColor: "#e6f3fa",
+        primaryBorderColor: "#0085c8",
         primaryTextColor: "#1f2328",
-        secondaryColor: "#f5f5f8",
+        secondaryColor: "#f3f9fc",
         tertiaryColor: "#ffffff",
-        lineColor: "#4f4e80",
+        lineColor: "#006ba3",
         textColor: "#1f2328",
         edgeLabelBackground: "#ffffff",
-        clusterBkg: "#f7f7fa",
+        clusterBkg: "#f3f9fc",
       },
     });
     return mermaid;

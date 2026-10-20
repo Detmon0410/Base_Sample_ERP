@@ -23,13 +23,13 @@ export const HEIGHT = 1290;
 const DASH = [6, 4];
 
 export const COLORS = {
-  header: "#6a69a0", // the main purple of the app
+  header: "#0085c8", // the theme blue of the app
   headerText: "#ffffff",
-  border: "#4f4e80",
+  border: "#006ba3",
   rowLine: "#e3e4e8",
   text: "#1f2328",
   muted: "#5b6168",
-  key: "#4b4a7d",
+  key: "#006ba3",
   line: "#3f4652",
   labelBg: "#ffffff",
   paper: "#ffffff",

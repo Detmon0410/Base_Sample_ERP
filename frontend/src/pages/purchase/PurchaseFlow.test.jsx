@@ -63,7 +63,7 @@ describe("the Purchase page", () => {
 
     // the PO is a Draft, with its number; it can be sent
     expect(await screen.findByRole("heading", { level: 1, name: /^PO-\d{4}-\d{4}\s*Draft$/ })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "PO form" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Download PDF" })).toBeInTheDocument(); // the PO form itself is out of sight
     const paper = document.querySelector('[data-print-doc="po"]');
     expect(paper).toHaveTextContent("Flow Supplier");
     expect(paper).toHaveTextContent("9 Supply Road");
@@ -87,9 +87,15 @@ describe("the Purchase page", () => {
     expect(moved).toBe(50); // 20 + 30
 
     // the payment: it must be the total; then the PO is paid
-    await user.type(screen.getByLabelText("Amount paid"), "100");
+    expect(screen.getByLabelText("Amount paid")).toHaveValue(9000); // it starts as the total
+    expect(screen.getByLabelText("Reference no.")).toHaveValue(`PAY-${screen.getByRole("heading", { level: 1 }).textContent.match(/PO-\d{4}-\d{4}/)[0]}`); // and the reference from the PO number
+    const first = screen.getByLabelText("Amount paid");
+    await user.clear(first);
+    await user.type(first, "100");
     await user.selectOptions(screen.getByLabelText("Payment method"), "Bank transfer");
-    await user.type(screen.getByLabelText("Reference no."), "TT-77");
+    const reference = screen.getByLabelText("Reference no.");
+    await user.clear(reference);
+    await user.type(reference, "TT-77");
     await user.click(screen.getByRole("button", { name: "Record the payment" }));
     await user.click(await screen.findByRole("button", { name: "Confirm" }));
     expect(await screen.findByText("The payment must be equal to the total of the invoice.")).toBeInTheDocument();

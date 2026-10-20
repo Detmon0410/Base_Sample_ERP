@@ -1,5 +1,5 @@
 import { ArrowLeft, Save, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router";
@@ -41,6 +41,16 @@ export function RecordFormPage({ api, listPath, newTitle, titleOf, defaults, toF
 
   const { data: record, error: loadError, loading, reload } = useLoad(() => (isNew ? Promise.resolve(null) : api.get(id)), [id]);
   const form = useForm({ defaultValues: defaults, values: record ? toForm(record) : undefined });
+
+  // an error of the server on a list as a whole (for example two lines with the same product) belongs to no field, so the form would
+  // never clear it and Save would stay blocked: it goes away when the person changes the list
+  useEffect(() => {
+    const subscription = form.watch((_values, { name }) => {
+      const list = name?.split(".")[0];
+      if (list && form.formState.errors[list]?.type === "server") form.clearErrors(list);
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const show = (error) => setSummary(applyServerErrors(form, error, t));
 

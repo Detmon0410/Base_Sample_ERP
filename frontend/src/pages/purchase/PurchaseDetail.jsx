@@ -98,7 +98,7 @@ function ReceivePanel({ po, onDone, onCancel }) {
 function PaymentSection({ po, onDone }) {
   const { t, i18n } = useTranslation(["purchase", "master"]);
   const language = i18n.language;
-  const form = useForm({ defaultValues: { paymentDate: todayIso(), amount: "", method: "", referenceNo: "", note: "" } });
+  const form = useForm({ defaultValues: { paymentDate: todayIso(), amount: po.total, method: "", referenceNo: `PAY-${po.poNumber}`, note: "" } });
   const errors = form.formState.errors;
   const [asking, setAsking] = useState(false);
   const [summary, setSummary] = useState(null);
@@ -135,7 +135,7 @@ function PaymentSection({ po, onDone }) {
           ) : null}
           <div className="grid gap-5 sm:grid-cols-2">
             <TextField label={t("purchase:payment.date")} placeholder={t("examples:date")} inputMode="numeric" error={errors.paymentDate?.message} {...form.register("paymentDate")} />
-            <TextField label={t("purchase:payment.amount")} placeholder={t("examples:paymentAmount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
+            <TextField label={t("purchase:payment.amount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
             <Field data-invalid={errors.method ? true : undefined}>
               <FieldLabel className="text-sm font-semibold">{t("purchase:payment.method")}</FieldLabel>
               <NativeSelect
@@ -145,7 +145,7 @@ function PaymentSection({ po, onDone }) {
               />
               {errors.method ? <FieldError>{errors.method.message}</FieldError> : null}
             </Field>
-            <TextField label={t("purchase:payment.reference")} placeholder={t("examples:reference")} error={errors.referenceNo?.message} {...form.register("referenceNo")} />
+            <TextField label={t("purchase:payment.reference")} error={errors.referenceNo?.message} {...form.register("referenceNo")} />
             <TextField label={t("purchase:payment.note")} placeholder={t("examples:paymentNote")} className="sm:col-span-2" error={errors.note?.message} {...form.register("note")} />
             <p className="text-sm text-muted-foreground sm:col-span-2">{t("purchase:payment.hint", { total: formatCurrency(po.total, language) })}</p>
           </div>
@@ -214,6 +214,8 @@ export function PurchaseDetail({ id }) {
             <AlertDescription className="text-base">{message}</AlertDescription>
           </Alert>
         ) : null}
+
+        <PurchaseDocument po={po} language={language} />
 
         <div className="flex flex-wrap items-center gap-3">
           {po.status === "Draft" ? (
@@ -308,8 +310,6 @@ export function PurchaseDetail({ id }) {
         <PaymentSection po={po} onDone={reload} />
 
         <Attachments ownerType="PurchaseOrder" ownerId={po.id} kinds={["PO_FILE", "QUOTATION", "OTHER"]} canChange title={t("filesTitle")} />
-
-        <PurchaseDocument po={po} language={language} />
 
         <div>
           <Button asChild variant="outline">

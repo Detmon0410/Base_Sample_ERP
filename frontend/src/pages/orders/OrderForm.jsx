@@ -121,8 +121,8 @@ function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
             <span className="pt-7 font-bold">
               {t("processes.step")} {step + 1}
             </span>
-            <TextField label={t("processes.name")} placeholder={t("examples:processName")} error={errors?.processes?.[step]?.name?.message} {...form.register(`lines.${index}.processes.${step}.name`)} />
-            <TextField label={t("processes.instructions")} placeholder={t("examples:processInstructions")} {...form.register(`lines.${index}.processes.${step}.instructions`)} />
+            <TextField label={t("processes.name")} error={errors?.processes?.[step]?.name?.message} {...form.register(`lines.${index}.processes.${step}.name`)} />
+            <TextField label={t("processes.instructions")} {...form.register(`lines.${index}.processes.${step}.instructions`)} />
             <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive sm:mt-5" aria-label={t("processes.remove")} title={t("processes.remove")} onClick={() => processes.remove(step)}>
               <Trash2 aria-hidden="true" />
             </Button>

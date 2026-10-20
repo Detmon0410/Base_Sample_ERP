@@ -9,13 +9,14 @@ import { useLoad } from "@/hooks/useLoad";
 import { getDashboard } from "@/services/dashboard.service";
 import { formatCurrency, formatNumber } from "@/utils/format";
 
-// The colour of a tile says what the number is: grey = waiting, blue = going on, green = done or paid, orange = money still to come in.
+// The colour of a tile says what the number is: grey = waiting, blue = going on, green = done, teal = money received, red = money still to come in.
 // Each class is written out in full so that Tailwind finds it; the text is white on all of them (5:1 or better, 4:1 for the blue).
 const TILE_TONES = {
   waiting: "bg-[#5b6772] hover:bg-[#49535c]",
   progress: "bg-primary hover:bg-[#006fa8]",
   done: "bg-success hover:bg-[#155a31]",
-  owed: "bg-[#b45309] hover:bg-[#92400e]",
+  owed: "bg-[#dc2626] hover:bg-[#b91c1c]",
+  paid: "bg-[#0f766e] hover:bg-[#115e59]",
 };
 
 function Tile({ to, label, value, icon: Icon, tone = "progress" }) {
@@ -65,7 +66,7 @@ export function DashboardPage() {
               <div className="grid gap-4 sm:grid-cols-3">
                 <Tile to="/accounting" icon={ReceiptText} tone="owed" label={t("dashboard:unpaidCount")} value={number(data.invoicing.unpaid.count)} />
                 <Tile to="/accounting" icon={Banknote} tone="owed" label={t("dashboard:unpaidTotal")} value={yen(data.invoicing.unpaid.total)} />
-                <Tile to="/accounting" icon={CircleCheck} tone="done" label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
+                <Tile to="/accounting" icon={CircleCheck} tone="paid" label={t("dashboard:paidThisMonth")} value={yen(data.invoicing.paidThisMonth.total)} />
               </div>
             ) : null}
           </section>

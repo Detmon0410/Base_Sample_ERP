@@ -1,5 +1,7 @@
 # Usability Plan
 
+> **Update:** the processes of a production order are now the Factory Worker's job (the Admin too); a Sale Worker reads the order and the QT page only links to it. Where this plan says a Sale Worker adds the processes, read Factory Worker.
+
 How the system becomes easier to use and to understand: a job is finished on **one page**, the screens are lighter, and each person starts from the work that is theirs. Built on branch `mini-erp` (phases U1 to U6; the Playwright specs of the changed pages are not updated or run yet).
 
 Related: [Version 2.0 Plan](Version%202.0%20Plan.md) (what is built), [docs/api](api/README.md) (the contract), [ProjectdocInfo](../ProjectdocInfo/) (the diagrams).

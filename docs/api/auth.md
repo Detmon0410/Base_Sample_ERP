@@ -56,7 +56,7 @@ The frontend only hides what a user may not use (`frontend/src/utils/permissions
 | Dashboard | all tiles and the chart | order tiles | order tiles |
 | QT: see, make, change, print, Confirm, delete a Draft | yes | yes | `403` |
 | Production orders: read | yes | yes | yes |
-| Production orders: make or change before the start | yes | yes | `403` |
+| Production orders: make or change before the start (the processes) | yes | `403` | yes |
 | Start production (it deducts stock) | yes | `403` | yes |
 | Record progress | yes | `403` | yes (not on a Completed process) |
 | Change or reopen a Completed process | yes | `403` | `403` |

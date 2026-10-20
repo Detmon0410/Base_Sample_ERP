@@ -16,7 +16,7 @@ This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accou
 
 1. **Master data** (Admin): customers, products with a BOM, materials with lots, users. A user is an Admin, a Sale Worker or a Factory Worker (a Worker has the department `Sales` or `Factory`, and the department decides the access: [docs/api/auth.md](docs/api/auth.md#access-by-role-and-department)).
 2. **QT** (Admin or Sale Worker): the quotation, with its lines (product, quantity, price), is made in the system and printed as a form. The customer's PO (number, date, file) is kept with it. Status Draft, then Confirmed.
-3. **Confirm QT** makes the **production order** (status Draft) from the lines of the QT, with their prices; the QT is then locked. The Admin or a Sale Worker adds the manual, ordered list of processes for every line. Files (evidence) can be added to the order.
+3. **Confirm QT** makes the **production order** (status Draft) from the lines of the QT, with their prices; the QT is then locked. The Admin or a Factory Worker adds the manual, ordered list of processes for every line. Files (evidence) can be added to the order.
 4. **Start production** (Admin or Factory Worker): needs enough stock. It deducts the BOM of every line from the oldest lot first (`409 STOCK_SHORT` when a material is short) and locks the products and processes.
 5. **Progress** (Factory Worker or Admin): every process goes Not Started, In Progress, Completed. The status of the order is computed: Draft, In Progress, Completed.
 6. **Stock** (Admin or Factory Worker): adds, deducts or adjusts a lot by hand at any time; the history of every change is kept.

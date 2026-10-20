@@ -81,8 +81,8 @@ describe("the QT page", () => {
     expect(screen.queryByText(/not attached yet/)).not.toBeInTheDocument(); // the PO file is there: no warning
     await user.click(screen.getByRole("button", { name: "Confirm", exact: true }));
     // the same page now carries the production order: its processes can be added before the start
-    expect(await screen.findByRole("heading", { name: /^Production order ORD-/ })).toBeInTheDocument();
-    expect(await screen.findByRole("button", { name: "Add a process" })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: /^ORD-/ })).toBeInTheDocument(); // the order is linked; its processes are the factory's
+    expect(screen.queryByRole("button", { name: "Add a process" })).not.toBeInTheDocument();
     expect(screen.getByRole("list", { name: "Steps of this job" })).toHaveTextContent("Confirmed");
 
     const [qt] = (await qtApi.list({ q: "QT-PAGE-1" })).items;
@@ -105,7 +105,7 @@ describe("the QT page", () => {
     await user.click(await screen.findByRole("button", { name: "Confirm QT" }));
     expect(await screen.findByText(/The customer PO file is not attached yet/)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Confirm", exact: true }));
-    expect(await screen.findByRole("heading", { name: /^Production order ORD-/ })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: /^ORD-/ })).toBeInTheDocument();
   });
 
   it("locks a confirmed QT: the customer and the lines are read only, there is no Confirm, and the order is linked", async () => {
@@ -123,34 +123,19 @@ describe("the QT page", () => {
     expect(screen.queryByRole("button", { name: "Confirm QT" })).not.toBeInTheDocument();
   });
 
-  it("a Sale Worker prepares the whole job on this page: adds a process, and later sees the progress that a Factory Worker records", async () => {
-    const user = userEvent.setup();
+  it("after Confirm the page only links to the production order: the Sale Worker cannot add the processes, the factory does", async () => {
     setToken(tokenOf(mockUsers[2]));
     const qt = await qtApi.create({ qtNumber: "QT-PAGE-4", qtDate: "2026-10-01", customerId: customer.id, lines: [{ productId: door.id, quantity: 4, unitPrice: 9000 }] });
     const { order } = await qtApi.confirm(qt.id);
-    const view = renderAs(mockUsers[2], `/sale/quotations/${qt.id}`);
-
-    await screen.findByRole("heading", { name: /^Production order ORD-/ });
-    await user.click(await screen.findByRole("button", { name: "Add a process" }));
-    await user.type(screen.getByLabelText("Process"), "Welding");
-    const production = screen.getByRole("heading", { name: /^Production order ORD-/ }).closest("section");
-    await user.click(within(production).getByRole("button", { name: "Save" }));
-    await waitFor(async () => expect((await ordersApi.get(order.id)).lines[0].processes.map((process) => process.name)).toEqual(["Welding"]));
-    expect(screen.getByRole("list", { name: "Steps of this job" })).toHaveTextContent("Confirmed");
-    view.unmount();
-
-    // the Admin starts it, the Factory Worker completes the process
-    setToken(tokenOf(mockUsers[0]));
-    await ordersApi.start(order.id);
-    const started = await ordersApi.get(order.id);
-    setToken(tokenOf(mockUsers[1]));
-    await ordersApi.recordProgress(order.id, { processId: started.lines[0].processes[0].id, status: "Completed", completedQuantity: 4, workDate: "2026-10-02", note: "" });
-
     renderAs(mockUsers[2], `/sale/quotations/${qt.id}`);
-    const done = await screen.findByRole("heading", { name: /^Production order ORD-/ });
-    expect(await screen.findByRole("list", { name: "Steps of this job" })).toHaveTextContent("Done");
-    expect(within(done.closest("section")).getAllByRole("row", { name: /Welding/ })[0]).toHaveTextContent("Completed");
-    expect(screen.queryByRole("button", { name: "Add a process" })).not.toBeInTheDocument(); // started: the processes are locked
+
+    expect(await screen.findByRole("link", { name: /^ORD-/ })).toHaveAttribute("href", `/sale/orders/${order.id}`);
+    expect(screen.queryByRole("button", { name: "Add a process" })).not.toBeInTheDocument();
+    await expect(ordersApi.update(order.id, { orderDate: order.orderDate, notes: "", lines: [] })).rejects.toMatchObject({ status: 403 }); // the server refuses a Sale Worker
+
+    setToken(tokenOf(mockUsers[1]));
+    const updated = await ordersApi.update(order.id, { orderDate: order.orderDate, notes: "", lines: [{ productId: door.id, quantity: 4, unitPrice: 9000, processes: [{ name: "Welding", instructions: "" }] }] });
+    expect(updated.lines[0].processes.map((process) => process.name)).toEqual(["Welding"]); // a Factory Worker may
   });
 
   it("lists the QTs with the total, the status and the order, and keeps a Factory Worker out", async () => {

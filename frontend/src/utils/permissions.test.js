@@ -11,7 +11,7 @@ const TABLE = {
   "dashboard.view": { admin: true, sale: true, factory: true },
   "qt.use": { admin: true, sale: true, factory: false },
   "orders.view": { admin: true, sale: true, factory: true },
-  "orders.edit": { admin: true, sale: true, factory: false },
+  "orders.edit": { admin: true, sale: false, factory: true },
   "orders.start": { admin: true, sale: false, factory: true },
   "orders.progress": { admin: true, sale: false, factory: true },
   "orders.evidence": { admin: true, sale: false, factory: true },

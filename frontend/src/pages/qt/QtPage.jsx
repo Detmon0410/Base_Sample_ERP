@@ -1,5 +1,5 @@
-import { ClipboardCheck, Factory, FileText, Package, Plus, Trash2, UserCheck } from "lucide-react";
-import { useId, useState } from "react";
+import { ClipboardCheck, FileText, Package, Plus, Trash2, UserCheck } from "lucide-react";
+import { useEffect, useId, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, Route, Routes } from "react-router";
@@ -20,21 +20,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLoad } from "@/hooks/useLoad";
 import { attachmentsApi } from "@/services/attachments.service";
 import { customersApi, productsApi } from "@/services/master.service";
-import { ordersApi } from "@/services/orders.service";
 import { qtApi } from "@/services/qt.service";
 import { todayIso } from "@/utils/dates";
 import { formatCurrency } from "@/utils/format";
 
-import { OrderForm } from "@/pages/orders/OrderForm";
-import { OrderView } from "@/pages/orders/OrderView";
-import { useAuth } from "@/hooks/useAuth";
-import { can } from "@/utils/permissions";
 
 import { QtDocument, QtDocumentActions } from "./QtDocument";
 
 const STEPS = ["Draft", "Confirmed", "InProduction", "Done"]; // where a job is: the QT, then its production order
 const STEP_TONE = { Draft: "neutral", Confirmed: "warn", InProduction: "progress", Done: "good" };
-const empty = () => ({ qtNumber: "", qtDate: todayIso(), customerId: "", notes: "", customerPoNumber: "", customerPoDate: "", lines: [{ productId: "", quantity: "", unitPrice: "" }] }); // a new QT starts with one empty product line
+const empty = () => ({ qtNumber: "", qtDate: todayIso(), customerId: "", notes: "", customerPoNumber: "", customerPoDate: todayIso(), lines: [{ productId: "", quantity: "", unitPrice: "" }] }); // a new QT starts with one empty product line
 
 /** The lines of the QT: product, quantity, unit price (it starts from the price of the product), the amount of each and the total. */
 function QtLines({ form, readOnly }) {
@@ -141,29 +136,19 @@ function ConfirmQt({ qt, onDone }) {
   );
 }
 
-/** The production order of a confirmed QT, on the same page: its processes before the start, its progress after. */
-function QtProduction({ qt, onChanged }) {
-  const { t } = useTranslation("master");
-  const { user } = useAuth();
-  const { data: order, error, reload } = useLoad(() => ordersApi.get(qt.productionOrderId), [qt.productionOrderId]);
-  if (error) return <p role="alert" className="text-destructive">{t("qt.production.failed")}</p>;
-  if (!order) return null;
-  const changed = () => {
-    reload();
-    onChanged();
-  };
-  return (
-    <section aria-labelledby="qt-production" className="flex flex-col gap-5">
-      <h2 id="qt-production" className="flex flex-wrap items-center gap-x-3 text-lg font-bold">
-        <Factory aria-hidden="true" className="size-5 text-primary" />
-        {t("qt.production.title", { number: order.orderNumber })}
-        <Link to={`/sale/orders/${order.id}`} className="text-sm font-normal">
-          {t("qt.production.open")}
-        </Link>
-      </h2>
-      {can(user, "orders.edit") && !order.started ? <OrderForm key={order.updatedAt} order={order} onChanged={changed} embedded /> : <OrderView order={order} onChanged={changed} embedded />}
-    </section>
-  );
+/** A new QT gets the next number of the customer PO (PO-year-0001, 0002 ...) and can change it. */
+function AutoPoNumber({ form }) {
+  useEffect(() => {
+    let live = true;
+    qtApi.list({ pageSize: 1 }).then((result) => {
+      if (!live || form.getValues("customerPoNumber")) return;
+      form.setValue("customerPoNumber", `PO-${new Date().getFullYear()}-${String((result?.meta?.total ?? 0) + 1).padStart(4, "0")}`);
+    }).catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [form]);
+  return null;
 }
 
 function QtForm() {
@@ -193,13 +178,13 @@ function QtForm() {
       actions={({ record, reload }) => (record.status === "Draft" ? <ConfirmQt qt={record} onDone={reload} /> : null)}
       wide
       headerActions={({ record }) => <QtDocumentActions qt={record} />}
-      after={({ record, reload }) => (record.productionOrderId ? <QtProduction qt={record} onChanged={reload} /> : null)}
     >
       {({ form, record }) => {
         const errors = form.formState.errors;
         const confirmed = record?.status === "Confirmed";
         return (
           <>
+            {record ? null : <AutoPoNumber form={form} />}
             {record ? <StepChain label={t("qt.steps.label")} current={record.step} steps={STEPS.map((key) => ({ key, label: t(`qt.step.${key}`) }))} /> : null}
             {confirmed ? (
               <Alert>
@@ -233,8 +218,8 @@ function QtForm() {
             <div className="flex flex-col gap-5">
             <Section icon={UserCheck} title={t("qt.po.title")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField label={t("qt.po.number")} placeholder={t("examples:customerPo")} error={errors.customerPoNumber?.message} {...form.register("customerPoNumber", { onChange: (event) => event.target.value.trim() && !form.getValues("customerPoDate") && form.setValue("customerPoDate", todayIso()) })} /> {/* the date of the PO starts as today */}
-                <TextField label={t("qt.po.date")} placeholder={t("examples:date")} inputMode="numeric" error={errors.customerPoDate?.message} {...form.register("customerPoDate")} />
+                <TextField label={t("qt.po.number")} error={errors.customerPoNumber?.message} {...form.register("customerPoNumber")} />
+                <TextField label={t("qt.po.date")} inputMode="numeric" error={errors.customerPoDate?.message} {...form.register("customerPoDate")} />
               </div>
               <p className="mt-3 text-sm text-muted-foreground">{record ? t("qt.po.hint") : t("qt.po.saveFirst")}</p>
             </Section>

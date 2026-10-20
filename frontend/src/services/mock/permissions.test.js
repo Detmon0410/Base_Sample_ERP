@@ -52,7 +52,7 @@ const TABLE = {
 
   "GET /orders": ["factory", "sale"],
   "GET /orders/:id": ["factory", "sale"],
-  "PUT /orders/:id": ["sale"],
+  "PUT /orders/:id": ["factory"],
   "POST /orders/:id/start": ["factory"],
   "POST /orders/:id/progress": ["factory"],
 

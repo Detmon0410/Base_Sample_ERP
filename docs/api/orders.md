@@ -8,11 +8,11 @@ Conventions: [README.md](README.md)
 | Call | Admin | Sale Worker | Factory Worker |
 |---|---|---|---|
 | `GET /orders`, `GET /orders/:id` | yes | yes | yes |
-| `PUT /orders/:id` (before the start) | yes | yes | `403 FORBIDDEN` |
+| `PUT /orders/:id` (before the start) | yes | `403 FORBIDDEN` | yes |
 | `POST /orders/:id/start` | yes | `403 FORBIDDEN` | yes |
 | `POST /orders/:id/progress` | yes | `403 FORBIDDEN` | yes (not on a completed process) |
 
-An order is **made by Confirm QT** ([qt.md](qt.md)), so there is no `POST /orders`. A Sale Worker (or the Admin) prepares the order (lines and processes); a Factory Worker (or the Admin) starts it and records the progress. See [auth.md](auth.md#access-by-role-and-department).
+An order is **made by Confirm QT** ([qt.md](qt.md)), so there is no `POST /orders`. A Factory Worker (or the Admin) prepares the order (lines and processes), starts it and records the progress. See [auth.md](auth.md#access-by-role-and-department).
 
 ## Calls
 

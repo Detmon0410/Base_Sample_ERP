@@ -350,9 +350,9 @@ describe("production orders", () => {
     const { order } = await makeOrder(t.as.admin, { product, customer, qtNumber: "QT-O2" });
     const body = { orderDate: "2026-11-01", notes: "rush", lines: [{ productId: product.id, quantity: 3, unitPrice: 50, processes: [{ name: "Only", instructions: "be careful" }] }] };
 
-    assert.equal((await t.as.factory.put(`/orders/${order.id}`, body)).status, 403);
-    assert.equal((await t.as.factory.put("/orders/99999", body)).status, 403);
-    const upd = must(await t.as.sales.put(`/orders/${order.id}`, body));
+    assert.equal((await t.as.sales.put(`/orders/${order.id}`, body)).status, 403);
+    assert.equal((await t.as.sales.put("/orders/99999", body)).status, 403);
+    const upd = must(await t.as.factory.put(`/orders/${order.id}`, body));
     assert.equal(upd.orderDate, "2026-11-01");
     assert.equal(upd.notes, "rush");
     assert.deepEqual(upd.lines.map((l) => [l.quantity, l.unitPrice, l.processes.map((p) => p.instructions)]), [[3, 50, ["be careful"]]]);

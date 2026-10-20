@@ -166,7 +166,8 @@
     "production": {
       "title": "Production order {{number}}",
       "open": "Open the order page",
-      "failed": "The production order could not be loaded."
+      "failed": "The production order could not be loaded.",
+      "factoryNote": "The factory adds the processes and starts the production on the page of the order."
     }
   },
   "stock": {

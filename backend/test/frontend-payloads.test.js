@@ -40,7 +40,7 @@ describe("bodies as the frontend forms send them (numbers as strings)", () => {
 
     const { order } = must(await t.as.sales.post(`/qt/${qt.id}/confirm`));
     must(
-      await t.as.sales.put(`/orders/${order.id}`, {
+      await t.as.factory.put(`/orders/${order.id}`, {
         orderDate: today(),
         notes: "",
         lines: [{ productId: String(product.id), quantity: "10", unitPrice: "45000", processes: [{ name: "Cut", instructions: "" }] }]

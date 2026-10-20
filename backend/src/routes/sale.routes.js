@@ -39,7 +39,7 @@ orderRoutes.get(
 orderRoutes.get("/:id", asyncHandler(async (req, res) => ok(res, await orders.get(parseId(req.params.id)))));
 orderRoutes.put(
   "/:id",
-  requires(can.adminOrSales),
+  requires(can.adminOrFactory), // the factory adds the processes
   asyncHandler(async (req, res) => ok(res, await orders.update(parseId(req.params.id), req.body ?? {})))
 );
 orderRoutes.post(

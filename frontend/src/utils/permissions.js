@@ -19,7 +19,7 @@ export const ACTIONS = {
   "qt.use": ["Sales"], // see, make, print, confirm
 
   "orders.view": ANYONE,
-  "orders.edit": ["Sales"], // make or change an order before the start
+  "orders.edit": ["Factory"], // add or change the processes (and the lines) of an order before the start
   "orders.start": ["Factory"], // start production (it deducts the stock)
   "orders.progress": ["Factory"], // record progress of a process
   "orders.evidence": ["Factory"], // upload or delete the evidence files of an order

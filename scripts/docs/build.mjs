@@ -1,5 +1,5 @@
 /*
- * Builds the documents of ProjectdocInfo: each .md -> "<name>.pdf" and "<name>.docx" next to it, with every diagram as vector SVG.
+ * Builds the documents of docs/ProjectdocInfo: each .md -> "<name>.pdf" and "<name>.docx" next to it, with every diagram as vector SVG.
  *   node build.mjs "User Flow" [--check]
  * Flowcharts are drawn by render.js (ELK layout, orthogonal lines, rounded elbows, theme of diagram-theme.md); other Mermaid charts
  * (sequence, state, ER) by Mermaid itself. --check only renders the diagrams and their QA report (out/<name>/) and writes no document.
@@ -15,7 +15,7 @@ import { chromium } from "playwright";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
-const DOCS = path.join(ROOT, "ProjectdocInfo");
+const DOCS = path.join(ROOT, "docs/ProjectdocInfo");
 const MERMAID = path.join(HERE, "node_modules/mermaid/dist/mermaid.min.js");
 const ELK = path.join(HERE, "node_modules/elkjs/lib/elk.bundled.js");
 
@@ -330,7 +330,7 @@ const args = process.argv.slice(2);
 const checkOnly = args.includes("--check");
 const names = args.filter((arg) => !arg.startsWith("--"));
 if (!names.length) {
-  console.error('usage: node build.mjs "<name of a .md in ProjectdocInfo>" [--check]');
+  console.error('usage: node build.mjs "<name of a .md in docs/ProjectdocInfo>" [--check]');
   process.exit(2);
 }
 
@@ -339,9 +339,9 @@ const page = await browser.newPage({ deviceScaleFactor: 2 });
 let anyFailed = false;
 try {
   for (const name of names) {
-    // a document is ProjectdocInfo/<name>.md or in its own folder ProjectdocInfo/<folder>/<name>.md; its PDF and DOCX go next to it
+    // a document is docs/ProjectdocInfo/<name>.md or in its own folder docs/ProjectdocInfo/<folder>/<name>.md; its PDF and DOCX go next to it
     const source = [DOCS, ...fs.readdirSync(DOCS, { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => path.join(DOCS, entry.name))].map((dir) => path.join(dir, `${name}.md`)).find((file) => fs.existsSync(file));
-    if (!source) throw new Error(`${name}.md not found in ProjectdocInfo`);
+    if (!source) throw new Error(`${name}.md not found in docs/ProjectdocInfo`);
     let blocks = parseMd(fs.readFileSync(source, "utf8"));
     const figuresFile = source.replace(/\.md$/, ".figures.json");
     if (fs.existsSync(figuresFile)) blocks = expandFigures(blocks, JSON.parse(fs.readFileSync(figuresFile, "utf8")));

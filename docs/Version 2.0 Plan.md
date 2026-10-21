@@ -5,7 +5,7 @@ How the three new requirements are built, phase by phase. Sources:
 - [User Version 2.0](User%20Version%202.0.md) (roles by department)
 - [QT Upgrade 2.0](QT%20Upgrade%202.0.md) (printed QT form, customer PO, Confirm QT creates the order)
 - [Purchase Logic Draft2](Purchase%20Logic%20Draft2.md) (suppliers, purchase orders, receiving, payment, files)
-- Diagrams of the system as built: [ProjectdocInfo](../ProjectdocInfo/)
+- Diagrams of the system as built: [ProjectdocInfo](ProjectdocInfo/)
 
 Status of this file: **built** (the five phases are done on the frontend and the mock; the backend follows `docs/api`). It stays as the record of the decisions D1 to D12. It is written so the frontend work and the backend work can start from the same page. The frontend runs on the mock API; the backend follows [docs/api](api/README.md).
 

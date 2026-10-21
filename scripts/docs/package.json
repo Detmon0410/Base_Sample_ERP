@@ -2,7 +2,7 @@
   "name": "kanou-docs-build",
   "private": true,
   "type": "module",
-  "description": "Builds ProjectdocInfo/*.md into DOCX and PDF with orthogonal diagrams (Mermaid source -> ELK layout -> SVG).",
+  "description": "Builds docs/ProjectdocInfo/*.md into DOCX and PDF with orthogonal diagrams (Mermaid source -> ELK layout -> SVG).",
   "scripts": {
     "build": "node build.mjs"
   },

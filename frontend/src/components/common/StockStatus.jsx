@@ -5,8 +5,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 const TONES = { Normal: "good", Low: "warn", Out: "bad" };
 
 /**
- * The stock status of a material (Normal / Low / Out, from its minimum level; see services/mock/stockStatus.js and
- * docs/api/stock.md). A material without a minimum level has no status and shows a dash.
+ * The stock status of a material (Normal / Low / Out, from its minimum level; see docs/api/stock.md). A material without a minimum level has no status and shows a dash.
  */
 export function StockStatus({ status }) {
   const { t } = useTranslation("master");

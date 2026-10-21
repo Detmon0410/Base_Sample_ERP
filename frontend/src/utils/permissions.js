@@ -1,5 +1,5 @@
-// The access rules, in ONE place. The frontend asks `can(user, action)` to decide what to show, and the mock API asks the same to
-// decide what to refuse; the real backend must enforce the same table on every request (docs/api, "Who may call").
+// The access rules, in ONE place. The frontend asks `can(user, action)` to decide what to show, and the real backend must
+// enforce the same table on every request (docs/api, "Who may call").
 //
 // A user: { id, name, department, email, role }. `role` is "Admin" (everything) or "Worker". A Worker belongs to one department,
 // "Sales" (a Sale Worker) or "Factory" (a Factory Worker), and the department decides what the Worker may do.

@@ -26,7 +26,7 @@ function exists(namespace, key) {
 function sources(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) return entry.name === "mock" || entry.name === "locales" ? [] : sources(full);
+    if (entry.isDirectory()) return entry.name === "locales" ? [] : sources(full);
     return /\.jsx?$/.test(entry.name) && !/\.test\./.test(entry.name) ? [full] : [];
   });
 }

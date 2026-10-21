@@ -2,17 +2,12 @@ import axios from "axios";
 
 import { clearToken, getToken } from "@/utils/session";
 
-import { mockAdapter } from "./mock/adapter.js";
 
 export const UNAUTHORIZED_EVENT = "kanou:unauthorized";
-
-const useMock = import.meta.env.VITE_USE_MOCK === "true";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:3001/api",
   headers: { "Content-Type": "application/json" },
-  // With VITE_USE_MOCK=true every request is answered locally (see services/mock).
-  ...(useMock ? { adapter: mockAdapter } : {}),
 });
 
 api.interceptors.request.use((config) => {

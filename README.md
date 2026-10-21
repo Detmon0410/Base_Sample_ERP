@@ -9,7 +9,7 @@ This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accou
 | Part | State |
 |---|---|
 | Source of the requirements | [docs/BaseRequirement_md/simplified_factory_system_requirements.md](docs/BaseRequirement_md/simplified_factory_system_requirements.md) |
-| Frontend | built on the mock API: sign-in, two roles (Admin, Worker), the menu in the header, the Dashboard (and "Today" for a Factory Worker), one page for a Sales job (QT, Confirm, the production order and its processes), production orders with progress, the Stock group (materials and stock changes, movements), one Accounting page (to invoice, waiting for payment, paid; the invoice and the receipt as documents), customers, products, users. See [docs/Usability Plan.md](docs/Usability%20Plan.md). English and Japanese. Tests: vitest |
+| Frontend | built on the API of `backend/`: sign-in, two roles (Admin, Worker), the menu in the header, the Dashboard (and "Today" for a Factory Worker), one page for a Sales job (QT, Confirm, the production order and its processes), production orders with progress, the Stock group (materials and stock changes, movements), one Accounting page (to invoice, waiting for payment, paid; the invoice and the receipt as documents), customers, products, users. See [docs/Usability Plan.md](docs/Usability%20Plan.md). English and Japanese. Tests: vitest |
 | Backend | only a sample (the `User` table). The API it has to answer is written in [docs/api](docs/api/README.md) |
 
 ## Workflow
@@ -36,17 +36,11 @@ docs/ProjectdocInfo/   the diagrams of the system as built: context, flow chart,
 docs/BaseRequirement_md/   the requirements (only simplified_factory_system_requirements.md is for this Mini ERP; the other files are of the big system on branch jay)
 ```
 
-## Run the frontend with the mock (no database)
+## Frontend commands
 
 ```bash
 cd frontend
-pnpm install
-pnpm run dev          # http://localhost:5173
-```
-
-`VITE_USE_MOCK=true` (in `frontend/.env.development`) answers every API call from `frontend/src/services/mock/`; what a person does is kept in the browser. The users: `admin@gmail.com` / `admin` (Admin) and `worker@gmail.com` / `worker` (Worker).
-
-```bash
+pnpm run dev          # http://localhost:5173 (the backend must run)
 pnpm run test         # vitest
 pnpm run lint
 pnpm run build

@@ -1,11 +1,11 @@
 # Frontend link: what is linked, and what has no page yet
 
-The frontend (`frontend/`) talks to the real backend (`backend/`, Node.js + Express + Prisma + MySQL) when `VITE_USE_MOCK=false` in `frontend/.env`. This note lists what is linked and which backend APIs have **no frontend page** (skipped on purpose). The contract is in [docs/api](api/README.md); the backend follows it, and the mock of the frontend (`frontend/src/services/mock`) is the reference for the details the documents do not spell out.
+The frontend (`frontend/`) talks to the real backend (`backend/`, Node.js + Express + Prisma + MySQL). This note lists what is linked and which backend APIs have **no frontend page** (skipped on purpose). The contract is in [docs/api](api/README.md); the backend follows it, and the mock of the frontend (`frontend/src/services/mock`) is the reference for the details the documents do not spell out.
 
 ## How to run it linked
 
 1. `cd backend && pnpm run db:setup` (creates the tables of `kanou_mini_erp` and the three demo users), then, for the demo data, `node prisma/seed-demo.js --fresh`.
-2. `frontend/.env`: `VITE_API_URL=http://localhost:3001/api` and `VITE_USE_MOCK=false`.
+2. `frontend/.env`: `VITE_API_URL=http://localhost:3001/api`.
 3. `node scripts/dev.js` from the repository root (backend on `:3001`, frontend on `:5173`).
 
 Users: `admin@gmail.com` / `admin`, `worker@gmail.com` / `worker` (Factory Worker), `sale@gmail.com` / `sale` (Sale Worker). The demo seed adds `hana@gmail.com`, `ken@gmail.com`, `mika@gmail.com` (password `demo123`).
@@ -29,7 +29,7 @@ Checked by opening every page below in a browser as Admin, Factory Worker and Sa
 
 Two things on the backend side make the forms work:
 
-* The forms send numbers as text (`"10"`, `"45000"`), as the mock accepts. The backend converts numeric text in the number fields (`*Id`, `quantity`, `unitPrice`, `price`, `completedQuantity`, `amount`, `minLevel`, `change`) before it validates (`backend/src/middlewares/coerce.middleware.js`). An empty value or letters are still rejected (`REQUIRED` / `INVALID`).
+* The forms send numbers as text (`"10"`, `"45000"`). The backend converts numeric text in the number fields (`*Id`, `quantity`, `unitPrice`, `price`, `completedQuantity`, `amount`, `minLevel`, `change`) before it validates (`backend/src/middlewares/coerce.middleware.js`). An empty value or letters are still rejected (`REQUIRED` / `INVALID`).
 * A native `<select>` whose options come from the server lost its saved value (the product of a QT showed "Choose a product"). `NativeSelect` in `frontend/src/components/common/FormFields.jsx` now rebuilds the select when its options change, so the saved value is put back.
 
 ## Backend APIs with no frontend page (skipped)

@@ -11,10 +11,6 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, 'src'),
     },
   },
-  server: {
-    // Playwright writes its videos, traces and downloads here while a test runs; watching them crashed the dev server (EBUSY on a .crdownload)
-    watch: { ignored: ["**/e2e-results/**", "**/e2e-report/**"] },
-  },
   test: {
     environment: 'jsdom',
     globals: true,
@@ -23,6 +19,6 @@ export default defineConfig({
     env: { VITE_USE_MOCK: 'true' },
     css: false,
     testTimeout: 15000, // the page tests drive a whole flow like a person would; on a busy machine 5 s is too tight
-    exclude: ["**/node_modules/**", "e2e/**"], // e2e/ is Playwright (npm run e2e)
+    exclude: ["**/node_modules/**"],
   },
 })

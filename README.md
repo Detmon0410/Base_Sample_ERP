@@ -9,7 +9,7 @@ This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accou
 | Part | State |
 |---|---|
 | Source of the requirements | [docs/BaseRequirement_md/simplified_factory_system_requirements.md](docs/BaseRequirement_md/simplified_factory_system_requirements.md) |
-| Frontend | built on the mock API: sign-in, two roles (Admin, Worker), the menu in the header, the Dashboard (and "Today" for a Factory Worker), one page for a Sales job (QT, Confirm, the production order and its processes), production orders with progress, the Stock group (materials and stock changes, movements), one Accounting page (to invoice, waiting for payment, paid; the invoice and the receipt as documents), customers, products, users. See [docs/Usability Plan.md](docs/Usability%20Plan.md). English and Japanese. Tests: vitest and Playwright (the acceptance case follows the 10 steps of the requirements) |
+| Frontend | built on the mock API: sign-in, two roles (Admin, Worker), the menu in the header, the Dashboard (and "Today" for a Factory Worker), one page for a Sales job (QT, Confirm, the production order and its processes), production orders with progress, the Stock group (materials and stock changes, movements), one Accounting page (to invoice, waiting for payment, paid; the invoice and the receipt as documents), customers, products, users. See [docs/Usability Plan.md](docs/Usability%20Plan.md). English and Japanese. Tests: vitest |
 | Backend | only a sample (the `User` table). The API it has to answer is written in [docs/api](docs/api/README.md) |
 
 ## Workflow
@@ -30,7 +30,7 @@ Where this differs from `simplified_factory_system_requirements.md` (changes the
 
 ```text
 backend/    Express API (MVC + Service layer, Prisma/MySQL)
-frontend/   React app (Vite, Tailwind v4, i18next, vitest, Playwright)
+frontend/   React app (Vite, Tailwind v4, i18next, vitest)
 docs/       the API contract (docs/api) and the plan of Version 2.0 (docs/Version 2.0 Plan.md)
 docs/ProjectdocInfo/   the diagrams of the system as built: context, flow chart, site map, user flow, ER, DB relations
 docs/BaseRequirement_md/   the requirements (only simplified_factory_system_requirements.md is for this Mini ERP; the other files are of the big system on branch jay)
@@ -50,7 +50,6 @@ pnpm run dev          # http://localhost:5173
 pnpm run test         # vitest
 pnpm run lint
 pnpm run build
-pnpm run e2e          # Playwright (a browser is installed once: pnpm exec playwright install chromium)
 ```
 
 ## Run the full stack

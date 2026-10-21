@@ -9,7 +9,6 @@ pnpm run dev      # http://localhost:5173
 pnpm run test     # vitest
 pnpm run lint     # oxlint
 pnpm run build
-pnpm run e2e      # Playwright
 ```
 
 ## Environment

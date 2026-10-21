@@ -23,6 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 
-# Playwright
-e2e-results
-e2e-report

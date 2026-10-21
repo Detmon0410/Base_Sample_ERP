@@ -94,6 +94,28 @@ function inline(text) {
 const esc = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const htmlInline = (text) => inline(text).map((run) => (run.code ? `<code>${esc(run.text)}</code>` : run.bold ? `<b>${esc(run.text)}</b>` : esc(run.text))).join("");
 
+/**
+ * `<name>.figures.json` next to a .md says how the document draws what the Markdown cannot draw well on paper:
+ *   erDiagram: { dashed, extra, figures: [{ caption, tables, names, ghosts, ... }] }  the one erDiagram block becomes these figures
+ *   fences: [{ heading, code }]  the text code block under that heading is drawn as this Mermaid chart
+ * The Markdown stays the source of the tables, columns and relationships.
+ */
+function expandFigures(blocks, config) {
+  const out = [];
+  let heading = "";
+  for (const block of blocks) {
+    if (block.type === "heading") heading = block.text;
+    const fence = block.type === "code" && (config.fences ?? []).find((item) => item.heading === heading);
+    if (fence) {
+      for (const figure of fence.figures ?? [fence]) out.push({ type: "chart", code: figure.code, caption: figure.caption ?? heading });
+    } else if (block.type === "chart" && config.erDiagram && block.code.trimStart().startsWith("erDiagram")) {
+      const { figures, ...shared } = config.erDiagram;
+      for (const figure of figures) out.push({ type: "chart", code: block.code, caption: figure.caption, er: { ...shared, ...figure } });
+    } else out.push(block);
+  }
+  return out;
+}
+
 // ------------------------------------------------------------------ diagrams
 
 async function renderCharts(page, blocks, outDir) {
@@ -103,7 +125,8 @@ async function renderCharts(page, blocks, outDir) {
   for (const [index, chart] of charts.entries()) {
     const kind = chart.code.trimStart().split(/\s/)[0];
     let result;
-    if (kind === "flowchart" || kind === "graph") result = await page.evaluate(([code, t]) => window.renderFlowchart(code, t), [chart.code, theme]);
+    if (chart.er) result = await page.evaluate(([code, t, spec]) => window.renderEr(code, t, spec), [chart.code, theme, chart.er]);
+    else if (kind === "flowchart" || kind === "graph") result = await page.evaluate(([code, t]) => window.renderFlowchart(code, t), [chart.code, theme]);
     else result = await page.evaluate(([code, id]) => window.renderMermaid(code, id), [chart.code, `m${index}`]);
     Object.assign(chart, result, { index: index + 1 });
 
@@ -137,6 +160,7 @@ async function loadRenderers(page) {
   await page.setContent("<html><body></body></html>");
   await page.addScriptTag({ path: ELK });
   await page.addScriptTag({ path: path.join(HERE, "render.js") });
+  await page.addScriptTag({ path: path.join(HERE, "render-er.js") });
   await page.addScriptTag({ path: MERMAID });
   await page.evaluate((t) => {
     window.mermaid.initialize({
@@ -307,13 +331,15 @@ try {
     // a document is ProjectdocInfo/<name>.md or in its own folder ProjectdocInfo/<folder>/<name>.md; its PDF and DOCX go next to it
     const source = [DOCS, ...fs.readdirSync(DOCS, { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => path.join(DOCS, entry.name))].map((dir) => path.join(dir, `${name}.md`)).find((file) => fs.existsSync(file));
     if (!source) throw new Error(`${name}.md not found in ProjectdocInfo`);
-    const blocks = parseMd(fs.readFileSync(source, "utf8"));
+    let blocks = parseMd(fs.readFileSync(source, "utf8"));
+    const figuresFile = source.replace(/\.md$/, ".figures.json");
+    if (fs.existsSync(figuresFile)) blocks = expandFigures(blocks, JSON.parse(fs.readFileSync(figuresFile, "utf8")));
     const title = blocks.find((block) => block.type === "heading" && block.level === 1)?.text ?? name;
     // a figure is named after the heading above it
     let heading = title;
     for (const block of blocks) {
       if (block.type === "heading") heading = block.text;
-      if (block.type === "chart") block.caption = heading;
+      if (block.type === "chart") block.caption ??= heading;
     }
     const outDir = path.join(HERE, "out", name);
     fs.mkdirSync(outDir, { recursive: true });

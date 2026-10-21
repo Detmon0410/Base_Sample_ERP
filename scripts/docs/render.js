@@ -389,7 +389,7 @@
     const hits = (a, b) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
     const segs = edges.flatMap((edge) => edge.points.slice(1).map((p, i) => ({ edge, i, a: edge.points[i], b: p })));
     const crossesLine = (box, own) =>
-      segs.some((seg) => !(seg.edge === own && seg.i === 0) && hits(box, { x: Math.min(seg.a.x, seg.b.x) - 1, y: Math.min(seg.a.y, seg.b.y) - 1, width: Math.abs(seg.a.x - seg.b.x) + 2, height: Math.abs(seg.a.y - seg.b.y) + 2 }));
+      segs.some((seg) => seg.edge !== own && hits(box, { x: Math.min(seg.a.x, seg.b.x) - 1, y: Math.min(seg.a.y, seg.b.y) - 1, width: Math.abs(seg.a.x - seg.b.x) + 2, height: Math.abs(seg.a.y - seg.b.y) + 2 }));
     for (const edge of edges.filter((item) => item.label)) {
       const [p0, p1] = edge.points;
       const { width: w, height: h } = edge.labelSize;
@@ -405,6 +405,9 @@
         const x = right ? p0.x + gap + 2 : p0.x - gap - 2 - w;
         candidates.push({ x, y: p0.y - gap + 1 - h }, { x, y: p0.y + gap - 1 });
       }
+      // else beside the last segment, where a fork's lines have already parted
+      const [q0, q1] = [edge.points[edge.points.length - 2], edge.points[edge.points.length - 1]];
+      if (q0.x === q1.x && Math.abs(q1.y - q0.y) > h + 4) candidates.push({ x: q0.x + gap, y: (q0.y + q1.y) / 2 - h / 2 }, { x: q0.x - gap - w, y: (q0.y + q1.y) / 2 - h / 2 });
       const fits = (box) => !nodes.some((n) => hits(box, n)) && !placed.some((other) => hits(box, other)) && !crossesLine(box, edge);
       const choice = candidates.map((c) => ({ ...c, width: w, height: h })).find(fits) ?? { ...candidates[0], width: w, height: h };
       placed.push({ text: edge.label, rows: edge.labelRows, ...choice });
@@ -438,7 +441,9 @@
       item.width = Math.max(item.width, 112);
     }
     const node = (id) => graph.nodes.get(id);
-    const stacked = (id) => kids.get(id).length >= 2 && kids.get(id).every((child) => kids.get(child).length === 0);
+    // `%% no-stack: Id, Id` keeps the leaves of those nodes in one row
+    const noStack = new Set((/^\s*%%\s*no-stack:\s*(.+)$/m.exec(code)?.[1] ?? "").split(/[,\s]+/).filter(Boolean));
+    const stacked = (id) => !noStack.has(id) && kids.get(id).length >= 2 && kids.get(id).every((child) => kids.get(child).length === 0);
     const span = new Map();
     const measureSpan = (id) => {
       const item = node(id);
@@ -527,6 +532,8 @@
   }
 
   // ---------------------------------------------------------------- main
+
+  window.__flow = { check, roundedPath, textSvg, measure, resolveRole, esc };
 
   window.renderFlowchart = async (code, theme) => {
     if (/^\s*%%\s*layout:\s*tree/m.test(code)) return renderTree(code, theme);

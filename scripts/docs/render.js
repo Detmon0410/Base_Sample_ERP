@@ -558,94 +558,102 @@
   // ---------------------------------------------------------------- context (DFD level 0)
 
   /**
-   * A chart marked `%% layout: context` is drawn as a context diagram: the system as a box in the middle (a "0" band over its name),
-   * external entities in a column on each side (`%% left: A, B` and `%% right: C`, `%% center: Id`), and every flow as its own straight
-   * horizontal line from its entity to the system, the label above the line, the arrow at the receiving end. A dotted flow stays dotted.
+   * A chart marked `%% layout: context` is drawn as a context diagram in the classic way: the system as a plain box with a "0" band in
+   * the middle, each external entity as a plain box around it, and every flow as its own line with its label on it. An entity stands in
+   * a slot named in the chart: `%% top-left: Id`, `top-right`, `bottom-left`, `bottom-right`, `left`, `right`, and `%% center: Id`.
+   * A side entity (left, right) reaches the system with straight lines. A corner entity leaves its box sideways and turns once, down
+   * or up, into the top or the bottom of the system; the lines of one entity are nested, so none of them crosses another. The label
+   * sits on the first run, next to the entity; the arrow is at the receiving end; a dotted flow stays dotted.
    */
   function renderContext(code, theme) {
     const graph = parse(code);
-    const comment = (key) => (new RegExp("^\\s*%%\\s*" + key + ":\\s*(.+)$", "m").exec(code)?.[1] ?? "").split(/[,\s]+/).filter(Boolean);
-    const centerId = comment("center")[0];
-    const sides = { left: comment("left"), right: comment("right") };
-    const PITCH = 28;
-    const PAD = 12;
-    const GAP_V = 22;
-    const centre = graph.nodes.get(centerId);
-    const labelW = Math.max(...graph.edges.map((edge) => measure(edge.label, theme.labelFontSize, theme.font, "bold").width));
-    const lane = Math.ceil(labelW + 56);
-    const columns = {};
-    let tallest = 0;
-    for (const side of ["left", "right"]) {
-      let y = 0;
-      columns[side] = sides[side].map((id) => {
-        const item = graph.nodes.get(id);
-        item.role = roleOf(item);
-        sizeNode(item, theme);
-        const flows = graph.edges.filter((edge) => (edge.from === id && edge.to === centerId) || (edge.to === id && edge.from === centerId));
-        item.flows = flows;
-        item.width = Math.max(item.width, 132);
-        item.height = Math.max(flows.length * PITCH + 2 * PAD, 56);
-        item.y = y;
-        y += item.height + GAP_V;
-        return item;
-      });
-      tallest = Math.max(tallest, y - GAP_V);
-    }
-    // the smaller column is centred beside the system
-    for (const side of ["left", "right"]) {
-      const used = columns[side].length ? columns[side][columns[side].length - 1].y + columns[side][columns[side].length - 1].height : 0;
-      const shift = (tallest - used) / 2;
-      for (const item of columns[side]) item.y += shift;
-    }
-    centre.role = "action";
-    centre.height = tallest;
-    centre.width = Math.max(measure(centre.text, theme.fontSize + 2, theme.font, "bold").width + 48, 220);
-    const leftW = Math.max(0, ...columns.left.map((item) => item.width));
-    const rightW = Math.max(0, ...columns.right.map((item) => item.width));
+    const comment = (key) => (new RegExp("^\\s*%%\\s*" + key + ":\\s*(.+)$", "m").exec(code)?.[1] ?? "").split(/[,\s]+/).filter(Boolean)[0];
+    const centerId = comment("center");
+    const slots = ["top-left", "top-right", "left", "right", "bottom-left", "bottom-right"];
+    const PITCH = 26;
+    const PAD = 14;
+    const NEST = 22;
+    const RUN = 250;
+    const DROP = 56;
     const M = 16;
-    const top = M;
-    centre.x = M + leftW + lane;
-    centre.y = top;
-    for (const item of columns.left) Object.assign(item, { x: M + leftW - item.width, y: item.y + top });
-    for (const item of columns.right) Object.assign(item, { x: centre.x + centre.width + lane, y: item.y + top });
-    const width = centre.x + centre.width + lane + rightW + M;
-    const height = tallest + 2 * M;
+    const ink = theme.connector.stroke;
+    const centre = graph.nodes.get(centerId);
+    const entities = [];
+    for (const slot of slots) {
+      const id = comment(slot);
+      if (!id) continue;
+      const item = graph.nodes.get(id);
+      item.slot = slot;
+      item.flows = graph.edges.filter((edge) => (edge.from === id && edge.to === centerId) || (edge.to === id && edge.from === centerId));
+      item.rows = item.text.split(/<br\s*\/?>/i);
+      item.width = Math.max(116, Math.max(...item.rows.map((row) => measure(row, theme.fontSize, theme.font, "bold").width)) + 32);
+      item.height = Math.max(64, item.flows.length * PITCH + 2 * PAD);
+      entities.push(item);
+    }
+    const at = (slot) => entities.find((item) => item.slot === slot);
+    const leftW = Math.max(0, ...["top-left", "left", "bottom-left"].map((s) => at(s)?.width ?? 0));
+    const rightW = Math.max(0, ...["top-right", "right", "bottom-right"].map((s) => at(s)?.width ?? 0));
+    const topH = Math.max(0, ...["top-left", "top-right"].map((s) => at(s)?.height ?? 0));
+    const bottomH = Math.max(0, ...["bottom-left", "bottom-right"].map((s) => at(s)?.height ?? 0));
+    const sideH = Math.max(0, ...["left", "right"].map((s) => at(s)?.height ?? 0));
+    centre.width = 300;
+    centre.height = Math.max(250, sideH);
+    centre.x = M + leftW + RUN;
+    centre.y = M + topH + (topH ? DROP : 0);
+    const sysBottom = centre.y + centre.height;
+    const sysRight = centre.x + centre.width;
+    for (const item of entities) {
+      const left = item.slot.endsWith("left") || item.slot === "left";
+      item.x = left ? M + (leftW - item.width) : sysRight + RUN;
+      if (item.slot.startsWith("top")) item.y = M;
+      else if (item.slot.startsWith("bottom")) item.y = sysBottom + DROP;
+      else item.y = centre.y + (centre.height - item.height) / 2;
+    }
+    const width = sysRight + RUN + rightW + M;
+    const height = sysBottom + (bottomH ? DROP + bottomH : 0) + M;
 
-    const { connector } = theme;
-    const parts = [];
-    const nodes = [centre, ...columns.left, ...columns.right];
     const lines = [];
     const labels = [];
-    for (const side of ["left", "right"]) {
-      for (const item of columns[side]) {
-        item.flows.forEach((edge, i) => {
-          const y = item.y + PAD + i * PITCH + PITCH / 2;
-          const edgeX = side === "left" ? item.x + item.width : item.x;
-          const centreX = side === "left" ? centre.x : centre.x + centre.width;
-          const toCentre = edge.to === centerId;
-          const points = toCentre ? [{ x: edgeX, y }, { x: centreX, y }] : [{ x: centreX, y }, { x: edgeX, y }];
-          lines.push({ from: edge.from, to: edge.to, points, arrow: true, style: edge.style, id: edge.id });
-          const w = Math.ceil(measure(edge.label, theme.labelFontSize, theme.font, "bold").width + 8);
-          labels.push({ text: edge.label, rows: [edge.label], x: (edgeX + centreX) / 2 - w / 2, y: y - 4 - 15, width: w, height: 15 });
-        });
-      }
+    for (const item of entities) {
+      const isLeft = item.slot.endsWith("left") || item.slot === "left";
+      const top = item.slot.startsWith("top");
+      const bottom = item.slot.startsWith("bottom");
+      const n = item.flows.length;
+      const edgeX = isLeft ? item.x + item.width : item.x;
+      item.flows.forEach((edge, i) => {
+        const y = item.y + PAD + i * PITCH + PITCH / 2;
+        let points;
+        if (top || bottom) {
+          // nested: the line farthest from the system turns last
+          const rank = top ? i : n - 1 - i; // 0 = the outermost line
+          const offset = 24 + (n - 1 - rank) * NEST;
+          const x = isLeft ? centre.x + offset : sysRight - offset;
+          points = [{ x: edgeX, y }, { x, y }, { x, y: top ? centre.y : sysBottom }];
+        } else {
+          points = [{ x: edgeX, y }, { x: isLeft ? centre.x : sysRight, y }];
+        }
+        const toCentre = edge.to === centerId;
+        lines.push({ from: edge.from, to: edge.to, points: toCentre ? points : [...points].reverse(), arrow: true, style: edge.style, id: edge.id });
+        const w = Math.ceil(measure(edge.label, theme.labelFontSize, theme.font, "bold").width + 8);
+        labels.push({ text: edge.label, rows: [edge.label], x: isLeft ? edgeX + 10 : edgeX - 10 - w, y: y - 19, width: w, height: 15 });
+      });
     }
-    parts.push(`<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.5 L10,5 L0,9.5 Z" fill="${connector.stroke}"/></marker></defs>`);
+
+    const parts = [`<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.5 L10,5 L0,9.5 Z" fill="${ink}"/></marker></defs>`];
     for (const line of lines) {
       const dash = line.style === "dotted" ? ' stroke-dasharray="6 4"' : "";
-      parts.push(`<path d="${roundedPath(line.points)}" fill="none" stroke="${connector.stroke}" stroke-width="${connector.strokeWidth}"${dash} marker-end="url(#arrow)"/>`);
+      parts.push(`<path d="${roundedPath(line.points, 0)}" fill="none" stroke="${ink}" stroke-width="1.5"${dash} marker-end="url(#arrow)"/>`);
     }
-    const sys = resolveRole(theme, "action");
-    parts.push(`<rect x="${centre.x}" y="${centre.y}" width="${centre.width}" height="${centre.height}" rx="26" fill="${sys.fill}" stroke="${sys.stroke}" stroke-width="2.5"/>`);
-    parts.push(`<path d="M${centre.x},${centre.y + 40} H${centre.x + centre.width}" stroke="${sys.stroke}" stroke-width="2.5"/>`);
-    parts.push(textSvg(["0"], centre.x + centre.width / 2, centre.y + 20, theme.fontSize + 2, sys.text, theme.font, "bold"));
-    parts.push(textSvg(centre.text.split(/<br\s*\/?>/i), centre.x + centre.width / 2, centre.y + 40 + (centre.height - 40) / 2, theme.fontSize + 4, sys.text, theme.font, "bold"));
-    for (const item of [...columns.left, ...columns.right]) {
-      const colors = resolveRole(theme, item.role);
-      parts.push(`<rect x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" rx="${item.shape === "stadium" ? 10 : 3}" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
-      parts.push(textSvg(item.text.split(/<br\s*\/?>/i), item.x + item.width / 2, item.y + item.height / 2, theme.fontSize, colors.text, theme.font, "bold"));
+    parts.push(`<rect x="${centre.x}" y="${centre.y}" width="${centre.width}" height="${centre.height}" fill="#ffffff" stroke="${ink}" stroke-width="2"/>`);
+    parts.push(`<path d="M${centre.x},${centre.y + 32} H${sysRight}" stroke="${ink}" stroke-width="2"/>`);
+    parts.push(textSvg(["0"], centre.x + centre.width / 2, centre.y + 16, theme.fontSize + 3, ink, theme.font, "bold"));
+    parts.push(textSvg(centre.text.split(/<br\s*\/?>/i), centre.x + centre.width / 2, centre.y + 32 + (centre.height - 32) / 2, theme.fontSize + 5, ink, theme.font, "bold"));
+    for (const item of entities) {
+      parts.push(`<rect x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" fill="#ffffff" stroke="${ink}" stroke-width="2"/>`);
+      parts.push(textSvg(item.rows, item.x + item.width / 2, item.y + item.height / 2, theme.fontSize, ink, theme.font, "bold"));
     }
-    for (const label of labels) parts.push(textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, theme.labelFontSize, connector.labelText, theme.font, "bold"));
+    for (const label of labels) parts.push(textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, theme.labelFontSize, ink, theme.font, "normal"));
+    const nodes = [centre, ...entities];
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${Math.ceil(width)} ${Math.ceil(height)}" width="${Math.ceil(width)}" height="${Math.ceil(height)}"><rect width="100%" height="100%" fill="#ffffff"/>${parts.join("")}</svg>`;
     return { svg, width: Math.ceil(width), height: Math.ceil(height), ...check(nodes, lines, labels) };
   }

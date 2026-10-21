@@ -1,37 +1,68 @@
 # Site Map
 
+## Overview
+
 ```mermaid
 flowchart TD
-    Root[App] --> Login["/login"]
-    Root --> Main[Main layout]
+    %% layout: tree
+    %% no-stack: Main
+    classDef startEnd fill:#1e1e1e,stroke:#1e1e1e,color:#ffffff,stroke-width:2px;
+    classDef menu fill:#f3e8ff,stroke:#a855f7,color:#1e293b,stroke-width:1.5px;
+    classDef page fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;
 
-    Main --> Dash["/ First page<br/>Dashboard (all roles)"]
+    Root([App]):::startEnd
 
-    Main --> Orders[Menu: Sales]
-    Orders --> QT["/sale/quotations<br/>Sales work list: one row per job<br/>with its step<br/>Admin, Sale"]
-    QT --> QT1["/new, /:id<br/>One page for a job: steps, QT lines,<br/>PO, Confirm; then a link to<br/>the production order"]
-    Orders --> PO["/sale/orders<br/>Production orders<br/>all"]
-    PO --> PO1["/:id<br/>Order: processes (Factory, Admin), start,<br/>progress, evidence upload"]
+    Root --> Login["/login<br/>Sign in"]:::page
+    Root --> Main[Main layout]:::menu
+    Root --> Sys["/403, *<br/>Forbidden, Not found"]:::page
 
-    Main --> Pur["Menu: Purchase"]
-    Pur --> PUR["/purchase/orders<br/>One page: stock, PO form, PO list<br/>Admin, Factory"]
-    PUR --> PUR1["/new, /:id<br/>PO: lines, status, Print PDF,<br/>payment, files"]
+    Main --> Dash[Menu: Dashboard]:::menu
+    Main --> Sales[Menu: Sales]:::menu
+    Main --> Pur[Menu: Purchase]:::menu
+    Main --> Acc[Menu: Accounting]:::menu
+    Main --> Stk[Menu: Stock]:::menu
+    Main --> Mst[Menu: Master data]:::menu
+```
 
-    Main --> Acc["/accounting<br/>One page: to invoice, waiting for payment, paid<br/>Admin"]
-    Acc --> INV["/accounting/invoices/:id<br/>Invoice as a document"]
-    Acc --> REC["/accounting/receipts/:id<br/>Receipt as a document"]
+## Pages of each menu
 
-    Main --> Stk[Menu: Stock]
-    Stk --> MAT["/stock/materials"]
-    Stk --> MOV["/stock/movements"]
+```mermaid
+flowchart TD
+    %% layout: tree
+    classDef startEnd fill:#1e1e1e,stroke:#1e1e1e,color:#ffffff,stroke-width:2px;
+    classDef menu fill:#f3e8ff,stroke:#a855f7,color:#1e293b,stroke-width:1.5px;
+    classDef page fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;
 
-    Main --> Mst[Menu: Master data]
-    Mst --> CUS["/master/customers"]
-    Mst --> PRD["/master/products"]
-    Mst --> SUP["/master/suppliers<br/>suppliers + their items and prices<br/>Admin"]
-    Mst --> USR["/master/users<br/>Admin"]
+    Main([Main layout]):::startEnd
 
-    Root --> Sys["/403, * not found"]
+    Main --> Dash[Menu: Dashboard]:::menu
+    Main --> Sales[Menu: Sales]:::menu
+    Main --> Pur[Menu: Purchase]:::menu
+    Main --> Acc[Menu: Accounting]:::menu
+    Main --> Stk[Menu: Stock]:::menu
+    Main --> Mst[Menu: Master data]:::menu
+
+    Dash --> D1["/<br/>Dashboard"]:::page
+
+    Sales --> QT["/sale/quotations<br/>Sales work list"]:::page
+    QT --> QT1["/new, /:id<br/>One page for a job"]:::page
+    Sales --> PO["/sale/orders<br/>Production orders"]:::page
+    PO --> PO1["/:id<br/>Production order"]:::page
+
+    Pur --> PUR["/purchase/orders<br/>Purchase orders"]:::page
+    PUR --> PUR1["/new, /:id<br/>Purchase order"]:::page
+
+    Acc --> ACC["/accounting<br/>Work list"]:::page
+    ACC --> INV["/accounting/invoices/:id<br/>Invoice document"]:::page
+    ACC --> REC["/accounting/receipts/:id<br/>Receipt document"]:::page
+
+    Stk --> MAT["/stock/materials<br/>Materials"]:::page
+    Stk --> MOV["/stock/movements<br/>Movements"]:::page
+
+    Mst --> CUS["/master/customers<br/>Customers"]:::page
+    Mst --> PRD["/master/products<br/>Products"]:::page
+    Mst --> SUP["/master/suppliers<br/>Suppliers"]:::page
+    Mst --> USR["/master/users<br/>Users"]:::page
 ```
 
 ## Page table

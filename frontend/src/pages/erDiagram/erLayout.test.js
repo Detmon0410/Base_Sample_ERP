@@ -11,7 +11,7 @@ import { inLanguage } from "@/i18n/mdJa";
 // be readable, in English and in Japanese: no line through a table, no two lines crossing, no label on a table or on another label,
 // everything on the paper.
 
-const md = fs.readFileSync(path.resolve(import.meta.dirname, "../../../../ProjectdocInfo/ER Diagram.md"), "utf8");
+const md = fs.readFileSync(path.resolve(import.meta.dirname, "../../../../ProjectdocInfo/ERDiagram/ER Diagram.md"), "utf8");
 const LEFT = { "||": "one", "o|": "zeroOne" };
 const RIGHT = { "||": "one", "o|": "zeroOne", "|{": "oneMany", "o{": "zeroMany" };
 

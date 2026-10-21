@@ -11,7 +11,7 @@ import { PARTS } from "./dbRelations";
 // part (without the sentences that only point to a document), and every table, list and chain. And it names only tables of the ER
 // diagram.
 
-const md = fs.readFileSync(path.resolve(import.meta.dirname, "../../../../ProjectdocInfo/DB Relations.md"), "utf8").replace(/\r\n/g, "\n");
+const md = fs.readFileSync(path.resolve(import.meta.dirname, "../../../../ProjectdocInfo/DBRelations/DB Relations.md"), "utf8").replace(/\r\n/g, "\n");
 
 const sentences = (paragraph) =>
   paragraph

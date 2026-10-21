@@ -1,0 +1,153 @@
+{
+  "erDiagram": {
+    "dashed": [
+      [
+        "PURCHASE_ORDER",
+        "ATTACHMENT"
+      ],
+      [
+        "QT_REFERENCE",
+        "ATTACHMENT"
+      ],
+      [
+        "PRODUCTION_ORDER",
+        "ATTACHMENT"
+      ]
+    ],
+    "extra": [
+      {
+        "line": "USER ||--o{ STOCK_CHANGE : \"makes\""
+      },
+      {
+        "line": "PRODUCTION_ORDER o|--o{ STOCK_CHANGE : \"start deducts\""
+      },
+      {
+        "line": "USER ||--o{ ATTACHMENT : \"uploads\""
+      }
+    ],
+    "figures": [
+      {
+        "caption": "The 23 tables in 5 groups, and the relationships between the groups",
+        "tables": "all",
+        "direction": "DOWN",
+        "domains": [
+          {
+            "name": "Master data",
+            "tables": [
+              "CUSTOMER",
+              "PRODUCT",
+              "MATERIAL",
+              "MATERIAL_LOT",
+              "PRODUCT_BOM",
+              "SUPPLIER",
+              "SUPPLIER_MATERIAL"
+            ]
+          },
+          {
+            "name": "Sale",
+            "tables": [
+              "QT_REFERENCE",
+              "QT_LINE",
+              "PRODUCTION_ORDER",
+              "ORDER_LINE",
+              "ORDER_PROCESS",
+              "PROGRESS_ENTRY"
+            ]
+          },
+          {
+            "name": "Accounting",
+            "tables": [
+              "INVOICE",
+              "INVOICE_LINE",
+              "PAYMENT",
+              "RECEIPT"
+            ]
+          },
+          {
+            "name": "Purchase and stock",
+            "tables": [
+              "PURCHASE_ORDER",
+              "PURCHASE_ORDER_LINE",
+              "PURCHASE_PAYMENT",
+              "STOCK_CHANGE"
+            ]
+          },
+          {
+            "name": "Users and files",
+            "tables": [
+              "USER",
+              "ATTACHMENT"
+            ]
+          }
+        ]
+      },
+      {
+        "caption": "Users and files",
+        "tables": [
+          "USER",
+          "ATTACHMENT"
+        ],
+        "ghosts": true
+      },
+      {
+        "caption": "Master data: products and materials",
+        "tables": [
+          "PRODUCT",
+          "PRODUCT_BOM",
+          "MATERIAL",
+          "MATERIAL_LOT"
+        ],
+        "ghosts": true,
+        "nodeGap": 20
+      },
+      {
+        "caption": "Master data: customers and suppliers",
+        "tables": [
+          "CUSTOMER",
+          "SUPPLIER",
+          "SUPPLIER_MATERIAL"
+        ],
+        "ghosts": true
+      },
+      {
+        "caption": "Sale: quotation",
+        "tables": [
+          "QT_REFERENCE",
+          "QT_LINE",
+          "PRODUCTION_ORDER"
+        ],
+        "ghosts": true
+      },
+      {
+        "caption": "Sale: production order",
+        "tables": [
+          "PRODUCTION_ORDER",
+          "ORDER_LINE",
+          "ORDER_PROCESS",
+          "PROGRESS_ENTRY"
+        ],
+        "ghosts": true
+      },
+      {
+        "caption": "Accounting",
+        "tables": [
+          "INVOICE",
+          "INVOICE_LINE",
+          "PAYMENT",
+          "RECEIPT"
+        ],
+        "ghosts": true
+      },
+      {
+        "caption": "Purchase and stock",
+        "tables": [
+          "PURCHASE_ORDER",
+          "PURCHASE_ORDER_LINE",
+          "PURCHASE_PAYMENT",
+          "STOCK_CHANGE"
+        ],
+        "ghosts": true
+      }
+    ]
+  }
+}

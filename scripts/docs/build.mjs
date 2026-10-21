@@ -111,10 +111,10 @@ function expandFigures(blocks, config) {
     if (block.type === "heading") heading = block.text;
     const fence = block.type === "code" && (config.fences ?? []).find((item) => item.heading === heading);
     if (fence) {
-      for (const figure of fence.figures ?? [fence]) out.push({ type: "chart", code: figure.code ?? block.code, caption: figure.caption ?? heading, er: figure.er });
+      for (const figure of fence.figures ?? [fence]) out.push({ type: "chart", code: figure.code ?? block.code, caption: figure.caption ?? heading, er: figure.er, api: figure.api });
     } else if (block.type === "chart" && (config.charts ?? []).some((item) => item.heading === heading)) {
       const entry = config.charts.find((item) => item.heading === heading);
-      for (const figure of entry.before ?? entry.replace ?? []) out.push({ type: "chart", code: figure.code ?? block.code, caption: figure.caption ?? heading, er: figure.er });
+      for (const figure of entry.before ?? entry.replace ?? []) out.push({ type: "chart", code: figure.code ?? block.code, caption: figure.caption ?? heading, er: figure.er, api: figure.api });
       // `mark`: a line put under the first line of the kept chart (a layout, e.g. "%% layout: modules")
       const kept = entry.mark ? { ...block, code: block.code.replace(/^(\s*\w+[^\n]*\n)/, `$1${entry.mark}\n`) } : block;
       if (!entry.replace) out.push({ ...kept, caption: entry.caption ?? heading });
@@ -174,7 +174,8 @@ async function renderCharts(page, blocks, outDir) {
   for (const [index, chart] of charts.entries()) {
     const kind = chart.code.trimStart().split(/\s/)[0];
     let result;
-    if (chart.er) result = await page.evaluate(([code, t, spec]) => window.renderEr(code, t, spec), [chart.code, theme, chart.er]);
+    if (chart.api) result = await page.evaluate(([spec, t]) => window.renderApi(spec, t), [chart.api, theme]);
+    else if (chart.er) result = await page.evaluate(([code, t, spec]) => window.renderEr(code, t, spec), [chart.code, theme, chart.er]);
     else if (kind.startsWith("stateDiagram")) result = await page.evaluate(([code, t]) => window.renderFlowchart(code, t), [stateToFlow(chart.code), theme]);
     else if (kind === "flowchart" || kind === "graph") result = await page.evaluate(([code, t]) => window.renderFlowchart(code, t), [chart.code, theme]);
     else result = await page.evaluate(([code, id]) => window.renderMermaid(code, id), [chart.code, `m${index}`]);
@@ -211,6 +212,7 @@ async function loadRenderers(page) {
   await page.addScriptTag({ path: ELK });
   await page.addScriptTag({ path: path.join(HERE, "render.js") });
   await page.addScriptTag({ path: path.join(HERE, "render-er.js") });
+  await page.addScriptTag({ path: path.join(HERE, "render-api.js") });
   await page.addScriptTag({ path: MERMAID });
   await page.evaluate((t) => {
     window.mermaid.initialize({

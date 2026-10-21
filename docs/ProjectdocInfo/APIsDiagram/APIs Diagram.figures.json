@@ -13,8 +13,351 @@
     },
     {
       "heading": "2. Endpoints by module",
-      "mark": "%% layout: modules\n    %% columns: 3",
-      "caption": "Endpoints by module"
+      "replace": [
+        {
+          "caption": "Endpoints by module (1 of 3): sign in, sale and dashboard (A = Admin, S = Sale Worker, F = Factory Worker; a dark letter means that role may call it; every call needs a signed-in user except the sign-in)",
+          "api": {
+            "modules": [
+              {
+                "name": "Auth",
+                "who": "every user",
+                "rows": [
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/auth/login",
+                    "text": "sign in; answers with the token",
+                    "roles": "ASF"
+                  },
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/auth/me",
+                    "text": "the user who is signed in",
+                    "roles": "ASF"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/auth/logout",
+                    "text": "sign out",
+                    "roles": "ASF"
+                  }
+                ]
+              },
+              {
+                "name": "Sale: QT and production orders",
+                "who": "QT: Admin, Sale Worker",
+                "rows": [
+                  {
+                    "methods": [
+                      "GET",
+                      "POST",
+                      "PUT",
+                      "DELETE"
+                    ],
+                    "path": "/qt",
+                    "text": "quotations; only a Draft can be deleted",
+                    "roles": "AS"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/qt/:id/confirm",
+                    "text": "confirm the QT: makes the production order, once",
+                    "roles": "AS"
+                  },
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/orders  /orders/:id",
+                    "text": "production orders and their progress",
+                    "roles": "ASF"
+                  },
+                  {
+                    "methods": [
+                      "PUT"
+                    ],
+                    "path": "/orders/:id",
+                    "text": "lines and processes, before the start",
+                    "roles": "AF"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/orders/:id/start",
+                    "text": "start production: deducts the BOM from the lots",
+                    "roles": "AF"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/orders/:id/progress",
+                    "text": "record progress (reopen a Completed process: Admin only)",
+                    "roles": "AF"
+                  }
+                ]
+              },
+              {
+                "name": "Dashboard",
+                "who": "every user",
+                "rows": [
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/dashboard",
+                    "text": "order tiles; invoice tiles for the Admin",
+                    "roles": "ASF"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "caption": "Endpoints by module (2 of 3): master data, stock and files (A = Admin, S = Sale Worker, F = Factory Worker; a dark letter means that role may call it; every call needs a signed-in user except the sign-in)",
+          "api": {
+            "modules": [
+              {
+                "name": "Master data",
+                "who": "change: Admin only",
+                "rows": [
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/customers",
+                    "text": "customers",
+                    "roles": "AS"
+                  },
+                  {
+                    "methods": [
+                      "POST",
+                      "PUT",
+                      "DELETE"
+                    ],
+                    "path": "/customers",
+                    "text": "add, change, delete a customer",
+                    "roles": "A"
+                  },
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/products",
+                    "text": "products with their BOM",
+                    "roles": "ASF"
+                  },
+                  {
+                    "methods": [
+                      "POST",
+                      "PUT",
+                      "DELETE"
+                    ],
+                    "path": "/products",
+                    "text": "add, change, delete a product and its BOM",
+                    "roles": "A"
+                  },
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/suppliers",
+                    "text": "suppliers with their items and prices",
+                    "roles": "AF"
+                  },
+                  {
+                    "methods": [
+                      "POST",
+                      "PUT",
+                      "DELETE"
+                    ],
+                    "path": "/suppliers",
+                    "text": "add, change, delete a supplier",
+                    "roles": "A"
+                  },
+                  {
+                    "methods": [
+                      "GET",
+                      "POST",
+                      "PUT",
+                      "DELETE"
+                    ],
+                    "path": "/users",
+                    "text": "users: role, department, password",
+                    "roles": "A"
+                  }
+                ]
+              },
+              {
+                "name": "Stock",
+                "who": "change a lot: Admin, Factory Worker",
+                "rows": [
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/materials  /materials/:id",
+                    "text": "materials with their lots, total and status (Normal, Low, Out)",
+                    "roles": "ASF"
+                  },
+                  {
+                    "methods": [
+                      "POST",
+                      "PUT",
+                      "DELETE"
+                    ],
+                    "path": "/materials",
+                    "text": "add, change, delete a material",
+                    "roles": "A"
+                  },
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/materials/:id/stock-changes",
+                    "text": "the history of one material",
+                    "roles": "ASF"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/materials/:id/stock-changes",
+                    "text": "Add, Deduct or Adjust a lot",
+                    "roles": "AF"
+                  },
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/stock-changes",
+                    "text": "the movements of all materials",
+                    "roles": "ASF"
+                  }
+                ]
+              },
+              {
+                "name": "Files",
+                "who": "the owner decides: QT, order, purchase order",
+                "rows": [
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/attachments?ownerType&ownerId",
+                    "text": "the files of a QT, an order or a PO",
+                    "roles": "owner"
+                  },
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/attachments/:id",
+                    "text": "one file, with its content",
+                    "roles": "owner"
+                  },
+                  {
+                    "methods": [
+                      "POST",
+                      "DELETE"
+                    ],
+                    "path": "/attachments",
+                    "text": "upload a file; delete a file (/attachments/:id)",
+                    "roles": "owner"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "caption": "Endpoints by module (3 of 3): purchase and accounting (A = Admin, S = Sale Worker, F = Factory Worker; a dark letter means that role may call it; every call needs a signed-in user except the sign-in)",
+          "api": {
+            "modules": [
+              {
+                "name": "Purchase",
+                "who": "Admin, Factory Worker",
+                "rows": [
+                  {
+                    "methods": [
+                      "GET",
+                      "POST",
+                      "PUT",
+                      "DELETE"
+                    ],
+                    "path": "/purchase-orders",
+                    "text": "purchase orders; change and delete only while Draft",
+                    "roles": "AF"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/purchase-orders/:id/status",
+                    "text": "Draft, Sent, Received (the stock is added once)",
+                    "roles": "AF"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/purchase-orders/:id/payment",
+                    "text": "the one payment, after Received",
+                    "roles": "AF"
+                  }
+                ]
+              },
+              {
+                "name": "Accounting",
+                "who": "Admin only",
+                "rows": [
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/invoices  /invoices/:id",
+                    "text": "invoices",
+                    "roles": "A"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/invoices",
+                    "text": "issue an invoice for a Completed order, once",
+                    "roles": "A"
+                  },
+                  {
+                    "methods": [
+                      "POST"
+                    ],
+                    "path": "/invoices/:id/payment",
+                    "text": "the full payment: the invoice is Paid and a receipt is issued",
+                    "roles": "A"
+                  },
+                  {
+                    "methods": [
+                      "GET"
+                    ],
+                    "path": "/receipts  /receipts/:id",
+                    "text": "receipts",
+                    "roles": "A"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "heading": "6. Data model (tables)",

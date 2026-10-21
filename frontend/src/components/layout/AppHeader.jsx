@@ -12,6 +12,13 @@ import { cn } from "@/lib/utils";
 
 // One look for every entry of the bar: the same weight always (nothing jumps when it becomes the current one); the current page, or the menu
 // that holds it, gets a lighter block and a white line under it.
+// TEMPORARY (not committed): the demo accounts for the role switcher in the user menu
+const TEMP_ROLES = [
+  { label: "Admin", email: "admin@gmail.com", password: "admin" },
+  { label: "Factory", email: "worker@gmail.com", password: "worker" },
+  { label: "Sales", email: "sale@gmail.com", password: "sale" },
+];
+
 const ENTRY = "relative inline-flex h-full min-h-14 items-center gap-2 px-3 text-base font-medium text-white/90 lg:px-4 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white";
 const CURRENT = "bg-white/15 text-white after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:bg-white";
 
@@ -25,7 +32,11 @@ const isUnder = (pathname, base) => (base === "/" ? pathname === "/" : pathname 
  */
 export function AppHeader() {
   const { t } = useTranslation(["nav", "auth", "common", "master"]);
-  const { user, logout } = useAuth();
+  const { user, logout, login } = useAuth();
+  const switchTo = async (account) => {
+    await login({ email: account.email, password: account.password }); // the demo accounts; a new sign-in replaces the session
+    window.location.assign("/");
+  };
   const { pathname } = useLocation();
   // What is open, with the page it was opened on: opening another page closes the menus without an effect.
   const [state, setState] = useState({ open: null, narrow: false, path: pathname }); // open: the key of the open menu, or "user"; narrow: the whole menu on a narrow screen
@@ -149,6 +160,18 @@ export function AppHeader() {
                 <span className="text-muted-foreground">{t("common:language.label")}</span>
                 <LanguageSwitcher />
               </div>
+              {import.meta.env.DEV ? (
+                <div className="border-t border-border bg-[#fff8e6] px-4 py-3 text-sm">
+                  <p className="mb-2 font-semibold text-warning">Switch role (temporary, development only)</p>
+                  <div className="flex flex-wrap gap-2">
+                    {TEMP_ROLES.map((account) => (
+                      <button key={account.email} type="button" disabled={user?.email === account.email} onClick={() => switchTo(account)} className="rounded-md border border-border bg-white px-2 py-1 font-medium hover:border-primary disabled:opacity-50">
+                        {account.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               <div className="border-t border-border p-3">
                 <button
                   type="button"

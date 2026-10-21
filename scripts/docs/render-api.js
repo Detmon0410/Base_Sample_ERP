@@ -58,7 +58,7 @@
         parts.push(`<text x="${px + pathW + 14}" y="${cy}" font-family="${esc(theme.font)}" font-size="11.5" fill="${ink}" fill-opacity="0.75" dominant-baseline="central">${esc(row.text)}</text>`);
         const cx0 = M + width - PAD - chipsW;
         if (row.roles === "owner") {
-          parts.push(`<text x="${cx0 + chipsW}" y="${cy}" font-family="${esc(theme.font)}" font-size="10.5" font-style="italic" fill="${ink}" fill-opacity="0.75" text-anchor="end" dominant-baseline="central">by owner</text>`);
+          parts.push(`<text x="${cx0 + chipsW}" y="${cy}" font-family="${esc(theme.font)}" font-size="10.5" font-style="italic" fill="${ink}" fill-opacity="0.75" text-anchor="end" dominant-baseline="central">${esc(window.__th?.["by owner"] ?? "by owner")}</text>`);
         } else {
           LETTERS.forEach((letter, k) => {
             const on = row.roles.includes(letter);

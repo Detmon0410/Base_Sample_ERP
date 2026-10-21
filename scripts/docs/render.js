@@ -39,7 +39,15 @@
     [/^-\.-(?:\|([^|]*)\|)?/, "dotted", false],
     [/^==>(?:\|([^|]*)\|)?/, "thick", true],
   ];
-  const clean = (text) => text.trim().replace(/^"(.*)"$/s, "$1").replaceAll(" -> ", " → ").replace(/&quot;/g, '"');
+  /** The Thai edition of a document (build.mjs --th) sets window.__th: label text -> Thai text. A label it does not know is listed in window.__miss. */
+  const tr = (text) => {
+    const th = window.__th;
+    if (!th) return text;
+    if (th[text] !== undefined) return th[text];
+    (window.__miss ??= new Set()).add(text);
+    return text;
+  };
+  const clean = (text) => tr(text.trim().replace(/^"(.*)"$/s, "$1").replaceAll(" -> ", " → ").replace(/&quot;/g, '"'));
 
   function parse(code) {
     const graph = { direction: "TB", nodes: new Map(), edges: [], classes: {}, source: code, lanes: [] };
@@ -84,7 +92,7 @@
     for (const line of lines) {
       const group = /^subgraph\s+(?:\w+\[")?([^"\]]+)/.exec(line);
       if (group) {
-        lane = group[1].trim();
+        lane = tr(group[1].trim());
         graph.lanes.push(lane);
         continue;
       }

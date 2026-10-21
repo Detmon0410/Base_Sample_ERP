@@ -29,6 +29,38 @@ const MARGIN_LAND_V = 12;
 const usable = (orientation) => ({ w: (PAGE[orientation].w - 2 * MARGIN_MM) * PX_PER_MM, h: (PAGE[orientation].h - 2 * (orientation === "landscape" ? MARGIN_LAND_V : MARGIN_MM) - (orientation === "landscape" ? 38 : 34)) * PX_PER_MM });
 
 const theme = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(fs.readFileSync(path.join(DOCS, "diagram-theme.md"), "utf8"))[1]);
+const args = process.argv.slice(2);
+// --th: the Thai edition (a reading copy, written to docs/ProjectdocInfo/Thai): every text goes through the dictionary th/dict-*.json
+const TH = args.includes("--th");
+if (TH) theme.font = "Leelawadee UI, Tahoma, Arial, sans-serif";
+// the dictionary of a document: the words every document shares (all dict files), overridden by the file of that document (dict-<name>.json)
+const dictFiles = TH ? fs.readdirSync(path.join(HERE, "th")).filter((f) => /^dict-.*\.json$/.test(f)) : [];
+const readDict = (file) => JSON.parse(fs.readFileSync(path.join(HERE, "th", file), "utf8"));
+let dict = {};
+const useDict = (name) => {
+  dict = {};
+  for (const file of dictFiles) Object.assign(dict, readDict(file));
+  const own = `dict-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.json`;
+  if (dictFiles.includes(own)) Object.assign(dict, readDict(own));
+};
+const missing = new Set();
+const tr = (text) => {
+  if (!TH || !text) return text;
+  if (dict[text] !== undefined) return dict[text];
+  missing.add(text);
+  return text;
+};
+/** A string of a figure spec that is a sentence or a name (not an identifier, a path or a method) is looked up; the others stay. */
+const isWords = (text) => /[a-z]{2}/.test(text) && /\s/.test(text.trim());
+const SKIP = new Set(["path", "methods", "roles", "tables", "names", "ghosts", "dashed"]);
+// these keys of a figure spec always hold a text for the reader (a module name may be one word)
+const TEXT_KEYS = new Set(["name", "who", "text", "caption"]);
+const trDeep = (value, key = "") => {
+  if (typeof value === "string") return TEXT_KEYS.has(key) ? tr(value) : dict[value] !== undefined ? dict[value] : isWords(value) ? tr(value) : value;
+  if (Array.isArray(value)) return value.map((item) => trDeep(item, key));
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([k, item]) => [k, SKIP.has(k) ? item : trDeep(item, k)]));
+  return value;
+};
 const ink = theme.connector.stroke;
 const headFill = theme.roles.decision.fill;
 
@@ -179,6 +211,7 @@ async function renderCharts(page, blocks, outDir) {
     else if (kind.startsWith("stateDiagram")) result = await page.evaluate(([code, t]) => window.renderFlowchart(code, t), [stateToFlow(chart.code), theme]);
     else if (kind === "flowchart" || kind === "graph") result = await page.evaluate(([code, t]) => window.renderFlowchart(code, t), [chart.code, theme]);
     else result = await page.evaluate(([code, id]) => window.renderMermaid(code, id), [chart.code, `m${index}`]);
+    if (TH) for (const text of await page.evaluate(() => [...(window.__miss ?? [])])) missing.add(text);
     Object.assign(chart, result, { index: index + 1 });
 
     // the size on paper: the largest scale that fits; portrait unless landscape prints the text larger and portrait is too small
@@ -214,6 +247,10 @@ async function loadRenderers(page) {
   await page.addScriptTag({ path: path.join(HERE, "render-er.js") });
   await page.addScriptTag({ path: path.join(HERE, "render-api.js") });
   await page.addScriptTag({ path: MERMAID });
+  await page.evaluate((d) => {
+    window.__th = d;
+    window.__miss = new Set();
+  }, TH ? dict : null);
   await page.evaluate((t) => {
     window.mermaid.initialize({
       startOnLoad: false,
@@ -251,6 +288,34 @@ async function loadRenderers(page) {
 
 // ------------------------------------------------------------------ PDF
 
+/** The Thai edition of the blocks: texts through the dictionary; the text inside flowcharts is looked up by render.js (window.__th). */
+function translateBlocks(blocks) {
+  const cell = (text) => tr(text);
+  return blocks.map((block) => {
+    if (block.type === "heading" || block.type === "para") return { ...block, text: tr(block.text) };
+    if (block.type === "list") return { ...block, items: block.items.map(tr) };
+    if (block.type === "table") return { ...block, head: block.head.map(cell), rows: block.rows.map((row) => row.map(cell)) };
+    if (block.type === "code") return { ...block, text: tr(block.text) };
+    if (block.type === "chart") {
+      const out = { ...block, caption: tr(block.caption) };
+      if (out.er) out.er = trDeep(out.er);
+      if (out.api) out.api = trDeep(out.api);
+      // text in quotes of an ER diagram (a column note, the label of a relationship) and of a Mermaid sequence diagram
+      if (/^\s*erDiagram/.test(out.code)) out.code = out.code.replace(/"([^"\n]+)"/g, (all, text) => `"${tr(text)}"`);
+      else if (/^\s*sequenceDiagram/.test(out.code)) {
+        // the names of the actors (`actor X as Name`), the text of a message (`A->>B: text`) and of a note
+        const head = (row, pattern) => row.replace(pattern, (all, start, text) => start + tr(text.trim()));
+        out.code = out.code
+          .split("\n")
+          .map((row) => head(head(head(row, /^(\s*(?:actor|participant)\s+\w+\s+as\s+)(.+)$/), /^(\s*\w+\s*(?:-->>|->>|--x|-x|-->|->)\s*\w+\s*:\s*)(.+)$/), /^(\s*Note\s+(?:over|left of|right of)\s+[\w, ]+:\s*)(.+)$/))
+          .join("\n");
+      }
+      return out;
+    }
+    return block;
+  });
+}
+
 function html(title, blocks) {
   const body = [];
   for (const block of blocks) {
@@ -268,7 +333,7 @@ function html(title, blocks) {
       const w = Math.round(block.width * block.scale);
       const h = Math.round(block.height * block.scale);
       const svg = block.svg.replace(/<svg([^>]*?)\swidth="[^"]*"\sheight="[^"]*"/, `<svg$1 width="${w}" height="${h}"`).replace(/<svg(?![^>]*\swidth=)/, `<svg width="${w}" height="${h}"`);
-      body.push(`<figure class="${block.orientation}">${svg}<figcaption>Figure ${block.index}. ${esc(block.caption)}</figcaption></figure>`);
+      body.push(`<figure class="${block.orientation}">${svg}<figcaption>${TH ? "รูปที่" : "Figure"} ${block.index}. ${esc(block.caption)}</figcaption></figure>`);
     }
   }
   // a heading stays with what follows it; a landscape figure takes its heading to the landscape page
@@ -280,7 +345,7 @@ function html(title, blocks) {
     .replace(/(<\/figure>)/g, "$1</div>")
     .replace(/<\/div><\/div>/g, "</div>")
     .replace(/<\/figure><\/div>\n(<p>[^\n]*<\/p>)/g, "</figure>\n$1</div>");
-  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>
+  return `<!doctype html><html lang="${TH ? "th" : "en"}"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
 @page { size: A4 portrait; margin: ${MARGIN_MM}mm; }
 @page land { size: A4 landscape; margin: ${MARGIN_LAND_V}mm ${MARGIN_MM}mm; }
 .landscape { page: land; }
@@ -383,7 +448,6 @@ async function writeDocx(title, blocks, file) {
 
 // ------------------------------------------------------------------ main
 
-const args = process.argv.slice(2);
 const checkOnly = args.includes("--check");
 const names = args.filter((arg) => !arg.startsWith("--"));
 if (!names.length) {
@@ -402,14 +466,18 @@ try {
     let blocks = parseMd(fs.readFileSync(source, "utf8"));
     const figuresFile = source.replace(/\.md$/, ".figures.json");
     if (fs.existsSync(figuresFile)) blocks = expandFigures(blocks, JSON.parse(fs.readFileSync(figuresFile, "utf8")));
-    const title = blocks.find((block) => block.type === "heading" && block.level === 1)?.text ?? name;
     // a figure is named after the heading above it
-    let heading = title;
+    let heading = "";
     for (const block of blocks) {
       if (block.type === "heading") heading = block.text;
       if (block.type === "chart") block.caption ??= heading;
     }
-    const outDir = path.join(HERE, "out", name);
+    if (TH) {
+      useDict(name);
+      blocks = translateBlocks(blocks);
+    }
+    const title = blocks.find((block) => block.type === "heading" && block.level === 1)?.text ?? name;
+    const outDir = path.join(HERE, "out", TH ? `th-${name}` : name);
     fs.mkdirSync(outDir, { recursive: true });
     await loadRenderers(page);
     const { report, failed } = await renderCharts(page, blocks, outDir);
@@ -417,15 +485,27 @@ try {
     for (const item of report) console.log(`${name} ${item.figure} ${item.kind} ${item.size} ${item.orientation} ${item.fontPt}pt crossings=${item.crossings}${item.issues.length ? `\n  - ${item.issues.join("\n  - ")}` : ""}`);
     const doc = html(title, blocks);
     fs.writeFileSync(path.join(outDir, "document.html"), doc);
+    if (TH) {
+      const left = [...missing];
+      fs.writeFileSync(path.join(HERE, "th", `missing-${name}.json`), JSON.stringify(Object.fromEntries(left.map((text) => [text, ""])), null, 2));
+      console.log(`${name}: ${left.length} text(s) without a Thai translation`);
+      missing.clear();
+    }
     if (checkOnly || failed) continue;
     await page.setContent(doc, { waitUntil: "load" });
+    const target = TH ? path.join(DOCS, "Thai") : path.dirname(source);
+    fs.mkdirSync(target, { recursive: true });
     await page.pdf({
-      path: path.join(path.dirname(source), `${name}.pdf`),
+      path: path.join(target, TH ? `${name} (ไทย).pdf` : `${name}.pdf`),
       preferCSSPageSize: true,
       displayHeaderFooter: true,
       headerTemplate: "<span></span>",
-      footerTemplate: `<div style="width:100%;text-align:center;font-family:Arial;font-size:8pt;color:${ink}">${esc(title)} · page <span class="pageNumber"></span> / <span class="totalPages"></span></div>`,
+      footerTemplate: `<div style="width:100%;text-align:center;font-family:${TH ? "Leelawadee UI, Tahoma" : "Arial"};font-size:8pt;color:${ink}">${esc(title)} · ${TH ? "หน้า" : "page"} <span class="pageNumber"></span> / <span class="totalPages"></span></div>`,
     });
+    if (TH) {
+      console.log(`wrote ${path.relative(ROOT, target)}/${name} (ไทย).pdf`);
+      continue;
+    }
     await writeDocx(title, blocks, path.join(path.dirname(source), `${name}.docx`));
     console.log(`wrote ${path.relative(ROOT, path.dirname(source))}/${name}.pdf and .docx`);
   }

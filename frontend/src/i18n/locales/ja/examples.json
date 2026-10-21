@@ -12,7 +12,6 @@
   "unitPrice": "120000",
   "smallPrice": "300",
   "processName": "裁断",
-  "processInstructions": "鋼板を指定寸法に裁断する",
   "progressQuantity": "5",
   "progressNote": "午前中に完了",
   "notes": "月末までに納品",

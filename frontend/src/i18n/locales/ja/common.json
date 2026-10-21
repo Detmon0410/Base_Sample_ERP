@@ -37,17 +37,5 @@
     "notes": "備考",
     "terms": "お支払い条件",
     "dateLine": "日付"
-  },
-  "pdf": {
-    "system": "冷蔵庫工場 Mini ERP",
-    "madeOn": "{{date}} 作成",
-    "paper": "用紙サイズ"
-  },
-  "doc": {
-    "downloadPdf": "PDFをダウンロード",
-    "makingPdf": "PDFを作成中...",
-    "pdfFailed": "PDFを作成できませんでした。もう一度お試しください。",
-    "chartsFailed": "図を描けませんでした。ページを再読み込みしてください。",
-    "drawing": "図を描いています"
   }
 }

@@ -3,12 +3,9 @@
   "new": "New invoice",
   "section": "Invoice",
   "number": "Invoice number",
-  "numberHint": "The number is given when the invoice is issued.",
   "date": "Invoice date",
   "customer": "Customer",
   "order": "Production order",
-  "chooseOrder": "Choose a completed order",
-  "noOrders": "There is no completed order without an invoice.",
   "total": "Total",
   "status": {
     "Unpaid": "Unpaid",
@@ -68,7 +65,6 @@
   "downloadPdf": "Download PDF",
   "makingPdf": "Making the PDF...",
   "pdfFailed": "The PDF could not be made. You can still print the document.",
-  "receiptsTitle": "Receipts",
   "accounting": {
     "tabsLabel": "Money jobs",
     "tabs": {

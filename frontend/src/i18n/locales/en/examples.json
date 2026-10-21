@@ -12,7 +12,6 @@
   "unitPrice": "120000",
   "smallPrice": "300",
   "processName": "Cutting",
-  "processInstructions": "Cut the steel sheet to size",
   "progressQuantity": "5",
   "progressNote": "Finished before noon",
   "notes": "Delivery by the end of the month",

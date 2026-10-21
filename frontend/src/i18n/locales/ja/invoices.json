@@ -3,12 +3,9 @@
   "new": "請求書を発行",
   "section": "請求書",
   "number": "請求書番号",
-  "numberHint": "番号は請求書を発行したときに付きます。",
   "date": "請求日",
   "customer": "顧客",
   "order": "製造指示書",
-  "chooseOrder": "完了した指示書を選択",
-  "noOrders": "請求書が未発行の完了した指示書はありません。",
   "total": "合計",
   "status": {
     "Unpaid": "未入金",
@@ -68,7 +65,6 @@
   "downloadPdf": "PDFをダウンロード",
   "makingPdf": "PDFを作成中...",
   "pdfFailed": "PDFを作成できませんでした。印刷は引き続き使えます。",
-  "receiptsTitle": "領収書",
   "accounting": {
     "tabsLabel": "経理の作業",
     "tabs": {

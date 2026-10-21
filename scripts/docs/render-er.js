@@ -34,19 +34,43 @@
     return match ? [{ parent: match[1], parentEnd: END[match[2]], childEnd: END[match[3]], child: match[4], label: match[5] }] : [];
   }
 
-  function sizeTable(entity, theme, namesOnly) {
+  /** The text after the type of a column: where a foreign key points, then its note. */
+  const extraOf = (entity, column, spec) => {
+    const target = spec.fk?.[`${entity.name}.${column.name}`];
+    return [target ? `\u2192 ${target}` : "", column.note].filter(Boolean).join("  \u00b7  ");
+  };
+  const rank = (column) => (column.keys.includes("PK") ? 0 : column.keys.includes("FK") ? 1 : column.keys.includes("UK") ? 2 : 3);
+
+  function sizeTable(entity, theme, namesOnly, spec = {}) {
     const titleText = measure(entity.name, theme.fontSize, theme.font, "bold").width;
     if (namesOnly) return { width: Math.ceil(titleText + 2 * PAD + 8), height: 32 };
     const keyW = 30;
     const nameW = Math.max(...entity.columns.map((c) => measure(c.name, 12, theme.font).width));
     const typeW = Math.max(...entity.columns.map((c) => measure(c.type, 12, theme.font).width));
-    const noteW = Math.max(0, ...entity.columns.map((c) => (c.note ? measure(c.note, 10.5, theme.font).width : 0)));
+    for (const c of entity.columns) c.extra = extraOf(entity, c, spec);
+    const noteW = Math.max(0, ...entity.columns.map((c) => (c.extra ? measure(c.extra, 10.5, theme.font).width : 0)));
     entity.cols = { keyW, nameW: Math.ceil(nameW), typeW: Math.ceil(typeW), noteW: Math.ceil(noteW) };
     const body = keyW + 6 + nameW + 10 + typeW + (noteW ? 12 + noteW : 0);
     return { width: Math.ceil(Math.max(titleText + 2 * PAD, body + 2 * PAD)), height: TITLE + entity.columns.length * ROW + 6 };
   }
 
   const fx = (n) => Math.round(n * 10) / 10;
+
+  const NUMBER = { one: "1", zeroOne: "0..1", oneMany: "1..N", zeroMany: "0..N" };
+  /** The end of a line as a number beside the table: `p` on the edge of the table, `u` from the table along the line. */
+  function endNumber(kind, p, u, theme, placed) {
+    const text = NUMBER[kind];
+    if (!text) return "";
+    const w = text.length * 7 + 8;
+    const horizontal = Math.abs(u.x) > 0.5;
+    // a line that leaves sideways has its number above it; one that leaves up or down has it beside it
+    let cx = horizontal ? p.x + u.x * (w / 2 + 4) : p.x + 12;
+    const cy = horizontal ? p.y - 11 : p.y + u.y * 14;
+    // two numbers close together are moved apart
+    for (let tries = 0; tries < 5 && placed.some((b) => Math.abs(b.x - cx) < (b.w + w) / 2 && Math.abs(b.y - cy) < 16); tries += 1) cx += (horizontal ? Math.sign(u.x) : 1) * (w + 2);
+    placed.push({ x: cx, y: cy, w });
+    return `<rect x="${fx(cx - w / 2)}" y="${fx(cy - 8)}" width="${w}" height="16" rx="3" fill="#ffffff"/>` + textSvg([text], cx, cy, 11, theme.connector.labelText, theme.font, "bold");
+  }
 
   /** The end of a line at `p` (on the edge of a table), `u` the unit vector from the table along the line. */
   function endSymbol(kind, p, u, stroke, width) {
@@ -109,7 +133,8 @@
       nodes = ids.map((id) => {
         const entity = byName.get(id);
         const ghost = ghosts.has(id);
-        const size = sizeTable(entity, theme, spec.names || ghost);
+        if (spec.keysFirst) entity.columns = entity.columns.map((c, i) => ({ c, i })).sort((a, b) => rank(a.c) - rank(b.c) || a.i - b.i).map(({ c }) => c);
+        const size = sizeTable(entity, theme, spec.names || ghost, spec);
         return { id, entity, ghost, namesOnly: spec.names || ghost, ...size };
       });
       edges = rels.map((r, i) => ({ id: `r${i}`, from: r.parent, to: r.child, rel: r, label: r.label, arrow: false, dashed: dashed.has(`${r.parent}>${r.child}`) }));
@@ -179,6 +204,8 @@
     const head = resolveRole(theme, "erHeader");
     const body = resolveRole(theme, "action");
     const parts = [];
+    const numbers = []; // drawn after the tables, so no table covers them
+    const placedNumbers = [];
     for (const edge of edges) {
       const dash = edge.dashed ? ' stroke-dasharray="6 4"' : "";
       parts.push(`<path d="${roundedPath(edge.points)}" fill="none" stroke="${connector.stroke}" stroke-width="${connector.strokeWidth}"${dash} stroke-linejoin="round"/>`);
@@ -189,8 +216,13 @@
         const d = Math.hypot(to.x - from.x, to.y - from.y) || 1;
         return { x: (to.x - from.x) / d, y: (to.y - from.y) / d };
       };
-      parts.push(endSymbol(edge.rel.parentEnd, first, unit(first, second), connector.stroke, connector.strokeWidth));
-      parts.push(endSymbol(edge.rel.childEnd, last, unit(last, before), connector.stroke, connector.strokeWidth));
+      if (spec.notation === "numbers") {
+        numbers.push(endNumber(edge.rel.parentEnd, first, unit(first, second), theme, placedNumbers));
+        numbers.push(endNumber(edge.rel.childEnd, last, unit(last, before), theme, placedNumbers));
+      } else {
+        parts.push(endSymbol(edge.rel.parentEnd, first, unit(first, second), connector.stroke, connector.strokeWidth));
+        parts.push(endSymbol(edge.rel.childEnd, last, unit(last, before), connector.stroke, connector.strokeWidth));
+      }
     }
     for (const n of nodes) {
       const { x, y, width: w, height: h } = n;
@@ -216,11 +248,12 @@
         const left = x + PAD;
         const t = (text, tx, size, weight, opacity = 1, anchor = "start") => `<text x="${tx}" y="${cy}" font-family="${esc(theme.font)}" font-size="${size}" font-weight="${weight}" fill="${body.text}" fill-opacity="${opacity}" text-anchor="${anchor}" dominant-baseline="central">${esc(text)}</text>`;
         if (c.keys) parts.push(t(c.keys.replace(",", " "), left, 10, "bold", 1));
-        parts.push(t(c.name, left + keyW + 6, 12, c.keys.includes("PK") ? "bold" : "normal"));
+        parts.push(t(c.name, left + keyW + 6, 12, c.keys ? "bold" : "normal"));
         parts.push(t(c.type, left + keyW + 6 + nameW + 10, 12, "normal", 0.6));
-        if (c.note) parts.push(t(c.note, left + keyW + 6 + nameW + 10 + typeW + 12, 10.5, "normal", 0.6));
+        if (c.extra) parts.push(t(c.extra, left + keyW + 6 + nameW + 10 + typeW + 12, 10.5, "normal", c.keys.includes("FK") ? 0.9 : 0.6));
       });
     }
+    parts.push(...numbers);
     for (const label of labels) {
       parts.push(`<rect x="${label.x}" y="${label.y}" width="${label.width}" height="${label.height}" rx="3" fill="${connector.labelBackground}"/>`);
       parts.push(textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, 11, connector.labelText, theme.font, "bold"));

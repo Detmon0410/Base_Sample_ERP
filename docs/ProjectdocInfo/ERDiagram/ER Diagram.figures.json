@@ -71,7 +71,7 @@
         ]
       },
       {
-        "caption": "Users and files",
+        "caption": "Users and files (1 = exactly one, 0..1 = none or one, 1..N = one or many, 0..N = none, one or many; → = the foreign key points to)",
         "tables": [
           "USER",
           "ATTACHMENT"
@@ -79,7 +79,7 @@
         "ghosts": true
       },
       {
-        "caption": "Master data: products and materials",
+        "caption": "Master data: products and materials (1 = exactly one, 0..1 = none or one, 1..N = one or many, 0..N = none, one or many; → = the foreign key points to)",
         "tables": [
           "PRODUCT",
           "PRODUCT_BOM",
@@ -90,7 +90,7 @@
         "nodeGap": 20
       },
       {
-        "caption": "Master data: customers and suppliers",
+        "caption": "Master data: customers and suppliers (1 = exactly one, 0..1 = none or one, 1..N = one or many, 0..N = none, one or many; → = the foreign key points to)",
         "tables": [
           "CUSTOMER",
           "SUPPLIER",
@@ -99,7 +99,7 @@
         "ghosts": true
       },
       {
-        "caption": "Sale: quotation",
+        "caption": "Sale: quotation (1 = exactly one, 0..1 = none or one, 1..N = one or many, 0..N = none, one or many; → = the foreign key points to)",
         "tables": [
           "QT_REFERENCE",
           "QT_LINE",
@@ -108,17 +108,23 @@
         "ghosts": true
       },
       {
-        "caption": "Sale: production order",
+        "caption": "Sale: production order and its lines (1 = exactly one, 0..1 = none or one, 1..N = one or many, 0..N = none, one or many; → = the foreign key points to)",
         "tables": [
           "PRODUCTION_ORDER",
-          "ORDER_LINE",
+          "ORDER_LINE"
+        ],
+        "ghosts": true
+      },
+      {
+        "caption": "Sale: processes and progress (1 = exactly one, 0..1 = none or one, 1..N = one or many, 0..N = none, one or many; → = the foreign key points to)",
+        "tables": [
           "ORDER_PROCESS",
           "PROGRESS_ENTRY"
         ],
         "ghosts": true
       },
       {
-        "caption": "Accounting",
+        "caption": "Accounting (1 = exactly one, 0..1 = none or one, 1..N = one or many, 0..N = none, one or many; → = the foreign key points to)",
         "tables": [
           "INVOICE",
           "INVOICE_LINE",
@@ -128,7 +134,7 @@
         "ghosts": true
       },
       {
-        "caption": "Purchase and stock",
+        "caption": "Purchase and stock (1 = exactly one, 0..1 = none or one, 1..N = one or many, 0..N = none, one or many; → = the foreign key points to)",
         "tables": [
           "PURCHASE_ORDER",
           "PURCHASE_ORDER_LINE",
@@ -137,6 +143,41 @@
         ],
         "ghosts": true
       }
-    ]
+    ],
+    "fk": {
+      "PRODUCT_BOM.product_id": "PRODUCT",
+      "PRODUCT_BOM.material_id": "MATERIAL",
+      "MATERIAL_LOT.material_id": "MATERIAL",
+      "STOCK_CHANGE.material_id": "MATERIAL",
+      "STOCK_CHANGE.order_id": "PRODUCTION_ORDER",
+      "STOCK_CHANGE.purchase_order_id": "PURCHASE_ORDER",
+      "STOCK_CHANGE.user_id": "USER",
+      "QT_REFERENCE.customer_id": "CUSTOMER",
+      "QT_REFERENCE.production_order_id": "PRODUCTION_ORDER",
+      "QT_LINE.qt_id": "QT_REFERENCE",
+      "QT_LINE.product_id": "PRODUCT",
+      "PRODUCTION_ORDER.qt_id": "QT_REFERENCE",
+      "PRODUCTION_ORDER.customer_id": "CUSTOMER",
+      "ORDER_LINE.order_id": "PRODUCTION_ORDER",
+      "ORDER_LINE.product_id": "PRODUCT",
+      "ORDER_PROCESS.line_id": "ORDER_LINE",
+      "PROGRESS_ENTRY.process_id": "ORDER_PROCESS",
+      "PROGRESS_ENTRY.user_id": "USER",
+      "INVOICE.order_id": "PRODUCTION_ORDER",
+      "INVOICE_LINE.invoice_id": "INVOICE",
+      "PAYMENT.invoice_id": "INVOICE",
+      "RECEIPT.invoice_id": "INVOICE",
+      "ATTACHMENT.uploaded_by": "USER",
+      "SUPPLIER_MATERIAL.supplier_id": "SUPPLIER",
+      "SUPPLIER_MATERIAL.material_id": "MATERIAL",
+      "PURCHASE_ORDER.supplier_id": "SUPPLIER",
+      "PURCHASE_ORDER.created_by": "USER",
+      "PURCHASE_ORDER_LINE.po_id": "PURCHASE_ORDER",
+      "PURCHASE_ORDER_LINE.material_id": "MATERIAL",
+      "PURCHASE_PAYMENT.po_id": "PURCHASE_ORDER",
+      "ATTACHMENT.owner_id": "QT_REFERENCE, PRODUCTION_ORDER or PURCHASE_ORDER (no database key)"
+    },
+    "notation": "numbers",
+    "keysFirst": true
   }
 }

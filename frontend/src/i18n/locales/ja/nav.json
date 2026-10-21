@@ -27,11 +27,5 @@
   "department": "部署",
   "purchase": "発注",
   "suppliers": "仕入先",
-  "today": "今日の作業",
-  "erDiagram": "ER図",
-  "dbRelations": "DBリレーション",
-  "flowChart": "フローチャート",
-  "userFlow": "ユーザーフロー",
-  "apisDiagram": "API図",
-  "contextDiagram": "コンテキスト図"
+  "today": "今日の作業"
 }

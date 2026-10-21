@@ -16,7 +16,7 @@ import { chromium } from "playwright";
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
 const DOCS = path.join(ROOT, "ProjectdocInfo");
-const MERMAID = path.join(ROOT, "frontend/node_modules/mermaid/dist/mermaid.min.js");
+const MERMAID = path.join(HERE, "node_modules/mermaid/dist/mermaid.min.js");
 const ELK = path.join(HERE, "node_modules/elkjs/lib/elk.bundled.js");
 
 const MIN_FONT_PT = 7;

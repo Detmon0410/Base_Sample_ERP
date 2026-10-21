@@ -27,11 +27,5 @@
   "department": "Department",
   "purchase": "Purchase",
   "suppliers": "Suppliers",
-  "today": "Today",
-  "erDiagram": "ER Diagram",
-  "dbRelations": "DB Relations",
-  "flowChart": "Flow Chart",
-  "userFlow": "User Flow",
-  "apisDiagram": "APIs Diagram",
-  "contextDiagram": "Context Diagram"
+  "today": "Today"
 }

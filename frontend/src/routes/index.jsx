@@ -15,12 +15,6 @@ import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { StockMovementsPage } from "@/pages/stock/StockMovementsPage";
 import { StockPage } from "@/pages/stock/StockPage";
 import { UsersPage } from "@/pages/users/UsersPage";
-import { ErDiagramPage } from "@/pages/erDiagram/ErDiagramPage";
-import { DbRelationsPage } from "@/pages/dbRelations/DbRelationsPage";
-import { FlowChartPage } from "@/pages/flowChart/FlowChartPage";
-import { UserFlowPage } from "@/pages/userFlow/UserFlowPage";
-import { ApisDiagramPage } from "@/pages/apisDiagram/ApisDiagramPage";
-import { ContextDiagramPage } from "@/pages/contextDiagram/ContextDiagramPage";
 import { ForbiddenPage } from "@/pages/system/ForbiddenPage";
 import { NotFoundPage } from "@/pages/system/NotFoundPage";
 import { UnderConstructionPage } from "@/pages/system/UnderConstructionPage";
@@ -30,7 +24,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { RequirePermission } from "./RequirePermission";
 
 // Menu entries whose page is built (the key of config/navigation.js). Everything else opens the "not built yet" placeholder.
-const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, accounting: AccountingPage, productionOrders: OrdersPage, purchase: PurchasePage, suppliers: SuppliersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage, erDiagram: ErDiagramPage, dbRelations: DbRelationsPage, flowChart: FlowChartPage, userFlow: UserFlowPage, apisDiagram: ApisDiagramPage, contextDiagram: ContextDiagramPage };
+const IMPLEMENTED_PAGES = { dashboard: DashboardPage, qt: QtPage, accounting: AccountingPage, productionOrders: OrdersPage, purchase: PurchasePage, suppliers: SuppliersPage, materials: StockPage, movements: StockMovementsPage, customers: CustomersPage, products: ProductsPage, users: UsersPage };
 
 /** An old address of a material, /stock/<id> (a saved link, the Dashboard of before): it opens the material where it is now. */
 function LegacyMaterialRedirect() {

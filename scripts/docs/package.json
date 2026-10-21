@@ -9,6 +9,7 @@
   "dependencies": {
     "docx": "9.5.1",
     "elkjs": "0.9.3",
+    "mermaid": "11.17.2",
     "playwright": "1.64.0"
   }
 }

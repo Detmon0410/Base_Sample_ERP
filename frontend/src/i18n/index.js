@@ -8,8 +8,6 @@ import enMaster from "./locales/en/master.json";
 import enInvoices from "./locales/en/invoices.json";
 import enNav from "./locales/en/nav.json";
 import enDashboard from "./locales/en/dashboard.json";
-import enErDiagram from "./locales/en/erDiagram.json";
-import enDbRelations from "./locales/en/dbRelations.json";
 import enExamples from "./locales/en/examples.json";
 import enOrders from "./locales/en/orders.json";
 import enPurchase from "./locales/en/purchase.json";
@@ -19,8 +17,6 @@ import jaMaster from "./locales/ja/master.json";
 import jaInvoices from "./locales/ja/invoices.json";
 import jaNav from "./locales/ja/nav.json";
 import jaDashboard from "./locales/ja/dashboard.json";
-import jaErDiagram from "./locales/ja/erDiagram.json";
-import jaDbRelations from "./locales/ja/dbRelations.json";
 import jaExamples from "./locales/ja/examples.json";
 import jaOrders from "./locales/ja/orders.json";
 import jaPurchase from "./locales/ja/purchase.json";
@@ -37,8 +33,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { common: enCommon, auth: enAuth, nav: enNav, master: enMaster, orders: enOrders, purchase: enPurchase, invoices: enInvoices, dashboard: enDashboard, examples: enExamples, erDiagram: enErDiagram, dbRelations: enDbRelations },
-      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, master: jaMaster, orders: jaOrders, purchase: jaPurchase, invoices: jaInvoices, dashboard: jaDashboard, examples: jaExamples, erDiagram: jaErDiagram, dbRelations: jaDbRelations },
+      en: { common: enCommon, auth: enAuth, nav: enNav, master: enMaster, orders: enOrders, purchase: enPurchase, invoices: enInvoices, dashboard: enDashboard, examples: enExamples },
+      ja: { common: jaCommon, auth: jaAuth, nav: jaNav, master: jaMaster, orders: jaOrders, purchase: jaPurchase, invoices: jaInvoices, dashboard: jaDashboard, examples: jaExamples },
     },
     supportedLngs: SUPPORTED_LANGUAGES.map((language) => language.code),
     // English is the primary language. JA files hold the same keys with empty
@@ -46,7 +42,7 @@ i18n
     fallbackLng: "en",
     returnEmptyString: false,
     defaultNS: "common",
-    ns: ["common", "auth", "nav", "master", "orders", "invoices", "dashboard", "examples", "erDiagram", "dbRelations"],
+    ns: ["common", "auth", "nav", "master", "orders", "invoices", "dashboard", "examples"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
     // Development only: a key with no text in English is a bug. It is collected in window.__missingKeys and reported as a console

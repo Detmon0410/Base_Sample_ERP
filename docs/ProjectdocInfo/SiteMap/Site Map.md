@@ -93,8 +93,8 @@ flowchart TD
 | QT page (one page for a job) | the steps of the job, customer, lines and total, Print button, customer PO upload (number, date, file), Confirm button; after Confirm a link to the production order (the factory adds the processes there) |
 | Production orders | list of orders with their status |
 | Production order | processes (Factory, Admin: before the start; Sale: read only), start, progress, the customer PO file, QT link, evidence upload (images and documents) |
-| Purchase orders | stock with low flags, the PO form, the PO list (see below) |
-| Accounting | tabs To invoice / Waiting for payment / Paid; Issue invoice and Record payment in small dialogs; Open receipt |
+| Purchase orders | the materials that are Low or Out (each with Create PO), the PO form, the PO list (see below) |
+| Accounting | two sides: customers pay us (tabs To invoice / Waiting for payment / Paid; Issue invoice and Record payment in small dialogs; Open receipt) and we pay suppliers (tabs To pay / Paid out: the received purchase orders; the payment is recorded on the PO page) |
 | Invoice, receipt | the document, ready to print |
 | Materials | materials with lots, total and stock status; Add / Deduct / Adjust a lot |
 | Movements | the history of every stock change |
@@ -103,13 +103,13 @@ flowchart TD
 | Users | list, add / edit / delete; a Worker must choose the department `Sales` or `Factory` |
 | Forbidden, Not found | message and a way back |
 
-Menus: each entry shows only for the roles and departments that may use it; a menu with one visible entry is shown as that entry alone. The language (English / Japanese) can be switched on every page.
+Menus: each entry shows only for the roles and departments that may use it; a menu with one visible entry is shown as that entry alone. The first entry of a Factory Worker is labelled "Today"; it opens the Dashboard. The language (English / Japanese) can be switched on every page.
 
 ## The Purchase page (one page)
 
 | Area | Content |
 |---|---|
-| Stock | material, remaining, low flag, "Create PO" |
+| Stock to buy | the materials that are Low or Out: remaining, minimum level, status, "Create PO" |
 | PO form | supplier, required date, department, item lines, quantity, price, total |
 | PO list | PO No., supplier, required date, status buttons |
 | PO detail | lines, Print PDF, payment, attachments |

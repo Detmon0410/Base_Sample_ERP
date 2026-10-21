@@ -57,10 +57,11 @@ flowchart LR
     classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;
     classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;
 
-    D[Dashboard: order tiles<br/>Draft / In progress / Completed]:::action --> Q[Sales work list:<br/>one row per job with its step]:::action
+    M([Top menu]):::startEnd --> D[Dashboard: order tiles<br/>Draft / In progress / Completed]:::action
     D --> V1[View: production orders]:::action
-    D --> V2[View: stock and movements]:::action
-    D --> V3[View: products and customers]:::action
+    M --> Q[Sales work list:<br/>one row per job with its step]:::action
+    M --> V2[View: stock and movements]:::action
+    M --> V3[View: products and customers]:::action
 ```
 
 ### Make and confirm a QT
@@ -117,14 +118,13 @@ flowchart TD
     classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;
     classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;
 
-    T[Dashboard: order tiles<br/>Draft / In progress / Completed]:::action --> A0[Orders list]:::action
+    T[Dashboard: order tiles<br/>Draft / In progress / Completed]:::action --> A0[Orders list:<br/>filter by status]:::action
     A0 --> A00[Open a Draft order:<br/>add / edit the processes]:::action
-    A00 --> A1[Orders to start]:::action
-    A1 --> B1[Start production on the order page]:::action
+    A00 --> B1[Start production on the order page]:::action
     B1 --> B2{Enough material<br/>for the BOM?}:::decision
     B2 -- Yes --> B4[BOM deducted, oldest lot first<br/>order In production]:::action
     B2 -- No --> B3[409 STOCK_SHORT:<br/>the card shows what is short]:::error
-    B4 --> A2([Orders in production]):::startEnd
+    B4 --> A2([Order In progress]):::startEnd
     B3 --> P1([Purchase page]):::startEnd
 ```
 
@@ -137,12 +137,11 @@ flowchart TD
     classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;
     classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;
 
-    A0[Orders list]:::action --> A2[Orders in production]:::action
-    A2 --> C1[Order page: Record progress]:::action
+    A2([Order In progress]):::startEnd --> C1[Order page: Record progress]:::action
     A2 --> C5[Open the order:<br/>upload evidence, images and documents]:::action
     C1 --> C2[Choose the process<br/>Not started / In progress / Completed]:::action
     C2 --> C3{All processes<br/>Completed?}:::decision
-    C3 -- No --> A2
+    C3 -- No --> C1
     C3 -- Yes --> C4([Order Completed<br/>goes to Admin for the invoice]):::startEnd
 ```
 
@@ -155,8 +154,8 @@ flowchart TD
     classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;
     classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;
 
-    T[Dashboard: order tiles<br/>Draft / In progress / Completed]:::action --> A3[Purchase: orders to receive]:::action
-    T --> A4[Purchase: low stock list]:::action
+    T([Top menu]):::startEnd --> A3["Purchase: PO list,<br/>filter Sent: orders to receive"]:::action
+    T --> A4["Purchase: the materials<br/>that are Low or Out"]:::action
     T --> S[Stock]:::action
     T --> V[View: products, suppliers, production orders]:::action
     A3 --> R1[Open the PO]:::action
@@ -167,7 +166,7 @@ flowchart TD
     S --> S2[Movements: history]:::action
 ```
 
-A Factory Worker cannot reopen a Completed process (Admin only), cannot change QT, customers, products or materials, and cannot open Accounting or Users.
+A Factory Worker cannot reopen a Completed process (Admin only), cannot change QT, customers, products or materials, and cannot open Accounting or Users. The first entry of the menu of a Factory Worker is labelled "Today"; it opens the same Dashboard.
 
 ## Purchase (Factory Worker and Admin)
 
@@ -178,7 +177,7 @@ flowchart TD
     classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;
     classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;
 
-    P1[Purchase page: stock list<br/>with low flags]:::action --> P2{Item low?}:::decision
+    P1[Purchase page: the materials<br/>that are Low or Out]:::action --> P2{Any material listed?}:::decision
     P2 -- No --> P1
     P2 -- Yes --> P3[Create PO from the item]:::action
     P3 --> P4[Fill the form:<br/>supplier, required date, department]:::action
@@ -208,16 +207,18 @@ flowchart LR
     classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;
     classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;
 
-    D[Dashboard: order tiles,<br/>invoice tiles, chart of orders by status]:::action --> M[Master data]:::action
-    D --> Sa[Sales: QT -> Confirm -> production order]:::action
-    D --> Fa[Factory: start, progress, reopen]:::action
-    D --> St[Stock: changes and history]:::action
-    D --> Pu[Purchase: PO, status, payment, files]:::action
-    D --> Ac[Accounting page]:::action
+    Menu([Top menu]):::startEnd --> D[Dashboard: order tiles,<br/>invoice tiles, chart of orders by status]:::action
+    Menu --> M[Master data]:::action
+    Menu --> Sa[Sales: QT -> Confirm -> production order]:::action
+    Menu --> Fa[Factory: start, progress, reopen]:::action
+    Menu --> St[Stock: changes and history]:::action
+    Menu --> Pu[Purchase: PO, status, payment, files]:::action
+    Menu --> Ac[Accounting page]:::action
+
+    St --> St1[Materials: add, edit, delete]:::action
 
     M --> M1[Customers]:::action
-    M --> M2[Products + BOM + processes]:::action
-    M --> M3[Materials]:::action
+    M --> M2[Products + BOM]:::action
     M --> M4[Suppliers + their items and prices]:::action
     M --> M5[Users: role, department,<br/>password]:::action
     M5 --> U1[New password ends<br/>the sessions of that user]:::action
@@ -250,7 +251,15 @@ flowchart TD
     I6 --> T3[Tab: Paid]:::action
     A --> T3
     T3 --> I7[Open receipt as a document:<br/>print]:::action
+
+    A --> S1[Side: We pay suppliers]:::action
+    S1 --> T4[Tab: To pay<br/>received POs not paid]:::action
+    S1 --> T5[Tab: Paid out<br/>paid POs]:::action
+    T4 --> I8[Pay PO: opens the PO page,<br/>the payment is recorded there]:::action
+    I8 --> T5
 ```
+
+The Accounting page has two sides: customers pay us (the tabs To invoice, Waiting for payment, Paid) and we pay suppliers (the tabs To pay and Paid out, which list the received purchase orders; the payment itself is recorded on the PO page, see Purchase).
 
 ## Master data
 
@@ -264,12 +273,10 @@ flowchart LR
     A[Admin]:::action --> B[Record]:::action
     B --> C[Customers]:::action
     B --> D[Products + BOM]:::action
-    B --> E[Materials]:::action
     B --> F[Suppliers + items]:::action
     B --> G[Users]:::action
     C --> H[Add / edit / delete]:::action
     D --> H
-    E --> H
     F --> H
     G --> H
     H --> I{Used by other records?}:::decision
@@ -277,7 +284,7 @@ flowchart LR
     I -- No --> K([Deleted]):::startEnd
 ```
 
-Sale Worker: view customers and products. Factory Worker: view products and suppliers.
+Sale Worker: view customers and products. Factory Worker: view products and suppliers. Materials are not here: the Admin adds, edits and deletes them in Stock, Materials.
 
 ## Who can do what
 

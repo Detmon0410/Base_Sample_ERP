@@ -17,7 +17,7 @@ flowchart LR
     Admin -- "master data, invoices,<br/>payments, all actions" --> ERP
     ERP -- "dashboard, all lists,<br/>invoice, receipt" --> Admin
 
-    Sale -- "QT, customer PO,<br/>orders before start" --> ERP
+    Sale -- "QT, customer PO" --> ERP
     ERP -- "QT form PDF" --> Sale
 
     Fac -- "progress, evidence, stock changes,<br/>PO, PO status, PO payment" --> ERP
@@ -36,7 +36,6 @@ flowchart LR
     subgraph Client["Frontend"]
         UI[Pages: Dashboard, Sales (QT),<br/>Orders, Purchase, Accounting,<br/>Stock, Master]
         PDF[PDF print: QT form, PO]
-        Mock[(Mock API)]
     end
     subgraph Server["Backend"]
         API[REST API /api<br/>auth, master, suppliers, stock, qt,<br/>orders, purchase, files, invoices,<br/>receipts, dashboard]
@@ -45,7 +44,6 @@ flowchart LR
     end
 
     UI --> PDF
-    UI -- "mock mode" --> Mock
     UI -- "JSON + Bearer token" --> API
     API --> DB
     API --> FS
@@ -56,7 +54,7 @@ flowchart LR
 | Entity | Gives the system | Gets from the system |
 |---|---|---|
 | Admin | master data, invoices, payments, any action | all pages, invoice and receipt |
-| Sale Worker | QT, customer PO file, order edits | QT form PDF, order and stock views |
+| Sale Worker | QT, customer PO file | QT form PDF, order and stock views |
 | Factory Worker | progress, evidence files, stock changes, PO and its status and payment | orders, stock, PO PDF |
 | Customer (outside) | customer PO, payment | QT form, invoice, receipt (handed over by users) |
 | Supplier (outside) | goods, quotation | PO PDF (handed over by the user) |
@@ -70,4 +68,4 @@ flowchart LR
 
 ## Not in this system
 
-Sales orders, delivery, supplier invoices in Accounting, serial numbers and tax.
+Sales orders, delivery, supplier invoices, serial numbers and tax. (The Accounting page also lists the received purchase orders that wait for payment and the ones that are paid; the payment is recorded on the PO.)

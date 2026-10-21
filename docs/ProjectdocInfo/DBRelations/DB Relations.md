@@ -1,6 +1,6 @@
 # DB Relations
 
-The system as built on branch `mini-erp` (Version 2.0): the base tables first, then what Purchase, QT 2.0 and User 2.0 added or changed. Sources ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)).
+The system as built on branch `mini-erp` (Version 2.0): the base tables first, then what Purchase, QT 2.0 and User 2.0 added or changed. Sources ([Purchase Logic Draft2](../../Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../../QT%20Upgrade%202.0.md), [User Version 2.0](../../User%20Version%202.0.md)).
 
 ## Current version summary (as built)
 
@@ -26,7 +26,7 @@ Rules to remember:
 
 ## Part 1: The base tables (the Mini ERP before Version 2.0)
 
-Table-by-table list of keys, relations and delete rules. The whole model, as built, is in the [ER Diagram](ER%20Diagram.md). The rows of QtReference, Material and User are changed by Part 2 below. Source: [docs/api](../docs/api/README.md) (`master-data.md`, `stock.md`, `qt.md`, `orders.md`, `invoices.md`, `receipts.md`).
+Table-by-table list of keys, relations and delete rules. The whole model, as built, is in the [ER Diagram](../ERDiagram/ER%20Diagram.md). The rows of QtReference, Material and User are changed by Part 2 below. Source: [docs/api](../../api/README.md) (`master-data.md`, `stock.md`, `qt.md`, `orders.md`, `invoices.md`, `receipts.md`).
 
 ### Foreign keys
 

@@ -82,9 +82,15 @@ The status of an order is computed from its processes, not set by hand. `Draft` 
 stateDiagram-v2
     [*] --> NotStarted
     NotStarted --> InProgress
-    InProgress --> Completed
+    NotStarted --> Completed: full quantity
+    InProgress --> InProgress: more quantity
+    InProgress --> NotStarted: quantity back to 0
+    InProgress --> Completed: full quantity
     Completed --> InProgress: Admin only, note required
+    Completed --> NotStarted: Admin only, note required
 ```
+
+Not started means quantity 0, Completed means the full quantity of the line, In progress is anything between.
 
 ## Invoice status
 
@@ -112,11 +118,11 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    C1[Press Confirm] --> C2{Customer and<br/>at least one line?}
-    C2 -- No --> C3[Validation error]
-    C2 -- Yes --> C4{Already confirmed?}
+    C1[Press Confirm] --> C4{Already confirmed?}
     C4 -- Yes --> C5[Show the existing order]
-    C4 -- No --> C6{Customer PO file?}
+    C4 -- No --> C2{At least one line?}
+    C2 -- No --> C3[Validation error]
+    C2 -- Yes --> C6{Customer PO file?}
     C6 -- No --> C7[Warning, user may continue]
     C6 -- Yes --> C8
     C7 --> C8[Create Draft Factory Order,<br/>attach PO file, lock QT]

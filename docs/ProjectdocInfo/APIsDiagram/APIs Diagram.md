@@ -126,7 +126,7 @@ sequenceDiagram
     participant API
     participant DB
 
-    U->>API: GET /materials?status=Low
+    U->>API: GET /materials  (the page lists the Low and Out ones)
     U->>API: POST /purchase-orders  (supplier, date, lines)
     API->>DB: PO-yyyy-0001 Draft, price from supplier item
     U->>API: POST /purchase-orders/:id/status  { Sent }

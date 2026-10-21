@@ -1,6 +1,6 @@
 # User Flow
 
-How each user works through the system, by role. The order of the work is in [Flow Chart](Flow%20Chart.md); the pages are in [Site Map](Site%20Map.md).
+How each user works through the system, by role. The order of the work is in [Flow Chart](../FlowChart/Flow%20Chart.md); the pages are in [Site Map](../SiteMap/Site%20Map.md).
 
 ## Roles
 
@@ -162,7 +162,7 @@ flowchart TD
     R1 --> R2[Set status Received:<br/>type the lot for each line]:::action
     R2 --> R3[Stock added once]:::action
     A4 --> P1[Purchase page]:::action
-    S --> S1[Add / Deduct / Adjust a lot<br/>with a reason]:::action
+    S --> S1[Add / Deduct / Adjust a lot<br/>a reason is required for Adjust]:::action
     S --> S2[Movements: history]:::action
 ```
 

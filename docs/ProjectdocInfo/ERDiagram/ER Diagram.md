@@ -1,6 +1,6 @@
 # ER Diagram
 
-The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purchase Logic Draft2](../docs/Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../docs/QT%20Upgrade%202.0.md), [User Version 2.0](../docs/User%20Version%202.0.md)) are in. This replaces the older single-version description.
+The system as built on branch `mini-erp` (Version 2.0): the three changes ([Purchase Logic Draft2](../../Purchase%20Logic%20Draft2.md), [QT Upgrade 2.0](../../QT%20Upgrade%202.0.md), [User Version 2.0](../../User%20Version%202.0.md)) are in. This replaces the older single-version description.
 
 ```mermaid
 erDiagram
@@ -11,6 +11,8 @@ erDiagram
         string email UK
         string password_hash
         string role "Admin | Worker"
+        int token_version "grows with a new password and ends the older sessions"
+        datetime last_login_at
     }
     CUSTOMER {
         int id PK
@@ -28,8 +30,8 @@ erDiagram
         bool active
     }
     SUPPLIER_MATERIAL {
-        int supplier_id FK
-        int material_id FK
+        int supplier_id PK,FK
+        int material_id PK,FK
         int unit_price "initial price"
     }
     PRODUCT {
@@ -46,11 +48,12 @@ erDiagram
         decimal min_level
     }
     PRODUCT_BOM {
-        int product_id FK
-        int material_id FK
+        int product_id PK,FK
+        int material_id PK,FK
         decimal quantity
     }
     MATERIAL_LOT {
+        int id PK
         int material_id FK
         string lot_number
         decimal quantity
@@ -62,9 +65,13 @@ erDiagram
         string kind "Add | Deduct | Adjust"
         decimal change
         decimal balance
+        date change_date
+        string note
+        bool initial "the first stock of a material"
         int order_id FK "start production"
         int purchase_order_id FK "PO received"
         int user_id FK
+        datetime at
     }
     QT_REFERENCE {
         int id PK
@@ -74,7 +81,7 @@ erDiagram
         string status "Draft | Confirmed"
         string customer_po_number
         date customer_po_date
-        int production_order_id FK "set on confirm"
+        int production_order_id FK,UK "set on confirm"
         string notes
     }
     QT_LINE {
@@ -90,6 +97,7 @@ erDiagram
         int qt_id FK
         int customer_id FK
         date order_date
+        string notes
         datetime started_at
     }
     ORDER_LINE {
@@ -116,6 +124,7 @@ erDiagram
         date work_date
         string note
         int user_id FK
+        datetime at
     }
     PURCHASE_ORDER {
         int id PK
@@ -123,6 +132,7 @@ erDiagram
         int supplier_id FK
         string department "Sales | Factory | ..."
         date required_date
+        string notes
         string status "Draft | Sent | Received"
         int total
         datetime received_at
@@ -139,6 +149,7 @@ erDiagram
         string lot_number "typed when received"
     }
     PURCHASE_PAYMENT {
+        int id PK
         int po_id FK,UK
         date payment_date
         int amount
@@ -161,11 +172,15 @@ erDiagram
     INVOICE {
         int id PK
         string invoice_number UK
+        date invoice_date
         int order_id FK,UK
+        string customer_name
+        string customer_address
         int total
         string status
     }
     INVOICE_LINE {
+        int id PK
         int invoice_id FK
         string product_code
         string product_name
@@ -174,6 +189,7 @@ erDiagram
         int amount
     }
     PAYMENT {
+        int id PK
         int invoice_id FK,UK
         date payment_date
         int amount
@@ -182,17 +198,20 @@ erDiagram
         int id PK
         string receipt_number UK
         int invoice_id FK,UK
+        date receipt_date
+        string customer_name
+        string customer_address
         int amount
     }
 
     CUSTOMER ||--o{ QT_REFERENCE : "has"
-    QT_REFERENCE ||--|{ QT_LINE : "contains"
+    QT_REFERENCE ||--o{ QT_LINE : "contains"
     PRODUCT ||--o{ QT_LINE : "quoted as"
     QT_REFERENCE ||--o| PRODUCTION_ORDER : "confirm creates"
     CUSTOMER ||--o{ PRODUCTION_ORDER : "orders"
-    PRODUCTION_ORDER ||--|{ ORDER_LINE : "contains"
+    PRODUCTION_ORDER ||--o{ ORDER_LINE : "contains"
     PRODUCT ||--o{ ORDER_LINE : "ordered as"
-    ORDER_LINE ||--|{ ORDER_PROCESS : "made by"
+    ORDER_LINE ||--o{ ORDER_PROCESS : "made by"
     ORDER_PROCESS ||--o{ PROGRESS_ENTRY : "records"
     USER ||--o{ PROGRESS_ENTRY : "writes"
     PRODUCT ||--o{ PRODUCT_BOM : "needs"
@@ -214,6 +233,9 @@ erDiagram
     INVOICE ||--|{ INVOICE_LINE : "contains"
     INVOICE ||--o| PAYMENT : "paid by"
     INVOICE ||--o| RECEIPT : "proved by"
+    USER ||--o{ STOCK_CHANGE : "makes"
+    PRODUCTION_ORDER o|--o{ STOCK_CHANGE : "start deducts"
+    USER ||--o{ ATTACHMENT : "uploads"
 ```
 
 ## What Version 2.0 added
@@ -230,9 +252,11 @@ erDiagram
 
 - `Attachment` is polymorphic (`owner_type` + `owner_id`), so there is no database foreign key to the owner; the service checks it.
 - `PurchasePayment` is stored on the PO and does not go through the Accounting tables.
-- `QT_REFERENCE.production_order_id` is unique: one QT creates one Factory Order.
+- `QT_REFERENCE.production_order_id` is unique: one QT creates one Factory Order. It is the second link between the two tables, in the other direction of "confirm creates" (`ProductionOrder.qt_id`).
 - `QtLine` has no stored amount: `quantity x unit_price` is computed by the API. The process, progress and invoice line tables list the columns the code has.
-- Invoice, Payment and Receipt are unchanged and keep their snapshot fields (not repeated here).
 - `Order status` (`Draft`, `In Progress`, `Completed`) is **computed** from the processes; it is not a column. The stock status (`Normal`, `Low`, `Out`) is computed from the lot totals and `min_level`.
 - `Invoice` and `Receipt` copy the customer and the product data when they are issued (a snapshot). An order is billed once, and an invoice has at most one payment and one receipt.
 - An order is made only by Confirm QT, so `ProductionOrder.qt_id` is always set and each QT has at most one order.
+- A QT, an order and an order line may have no line or no process for a while (zero or many in the database): the first QT line is required when the QT is confirmed, and a line and a process on every line when the order starts. A purchase order and an invoice always have lines.
+- `StockChange.initial` marks the first stock of a material; a material with a later change cannot be deleted.
+- `ProductBom` and `SupplierMaterial` have a primary key of two columns (`PK,FK` on both).

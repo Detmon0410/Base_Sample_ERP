@@ -1,0 +1,13 @@
+import { open, login, shot, state, URL_BASE } from "./walk-lib.mjs";
+const { browser, page } = await open();
+await login(page, "sale@gmail.com", "sale");
+await page.goto(state().qtUrl);
+await page.waitForSelector("text=Confirm QT");
+await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+await shot(page, "07-qt-po-uploaded");
+await page.getByRole("button", { name: "Confirm QT" }).click();
+await page.waitForTimeout(1200);
+await shot(page, "08-qt-confirm-dialog");
+console.log((await page.locator("[role=alertdialog],[role=dialog]").allInnerTexts()).join("\n---\n"));
+console.log("BUTTONS:", (await page.locator("[role=alertdialog] button,[role=dialog] button").allInnerTexts()).join(" | "));
+await browser.close();

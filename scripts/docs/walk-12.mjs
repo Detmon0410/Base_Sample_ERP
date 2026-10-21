@@ -1,0 +1,12 @@
+import { open, login, shot, URL_BASE } from "./walk-lib.mjs";
+const { browser, page } = await open();
+await login(page, "admin@gmail.com", "admin");
+await page.goto(URL_BASE + "accounting");
+await page.waitForTimeout(1200);
+await page.locator('button:has-text("Waiting for payment")').first().click();
+await page.waitForTimeout(1200);
+await shot(page, "28-waiting-for-payment");
+console.log((await page.locator("body").innerText()).slice(0, 900));
+console.log("BUTTONS:", (await page.locator("button,a").allInnerTexts()).filter(Boolean).join(" | "));
+console.log("LINKS:", await page.locator("a").evaluateAll((a) => a.map((x) => x.innerText + "=" + x.getAttribute("href")).join(" | ")));
+await browser.close();

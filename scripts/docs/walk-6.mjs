@@ -1,0 +1,18 @@
+import { open, login, shot, state, URL_BASE } from "./walk-lib.mjs";
+const { browser, page } = await open();
+await login(page, "worker@gmail.com", "worker");
+await page.goto(state().orderUrl);
+await page.waitForTimeout(1500);
+await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+await shot(page, "16-order-saved");
+await page.getByRole("button", { name: "Start production" }).click();
+await page.waitForTimeout(1000);
+await shot(page, "17-start-dialog");
+await page.locator("[role=alertdialog] button, [role=dialog] button").filter({ hasText: /^Confirm$/ }).click();
+await page.waitForTimeout(4000);
+await page.evaluate(() => window.scrollTo(0, 0));
+await shot(page, "18-order-started");
+console.log(page.url());
+console.log((await page.locator("body").innerText()).slice(0, 2500));
+console.log("BUTTONS:", (await page.locator("button").allInnerTexts()).filter(Boolean).join(" | "));
+await browser.close();

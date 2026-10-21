@@ -1,0 +1,18 @@
+import { open, login, shot, URL_BASE } from "./walk-lib.mjs";
+const { browser, page } = await open();
+await login(page, "admin@gmail.com", "admin");
+await page.goto(URL_BASE + "accounting");
+await page.waitForTimeout(1200);
+await page.getByRole("button", { name: "Issue invoice" }).click();
+await page.waitForTimeout(800);
+await page.locator("[role=dialog] button").filter({ hasText: "Issue invoice" }).click();
+await page.waitForTimeout(4000);
+await shot(page, "27-invoice-issued");
+console.log((await page.locator("body").innerText()).slice(0, 900));
+console.log("BUTTONS:", (await page.locator("button,a").allInnerTexts()).filter(Boolean).join(" | "));
+await page.getByRole("button", { name: /Waiting for payment/ }).last().click();
+await page.waitForTimeout(1200);
+await shot(page, "28-waiting-for-payment");
+console.log((await page.locator("body").innerText()).slice(0, 900));
+console.log("BUTTONS:", (await page.locator("button,a").allInnerTexts()).filter(Boolean).join(" | "));
+await browser.close();

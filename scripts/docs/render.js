@@ -644,13 +644,16 @@
       const dash = line.style === "dotted" ? ' stroke-dasharray="6 4"' : "";
       parts.push(`<path d="${roundedPath(line.points, 0)}" fill="none" stroke="${ink}" stroke-width="1.5"${dash} marker-end="url(#arrow)"/>`);
     }
-    parts.push(`<rect x="${centre.x}" y="${centre.y}" width="${centre.width}" height="${centre.height}" fill="#ffffff" stroke="${ink}" stroke-width="2"/>`);
-    parts.push(`<path d="M${centre.x},${centre.y + 32} H${sysRight}" stroke="${ink}" stroke-width="2"/>`);
-    parts.push(textSvg(["0"], centre.x + centre.width / 2, centre.y + 16, theme.fontSize + 3, ink, theme.font, "bold"));
-    parts.push(textSvg(centre.text.split(/<br\s*\/?>/i), centre.x + centre.width / 2, centre.y + 32 + (centre.height - 32) / 2, theme.fontSize + 5, ink, theme.font, "bold"));
+    // the colours of the theme: the system as an action box, the entities as the outside (start/end) boxes
+    const sys = resolveRole(theme, "action");
+    const outside = resolveRole(theme, "startEnd");
+    parts.push(`<rect x="${centre.x}" y="${centre.y}" width="${centre.width}" height="${centre.height}" fill="${sys.fill}" stroke="${sys.stroke}" stroke-width="2.5"/>`);
+    parts.push(`<path d="M${centre.x},${centre.y + 32} H${sysRight}" stroke="${sys.stroke}" stroke-width="2.5"/>`);
+    parts.push(textSvg(["0"], centre.x + centre.width / 2, centre.y + 16, theme.fontSize + 3, sys.text, theme.font, "bold"));
+    parts.push(textSvg(centre.text.split(/<br\s*\/?>/i), centre.x + centre.width / 2, centre.y + 32 + (centre.height - 32) / 2, theme.fontSize + 5, sys.text, theme.font, "bold"));
     for (const item of entities) {
-      parts.push(`<rect x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" fill="#ffffff" stroke="${ink}" stroke-width="2"/>`);
-      parts.push(textSvg(item.rows, item.x + item.width / 2, item.y + item.height / 2, theme.fontSize, ink, theme.font, "bold"));
+      parts.push(`<rect x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" fill="${outside.fill}" stroke="${outside.stroke}" stroke-width="2"/>`);
+      parts.push(textSvg(item.rows, item.x + item.width / 2, item.y + item.height / 2, theme.fontSize, outside.text, theme.font, "bold"));
     }
     for (const label of labels) parts.push(textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, theme.labelFontSize, ink, theme.font, "normal"));
     const nodes = [centre, ...entities];

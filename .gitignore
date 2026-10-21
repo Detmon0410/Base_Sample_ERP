@@ -9,3 +9,5 @@ build/
 .DS_Store
 
 backend/uploads/
+
+scripts/docs/out/

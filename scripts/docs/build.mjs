@@ -129,6 +129,44 @@ function expandFigures(blocks, config) {
 
 // ------------------------------------------------------------------ diagrams
 
+/**
+ * A Mermaid stateDiagram as the flowchart renderer reads it: a state is a rounded box (its name, or the text given by `state "text" as Id`),
+ * [*] is a Start or an End terminal, and a change keeps its label. The document draws its state diagrams this way (right-angle lines,
+ * labels beside the lines) instead of Mermaid's curves.
+ */
+function stateToFlow(code) {
+  const names = {};
+  for (const m of code.matchAll(/^\s*state "([^"]+)" as (\w+)/gm)) names[m[2]] = m[1];
+  const defined = new Set();
+  const out = [
+    "flowchart TD",
+    "    %% layer-gap: 72",
+    "    classDef startEnd fill:#1e1e1e,stroke:#1e1e1e,color:#ffffff,stroke-width:2px;",
+    "    classDef action fill:#f3e8ff,stroke:#a855f7,color:#1e293b,stroke-width:1.5px;",
+    "",
+  ];
+  let ends = 0;
+  const node = (id, role) => {
+    if (id === "[*]") {
+      const key = role === "from" ? "Start" : `End${ends ? ends : ""}`;
+      if (role === "to") ends += 1;
+      const nid = role === "from" ? "S0" : `E${ends}`;
+      if (!defined.has(nid)) out.push(`    ${nid}(["${key.replace(/\d+$/, "")}"]):::startEnd`), defined.add(nid);
+      return nid;
+    }
+    if (!defined.has(id)) out.push(`    ${id}["${names[id] ?? id}"]:::action`), defined.add(id);
+    return id;
+  };
+  for (const line of code.split("\n")) {
+    const m = /^\s*(\[\*\]|\w+)\s*-->\s*(\[\*\]|\w+)(?::\s*(.+))?\s*$/.exec(line);
+    if (!m) continue;
+    const a = node(m[1], "from");
+    const b = node(m[2], "to");
+    out.push(m[3] ? `    ${a} -- "${m[3].trim().replace(/"/g, "'")}" --> ${b}` : `    ${a} --> ${b}`);
+  }
+  return out.join("\n");
+}
+
 async function renderCharts(page, blocks, outDir) {
   const charts = blocks.filter((block) => block.type === "chart");
   const report = [];
@@ -137,6 +175,7 @@ async function renderCharts(page, blocks, outDir) {
     const kind = chart.code.trimStart().split(/\s/)[0];
     let result;
     if (chart.er) result = await page.evaluate(([code, t, spec]) => window.renderEr(code, t, spec), [chart.code, theme, chart.er]);
+    else if (kind.startsWith("stateDiagram")) result = await page.evaluate(([code, t]) => window.renderFlowchart(code, t), [stateToFlow(chart.code), theme]);
     else if (kind === "flowchart" || kind === "graph") result = await page.evaluate(([code, t]) => window.renderFlowchart(code, t), [chart.code, theme]);
     else result = await page.evaluate(([code, id]) => window.renderMermaid(code, id), [chart.code, `m${index}`]);
     Object.assign(chart, result, { index: index + 1 });

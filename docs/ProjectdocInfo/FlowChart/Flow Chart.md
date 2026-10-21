@@ -83,14 +83,13 @@ stateDiagram-v2
     [*] --> NotStarted
     NotStarted --> InProgress
     NotStarted --> Completed: full quantity
-    InProgress --> InProgress: more quantity
     InProgress --> NotStarted: quantity back to 0
     InProgress --> Completed: full quantity
     Completed --> InProgress: Admin only, note required
     Completed --> NotStarted: Admin only, note required
 ```
 
-Not started means quantity 0, Completed means the full quantity of the line, In progress is anything between.
+Not started means quantity 0, Completed means the full quantity of the line, In progress is anything between (the quantity can grow while the process stays In progress).
 
 ## Invoice status
 

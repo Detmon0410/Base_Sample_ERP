@@ -978,6 +978,8 @@
     if (/^\s*%%\s*layout:\s*lanes/m.test(code)) return renderLanes(code, theme);
     if (/^\s*%%\s*layout:\s*modules/m.test(code)) return renderModules(code, theme);
     const graph = parse(code);
+    const selfEdges = graph.edges.filter((edge) => edge.from === edge.to);
+    graph.edges = graph.edges.filter((edge) => edge.from !== edge.to);
     for (const item of graph.nodes.values()) {
       item.role = roleOf(item);
       sizeNode(item, theme);
@@ -995,6 +997,42 @@
       return edge;
     });
     const labels = placeLabels(nodes, edges);
+    for (const edge of selfEdges) {
+      // a small loop on the state: on its top or bottom, or on a side, wherever neither the loop nor its label meets a line, a state or a label
+      const node = graph.nodes.get(edge.from);
+      const text = edge.label ? measure(edge.label, theme.labelFontSize, theme.font, "bold") : { rows: [], width: 0, height: 0 };
+      const lw = Math.ceil(text.width + 8);
+      const lh = Math.ceil(text.height + 2);
+      const segsOf = (pts) => pts.slice(1).map((q, i) => ({ a: pts[i], b: q }));
+      const box = (seg, pad = 0) => ({ x: Math.min(seg.a.x, seg.b.x) - pad, y: Math.min(seg.a.y, seg.b.y) - pad, width: Math.abs(seg.a.x - seg.b.x) + 2 * pad, height: Math.abs(seg.a.y - seg.b.y) + 2 * pad });
+      const hit = (m, n) => m.x < n.x + n.width && n.x < m.x + m.width && m.y < n.y + n.height && n.y < m.y + m.height;
+      const others = edges.flatMap((other) => segsOf(other.points));
+      const candidates = [];
+      for (const f of [0.2, 0.8, 0.5]) {
+        const x = node.x + node.width * f;
+        candidates.push({ pts: [{ x, y: node.y }, { x, y: node.y - 20 }, { x: x + 30, y: node.y - 20 }, { x: x + 30, y: node.y }], label: { x: x + 15 - lw / 2, y: node.y - 20 - 4 - lh } });
+        candidates.push({ pts: [{ x, y: node.y + node.height }, { x, y: node.y + node.height + 20 }, { x: x + 30, y: node.y + node.height + 20 }, { x: x + 30, y: node.y + node.height }], label: { x: x + 15 - lw / 2, y: node.y + node.height + 24 } });
+      }
+      const cy = node.y + node.height / 2;
+      candidates.push({ pts: [{ x: node.x + node.width, y: cy - 9 }, { x: node.x + node.width + 30, y: cy - 9 }, { x: node.x + node.width + 30, y: cy + 9 }, { x: node.x + node.width, y: cy + 9 }], label: { x: node.x + node.width + 36, y: cy - lh / 2 } });
+      candidates.push({ pts: [{ x: node.x, y: cy - 9 }, { x: node.x - 30, y: cy - 9 }, { x: node.x - 30, y: cy + 9 }, { x: node.x, y: cy + 9 }], label: { x: node.x - 36 - lw, y: cy - lh / 2 } });
+      const free = (c) => {
+        const mine = segsOf(c.pts).map((seg) => box(seg, 3));
+        const labelBox = { x: c.label.x, y: c.label.y, width: lw, height: lh };
+        const ends = edges.flatMap((other) => [other.points[0], other.points[other.points.length - 1]]);
+        const apart = [c.pts[0], c.pts[c.pts.length - 1]].every((q) => ends.every((e) => Math.hypot(e.x - q.x, e.y - q.y) > 30));
+        const loopFree = mine.every((m) => !others.some((o) => hit(m, box(o))));
+        const labelOnLines = others.some((o) => hit(labelBox, box(o, 1)));
+        const labelOnLabels = labels.some((l) => hit(labelBox, l));
+        const labelOnNodes = nodes.some((n) => hit(labelBox, n));
+        return apart && loopFree && !labelOnLines && !labelOnLabels && !labelOnNodes;
+      };
+      // the end points of the loop sit on the state itself: only the middle of the loop is tested against the other lines
+      const pick = candidates.find((c) => free({ ...c, pts: c.pts })) ?? candidates[0];
+      edge.points = pick.pts;
+      edges.push(edge);
+      if (edge.label) labels.push({ text: edge.label, rows: text.rows, x: pick.label.x, y: pick.label.y, width: lw, height: lh });
+    }
 
     const { connector } = theme;
     const parts = [];

@@ -4,16 +4,12 @@
       "heading": "Main flow",
       "replace": [
         {
-          "caption": "Main flow (1 of 3): from master data to the Draft order",
+          "caption": "Main flow (1 of 2): from master data to the Draft order",
           "code": "flowchart TD\n    classDef startEnd fill:#1e1e1e,stroke:#1e1e1e,color:#ffffff,stroke-width:2px;\n    classDef action fill:#f3e8ff,stroke:#a855f7,color:#1e293b,stroke-width:1.5px;\n    classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;\n    classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;\n\n\n    A([Start]):::startEnd --> B[\"Admin: master data<br/>customers, products + BOM,<br/>materials, suppliers + their items, users\"]:::action\n    B --> C[\"Sale: create QT with lines<br/>status Draft\"]:::action\n    C --> D[/\"Print QT form as PDF<br/>send to customer\"/]:::action\n    D --> E[/\"Upload the customer PO<br/>PO No., date, file\"/]:::action\n    E --> F[\"Confirm QT\"]:::action\n    F --> G([\"System creates a Draft Factory Order<br/>from the QT lines\"]):::startEnd\n"
         },
         {
-          "caption": "Main flow (2 of 3): production",
-          "code": "flowchart TD\n    classDef startEnd fill:#1e1e1e,stroke:#1e1e1e,color:#ffffff,stroke-width:2px;\n    classDef action fill:#f3e8ff,stroke:#a855f7,color:#1e293b,stroke-width:1.5px;\n    classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;\n    classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;\n\n\n    G([\"System creates a Draft Factory Order<br/>from the QT lines\"]):::startEnd --> G1[\"Factory: add the processes<br/>of every line on the order page\"]:::action\n    G1 --> H{\"Enough stock<br/>for the BOM?\"}:::decision\n    H -- No --> P1[\"Purchase flow below\"]:::action\n    P1 --> H\n    H -- Yes --> I[\"Factory: start production<br/>BOM deducted, oldest lot first\"]:::action\n    I --> J[/\"Factory: record progress,<br/>upload evidence images / documents\"/]:::action\n    J --> K{\"All processes<br/>Completed?\"}:::decision\n    K -- No --> J\n    K -- Yes --> L([\"Admin: issue invoice\"]):::startEnd\n"
-        },
-        {
-          "caption": "Main flow (3 of 3): invoice and payment",
-          "code": "flowchart TD\n    classDef startEnd fill:#1e1e1e,stroke:#1e1e1e,color:#ffffff,stroke-width:2px;\n    classDef action fill:#f3e8ff,stroke:#a855f7,color:#1e293b,stroke-width:1.5px;\n    classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;\n    classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;\n\n\n    L([\"Admin: issue invoice\"]):::startEnd --> M[\"Admin: full payment → Paid + receipt\"]:::action\n    M --> N([End]):::startEnd\n"
+          "caption": "Main flow (2 of 2): production, invoice and payment",
+          "code": "flowchart TD\n    classDef startEnd fill:#1e1e1e,stroke:#1e1e1e,color:#ffffff,stroke-width:2px;\n    classDef action fill:#f3e8ff,stroke:#a855f7,color:#1e293b,stroke-width:1.5px;\n    classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;\n    classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;\n\n\n    G([\"System creates a Draft Factory Order<br/>from the QT lines\"]):::startEnd --> G1[\"Factory: add the processes<br/>of every line on the order page\"]:::action\n    G1 --> H{\"Enough stock<br/>for the BOM?\"}:::decision\n    H -- No --> P1[\"Purchase flow below\"]:::action\n    P1 --> H\n    H -- Yes --> I[\"Factory: start production<br/>BOM deducted, oldest lot first\"]:::action\n    I --> J[/\"Factory: record progress,<br/>upload evidence images / documents\"/]:::action\n    J --> K{\"All processes<br/>Completed?\"}:::decision\n    K -- No --> J\n    K -- Yes --> L[\"Admin: issue invoice\"]:::action\n    L --> M[\"Admin: full payment → Paid + receipt\"]:::action\n    M --> N([End]):::startEnd\n"
         }
       ]
     },

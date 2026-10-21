@@ -23,7 +23,10 @@ const MIN_FONT_PT = 7;
 const PX_PER_MM = 96 / 25.4;
 const MARGIN_MM = 18;
 const PAGE = { portrait: { w: 210, h: 297 }, landscape: { w: 297, h: 210 } };
-const usable = (orientation) => ({ w: (PAGE[orientation].w - 2 * MARGIN_MM) * PX_PER_MM, h: (PAGE[orientation].h - 2 * MARGIN_MM - 22) * PX_PER_MM });
+// the room of a figure on its page: the page less the margins and what always goes with it (the title, the heading and the caption: 34 mm, 38 mm on a landscape page whose title shares it);
+// a landscape page has narrower margins above and below, so a wide figure keeps its size
+const MARGIN_LAND_V = 12;
+const usable = (orientation) => ({ w: (PAGE[orientation].w - 2 * MARGIN_MM) * PX_PER_MM, h: (PAGE[orientation].h - 2 * (orientation === "landscape" ? MARGIN_LAND_V : MARGIN_MM) - (orientation === "landscape" ? 38 : 34)) * PX_PER_MM });
 
 const theme = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(fs.readFileSync(path.join(DOCS, "diagram-theme.md"), "utf8"))[1]);
 const ink = theme.connector.stroke;
@@ -228,10 +231,17 @@ function html(title, blocks) {
     }
   }
   // a heading stays with what follows it; a landscape figure takes its heading to the landscape page
-  const joined = body.join("\n").replace(/(<h[2-4]>.*?<\/h[2-4]>)\n(<p>.*?<\/p>\n)?(<figure class="(portrait|landscape)">)/g, (all, heading, para = "", open, orientation) => `<div class="keep ${orientation}">${heading}\n${para}${open}`).replace(/(<\/figure>)/g, "$1</div>").replace(/<\/div><\/div>/g, "</div>");
+  // a heading stays with the figure after it (the title too, when the figure comes right after it), and a short note after a figure stays with it:
+  // so a page never holds a title or a sentence alone
+  const joined = body
+    .join("\n")
+    .replace(/((?:<h1>.*?<\/h1>\n)?<h[2-4]>.*?<\/h[2-4]>)\n(<p>.*?<\/p>\n)?(<figure class="(portrait|landscape)">)/g, (all, heading, para = "", open, orientation) => `<div class="keep ${orientation}">${heading}\n${para}${open}`)
+    .replace(/(<\/figure>)/g, "$1</div>")
+    .replace(/<\/div><\/div>/g, "</div>")
+    .replace(/<\/figure><\/div>\n(<p>[^\n]*<\/p>)/g, "</figure>\n$1</div>");
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>
 @page { size: A4 portrait; margin: ${MARGIN_MM}mm; }
-@page land { size: A4 landscape; margin: ${MARGIN_MM}mm; }
+@page land { size: A4 landscape; margin: ${MARGIN_LAND_V}mm ${MARGIN_MM}mm; }
 .landscape { page: land; }
 body { font-family: ${theme.font}; font-size: 10.5pt; color: ${ink}; line-height: 1.45; }
 h1 { font-size: 22pt; margin: 0 0 10pt; border-bottom: 2pt solid ${theme.roles.decision.stroke}; padding-bottom: 6pt; }
@@ -267,10 +277,16 @@ function docxBlocks(blocks) {
   const border = { style: BorderStyle.SINGLE, size: 4, color: ink.slice(1) };
   for (let i = 0; i < blocks.length; i += 1) {
     const block = blocks[i];
-    // a landscape figure and the heading (and sentence) before it go to a landscape section
-    if (block.type === "heading" && block.level > 1) {
-      const next = blocks.slice(i + 1, i + 3).find((item) => item.type === "chart" || item.type === "heading");
-      const want = next?.type === "chart" ? next.orientation : "portrait";
+    // a heading (the title too) goes with the figure that follows it: into a landscape section when that figure is landscape
+    if (block.type === "heading") {
+      let want = "portrait";
+      for (let j = i + 1; j < blocks.length && j < i + 5; j += 1) {
+        if (blocks[j].type === "chart") {
+          want = blocks[j].orientation;
+          break;
+        }
+        if (blocks[j].type !== "heading" && blocks[j].type !== "para") break;
+      }
       if (want !== current.orientation) start(want);
     }
     if (block.type === "heading") {

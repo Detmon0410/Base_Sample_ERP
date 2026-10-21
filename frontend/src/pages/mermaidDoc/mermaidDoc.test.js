@@ -60,7 +60,7 @@ function blocksOf(text) {
  * to other documents) and each "## " section with its blocks in order.
  */
 function readMd(name) {
-  const md = fs.readFileSync(path.resolve(import.meta.dirname, `../../../../ProjectdocInfo/${name}`), "utf8").replace(/\r\n/g, "\n");
+  const md = fs.readFileSync(path.resolve(import.meta.dirname, `../../../../ProjectdocInfo/${name === "User Flow.md" ? "UserFlow/" : ""}${name}`), "utf8").replace(/\r\n/g, "\n");
   const title = md.split("\n")[0].replace(/^#\s*/, "").trim();
   const [head, ...chunks] = md.split("\n## ");
   const intro = blocksOf(head.split("\n").slice(1).join("\n"))
@@ -81,7 +81,7 @@ function readMd(name) {
 
 describe.each([
   ["Flow Chart.md", FLOW_TITLE, [], FLOW, 9, 9],
-  ["User Flow.md", USER_FLOW_TITLE, [], USER_FLOW, 11, 8],
+  ["User Flow.md", USER_FLOW_TITLE, [], USER_FLOW, 11, 12],
   ["APIs Diagram.md", APIS_TITLE, APIS_INTRO, APIS, 9, 6],
   ["Context Diagram.md", CONTEXT_TITLE, [], CONTEXT, 5, 2],
 ])("the page of %s", (name, title, intro, sections, sectionCount, chartCount) => {

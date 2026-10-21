@@ -16,9 +16,17 @@ function mermaidApi() {
       fontFamily: FONT,
       htmlLabels: false,
       // wrappingWidth: a box breaks its text only where the .md breaks it (<br/>), not again in the middle of a line
-      flowchart: { htmlLabels: false, curve: "basis", padding: 14, nodeSpacing: 44, rankSpacing: 64, wrappingWidth: 400 },
-      // the label of a line on a white box, so a line that passes under it does not cross the words
-      themeCSS: ".edgeLabel rect.background, .edgeLabel rect { fill: #ffffff !important; opacity: 1 !important; fill-opacity: 0.95 !important; stroke: none; }",
+      flowchart: { htmlLabels: false, curve: "stepAfter", padding: 14, nodeSpacing: 44, rankSpacing: 64, wrappingWidth: 400 },
+      themeCSS:
+        ".edgeLabel rect.background, .edgeLabel rect { fill: #ffffff !important; opacity: 1 !important; fill-opacity: 0.95 !important; stroke: none; } " +
+        ".node.startEnd rect, .node.startEnd path { fill: #1e1e1e !important; stroke: #1e1e1e !important; } " +
+        ".node.startEnd text { fill: #ffffff !important; font-weight: 600 !important; } " +
+        ".node.action rect, .node.action path { fill: #f3e8ff !important; stroke: #a855f7 !important; } " +
+        ".node.action text { fill: #1e293b !important; } " +
+        ".node.decision polygon, .node.decision path { fill: #e0f2fe !important; stroke: #0284c7 !important; } " +
+        ".node.decision text { fill: #1e293b !important; } " +
+        ".node.error rect, .node.error path { fill: #fee2e2 !important; stroke: #ef4444 !important; } " +
+        ".node.error text { fill: #991b1b !important; }",
       state: { padding: 10 },
       themeVariables: {
         fontFamily: FONT,

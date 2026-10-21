@@ -54,6 +54,8 @@ const db = [
     ]),
   ]),
 ];
+/** Sub-headings of the redesigned User Flow charts: kept in English on purpose (no Japanese text is added for them). */
+const ENGLISH_ONLY = ["Pages", "Make and confirm a QT", "After Confirm", "Prepare and start an order", "Record progress"];
 const charts = (title, sections, intro = []) =>
   [
     title,
@@ -62,7 +64,7 @@ const charts = (title, sections, intro = []) =>
       section.title,
       ...section.blocks.flatMap((block) => (block.chart ? labelsOf(block.chart) : block.heading ? [block.heading] : block.items ? block.items : block.table ? [...block.table.head, ...block.table.rows.flat()] : [block.text])),
     ]),
-  ].filter((word) => !NAMES.includes(word));
+  ].filter((word) => !NAMES.includes(word) && !ENGLISH_ONLY.includes(word));
 /** The codes of a text, in any order (Japanese puts the words in another order). */
 const codes = (text) => [...text.matchAll(/`([^`]*)`/g)].map((match) => match[1]).sort();
 

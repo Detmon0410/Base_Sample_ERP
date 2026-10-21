@@ -71,7 +71,7 @@ describe("the User Flow page", () => {
     expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(USER_FLOW.map((section) => section.title));
     expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toContain("Errors a user may see");
     const charts = await screen.findAllByRole("img");
-    expect(charts).toHaveLength(8);
+    expect(charts).toHaveLength(12);
     expect(charts.map(codeOf)).toEqual(chartsOf(USER_FLOW).map((code) => code.replaceAll(" -> ", " → ")));
     expect(screen.getByText("The Admin can do everything the two Workers can.")).toBeInTheDocument();
     expect(within(screen.getByRole("list")).getAllByRole("listitem")[1]).toHaveTextContent("A menu that has only one visible entry is shown as that entry alone.");
@@ -92,8 +92,8 @@ describe("the User Flow page", () => {
       expect(screen.getByRole("heading", { level: 1, name: "ユーザーフロー" })).toBeInTheDocument();
       expect(screen.getAllByRole("heading", { level: 2 })[3]).toHaveTextContent("工場担当");
       const charts = await screen.findAllByRole("img");
-      expect(codeOf(charts[2])).toContain("T[ダッシュボード：指示書のタイル<br/>Draft・In progress・Completed]");
-      expect(codeOf(charts[2])).toContain("S1[ロットを Add・Deduct・Adjust<br/>理由を付けて]");
+      expect(codeOf(charts[6])).toContain("T[ダッシュボード：指示書のタイル<br/>Draft・In progress・Completed]");
+      expect(codeOf(charts[6])).toContain("S1[ロットを Add・Deduct・Adjust<br/>理由を付けて]");
       const rows = within(screen.getAllByRole("table")[1]).getAllByRole("row");
       expect(rows[0]).toHaveTextContent("機能管理者営業担当工場担当");
       expect(rows[12]).toHaveTextContent("仕入先可不可閲覧のみ");

@@ -225,9 +225,11 @@
       parts.push(`<rect x="${label.x}" y="${label.y}" width="${label.width}" height="${label.height}" rx="3" fill="${connector.labelBackground}"/>`);
       parts.push(textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, 11, connector.labelText, theme.font, "bold"));
     }
-    const width = Math.ceil(layout.width);
+    // labels may reach past the layout: the drawing is moved right and widened to hold them
+    const shiftX = Math.max(0, 8 - Math.min(0, ...labels.map((label) => label.x)));
+    const width = Math.ceil(Math.max(layout.width, ...labels.map((label) => label.x + label.width + 8)) + shiftX);
     const height = Math.ceil(layout.height);
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#ffffff"/>${parts.join("")}</svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#ffffff"/><g transform="translate(${shiftX},0)">${parts.join("")}</g></svg>`;
     return { svg, width, height, ...check(nodes, edges, labels) };
   };
 })();

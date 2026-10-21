@@ -42,10 +42,13 @@
   const clean = (text) => text.trim().replace(/^"(.*)"$/s, "$1").replaceAll(" -> ", " → ").replace(/&quot;/g, '"');
 
   function parse(code) {
-    const graph = { direction: "TB", nodes: new Map(), edges: [], classes: {}, source: code };
+    const graph = { direction: "TB", nodes: new Map(), edges: [], classes: {}, source: code, lanes: [] };
+    let lane = null;
     const node = (id) => {
       if (!graph.nodes.has(id)) graph.nodes.set(id, { id, text: id, shape: "rect", cls: null, order: graph.nodes.size });
-      return graph.nodes.get(id);
+      const item = graph.nodes.get(id);
+      if (lane && !item.lane) item.lane = lane;
+      return item;
     };
     const readNode = (line, at) => {
       const idMatch = /^[A-Za-z0-9_]+/.exec(line.slice(at));
@@ -75,7 +78,20 @@
     const head = lines.shift();
     const dir = /^(?:flowchart|graph)\s+(TD|TB|LR|RL|BT)/.exec(head);
     if (dir) graph.direction = { TD: "TB", TB: "TB", BT: "TB", LR: "LR", RL: "LR" }[dir[1]];
+    // `%% direction: TB` in the chart sets the direction of the document's drawing
+    const forced = /^\s*%%\s*direction:\s*(TB|LR)/m.exec(code);
+    if (forced) graph.direction = forced[1];
     for (const line of lines) {
+      const group = /^subgraph\s+(?:\w+\[")?([^"\]]+)/.exec(line);
+      if (group) {
+        lane = group[1].trim();
+        graph.lanes.push(lane);
+        continue;
+      }
+      if (line === "end") {
+        lane = null;
+        continue;
+      }
       if (!line || line.startsWith("%%") || line === "end" || line.startsWith("subgraph") || line.startsWith("direction") || line.startsWith("style") || line.startsWith("linkStyle")) continue;
       if (line.startsWith("classDef ")) continue;
       const classLine = /^class\s+([\w,]+)\s+(\w+)/.exec(line);
@@ -781,6 +797,165 @@
     return { svg, width, height, ...check(nodes, lines, labels) };
   }
 
+  // ---------------------------------------------------------------- modules (API endpoints by module)
+
+  /**
+   * A chart marked `%% layout: modules` is drawn as boxes of endpoints: the root (the API) as a banner, each child as a box with its
+   * name in a header and one row for each of its own children (the endpoints), `%% columns: 3` boxes in a row. A trunk in the left
+   * margin carries one bus line to each row of boxes, so every box hangs from its row's bus.
+   */
+  function renderModules(code, theme) {
+    const graph = parse(code);
+    const kids = new Map([...graph.nodes.keys()].map((id) => [id, []]));
+    const hasParent = new Set();
+    for (const edge of graph.edges) {
+      kids.get(edge.from).push(edge.to);
+      hasParent.add(edge.to);
+    }
+    const rootId = [...graph.nodes.keys()].find((id) => !hasParent.has(id));
+    const root = graph.nodes.get(rootId);
+    const perRow = Number(/^\s*%%\s*columns:\s*(\d+)/m.exec(code)?.[1] ?? 3);
+    const ROW = 22;
+    const HEAD = 30;
+    const GAP_X = 20;
+    const GAP_Y = 40;
+    const M = 16;
+    const TRUNK = 14;
+    const boxes = kids.get(rootId).map((id) => {
+      const item = graph.nodes.get(id);
+      const rows = kids.get(id).map((child) => graph.nodes.get(child).text.replace(/<br\s*\/?>/gi, " "));
+      const textW = Math.max(measure(item.text, theme.fontSize, theme.font, "bold").width, ...rows.map((row) => measure(row, 12, theme.font).width));
+      return { id, name: item.text, rows, width: Math.ceil(Math.max(textW + 28, 190)), height: HEAD + rows.length * ROW + 10 };
+    });
+    const grid = [];
+    for (let i = 0; i < boxes.length; i += perRow) grid.push(boxes.slice(i, i + perRow));
+    const colW = Array.from({ length: perRow }, (_, c) => Math.max(0, ...grid.map((row) => row[c]?.width ?? 0)));
+    const totalW = colW.reduce((sum, w) => sum + w, 0) + GAP_X * (perRow - 1);
+    const left = M + TRUNK + 12;
+    const bannerH = 40;
+    let y = M + bannerH + GAP_Y;
+    const buses = [];
+    for (const row of grid) {
+      const rowH = Math.max(...row.map((box) => box.height));
+      let x = left;
+      row.forEach((box, c) => {
+        box.x = x + (colW[c] - box.width) / 2;
+        box.y = y;
+        x += colW[c] + GAP_X;
+      });
+      buses.push({ y: y - GAP_Y / 2, row });
+      y += rowH + GAP_Y;
+    }
+    const width = Math.ceil(left + totalW + M);
+    const height = Math.ceil(y - GAP_Y + M);
+    const { connector } = theme;
+    const parts = [];
+    const lines = [];
+    const trunkX = M + TRUNK / 2;
+    const pathOf = (points) => ({ points, arrow: false, from: "trunk", to: "box" });
+    // trunk from the banner down to the last bus; a bus from the trunk across its row; a drop to each box
+    const lastBus = buses[buses.length - 1].y;
+    lines.push(pathOf([{ x: trunkX, y: M + bannerH }, { x: trunkX, y: lastBus }]));
+    for (const bus of buses) {
+      const lastBox = bus.row[bus.row.length - 1];
+      lines.push(pathOf([{ x: trunkX, y: bus.y }, { x: lastBox.x + lastBox.width / 2, y: bus.y }]));
+      for (const box of bus.row) lines.push(pathOf([{ x: box.x + box.width / 2, y: bus.y }, { x: box.x + box.width / 2, y: box.y }]));
+    }
+    for (const line of lines) parts.push(`<path d="${roundedPath(line.points, 8)}" fill="none" stroke="${connector.stroke}" stroke-width="${connector.strokeWidth}" stroke-linejoin="round"/>`);
+    const rootColors = resolveRole(theme, "startEnd");
+    parts.push(`<rect x="${M}" y="${M}" width="${width - 2 * M}" height="${bannerH}" rx="${bannerH / 2}" fill="${rootColors.fill}" stroke="${rootColors.stroke}" stroke-width="${rootColors.strokeWidth}"/>`);
+    parts.push(textSvg(root.text.split(/<br\s*\/?>/i), width / 2, M + bannerH / 2, theme.fontSize + 2, rootColors.text, theme.font, "bold"));
+    const colors = resolveRole(theme, "action");
+    for (const box of boxes) {
+      parts.push(`<rect x="${box.x}" y="${box.y}" width="${box.width}" height="${box.height}" rx="6" fill="#ffffff" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
+      parts.push(`<path d="M${box.x},${box.y + HEAD} V${box.y + 6} Q${box.x},${box.y} ${box.x + 6},${box.y} H${box.x + box.width - 6} Q${box.x + box.width},${box.y} ${box.x + box.width},${box.y + 6} V${box.y + HEAD} Z" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
+      parts.push(textSvg([box.name], box.x + box.width / 2, box.y + HEAD / 2, theme.fontSize, colors.text, theme.font, "bold"));
+      box.rows.forEach((row, i) => parts.push(`<text x="${box.x + 14}" y="${box.y + HEAD + i * ROW + ROW / 2 + 3}" font-family="${esc(theme.font)}" font-size="12" fill="${colors.text}" dominant-baseline="central">${esc(row)}</text>`));
+    }
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#ffffff"/>${parts.join("")}</svg>`;
+    return { svg, width, height, issues: [], crossings: 0 };
+  }
+
+  // ---------------------------------------------------------------- lanes (swimlane flow)
+
+  /**
+   * A chart marked `%% layout: lanes` is drawn as a swimlane flow: each `subgraph` is a lane (a row, its name at the left), a node
+   * belongs to the lane it is written in, and `%% cols: A=0 B=1` puts a node in a column. The flow runs down through the lanes in
+   * column 0; a "No" or error exit leaves the side tip of its decision, runs right and then up to its end in a lane above.
+   */
+  function renderLanes(code, theme) {
+    const graph = parse(code);
+    const cols = Object.fromEntries([...code.matchAll(/^\s*%%\s*cols:\s*(.+)$/gm)].flatMap((m) => m[1].split(/\s+/).filter(Boolean).map((pair) => pair.split("="))).map(([id, col]) => [id, Number(col)]));
+    const nodes = [...graph.nodes.values()];
+    for (const item of nodes) {
+      item.role = roleOf(item);
+      sizeNode(item, theme);
+      item.rows = item.text.split(/<br\s*\/?>/i);
+      item.col = cols[item.id] ?? 0;
+    }
+    const LABEL_W = 34;
+    const LANE_H = 112;
+    const COL_W = Math.max(150, ...nodes.map((n) => n.width + 40));
+    const M = 8;
+    const lanes = graph.lanes;
+    const laneIndex = (n) => lanes.indexOf(n.lane);
+    const columns = Math.max(...nodes.map((n) => n.col)) + 1;
+    const width = M * 2 + LABEL_W + columns * COL_W;
+    const height = M * 2 + lanes.length * LANE_H;
+    for (const n of nodes) {
+      n.x = M + LABEL_W + n.col * COL_W + (COL_W - n.width) / 2;
+      n.y = M + laneIndex(n) * LANE_H + (LANE_H - n.height) / 2;
+    }
+    const right = (n) => ({ x: n.x + n.width, y: n.y + n.height / 2 });
+    const left = (n) => ({ x: n.x, y: n.y + n.height / 2 });
+    const top = (n) => ({ x: n.x + n.width / 2, y: n.y });
+    const bottom = (n) => ({ x: n.x + n.width / 2, y: n.y + n.height });
+
+    const lines = [];
+    const labels = [];
+    for (const edge of graph.edges) {
+      const a = graph.nodes.get(edge.from);
+      const b = graph.nodes.get(edge.to);
+      const la = laneIndex(a);
+      const lb = laneIndex(b);
+      let points;
+      let at; // where the label goes: the first point and the direction of the first run
+      if (a.col === b.col && lb > la) points = [bottom(a), top(b)];
+      else if (a.col === b.col && lb < la) points = [top(a), bottom(b)];
+      else if (la === lb && b.col > a.col) points = [right(a), left(b)];
+      else if (la === lb && b.col < a.col) points = [left(a), right(b)];
+      else if (lb < la && b.col > a.col) points = [right(a), { x: bottom(b).x, y: right(a).y }, bottom(b)];
+      else if (lb > la && b.col > a.col) points = [right(a), { x: top(b).x, y: right(a).y }, top(b)];
+      else throw new Error(`no route from ${a.id} to ${b.id}`);
+      at = points[0];
+      lines.push({ from: a.id, to: b.id, points, arrow: true, style: edge.style, id: edge.id });
+      if (edge.label) {
+        const w = Math.ceil(measure(edge.label, theme.labelFontSize, theme.font, "bold").width + 8);
+        const vertical = points[0].x === points[1].x;
+        labels.push({ text: edge.label, rows: [edge.label], x: vertical ? at.x + 6 : at.x + 6, y: vertical ? at.y + 9 : at.y - 18, width: w, height: 15 });
+      }
+    }
+
+    const { connector } = theme;
+    const head = resolveRole(theme, "erHeader");
+    const parts = [`<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.5 L10,5 L0,9.5 Z" fill="${connector.stroke}"/></marker></defs>`];
+    lanes.forEach((name, i) => {
+      const y = M + i * LANE_H;
+      parts.push(`<rect x="${M}" y="${y}" width="${width - 2 * M}" height="${LANE_H}" fill="${i % 2 ? "#ffffff" : head.fill}" fill-opacity="${i % 2 ? 1 : 0.28}" stroke="${head.stroke}" stroke-width="1"/>`);
+      parts.push(`<rect x="${M}" y="${y}" width="${LABEL_W}" height="${LANE_H}" fill="${head.fill}" stroke="${head.stroke}" stroke-width="1"/>`);
+      parts.push(`<text transform="translate(${M + LABEL_W / 2},${y + LANE_H / 2}) rotate(-90)" font-family="${esc(theme.font)}" font-size="${theme.fontSize}" font-weight="bold" fill="${head.text}" text-anchor="middle" dominant-baseline="central">${esc(name)}</text>`);
+    });
+    for (const line of lines) parts.push(`<path d="${roundedPath(line.points, 8)}" fill="none" stroke="${connector.stroke}" stroke-width="${connector.strokeWidth}" stroke-linejoin="round" marker-end="url(#arrow)"/>`);
+    for (const n of nodes) {
+      const colors = resolveRole(theme, n.role);
+      parts.push(shapeSvg(n, colors));
+      parts.push(textSvg(n.rows, n.x + n.width / 2, n.y + n.height / 2, theme.fontSize, colors.text, theme.font, n.role === "startEnd" ? "bold" : "normal"));
+    }
+    for (const label of labels) parts.push(`<rect x="${label.x - 2}" y="${label.y}" width="${label.width + 4}" height="${label.height}" fill="#ffffff"/>` + textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, theme.labelFontSize, connector.labelText, theme.font, "bold"));
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#ffffff"/>${parts.join("")}</svg>`;
+    return { svg, width, height, ...check(nodes, lines, labels) };
+  }
+
   // ---------------------------------------------------------------- main
 
   window.__flow = { check, roundedPath, textSvg, measure, resolveRole, esc };
@@ -789,6 +964,8 @@
     if (/^\s*%%\s*layout:\s*tree/m.test(code)) return renderTree(code, theme);
     if (/^\s*%%\s*layout:\s*context/m.test(code)) return renderContext(code, theme);
     if (/^\s*%%\s*layout:\s*dfd/m.test(code)) return renderDfd(code, theme);
+    if (/^\s*%%\s*layout:\s*lanes/m.test(code)) return renderLanes(code, theme);
+    if (/^\s*%%\s*layout:\s*modules/m.test(code)) return renderModules(code, theme);
     const graph = parse(code);
     for (const item of graph.nodes.values()) {
       item.role = roleOf(item);

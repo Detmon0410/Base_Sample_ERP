@@ -108,11 +108,14 @@ function expandFigures(blocks, config) {
     if (block.type === "heading") heading = block.text;
     const fence = block.type === "code" && (config.fences ?? []).find((item) => item.heading === heading);
     if (fence) {
-      for (const figure of fence.figures ?? [fence]) out.push({ type: "chart", code: figure.code, caption: figure.caption ?? heading });
+      for (const figure of fence.figures ?? [fence]) out.push({ type: "chart", code: figure.code ?? block.code, caption: figure.caption ?? heading, er: figure.er });
     } else if (block.type === "chart" && (config.charts ?? []).some((item) => item.heading === heading)) {
       const entry = config.charts.find((item) => item.heading === heading);
-      for (const figure of entry.before ?? entry.replace ?? []) out.push({ type: "chart", code: figure.code, caption: figure.caption ?? heading });
-      if (!entry.replace) out.push({ ...block, caption: entry.caption ?? heading });
+      for (const figure of entry.before ?? entry.replace ?? []) out.push({ type: "chart", code: figure.code ?? block.code, caption: figure.caption ?? heading, er: figure.er });
+      // `mark`: a line put under the first line of the kept chart (a layout, e.g. "%% layout: modules")
+      const kept = entry.mark ? { ...block, code: block.code.replace(/^(\s*\w+[^\n]*\n)/, `$1${entry.mark}\n`) } : block;
+      if (!entry.replace) out.push({ ...kept, caption: entry.caption ?? heading });
+      for (const figure of entry.after ?? []) out.push({ type: "chart", code: figure.code ?? block.code, caption: figure.caption ?? heading, er: figure.er });
     } else if (block.type === "chart" && config.erDiagram && block.code.trimStart().startsWith("erDiagram")) {
       const { figures, ...shared } = config.erDiagram;
       for (const figure of figures) out.push({ type: "chart", code: block.code, caption: figure.caption, er: { ...shared, ...figure } });
@@ -174,11 +177,14 @@ async function loadRenderers(page) {
       fontFamily: t.font,
       themeVariables: { fontFamily: t.font, fontSize: `${t.fontSize}px`, primaryColor: t.roles.action.fill, primaryBorderColor: t.roles.action.stroke, primaryTextColor: t.roles.action.text, lineColor: t.connector.stroke, textColor: t.connector.labelText, noteBkgColor: t.roles.decision.fill, noteBorderColor: t.roles.decision.stroke, actorBkg: t.roles.decision.fill, actorBorder: t.roles.decision.stroke },
       flowchart: { htmlLabels: false },
-      sequence: { useMaxWidth: false },
+      themeCSS: ".messageText, .noteText { paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round; }",
+      sequence: { useMaxWidth: false, wrap: true, width: 150, messageMargin: 26, noteMargin: 8, boxMargin: 6, actorMargin: 40 },
       er: { useMaxWidth: false },
       state: { useMaxWidth: false },
     });
     window.renderMermaid = async (code, id) => {
+      // a state diagram of the document runs top to bottom (a left-to-right chain of 8 states is too wide for a page)
+      if (/^\s*stateDiagram/.test(code)) code = code.replace(/^(\s*)direction LR$/m, "$1direction TB");
       const { svg } = await window.mermaid.render(id, code);
       const holder = document.createElement("div");
       holder.innerHTML = svg;

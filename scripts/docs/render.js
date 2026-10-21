@@ -42,7 +42,7 @@
   const clean = (text) => text.trim().replace(/^"(.*)"$/s, "$1").replaceAll(" -> ", " → ").replace(/&quot;/g, '"');
 
   function parse(code) {
-    const graph = { direction: "TB", nodes: new Map(), edges: [], classes: {} };
+    const graph = { direction: "TB", nodes: new Map(), edges: [], classes: {}, source: code };
     const node = (id) => {
       if (!graph.nodes.has(id)) graph.nodes.set(id, { id, text: id, shape: "rect", cls: null, order: graph.nodes.size });
       return graph.nodes.get(id);
@@ -206,7 +206,9 @@
       }
       return out;
     });
-    return { id: "root", layoutOptions: baseOptions(graph.direction), children, edges };
+    // `%% layer-gap: 64` in the chart: more room between layers (a fork's labels need a run of their own)
+    const layerGap = /^\s*%%\s*layer-gap:\s*(\d+)/m.exec(graph.source)?.[1];
+    return { id: "root", layoutOptions: { ...baseOptions(graph.direction), ...(layerGap ? { "elk.layered.spacing.nodeNodeBetweenLayers": layerGap } : {}) }, children, edges };
   }
 
   /** The side of each end of each line, from where pass 1 put the nodes. */
@@ -407,7 +409,13 @@
       }
       // else beside the last segment, where a fork's lines have already parted
       const [q0, q1] = [edge.points[edge.points.length - 2], edge.points[edge.points.length - 1]];
-      if (q0.x === q1.x && Math.abs(q1.y - q0.y) > h + 4) candidates.push({ x: q0.x + gap, y: (q0.y + q1.y) / 2 - h / 2 }, { x: q0.x - gap - w, y: (q0.y + q1.y) / 2 - h / 2 });
+      if (q0.x === q1.x && Math.abs(q1.y - q0.y) > h + 4) {
+        const last = [{ x: q0.x + gap, y: (q0.y + q1.y) / 2 - h / 2 }, { x: q0.x - gap - w, y: (q0.y + q1.y) / 2 - h / 2 }];
+        // the first run of a fork is shared by its lines, so its label would belong to none: the run of its own comes first
+        const shared = edges.some((other) => other !== edge && other.points[0].x === p0.x && other.points[0].y === p0.y);
+        if (shared) candidates.unshift(...last);
+        else candidates.push(...last);
+      }
       const fits = (box) => !nodes.some((n) => hits(box, n)) && !placed.some((other) => hits(box, other)) && !crossesLine(box, edge);
       const choice = candidates.map((c) => ({ ...c, width: w, height: h })).find(fits) ?? { ...candidates[0], width: w, height: h };
       placed.push({ text: edge.label, rows: edge.labelRows, ...choice });
@@ -531,12 +539,256 @@
     return { svg, width, height, ...check(nodes, edges, []) };
   }
 
+  // ---------------------------------------------------------------- context (DFD level 0)
+
+  /**
+   * A chart marked `%% layout: context` is drawn as a context diagram: the system as a box in the middle (a "0" band over its name),
+   * external entities in a column on each side (`%% left: A, B` and `%% right: C`, `%% center: Id`), and every flow as its own straight
+   * horizontal line from its entity to the system, the label above the line, the arrow at the receiving end. A dotted flow stays dotted.
+   */
+  function renderContext(code, theme) {
+    const graph = parse(code);
+    const comment = (key) => (new RegExp("^\\s*%%\\s*" + key + ":\\s*(.+)$", "m").exec(code)?.[1] ?? "").split(/[,\s]+/).filter(Boolean);
+    const centerId = comment("center")[0];
+    const sides = { left: comment("left"), right: comment("right") };
+    const PITCH = 28;
+    const PAD = 12;
+    const GAP_V = 22;
+    const centre = graph.nodes.get(centerId);
+    const labelW = Math.max(...graph.edges.map((edge) => measure(edge.label, theme.labelFontSize, theme.font, "bold").width));
+    const lane = Math.ceil(labelW + 56);
+    const columns = {};
+    let tallest = 0;
+    for (const side of ["left", "right"]) {
+      let y = 0;
+      columns[side] = sides[side].map((id) => {
+        const item = graph.nodes.get(id);
+        item.role = roleOf(item);
+        sizeNode(item, theme);
+        const flows = graph.edges.filter((edge) => (edge.from === id && edge.to === centerId) || (edge.to === id && edge.from === centerId));
+        item.flows = flows;
+        item.width = Math.max(item.width, 132);
+        item.height = Math.max(flows.length * PITCH + 2 * PAD, 56);
+        item.y = y;
+        y += item.height + GAP_V;
+        return item;
+      });
+      tallest = Math.max(tallest, y - GAP_V);
+    }
+    // the smaller column is centred beside the system
+    for (const side of ["left", "right"]) {
+      const used = columns[side].length ? columns[side][columns[side].length - 1].y + columns[side][columns[side].length - 1].height : 0;
+      const shift = (tallest - used) / 2;
+      for (const item of columns[side]) item.y += shift;
+    }
+    centre.role = "action";
+    centre.height = tallest;
+    centre.width = Math.max(measure(centre.text, theme.fontSize + 2, theme.font, "bold").width + 48, 220);
+    const leftW = Math.max(0, ...columns.left.map((item) => item.width));
+    const rightW = Math.max(0, ...columns.right.map((item) => item.width));
+    const M = 16;
+    const top = M;
+    centre.x = M + leftW + lane;
+    centre.y = top;
+    for (const item of columns.left) Object.assign(item, { x: M + leftW - item.width, y: item.y + top });
+    for (const item of columns.right) Object.assign(item, { x: centre.x + centre.width + lane, y: item.y + top });
+    const width = centre.x + centre.width + lane + rightW + M;
+    const height = tallest + 2 * M;
+
+    const { connector } = theme;
+    const parts = [];
+    const nodes = [centre, ...columns.left, ...columns.right];
+    const lines = [];
+    const labels = [];
+    for (const side of ["left", "right"]) {
+      for (const item of columns[side]) {
+        item.flows.forEach((edge, i) => {
+          const y = item.y + PAD + i * PITCH + PITCH / 2;
+          const edgeX = side === "left" ? item.x + item.width : item.x;
+          const centreX = side === "left" ? centre.x : centre.x + centre.width;
+          const toCentre = edge.to === centerId;
+          const points = toCentre ? [{ x: edgeX, y }, { x: centreX, y }] : [{ x: centreX, y }, { x: edgeX, y }];
+          lines.push({ from: edge.from, to: edge.to, points, arrow: true, style: edge.style, id: edge.id });
+          const w = Math.ceil(measure(edge.label, theme.labelFontSize, theme.font, "bold").width + 8);
+          labels.push({ text: edge.label, rows: [edge.label], x: (edgeX + centreX) / 2 - w / 2, y: y - 4 - 15, width: w, height: 15 });
+        });
+      }
+    }
+    parts.push(`<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.5 L10,5 L0,9.5 Z" fill="${connector.stroke}"/></marker></defs>`);
+    for (const line of lines) {
+      const dash = line.style === "dotted" ? ' stroke-dasharray="6 4"' : "";
+      parts.push(`<path d="${roundedPath(line.points)}" fill="none" stroke="${connector.stroke}" stroke-width="${connector.strokeWidth}"${dash} marker-end="url(#arrow)"/>`);
+    }
+    const sys = resolveRole(theme, "action");
+    parts.push(`<rect x="${centre.x}" y="${centre.y}" width="${centre.width}" height="${centre.height}" rx="26" fill="${sys.fill}" stroke="${sys.stroke}" stroke-width="2.5"/>`);
+    parts.push(`<path d="M${centre.x},${centre.y + 40} H${centre.x + centre.width}" stroke="${sys.stroke}" stroke-width="2.5"/>`);
+    parts.push(textSvg(["0"], centre.x + centre.width / 2, centre.y + 20, theme.fontSize + 2, sys.text, theme.font, "bold"));
+    parts.push(textSvg(centre.text.split(/<br\s*\/?>/i), centre.x + centre.width / 2, centre.y + 40 + (centre.height - 40) / 2, theme.fontSize + 4, sys.text, theme.font, "bold"));
+    for (const item of [...columns.left, ...columns.right]) {
+      const colors = resolveRole(theme, item.role);
+      parts.push(`<rect x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" rx="${item.shape === "stadium" ? 10 : 3}" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
+      parts.push(textSvg(item.text.split(/<br\s*\/?>/i), item.x + item.width / 2, item.y + item.height / 2, theme.fontSize, colors.text, theme.font, "bold"));
+    }
+    for (const label of labels) parts.push(textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, theme.labelFontSize, connector.labelText, theme.font, "bold"));
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${Math.ceil(width)} ${Math.ceil(height)}" width="${Math.ceil(width)}" height="${Math.ceil(height)}"><rect width="100%" height="100%" fill="#ffffff"/>${parts.join("")}</svg>`;
+    return { svg, width: Math.ceil(width), height: Math.ceil(height), ...check(nodes, lines, labels) };
+  }
+
+  // ---------------------------------------------------------------- dfd (level 1)
+
+  /**
+   * A chart marked `%% layout: dfd` is drawn as a data flow diagram in three columns: external entities on the left (role startEnd),
+   * processes in the middle (their first line is the number), data stores on the right (cylinder shape, first line "D1"). Every flow
+   * leaves its box at its own point, runs along its own vertical lane in the channel between the columns, and enters the next box at its
+   * own point; the label of an entity flow sits on the first horizontal run, next to the entity. Boxes keep the order of the source.
+   */
+  function renderDfd(code, theme) {
+    const graph = parse(code);
+    const nodes = [...graph.nodes.values()];
+    for (const item of nodes) {
+      item.role = roleOf(item);
+      item.rows = item.text.split(/<br\s*\/?>/i);
+    }
+    const kind = (item) => (item.role === "startEnd" ? "left" : item.shape === "cylinder" ? "right" : "mid");
+    const columns = { left: nodes.filter((n) => kind(n) === "left"), mid: nodes.filter((n) => kind(n) === "mid"), right: nodes.filter((n) => kind(n) === "right") };
+    const PITCH = 22;
+    const PAD = 14;
+    const LANE = 12;
+    const M = 16;
+    const flows = graph.edges;
+    const labelW = Math.max(0, ...flows.map((edge) => (edge.label ? measure(edge.label, theme.labelFontSize, theme.font, "bold").width : 0))) + 24;
+
+    // the box nearer the left of a flow (src) and the other (dst); a flow with an entity runs in the left channel, the others in the right one
+    const split = (edge) => {
+      const a = graph.nodes.get(edge.from);
+      const b = graph.nodes.get(edge.to);
+      const leftSide = kind(a) === "left" || kind(b) === "left";
+      const src = leftSide ? (kind(a) === "left" ? a : b) : kind(a) === "mid" ? a : b;
+      const dst = src === a ? b : a;
+      return { src, dst, leftSide };
+    };
+    const ports = new Map(nodes.map((n) => [n.id, { left: 0, right: 0 }]));
+    for (const edge of flows) {
+      const { src, dst } = split(edge);
+      ports.get(src.id).right += 1;
+      ports.get(dst.id).left += 1;
+    }
+    for (const n of nodes) {
+      const k = kind(n);
+      const count = k === "left" ? ports.get(n.id).right : Math.max(ports.get(n.id).left, ports.get(n.id).right);
+      n.height = Math.max(k === "mid" ? 70 : 52, count * PITCH + 2 * PAD);
+      n.width = k === "left" ? Math.max(130, Math.max(...n.rows.map((r) => measure(r, theme.fontSize, theme.font, "bold").width)) + 28) : k === "mid" ? 170 : Math.max(150, Math.max(...n.rows.slice(1).map((r) => measure(r, theme.fontSize, theme.font).width)) + 70);
+    }
+    const GAP = 26;
+    const colHeight = (list) => list.reduce((sum, n) => sum + n.height, 0) + GAP * Math.max(0, list.length - 1);
+    const total = Math.max(colHeight(columns.left), colHeight(columns.mid), colHeight(columns.right));
+    for (const list of Object.values(columns)) {
+      const free = total - list.reduce((sum, n) => sum + n.height, 0);
+      const gap = list.length > 1 ? free / (list.length - 1) : 0;
+      let y = M + (list.length > 1 ? 0 : free / 2);
+      for (const n of list) {
+        n.y = y;
+        y += n.height + gap;
+      }
+    }
+    const leftEnd = M + Math.max(...columns.left.map((n) => n.width));
+    const leftLanes = flows.filter((e) => split(e).leftSide).length;
+    const rightLanes = flows.length - leftLanes;
+    const laneLeftStart = leftEnd + labelW;
+    const midX = laneLeftStart + Math.min(leftLanes, 14) * LANE + 40;
+    const midW = Math.max(...columns.mid.map((n) => n.width));
+    const rightX = midX + midW + 24 + Math.min(rightLanes, 14) * LANE + 60;
+    for (const n of columns.left) n.x = leftEnd - n.width;
+    for (const n of columns.mid) n.x = midX + (midW - n.width) / 2;
+    for (const n of columns.right) n.x = rightX;
+
+    const centre = (n) => n.y + n.height / 2;
+    // the y of each port: the flows of a side ordered by where the other end is, spread over the box
+    const portY = new Map();
+    for (const n of nodes) {
+      const sides = { left: [], right: [] };
+      for (const edge of flows) {
+        const { src, dst } = split(edge);
+        if (src === n) sides.right.push({ edge, other: dst });
+        if (dst === n) sides.left.push({ edge, other: src });
+      }
+      for (const side of ["left", "right"]) {
+        const sorted = [...sides[side]].sort((p, q) => centre(p.other) - centre(q.other));
+        const top = n.y + (n.height - sorted.length * PITCH) / 2;
+        sorted.forEach((item, i) => portY.set(`${item.edge.id}:${side}`, top + i * PITCH + PITCH / 2 + (kind(n) === "left" ? 0 : 6)));
+      }
+    }
+
+    const routes = flows.map((edge) => {
+      const { src, dst, leftSide } = split(edge);
+      return { edge, src, dst, leftSide, y1: portY.get(`${edge.id}:right`), y2: portY.get(`${edge.id}:left`), x1: src.x + src.width, x2: dst.x };
+    });
+    for (const leftSide of [true, false]) {
+      const list = routes.filter((r) => r.leftSide === leftSide).sort((p, q) => Math.min(p.y1, p.y2) - Math.min(q.y1, q.y2));
+      const used = [];
+      for (const r of list) {
+        r.lane = null;
+        if (Math.abs(r.y1 - r.y2) < 0.5) continue;
+        const lo = Math.min(r.y1, r.y2);
+        let k = used.findIndex((end) => end < lo - 6);
+        if (k < 0) k = used.length;
+        used[k] = Math.max(r.y1, r.y2);
+        r.lane = k;
+      }
+    }
+    const lines = [];
+    const labels = [];
+    for (const r of routes) {
+      const base = r.leftSide ? laneLeftStart : r.x1 + 24;
+      const laneX = r.lane === null ? null : base + r.lane * LANE;
+      const points = laneX === null ? [{ x: r.x1, y: r.y1 }, { x: r.x2, y: r.y2 }] : [{ x: r.x1, y: r.y1 }, { x: laneX, y: r.y1 }, { x: laneX, y: r.y2 }, { x: r.x2, y: r.y2 }];
+      const toDst = r.edge.to === r.dst.id;
+      lines.push({ from: r.edge.from, to: r.edge.to, points: toDst ? points : [...points].reverse(), arrow: true, style: r.edge.style, id: r.edge.id });
+      if (r.edge.label) {
+        const w = Math.ceil(measure(r.edge.label, theme.labelFontSize, theme.font, "bold").width + 8);
+        labels.push({ text: r.edge.label, rows: [r.edge.label], x: r.x1 + 6, y: r.y1 - 17, width: w, height: 15 });
+      }
+    }
+
+    const { connector } = theme;
+    const parts = [`<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.5 L10,5 L0,9.5 Z" fill="${connector.stroke}"/></marker></defs>`];
+    for (const line of lines) {
+      const dash = line.style === "dotted" ? ' stroke-dasharray="6 4"' : "";
+      parts.push(`<path d="${roundedPath(line.points, 6)}" fill="none" stroke="${connector.stroke}" stroke-width="${connector.strokeWidth}"${dash} stroke-linejoin="round" marker-end="url(#arrow)"/>`);
+    }
+    for (const n of nodes) {
+      const colors = resolveRole(theme, n.role);
+      const k = kind(n);
+      if (k === "left") {
+        parts.push(`<rect x="${n.x}" y="${n.y}" width="${n.width}" height="${n.height}" rx="3" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
+        parts.push(textSvg(n.rows, n.x + n.width / 2, centre(n), theme.fontSize, colors.text, theme.font, "bold"));
+      } else if (k === "mid") {
+        parts.push(`<rect x="${n.x}" y="${n.y}" width="${n.width}" height="${n.height}" rx="8" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
+        parts.push(`<path d="M${n.x},${n.y + 26} H${n.x + n.width}" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
+        parts.push(textSvg([n.rows[0]], n.x + n.width / 2, n.y + 13, theme.fontSize, colors.text, theme.font, "bold"));
+        parts.push(textSvg(n.rows.slice(1), n.x + n.width / 2, n.y + 26 + (n.height - 26) / 2, theme.fontSize, colors.text, theme.font, "normal"));
+      } else {
+        parts.push(`<rect x="${n.x}" y="${n.y}" width="${n.width}" height="${n.height}" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
+        parts.push(`<path d="M${n.x + 44},${n.y} V${n.y + n.height}" stroke="${colors.stroke}" stroke-width="${colors.strokeWidth}"/>`);
+        parts.push(textSvg([n.rows[0]], n.x + 22, centre(n), theme.fontSize, colors.text, theme.font, "bold"));
+        parts.push(textSvg(n.rows.slice(1), n.x + 44 + (n.width - 44) / 2, centre(n), theme.fontSize, colors.text, theme.font, "normal"));
+      }
+    }
+    for (const label of labels) parts.push(`<rect x="${label.x - 2}" y="${label.y}" width="${label.width + 4}" height="${label.height}" fill="#ffffff"/>` + textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, theme.labelFontSize, connector.labelText, theme.font, "bold"));
+    const width = Math.ceil(rightX + Math.max(...columns.right.map((n) => n.width)) + M);
+    const height = Math.ceil(total + 2 * M);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#ffffff"/>${parts.join("")}</svg>`;
+    return { svg, width, height, ...check(nodes, lines, labels) };
+  }
+
   // ---------------------------------------------------------------- main
 
   window.__flow = { check, roundedPath, textSvg, measure, resolveRole, esc };
 
   window.renderFlowchart = async (code, theme) => {
     if (/^\s*%%\s*layout:\s*tree/m.test(code)) return renderTree(code, theme);
+    if (/^\s*%%\s*layout:\s*context/m.test(code)) return renderContext(code, theme);
+    if (/^\s*%%\s*layout:\s*dfd/m.test(code)) return renderDfd(code, theme);
     const graph = parse(code);
     for (const item of graph.nodes.values()) {
       item.role = roleOf(item);
@@ -573,7 +825,7 @@
       parts.push(`<rect x="${label.x}" y="${label.y}" width="${label.width}" height="${label.height}" rx="3" fill="${connector.labelBackground}"/>`);
       parts.push(textSvg(label.rows, label.x + label.width / 2, label.y + label.height / 2, theme.labelFontSize, connector.labelText, theme.font, "bold"));
     }
-    const width = Math.ceil(done.width);
+    const width = Math.ceil(Math.max(done.width, ...labels.map((label) => label.x + label.width + 8)));
     const height = Math.ceil(done.height);
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#ffffff"/>${parts.join("")}</svg>`;
     return { svg, width, height, ...check(nodes, edges, labels) };

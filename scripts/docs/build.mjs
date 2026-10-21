@@ -98,6 +98,7 @@ const htmlInline = (text) => inline(text).map((run) => (run.code ? `<code>${esc(
  * `<name>.figures.json` next to a .md says how the document draws what the Markdown cannot draw well on paper:
  *   erDiagram: { dashed, extra, figures: [{ caption, tables, names, ghosts, ... }] }  the one erDiagram block becomes these figures
  *   fences: [{ heading, code }]  the text code block under that heading is drawn as this Mermaid chart
+ *   charts: [{ heading, replace | before: [{ caption, code }], caption }]  the chart under that heading is replaced, or kept (with this caption) after the figures `before` it
  * The Markdown stays the source of the tables, columns and relationships.
  */
 function expandFigures(blocks, config) {
@@ -108,6 +109,10 @@ function expandFigures(blocks, config) {
     const fence = block.type === "code" && (config.fences ?? []).find((item) => item.heading === heading);
     if (fence) {
       for (const figure of fence.figures ?? [fence]) out.push({ type: "chart", code: figure.code, caption: figure.caption ?? heading });
+    } else if (block.type === "chart" && (config.charts ?? []).some((item) => item.heading === heading)) {
+      const entry = config.charts.find((item) => item.heading === heading);
+      for (const figure of entry.before ?? entry.replace ?? []) out.push({ type: "chart", code: figure.code, caption: figure.caption ?? heading });
+      if (!entry.replace) out.push({ ...block, caption: entry.caption ?? heading });
     } else if (block.type === "chart" && config.erDiagram && block.code.trimStart().startsWith("erDiagram")) {
       const { figures, ...shared } = config.erDiagram;
       for (const figure of figures) out.push({ type: "chart", code: block.code, caption: figure.caption, er: { ...shared, ...figure } });

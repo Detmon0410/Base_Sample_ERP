@@ -78,7 +78,7 @@ List calls take `q`, `page`, `pageSize` and answer `meta: { page, pageSize, tota
 | Customers, products, materials, users write | yes | 403 | 403 |
 | Users read | yes | 403 | 403 |
 | QT (all calls, Confirm, delete a Draft) | yes | yes | 403 |
-| `PUT /orders/:id` (before start) | yes | yes | 403 |
+| `PUT /orders/:id` (before start) | yes | 403 | yes |
 | `POST /orders/:id/start`, `/progress` | yes | 403 | yes |
 | Stock change by hand | yes | 403 | yes |
 | Reopen / change a Completed process | yes | 403 | 403 |
@@ -106,7 +106,7 @@ sequenceDiagram
     Sale->>API: POST /qt/:id/confirm
     API->>DB: QT = Confirmed, create ORD-yyyy-0001 (Draft), copy PO file
     API-->>Sale: { qt, order, alreadyConfirmed, warnings }
-    Sale->>API: PUT /orders/:id  (date, lines, processes)
+    Fac->>API: PUT /orders/:id  (date, lines, processes)
     Fac->>API: POST /orders/:id/start
     API->>DB: deduct BOM from lots, oldest lot first
     API-->>Fac: 409 STOCK_SHORT if a material is short
@@ -146,9 +146,10 @@ stateDiagram-v2
     QT_Confirmed --> Order_Draft: order created
 
     state "Order Draft" as Order_Draft
-    Order_Draft --> Order_Started: POST start (deducts stock)
-    Order_Started --> Order_InProgress: first process moves
+    Order_Draft --> Order_Draft: POST start (deducts stock)
+    Order_Draft --> Order_InProgress: first process moves
     Order_InProgress --> Order_Completed: every process Completed
+    Order_Completed --> Order_InProgress: a process reopened (Admin, note required)
 
     Order_Completed --> Invoice_Unpaid: POST /invoices
     Invoice_Unpaid --> Invoice_Paid: POST payment (amount = total)

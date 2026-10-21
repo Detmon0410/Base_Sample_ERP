@@ -33,7 +33,7 @@ export const SECTIONS = [
         ["Customers, products, materials, users write", "yes", "403", "403"],
         ["Users read", "yes", "403", "403"],
         ["QT (all calls, Confirm, delete a Draft)", "yes", "yes", "403"],
-        ["`PUT /orders/:id` (before start)", "yes", "yes", "403"],
+        ["`PUT /orders/:id` (before start)", "yes", "403", "yes"],
         ["`POST /orders/:id/start`, `/progress`", "yes", "403", "yes"],
         ["Stock change by hand", "yes", "403", "yes"],
         ["Reopen / change a Completed process", "yes", "403", "403"],
@@ -50,7 +50,7 @@ export const SECTIONS = [
   {
     title: "4. One sale, end to end",
     blocks: [
-      { chart: "sequenceDiagram\n    actor Sale as Sale Worker / Admin\n    actor Fac as Factory Worker / Admin\n    actor Adm as Admin\n    participant API\n    participant DB\n\n    Sale->>API: POST /qt  (Draft, lines)\n    Sale->>API: POST /attachments  (PO_FILE, optional)\n    Sale->>API: POST /qt/:id/confirm\n    API->>DB: QT = Confirmed, create ORD-yyyy-0001 (Draft), copy PO file\n    API-->>Sale: { qt, order, alreadyConfirmed, warnings }\n    Sale->>API: PUT /orders/:id  (date, lines, processes)\n    Fac->>API: POST /orders/:id/start\n    API->>DB: deduct BOM from lots, oldest lot first\n    API-->>Fac: 409 STOCK_SHORT if a material is short\n    Fac->>API: POST /orders/:id/progress  (repeat per process)\n    Note over API: order status is computed:<br/>Draft, In Progress, Completed\n    Adm->>API: POST /invoices  (order Completed)\n    API->>DB: snapshot invoice INV-yyyy-0001, lock progress\n    Adm->>API: POST /invoices/:id/payment  (amount = total)\n    API->>DB: Payment, status Paid, Receipt RC-yyyy-0001" },
+      { chart: "sequenceDiagram\n    actor Sale as Sale Worker / Admin\n    actor Fac as Factory Worker / Admin\n    actor Adm as Admin\n    participant API\n    participant DB\n\n    Sale->>API: POST /qt  (Draft, lines)\n    Sale->>API: POST /attachments  (PO_FILE, optional)\n    Sale->>API: POST /qt/:id/confirm\n    API->>DB: QT = Confirmed, create ORD-yyyy-0001 (Draft), copy PO file\n    API-->>Sale: { qt, order, alreadyConfirmed, warnings }\n    Fac->>API: PUT /orders/:id  (date, lines, processes)\n    Fac->>API: POST /orders/:id/start\n    API->>DB: deduct BOM from lots, oldest lot first\n    API-->>Fac: 409 STOCK_SHORT if a material is short\n    Fac->>API: POST /orders/:id/progress  (repeat per process)\n    Note over API: order status is computed:<br/>Draft, In Progress, Completed\n    Adm->>API: POST /invoices  (order Completed)\n    API->>DB: snapshot invoice INV-yyyy-0001, lock progress\n    Adm->>API: POST /invoices/:id/payment  (amount = total)\n    API->>DB: Payment, status Paid, Receipt RC-yyyy-0001" },
       { heading: "Purchase flow" },
       { chart: "sequenceDiagram\n    actor U as Factory Worker / Admin\n    participant API\n    participant DB\n\n    U->>API: GET /materials?status=Low\n    U->>API: POST /purchase-orders  (supplier, date, lines)\n    API->>DB: PO-yyyy-0001 Draft, price from supplier item\n    U->>API: POST /purchase-orders/:id/status  { Sent }\n    U->>API: POST /purchase-orders/:id/status  { Received, lots[] }\n    API->>DB: Add stock per line (once only), link purchaseOrderId\n    U->>API: POST /purchase-orders/:id/payment  (amount = total)\n    U->>API: POST /attachments  (ownerType PurchaseOrder)" },
     ],
@@ -58,7 +58,7 @@ export const SECTIONS = [
   {
     title: "5. Order and invoice states",
     blocks: [
-      { chart: "stateDiagram-v2\n    direction LR\n    [*] --> QT_Draft\n    QT_Draft --> QT_Confirmed: POST /qt/:id/confirm (once)\n    QT_Confirmed --> Order_Draft: order created\n\n    state \"Order Draft\" as Order_Draft\n    Order_Draft --> Order_Started: POST start (deducts stock)\n    Order_Started --> Order_InProgress: first process moves\n    Order_InProgress --> Order_Completed: every process Completed\n\n    Order_Completed --> Invoice_Unpaid: POST /invoices\n    Invoice_Unpaid --> Invoice_Paid: POST payment (amount = total)\n    Invoice_Paid --> [*]: receipt issued" },
+      { chart: "stateDiagram-v2\n    direction LR\n    [*] --> QT_Draft\n    QT_Draft --> QT_Confirmed: POST /qt/:id/confirm (once)\n    QT_Confirmed --> Order_Draft: order created\n\n    state \"Order Draft\" as Order_Draft\n    Order_Draft --> Order_Draft: POST start (deducts stock)\n    Order_Draft --> Order_InProgress: first process moves\n    Order_InProgress --> Order_Completed: every process Completed\n    Order_Completed --> Order_InProgress: a process reopened (Admin, note required)\n\n    Order_Completed --> Invoice_Unpaid: POST /invoices\n    Invoice_Unpaid --> Invoice_Paid: POST payment (amount = total)\n    Invoice_Paid --> [*]: receipt issued" },
     ],
   },
   {

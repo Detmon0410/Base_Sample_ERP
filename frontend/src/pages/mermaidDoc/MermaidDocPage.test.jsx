@@ -138,7 +138,7 @@ describe("the APIs Diagram page", () => {
     expect(container.querySelectorAll("[data-hidden]").length).toBeGreaterThan(20);
     const tables = screen.getAllByRole("table");
     expect(tables).toHaveLength(3);
-    expect(within(tables[0]).getAllByRole("row")[6]).toHaveTextContent(`${HIDDEN} (before start)yesyes403`);
+    expect(within(tables[0]).getAllByRole("row")[6]).toHaveTextContent(`${HIDDEN} (before start)yes403yes`);
     expect(within(tables[1]).getAllByRole("row")[5]).toHaveTextContent("409DUPLICATE_VALUEUnique code, email, qtNumber used");
     // the error codes, the tables and the status values stay; nothing that would help to get in is in the page or in a chart
     expect(document.body.textContent).toContain("STOCK_SHORT");

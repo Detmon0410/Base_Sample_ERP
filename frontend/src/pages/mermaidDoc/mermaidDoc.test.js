@@ -60,7 +60,7 @@ function blocksOf(text) {
  * to other documents) and each "## " section with its blocks in order.
  */
 function readMd(name) {
-  const md = fs.readFileSync(path.resolve(import.meta.dirname, `../../../../ProjectdocInfo/${name === "User Flow.md" ? "UserFlow/" : name === "Context Diagram.md" ? "ContextDiagram/" : ""}${name}`), "utf8").replace(/\r\n/g, "\n");
+  const md = fs.readFileSync(path.resolve(import.meta.dirname, `../../../../ProjectdocInfo/${{ "User Flow.md": "UserFlow/", "Context Diagram.md": "ContextDiagram/", "APIs Diagram.md": "APIsDiagram/" }[name] ?? ""}${name}`), "utf8").replace(/\r\n/g, "\n");
   const title = md.split("\n")[0].replace(/^#\s*/, "").trim();
   const [head, ...chunks] = md.split("\n## ");
   const intro = blocksOf(head.split("\n").slice(1).join("\n"))

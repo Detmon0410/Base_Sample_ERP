@@ -1,0 +1,81 @@
+{
+  "charts": [
+    {
+      "heading": "1. Layers",
+      "mark": "%% direction: TB",
+      "caption": "1. Layers",
+      "after": [
+        {
+          "caption": "What every API call goes through (swimlanes)",
+          "code": "flowchart TD\n    %% layout: lanes\n    %% cols: Req=0 A=0 P=0 S=0 D=0 U401=1 U403=2 Env=3 Err=3 Ok=4\n    classDef startEnd fill:#1e1e1e,stroke:#1e1e1e,color:#ffffff,stroke-width:2px;\n    classDef action fill:#f3e8ff,stroke:#a855f7,color:#1e293b,stroke-width:1.5px;\n    classDef decision fill:#e0f2fe,stroke:#0284c7,color:#1e293b,stroke-width:1.5px;\n    classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b,stroke-width:1.5px;\n\n    subgraph Client\n        Req([Request]):::startEnd\n        U401([\"401<br/>UNAUTHORIZED\"]):::error\n        U403([\"403<br/>FORBIDDEN\"]):::error\n        Err([\"Error response<br/>400, 404, 409, 500\"]):::error\n        Ok([\"Response<br/>JSON\"]):::startEnd\n    end\n    subgraph Routes[\"Routes, auth\"]\n        A{\"Valid token and<br/>tokenVersion?\"}:::decision\n        Env[\"error.middleware:<br/>envelope + code\"]:::action\n    end\n    subgraph Permission\n        P{\"Role and department<br/>allowed?\"}:::decision\n    end\n    subgraph Service\n        S{\"Valid request<br/>and rules?\"}:::decision\n    end\n    subgraph Database\n        D[(\"Prisma, MySQL,<br/>uploads/\")]:::action\n    end\n\n    Req --> A\n    A -- No --> U401\n    A -- Yes --> P\n    P -- No --> U403\n    P -- Yes --> S\n    S -- No --> Env\n    Env --> Err\n    S -- Yes --> D\n    D --> Ok\n"
+        }
+      ]
+    },
+    {
+      "heading": "2. Endpoints by module",
+      "mark": "%% layout: modules\n    %% columns: 3",
+      "caption": "Endpoints by module"
+    },
+    {
+      "heading": "6. Data model (tables)",
+      "replace": [
+        {
+          "caption": "Data model: the 23 tables in 5 groups, and the relationships between the groups",
+          "er": {
+            "tables": "all",
+            "domains": [
+              {
+                "name": "Master data",
+                "tables": [
+                  "Customer",
+                  "Product",
+                  "Material",
+                  "MaterialLot",
+                  "ProductBom",
+                  "Supplier",
+                  "SupplierMaterial"
+                ]
+              },
+              {
+                "name": "Sale",
+                "tables": [
+                  "QtReference",
+                  "QtLine",
+                  "ProductionOrder",
+                  "OrderLine",
+                  "OrderProcess",
+                  "ProgressEntry"
+                ]
+              },
+              {
+                "name": "Accounting",
+                "tables": [
+                  "Invoice",
+                  "InvoiceLine",
+                  "Payment",
+                  "Receipt"
+                ]
+              },
+              {
+                "name": "Purchase and stock",
+                "tables": [
+                  "PurchaseOrder",
+                  "PurchaseOrderLine",
+                  "PurchasePayment",
+                  "StockChange"
+                ]
+              },
+              {
+                "name": "Users and files",
+                "tables": [
+                  "User",
+                  "Attachment"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

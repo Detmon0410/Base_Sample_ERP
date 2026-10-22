@@ -12,14 +12,14 @@ This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accou
 | **QT 2.0** | A QT has lines, is printed as a form, keeps the customer's PO (number, date, file); **Confirm QT makes the production order** |
 | **Purchase** | Suppliers and their items, one Purchase page (materials that are low or out), purchase orders Draft, Sent, Received (stock added once), payment, PDF |
 | **Files** | PDF, PNG or JPG (up to 10 MB) kept with a QT, a production order or a purchase order; an image or a PDF opens in a large window |
-| **Easier to use** | A job is finished on one page (Sales, Accounting), Today's work for the Factory Worker, shorter menu, lighter forms and tables ([docs/Usability Plan.md](docs/Usability%20Plan.md)); invoice and receipt print straight from the lists |
-| **Documents** | Eight diagram documents (PDF and DOCX) in [docs/ProjectdocInfo](docs/ProjectdocInfo/), checked against the system |
+| **Easier to use** | A job is finished on one page (Sales, Accounting), Today's work for the Factory Worker, shorter menu, lighter forms and tables ([docs/BaseRequirement_md/Usability Plan.md](docs/BaseRequirement_md/Usability%20Plan.md)); invoice and receipt print straight from the lists |
+| **Documents** | Nine documents (PDF and DOCX) in [docs/ProjectdocInfo](docs/ProjectdocInfo/): eight diagram documents and the Data Dictionary, checked against the system |
 
 ## Where the project is
 
 | Part | State |
 |---|---|
-| Source of the requirements | [docs/BaseRequirement_md/simplified_factory_system_requirements.md](docs/BaseRequirement_md/simplified_factory_system_requirements.md), then [User Version 2.0](docs/User%20Version%202.0.md), [QT Upgrade 2.0](docs/QT%20Upgrade%202.0.md) and [Purchase Logic Draft2](docs/Purchase%20Logic%20Draft2.md); how they were built: [docs/Version 2.0 Plan.md](docs/Version%202.0%20Plan.md) |
+| Source of the requirements | [docs/BaseRequirement_md/simplified_factory_system_requirements.md](docs/BaseRequirement_md/simplified_factory_system_requirements.md), then [User Version 2.0](docs/BaseRequirement_md/User%20Version%202.0.md), [QT Upgrade 2.0](docs/BaseRequirement_md/QT%20Upgrade%202.0.md) and [Purchase Logic Draft2](docs/BaseRequirement_md/Purchase%20Logic%20Draft2.md); how they were built: [docs/BaseRequirement_md/Version 2.0 Plan.md](docs/BaseRequirement_md/Version%202.0%20Plan.md) |
 | Backend | built: Express API with the Service layer and Prisma/MySQL (23 tables), answering the contract in [docs/api](docs/api/README.md); integration tests with the Node test runner |
 | Frontend | built on that API: sign-in, the menu in the header, the Dashboard ("Today" for a Factory Worker), Sales (one page for a job), production orders with progress, Purchase, Accounting (one work list), Stock, Master data (customers, products, suppliers, users). English and Japanese. Tests: vitest |
 
@@ -54,18 +54,20 @@ backend/    Express API (MVC + Service layer, Prisma/MySQL)
 frontend/   React app (Vite, Tailwind v4, i18next, vitest)
 scripts/    setup and dev scripts; scripts/docs builds the diagram documents (PDF, DOCX) from their Markdown
 docs/       the API contract (docs/api), the plans and the three requirements of Version 2.0
-docs/ProjectdocInfo/   the diagrams of the system as built (English): user flow, site map, ER, DB relations, context, APIs, flow chart, state and permission matrix
+docs/ProjectdocInfo/   the documents of the system as built, PDF and DOCX only (English): user flow, site map, ER, DB relations, context, APIs, flow chart, state and permission matrix, data dictionary; Thai reading copies in ThaiReading/
+scripts/docs/sources/  the Markdown and JSON sources of those documents
 docs/BaseRequirement_md/   the requirements (only simplified_factory_system_requirements.md is for this system; the other files are of the big system on branch jay)
 ```
 
 ## Documents
 
-The diagram documents are written in Markdown and built into PDF and DOCX by `scripts/docs` (see `scripts/docs/build.mjs`):
+The documents are written in Markdown (`scripts/docs/sources`) and built into PDF and DOCX in `docs/ProjectdocInfo` by `scripts/docs` (see `build.mjs`). The Data Dictionary is generated from `backend/prisma/schema.prisma` first (`node gen-data-dictionary.mjs`):
 
 ```bash
 cd scripts/docs
 pnpm install
-node build.mjs "User Flow"      # any name in docs/ProjectdocInfo; writes the PDF and the DOCX next to it
+node build.mjs "User Flow"      # any name in scripts/docs/sources; writes the PDF and the DOCX to docs/ProjectdocInfo
+node build.mjs "User Flow" --th # the Thai reading copy (dictionary in scripts/docs/th)
 ```
 
 ## Backend commands

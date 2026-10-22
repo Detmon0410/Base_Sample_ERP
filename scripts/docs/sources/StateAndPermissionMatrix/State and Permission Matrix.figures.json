@@ -1,9 +1,0 @@
-{
-  "charts": [
-    {
-      "heading": "4. One job through the statuses",
-      "mark": "%% direction: TB\n    %% layer-gap: 64",
-      "caption": "4. One job (QT, order, invoice) and one purchase order through the statuses"
-    }
-  ]
-}

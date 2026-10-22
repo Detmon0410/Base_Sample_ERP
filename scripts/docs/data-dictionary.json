@@ -1,0 +1,289 @@
+{
+  "common": {
+    "id": "Primary key, given by the database.",
+    "createdAt": "When the row was created.",
+    "updatedAt": "When the row was last changed.",
+    "at": "When the row was written."
+  },
+  "values": [
+    ["User.role", "`Admin`, `Worker`", "Admin does everything. A Worker works by department."],
+    ["User.department", "`Sales`, `Factory`, `Accounting`, `Administration`", "A Worker must be `Sales` or `Factory`; the department decides the access."],
+    ["QtReference.status", "`Draft`, `Confirmed`", "Draft can be changed and deleted; Confirmed is locked and has one production order."],
+    ["OrderProcess.status", "`Not Started`, `In Progress`, `Completed`", "Not Started means quantity 0, Completed means the full quantity of the line."],
+    ["Invoice.status", "`Unpaid`, `Paid`", "Paid after one full payment, which also issues the receipt."],
+    ["PurchaseOrder.status", "`Draft`, `Sent`, `Received`", "Moved by hand, one step forward. Received adds the stock once."],
+    ["StockChange.kind", "`Add`, `Deduct`, `Adjust`", "Add and Deduct move a lot by a quantity; Adjust is a signed correction and needs a reason."],
+    ["Attachment.kind", "`PO_FILE`, `QUOTATION`, `EVIDENCE`, `OTHER`", "What the file is. A new `PO_FILE` replaces the old one."],
+    ["Attachment.ownerType", "`QtReference`, `ProductionOrder`, `PurchaseOrder`", "The table the file belongs to (with `ownerId`)."],
+    ["PurchasePayment.method", "`Cash`, `Bank transfer`, `Cheque`, `Credit card`, `Other`", "How the purchase order was paid."]
+  ],
+  "tables": {
+    "User": {
+      "group": "Users and files",
+      "purpose": "A person who signs in: Admin, Sale Worker or Factory Worker.",
+      "columns": {
+        "name": "Display name.",
+        "department": "Department of the user; decides the access of a Worker.",
+        "email": "Sign-in name, stored in lower case. Unique.",
+        "passwordHash": "Hash of the password (bcrypt). The password itself is never stored.",
+        "role": "`Admin` or `Worker`.",
+        "tokenVersion": "Grows with every new password; a token with an older number is refused, so old sessions end.",
+        "lastLoginAt": "Time of the last sign-in."
+      }
+    },
+    "Attachment": {
+      "group": "Users and files",
+      "purpose": "A file kept with a QT, a production order or a purchase order.",
+      "columns": {
+        "ownerType": "Table of the owner. There is no database key to it; the service checks it.",
+        "ownerId": "Id of the owner row.",
+        "kind": "What the file is.",
+        "fileName": "Original name of the file.",
+        "fileType": "Media type: PDF, PNG or JPG.",
+        "size": "Size in bytes (up to 10 MB).",
+        "filePath": "Name of the stored file in the upload folder.",
+        "uploadedBy": "The user who uploaded it."
+      }
+    },
+    "Customer": {
+      "group": "Master data",
+      "purpose": "A company that buys from the factory.",
+      "columns": {
+        "name": "Company name.",
+        "address": "Postal address, printed on the QT, invoice and receipt.",
+        "email": "Contact e-mail (may be empty).",
+        "telephone": "Contact telephone (may be empty)."
+      }
+    },
+    "Product": {
+      "group": "Master data",
+      "purpose": "A product the factory makes and sells.",
+      "columns": {
+        "code": "Product code. Unique.",
+        "name": "Product name.",
+        "price": "Default unit price in yen; copied to a QT line and then editable there."
+      }
+    },
+    "Material": {
+      "group": "Master data",
+      "purpose": "A raw material or part kept in stock.",
+      "columns": {
+        "code": "Material code. Unique.",
+        "name": "Material name.",
+        "unit": "Unit of measure (pcs, kg, ...).",
+        "minLevel": "Minimum stock level. Empty means no level, so the material is never Low or Out."
+      }
+    },
+    "ProductBom": {
+      "group": "Master data",
+      "purpose": "Bill of materials: how much of a material one product needs. One row per product and material.",
+      "columns": {
+        "productId": "The product. The row goes with the product when it is deleted.",
+        "materialId": "The material.",
+        "quantity": "Quantity of the material for one product."
+      }
+    },
+    "MaterialLot": {
+      "group": "Master data",
+      "purpose": "A lot of a material in stock. The total of the lots is the stock of the material.",
+      "columns": {
+        "materialId": "The material. The lot goes with the material when it is deleted.",
+        "lotNumber": "Lot number, unique inside the material.",
+        "quantity": "Quantity left in the lot. Production takes from the oldest lot first."
+      }
+    },
+    "Supplier": {
+      "group": "Master data",
+      "purpose": "A company the factory buys materials from.",
+      "columns": {
+        "code": "Supplier code. Unique.",
+        "name": "Supplier name.",
+        "contact": "Contact person or telephone (may be empty).",
+        "address": "Postal address, printed on the purchase order.",
+        "active": "False hides the supplier from new purchase orders; old ones stay."
+      }
+    },
+    "SupplierMaterial": {
+      "group": "Master data",
+      "purpose": "A material a supplier sells, with its price. One row per supplier and material.",
+      "columns": {
+        "supplierId": "The supplier. The row goes with the supplier when it is deleted.",
+        "materialId": "The material.",
+        "unitPrice": "Initial unit price in yen; copied to a purchase order line, where it can be changed."
+      }
+    },
+    "QtReference": {
+      "group": "Sale",
+      "purpose": "A quotation (QT). Confirming it makes one production order.",
+      "columns": {
+        "qtNumber": "QT number. Unique.",
+        "qtDate": "Date of the QT.",
+        "customerId": "The customer.",
+        "notes": "Free notes.",
+        "customerPoNumber": "Number of the customer's purchase order (may be empty).",
+        "customerPoDate": "Date of the customer's purchase order.",
+        "status": "`Draft` or `Confirmed`.",
+        "productionOrderId": "The production order made by Confirm. Unique, so a QT makes only one order."
+      }
+    },
+    "QtLine": {
+      "group": "Sale",
+      "purpose": "A product line of a QT. One row per QT and product.",
+      "columns": {
+        "qtId": "The QT. The line goes with the QT when it is deleted.",
+        "productId": "The product.",
+        "quantity": "Quantity quoted.",
+        "unitPrice": "Unit price in yen. The amount (quantity x unit price) is computed, not stored."
+      }
+    },
+    "ProductionOrder": {
+      "group": "Sale",
+      "purpose": "The factory order made by Confirm QT. Its status (Draft, In Progress, Completed) is computed from its processes.",
+      "columns": {
+        "orderNumber": "Order number (ORD-yyyy-0001), given by the server. Unique.",
+        "qtId": "The QT it was made from.",
+        "customerId": "The customer, copied from the QT.",
+        "orderDate": "Date of the order.",
+        "notes": "Free notes.",
+        "startedAt": "When production started. Empty before the start; after it the products and processes are locked."
+      }
+    },
+    "OrderLine": {
+      "group": "Sale",
+      "purpose": "A product line of a production order, copied from the QT line.",
+      "columns": {
+        "orderId": "The order. The line goes with the order when it is deleted.",
+        "productId": "The product.",
+        "quantity": "Quantity to make.",
+        "unitPrice": "Agreed unit price in yen."
+      }
+    },
+    "OrderProcess": {
+      "group": "Sale",
+      "purpose": "One manual step of making a line (cutting, assembly, testing, ...), in order.",
+      "columns": {
+        "lineId": "The order line. The process goes with the line when it is deleted.",
+        "sequence": "Position of the step, from 1.",
+        "name": "Name of the step.",
+        "instructions": "How to do the step (may be empty).",
+        "status": "`Not Started`, `In Progress` or `Completed`.",
+        "completedQuantity": "Quantity finished so far, from 0 up to the quantity of the line."
+      }
+    },
+    "ProgressEntry": {
+      "group": "Sale",
+      "purpose": "History of progress: every time a process is updated. Never changed or deleted.",
+      "columns": {
+        "processId": "The process.",
+        "status": "Status set by this entry.",
+        "completedQuantity": "Quantity finished at that time.",
+        "workDate": "Date of the work.",
+        "note": "Note (needed when a Completed process is reopened).",
+        "userId": "Who recorded it."
+      }
+    },
+    "Invoice": {
+      "group": "Accounting",
+      "purpose": "An invoice for a Completed order: a copy of the order as it was. One per order.",
+      "columns": {
+        "invoiceNumber": "Invoice number (INV-yyyy-0001). Unique.",
+        "invoiceDate": "Date of the invoice.",
+        "orderId": "The order. Unique, so an order is billed once.",
+        "customerName": "Customer name, copied when issued.",
+        "customerAddress": "Customer address, copied when issued.",
+        "total": "Total in yen.",
+        "status": "`Unpaid` or `Paid`."
+      }
+    },
+    "InvoiceLine": {
+      "group": "Accounting",
+      "purpose": "A line of an invoice, with the product data copied when it was issued.",
+      "columns": {
+        "invoiceId": "The invoice. The line goes with the invoice.",
+        "productCode": "Product code, copied.",
+        "productName": "Product name, copied.",
+        "quantity": "Quantity billed.",
+        "unitPrice": "Unit price in yen.",
+        "amount": "Quantity x unit price."
+      }
+    },
+    "Payment": {
+      "group": "Accounting",
+      "purpose": "The one full payment of an invoice.",
+      "columns": {
+        "invoiceId": "The invoice. Unique: one payment per invoice.",
+        "paymentDate": "Date of the payment.",
+        "amount": "Amount in yen. Must equal the total of the invoice."
+      }
+    },
+    "Receipt": {
+      "group": "Accounting",
+      "purpose": "The receipt issued when an invoice is paid.",
+      "columns": {
+        "receiptNumber": "Receipt number (RC-yyyy-0001). Unique.",
+        "invoiceId": "The invoice. Unique: one receipt per invoice.",
+        "receiptDate": "Date of the receipt.",
+        "customerName": "Customer name, copied.",
+        "customerAddress": "Customer address, copied.",
+        "amount": "Amount received in yen."
+      }
+    },
+    "PurchaseOrder": {
+      "group": "Purchase and stock",
+      "purpose": "A purchase order (PO) to a supplier.",
+      "columns": {
+        "poNumber": "PO number (PO-yyyy-0001). Unique.",
+        "supplierId": "The supplier.",
+        "department": "Department the purchase is for (a plain list, not a permission).",
+        "requiredDate": "Date the goods are needed.",
+        "notes": "Free notes.",
+        "status": "`Draft`, `Sent` or `Received`.",
+        "total": "Sum of the line amounts, in yen.",
+        "receivedAt": "When the status became Received; the stock was added then, once.",
+        "createdBy": "The user who made the PO."
+      }
+    },
+    "PurchaseOrderLine": {
+      "group": "Purchase and stock",
+      "purpose": "A material on a purchase order. Lines change only while the PO is Draft.",
+      "columns": {
+        "poId": "The PO. The line goes with the PO when it is deleted.",
+        "materialId": "The material (one the supplier sells).",
+        "quantity": "Quantity ordered.",
+        "unit": "Unit of the material, copied.",
+        "unitPrice": "Unit price in yen; starts from the supplier's price.",
+        "amount": "Quantity x unit price.",
+        "lotNumber": "Lot typed for this line when the PO is received; the received quantity goes into it."
+      }
+    },
+    "PurchasePayment": {
+      "group": "Purchase and stock",
+      "purpose": "The one payment of a received purchase order. It does not go through the Accounting tables.",
+      "columns": {
+        "poId": "The PO. Unique: one payment per PO.",
+        "paymentDate": "Date of the payment.",
+        "amount": "Amount in yen. Must equal the total of the PO.",
+        "method": "How it was paid.",
+        "referenceNo": "Reference number of the payment (may be empty).",
+        "note": "Free note."
+      }
+    },
+    "StockChange": {
+      "group": "Purchase and stock",
+      "purpose": "History of every change of a lot: by hand, by the start of an order, or by receiving a PO. Never changed or deleted.",
+      "columns": {
+        "materialId": "The material.",
+        "lotNumber": "The lot that changed.",
+        "kind": "`Add`, `Deduct` or `Adjust`.",
+        "change": "Signed quantity added to the lot (negative for a deduction).",
+        "balance": "Quantity of the lot after the change.",
+        "changeDate": "Date of the change.",
+        "note": "Reason (needed for Adjust).",
+        "initial": "True for the first stock of a material; a material with a later change cannot be deleted.",
+        "orderId": "The production order whose start took the stock (if any).",
+        "purchaseOrderId": "The PO whose receiving added the stock (if any).",
+        "userId": "Who made the change."
+      }
+    }
+  }
+}

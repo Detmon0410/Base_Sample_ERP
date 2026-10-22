@@ -1,16 +1,37 @@
-# Refrigerator Factory — Mini ERP
+# Refrigerator Factory
 
-A simplified factory system: make the QT, confirm it into a production order with its processes, record the progress by hand, keep the material stock by hand, issue an invoice and a receipt. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only. Languages: English and Japanese. Currency: JPY only, no tax.
+A simplified factory system: make the QT, confirm it into a production order with its processes, record the progress, keep the material stock, buy the materials that run low (purchase orders), issue an invoice and a receipt. Node.js + Express + Prisma + MySQL and React (Vite). JavaScript only. Languages: English and Japanese. Currency: JPY only, no tax.
 
 This is branch `mini-erp`. The big system (sale, factory, stock, purchase, accounting, serial numbers, 33 pages) is on branch `jay`.
+
+## What is in Version 2.0
+
+| Part | What it does |
+|---|---|
+| **Roles by department** | A Worker is a Sale Worker (`Sales`) or a Factory Worker (`Factory`); the department decides the access and the menu. Admin does everything |
+| **QT 2.0** | A QT has lines, is printed as a form, keeps the customer's PO (number, date, file); **Confirm QT makes the production order** |
+| **Purchase** | Suppliers and their items, one Purchase page (materials that are low or out), purchase orders Draft, Sent, Received (stock added once), payment, PDF |
+| **Files** | PDF, PNG or JPG (up to 10 MB) kept with a QT, a production order or a purchase order; an image or a PDF opens in a large window |
+| **Easier to use** | A job is finished on one page (Sales, Accounting), Today's work for the Factory Worker, shorter menu, lighter forms and tables ([docs/Usability Plan.md](docs/Usability%20Plan.md)); invoice and receipt print straight from the lists |
+| **Documents** | Eight diagram documents (PDF and DOCX) in [docs/ProjectdocInfo](docs/ProjectdocInfo/), checked against the system |
 
 ## Where the project is
 
 | Part | State |
 |---|---|
-| Source of the requirements | [docs/BaseRequirement_md/simplified_factory_system_requirements.md](docs/BaseRequirement_md/simplified_factory_system_requirements.md) |
-| Frontend | built on the API of `backend/`: sign-in, two roles (Admin, Worker), the menu in the header, the Dashboard (and "Today" for a Factory Worker), one page for a Sales job (QT, Confirm, the production order and its processes), production orders with progress, the Stock group (materials and stock changes, movements), one Accounting page (to invoice, waiting for payment, paid; the invoice and the receipt as documents), customers, products, users. See [docs/Usability Plan.md](docs/Usability%20Plan.md). English and Japanese. Tests: vitest |
-| Backend | only a sample (the `User` table). The API it has to answer is written in [docs/api](docs/api/README.md) |
+| Source of the requirements | [docs/BaseRequirement_md/simplified_factory_system_requirements.md](docs/BaseRequirement_md/simplified_factory_system_requirements.md), then [User Version 2.0](docs/User%20Version%202.0.md), [QT Upgrade 2.0](docs/QT%20Upgrade%202.0.md) and [Purchase Logic Draft2](docs/Purchase%20Logic%20Draft2.md); how they were built: [docs/Version 2.0 Plan.md](docs/Version%202.0%20Plan.md) |
+| Backend | built: Express API with the Service layer and Prisma/MySQL (23 tables), answering the contract in [docs/api](docs/api/README.md); integration tests with the Node test runner |
+| Frontend | built on that API: sign-in, the menu in the header, the Dashboard ("Today" for a Factory Worker), Sales (one page for a job), production orders with progress, Purchase, Accounting (one work list), Stock, Master data (customers, products, suppliers, users). English and Japanese. Tests: vitest |
+
+## Demo accounts
+
+Created by the seed (`backend`, `pnpm run db:setup`). Change the passwords before any real use.
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@gmail.com` | `admin` |
+| Sale Worker | `sale@gmail.com` | `sale` |
+| Factory Worker | `worker@gmail.com` | `worker` |
 
 ## Workflow
 
@@ -31,9 +52,30 @@ Where this differs from `simplified_factory_system_requirements.md` (changes the
 ```text
 backend/    Express API (MVC + Service layer, Prisma/MySQL)
 frontend/   React app (Vite, Tailwind v4, i18next, vitest)
-docs/       the API contract (docs/api) and the plan of Version 2.0 (docs/Version 2.0 Plan.md)
-docs/ProjectdocInfo/   the diagrams of the system as built: context, flow chart, site map, user flow, ER, DB relations
-docs/BaseRequirement_md/   the requirements (only simplified_factory_system_requirements.md is for this Mini ERP; the other files are of the big system on branch jay)
+scripts/    setup and dev scripts; scripts/docs builds the diagram documents (PDF, DOCX) from their Markdown
+docs/       the API contract (docs/api), the plans and the three requirements of Version 2.0
+docs/ProjectdocInfo/   the diagrams of the system as built (English): user flow, site map, ER, DB relations, context, APIs, flow chart, state and permission matrix
+docs/BaseRequirement_md/   the requirements (only simplified_factory_system_requirements.md is for this system; the other files are of the big system on branch jay)
+```
+
+## Documents
+
+The diagram documents are written in Markdown and built into PDF and DOCX by `scripts/docs` (see `scripts/docs/build.mjs`):
+
+```bash
+cd scripts/docs
+pnpm install
+node build.mjs "User Flow"      # any name in docs/ProjectdocInfo; writes the PDF and the DOCX next to it
+```
+
+## Backend commands
+
+```bash
+cd backend
+pnpm run dev          # http://localhost:3001/api (nodemon, watches src)
+pnpm run db:setup     # RESETS the database: schema, then the seed with the demo accounts
+pnpm run db:seed:demo # optional demo records
+pnpm run test         # integration tests against a separate database kanou_mini_erp_test
 ```
 
 ## Frontend commands

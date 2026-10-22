@@ -1,5 +1,5 @@
 /*
- * Builds the documents of docs/ProjectdocInfo: each .md -> "<name>.pdf" and "<name>.docx" next to it, with every diagram as vector SVG.
+ * Builds the documents of scripts/docs/sources: each .md -> "<name>.pdf" and "<name>.docx" into docs/ProjectdocInfo/<Folder>, with every diagram as vector SVG.
  *   node build.mjs "User Flow" [--check]
  * Flowcharts are drawn by render.js (ELK layout, orthogonal lines, rounded elbows, theme of diagram-theme.md); other Mermaid charts
  * (sequence, state, ER) by Mermaid itself. --check only renders the diagrams and their QA report (out/<name>/) and writes no document.
@@ -15,6 +15,8 @@ import { chromium } from "playwright";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
+// the sources (.md, .figures.json, the theme) are in scripts/docs/sources/<Folder>; the documents (.pdf, .docx) are written to docs/ProjectdocInfo/<Folder>
+const SOURCES = path.join(HERE, "sources");
 const DOCS = path.join(ROOT, "docs/ProjectdocInfo");
 const MERMAID = path.join(HERE, "node_modules/mermaid/dist/mermaid.min.js");
 const ELK = path.join(HERE, "node_modules/elkjs/lib/elk.bundled.js");
@@ -28,9 +30,9 @@ const PAGE = { portrait: { w: 210, h: 297 }, landscape: { w: 297, h: 210 } };
 const MARGIN_LAND_V = 12;
 const usable = (orientation) => ({ w: (PAGE[orientation].w - 2 * MARGIN_MM) * PX_PER_MM, h: (PAGE[orientation].h - 2 * (orientation === "landscape" ? MARGIN_LAND_V : MARGIN_MM) - (orientation === "landscape" ? 38 : 34)) * PX_PER_MM });
 
-const theme = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(fs.readFileSync(path.join(DOCS, "diagram-theme.md"), "utf8"))[1]);
+const theme = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(fs.readFileSync(path.join(SOURCES, "diagram-theme.md"), "utf8"))[1]);
 const args = process.argv.slice(2);
-// --th: the Thai edition (a reading copy, written to docs/ThaiReading): every text goes through the dictionary th/dict-*.json
+// --th: the Thai edition (a reading copy, written to docs/ProjectdocInfo/ThaiReading): every text goes through the dictionary th/dict-*.json
 const TH = args.includes("--th");
 if (TH) theme.font = "Leelawadee UI, Tahoma, Arial, sans-serif";
 // the dictionary of a document: the words every document shares (all dict files), overridden by the file of that document (dict-<name>.json)
@@ -431,7 +433,7 @@ async function writeDocx(title, blocks, file) {
   const doc = new Document({
     creator: "scripts/docs",
     title,
-    styles: { default: { document: { run: { font: "Arial", size: 21, color: ink.slice(1) } } } },
+    styles: { default: { document: { run: { font: TH ? "Leelawadee UI" : "Arial", size: 21, color: ink.slice(1) } } } },
     sections: docxBlocks(blocks).map((section) => ({
       properties: {
         page: {
@@ -461,8 +463,8 @@ let anyFailed = false;
 try {
   for (const name of names) {
     // a document is docs/ProjectdocInfo/<name>.md or in its own folder docs/ProjectdocInfo/<folder>/<name>.md; its PDF and DOCX go next to it
-    const source = [DOCS, ...fs.readdirSync(DOCS, { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => path.join(DOCS, entry.name))].map((dir) => path.join(dir, `${name}.md`)).find((file) => fs.existsSync(file));
-    if (!source) throw new Error(`${name}.md not found in docs/ProjectdocInfo`);
+    const source = [SOURCES, ...fs.readdirSync(SOURCES, { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => path.join(SOURCES, entry.name))].map((dir) => path.join(dir, `${name}.md`)).find((file) => fs.existsSync(file));
+    if (!source) throw new Error(`${name}.md not found in scripts/docs/sources`);
     let blocks = parseMd(fs.readFileSync(source, "utf8"));
     const figuresFile = source.replace(/\.md$/, ".figures.json");
     if (fs.existsSync(figuresFile)) blocks = expandFigures(blocks, JSON.parse(fs.readFileSync(figuresFile, "utf8")));
@@ -493,7 +495,7 @@ try {
     }
     if (checkOnly || failed) continue;
     await page.setContent(doc, { waitUntil: "load" });
-    const target = TH ? path.join(ROOT, "docs/ThaiReading") : path.dirname(source);
+    const target = TH ? path.join(DOCS, "ThaiReading") : path.join(DOCS, path.basename(path.dirname(source)));
     fs.mkdirSync(target, { recursive: true });
     await page.pdf({
       path: path.join(target, TH ? `${name} (ไทย).pdf` : `${name}.pdf`),
@@ -502,12 +504,8 @@ try {
       headerTemplate: "<span></span>",
       footerTemplate: `<div style="width:100%;text-align:center;font-family:${TH ? "Leelawadee UI, Tahoma" : "Arial"};font-size:8pt;color:${ink}">${esc(title)} · ${TH ? "หน้า" : "page"} <span class="pageNumber"></span> / <span class="totalPages"></span></div>`,
     });
-    if (TH) {
-      console.log(`wrote ${path.relative(ROOT, target)}/${name} (ไทย).pdf`);
-      continue;
-    }
-    await writeDocx(title, blocks, path.join(path.dirname(source), `${name}.docx`));
-    console.log(`wrote ${path.relative(ROOT, path.dirname(source))}/${name}.pdf and .docx`);
+    await writeDocx(title, blocks, path.join(target, TH ? `${name} (ไทย).docx` : `${name}.docx`));
+    console.log(`wrote ${path.relative(ROOT, target)}/${TH ? `${name} (ไทย)` : name}.pdf and .docx`);
   }
 } finally {
   await browser.close();

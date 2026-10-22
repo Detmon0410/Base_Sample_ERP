@@ -1,6 +1,6 @@
 /*
  * Builds the Thai step-by-step guide of the whole job, from the QT to the receipt, from the screenshots that walk-*.mjs took of the running app
- * (scripts/docs/out/walkthrough). Output: docs/ThaiReading/Workflow QT to Receipt (ไทย).pdf
+ * (scripts/docs/out/walkthrough). Output: docs/ProjectdocInfo/ThaiReading/Workflow QT to Receipt (ไทย).pdf
  *   node build-walkthrough.mjs
  */
 import fs from "node:fs";
@@ -10,7 +10,7 @@ import { chromium } from "playwright";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SHOTS = path.join(HERE, "out/walkthrough");
-const OUT = path.resolve(HERE, "../../docs/ThaiReading/Workflow QT to Receipt (ไทย).pdf");
+const OUT = path.resolve(HERE, "../../docs/ProjectdocInfo/ThaiReading/Workflow QT to Receipt (ไทย).pdf");
 
 const ROLE = {
   sale: { name: "พนักงานขาย", account: "sale@gmail.com", color: "#7c3aed" },

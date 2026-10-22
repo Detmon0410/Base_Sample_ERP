@@ -16,7 +16,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { materialsApi, productsApi } from "@/services/master.service";
 import { ordersApi } from "@/services/orders.service";
 import { can } from "@/utils/permissions";
-import { formatNumber } from "@/utils/format";
+import { formatCurrency, formatNumber } from "@/utils/format";
 
 import { applyServerErrors, statusKey } from "@/utils/serverErrors";
 
@@ -82,31 +82,53 @@ function BomBlock({ form, index, products, materials }) {
   );
 }
 
-/** One product line: the product, the quantity, the agreed unit price and the ordered list of its processes. */
-function LineEditor({ form, index, products, materials, onRemove, canRemove }) {
-  const { t } = useTranslation("orders");
+/**
+ * One product line: the product, the quantity, the agreed unit price and the ordered list of its processes. A line that comes from the QT
+ * (`locked`) shows its product, quantity and price as text; only a line added here is typed in.
+ */
+function LineEditor({ form, index, products, materials, onRemove, canRemove, locked }) {
+  const { t, i18n } = useTranslation("orders");
+  const [productId, quantity, unitPrice] = useWatch({ control: form.control, name: [`lines.${index}.productId`, `lines.${index}.quantity`, `lines.${index}.unitPrice`] });
+  const product = products.find((item) => String(item.id) === String(productId));
   const processes = useFieldArray({ control: form.control, name: `lines.${index}.processes` });
   const errors = form.formState.errors.lines?.[index];
   const options = [{ value: "", label: t("lines.chooseProduct") }, ...products.map((product) => ({ value: String(product.id), label: `${product.code} ${product.name}` }))];
 
   return (
     <Section icon={Package} title={t("lines.line", { n: index + 1 })}>
-      <div className="grid gap-5 sm:grid-cols-[1fr_9rem_11rem]">
-        <SelectField
-          label={t("lines.product")}
-          options={options}
-          error={errors?.productId?.message}
-          {...form.register(`lines.${index}.productId`, {
-            // the price of the product is the default agreed price
-            onChange: (event) => {
-              const product = products.find((item) => String(item.id) === event.target.value);
-              if (product) form.setValue(`lines.${index}.unitPrice`, product.price);
-            },
-          })}
-        />
-        <TextField label={t("lines.quantity")} placeholder={t("examples:quantity")} type="number" min="1" step="1" error={errors?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
-        <TextField label={t("lines.unitPrice")} placeholder={t("examples:unitPrice")} type="number" min="0" step="1" error={errors?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
-      </div>
+      {locked ? (
+        <div className="grid gap-5 sm:grid-cols-[1fr_9rem_11rem]">
+          <div>
+            <p className="text-sm font-semibold text-muted-foreground">{t("lines.product")}</p>
+            <p>{product ? `${product.code} ${product.name}` : "-"}</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-muted-foreground">{t("lines.quantity")}</p>
+            <p>{formatNumber(Number(quantity) || 0, i18n.language)}</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-muted-foreground">{t("lines.unitPrice")}</p>
+            <p>{formatCurrency(Number(unitPrice) || 0, i18n.language)}</p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-[1fr_9rem_11rem]">
+          <SelectField
+            label={t("lines.product")}
+            options={options}
+            error={errors?.productId?.message}
+            {...form.register(`lines.${index}.productId`, {
+              // the price of the product is the default agreed price
+              onChange: (event) => {
+                const product = products.find((item) => String(item.id) === event.target.value);
+                if (product) form.setValue(`lines.${index}.unitPrice`, product.price);
+              },
+            })}
+          />
+          <TextField label={t("lines.quantity")} placeholder={t("examples:quantity")} type="number" min="1" step="1" error={errors?.quantity?.message} {...form.register(`lines.${index}.quantity`)} />
+          <TextField label={t("lines.unitPrice")} placeholder={t("examples:unitPrice")} type="number" min="0" step="1" error={errors?.unitPrice?.message} {...form.register(`lines.${index}.unitPrice`)} />
+        </div>
+      )}
 
       <BomBlock form={form} index={index} products={products} materials={materials} />
 
@@ -160,6 +182,7 @@ export function OrderForm({ order, onChanged, embedded = false }) {
   const form = useForm({ defaultValues: toForm(order) });
   const lines = useFieldArray({ control: form.control, name: "lines" });
   const errors = form.formState.errors;
+  const [savedLines] = useState(() => new Set(lines.fields.map((field) => field.id))); // the lines of the QT are not typed in
 
   const productList = useLoad(() => productsApi.list({ pageSize: 200 }), []);
   const materialList = useLoad(() => materialsApi.list({ pageSize: 200 }), []);
@@ -219,7 +242,7 @@ export function OrderForm({ order, onChanged, embedded = false }) {
 
         {lines.fields.length === 0 ? <p className="text-muted-foreground">{t("orders:lines.none")}</p> : null}
         {productList.data && materialList.data ? lines.fields.map((field, index) => (
-          <LineEditor key={field.id} form={form} index={index} products={products} materials={materials} canRemove={lines.fields.length > 1} onRemove={() => lines.remove(index)} />
+          <LineEditor key={field.id} locked={savedLines.has(field.id)} form={form} index={index} products={products} materials={materials} canRemove={lines.fields.length > 1} onRemove={() => lines.remove(index)} />
         )) : <p role="status">{t("common:loading")}</p>} {/* the products are the options of the selects: wait for them */}
         <div>
           <Button type="button" variant="outline" size="sm" onClick={() => lines.append(emptyLine())}>

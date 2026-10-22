@@ -1,13 +1,14 @@
-import { ArrowLeft, Banknote, Boxes, ClipboardList, PackageCheck, Pencil, Send, Trash2, X } from "lucide-react";
+import { ArrowLeft, Banknote, Boxes, ClipboardList, CreditCard, Ellipsis, FileSignature, Landmark, PackageCheck, Pencil, Send, Trash2, X } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 import { Attachments } from "@/components/common/Attachments";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
-import { NativeSelect, Section, TextField } from "@/components/common/FormFields";
+import { Section, TextField } from "@/components/common/FormFields";
+import { IconSelect } from "@/components/common/IconSelect";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -23,6 +24,7 @@ import { applyServerErrors } from "@/utils/serverErrors";
 import { PurchaseDocument } from "./PurchaseDocument";
 
 const METHODS = ["Cash", "Bank transfer", "Cheque", "Credit card", "Other"];
+const METHOD_ICONS = { Cash: Banknote, "Bank transfer": Landmark, Cheque: FileSignature, "Credit card": CreditCard, Other: Ellipsis };
 const methodKey = (method) => method.replace(/ (.)/g, (_, letter) => letter.toUpperCase()).replace(/^./, (letter) => letter.toUpperCase());
 const NO_FORM = { setError: () => {} };
 const STATUS_TONE = { Draft: "neutral", Sent: "progress", Received: "good" };
@@ -138,10 +140,19 @@ function PaymentSection({ po, onDone }) {
             <TextField label={t("purchase:payment.amount")} type="number" min="0" step="1" error={errors.amount?.message} {...form.register("amount")} />
             <Field data-invalid={errors.method ? true : undefined}>
               <FieldLabel className="text-sm font-semibold">{t("purchase:payment.method")}</FieldLabel>
-              <NativeSelect
-                aria-label={t("purchase:payment.method")}
-                options={[{ value: "", label: t("purchase:payment.chooseMethod") }, ...METHODS.map((value) => ({ value, label: t(`purchase:payment.methods.${methodKey(value)}`) }))]}
-                {...form.register("method")}
+              <Controller
+                control={form.control}
+                name="method"
+                render={({ field }) => (
+                  <IconSelect
+                    aria-label={t("purchase:payment.method")}
+                    invalid={Boolean(errors.method)}
+                    placeholder={t("purchase:payment.chooseMethod")}
+                    options={METHODS.map((value) => ({ value, icon: METHOD_ICONS[value], label: t(`purchase:payment.methods.${methodKey(value)}`) }))}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
               />
               {errors.method ? <FieldError>{errors.method.message}</FieldError> : null}
             </Field>

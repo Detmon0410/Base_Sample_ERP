@@ -247,6 +247,8 @@
     "by": "アップロード者",
     "at": "日時",
     "actions": "操作",
+    "view": "表示",
+    "close": "閉じる",
     "download": "ダウンロード",
     "delete": "削除",
     "chooseFile": "ファイルを選択（PDF・PNG・JPG、10 MBまで）",

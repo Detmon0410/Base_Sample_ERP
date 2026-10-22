@@ -247,6 +247,8 @@
     "by": "Uploaded by",
     "at": "When",
     "actions": "Actions",
+    "view": "View",
+    "close": "Close",
     "download": "Download",
     "delete": "Delete",
     "chooseFile": "Choose a file (PDF, PNG or JPG, up to 10 MB)",

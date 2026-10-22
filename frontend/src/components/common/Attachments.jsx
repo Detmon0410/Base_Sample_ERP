@@ -1,5 +1,6 @@
-import { Download, Paperclip, Trash2, Upload } from "lucide-react";
-import { useId, useRef, useState } from "react";
+import { Download, Eye, Paperclip, Trash2, Upload, X } from "lucide-react";
+import { Dialog as DialogPrimitive } from "radix-ui";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -39,6 +40,37 @@ async function download(id) {
   link.click();
 }
 
+/** A saved file as a blob address, so an image or a PDF can be shown in the page (a long data address is not shown by every browser). */
+async function blobUrl(id) {
+  const { file } = await attachmentsApi.get(id);
+  return { name: file.name, type: file.type ?? "", url: URL.createObjectURL(await (await fetch(file.dataUrl)).blob()) };
+}
+
+/** The file in a large window: an image as it is, a PDF in the viewer of the browser. */
+function Preview({ file, onClose, closeLabel }) {
+  useEffect(() => () => file && URL.revokeObjectURL(file.url), [file]);
+  const isPdf = file?.type === "application/pdf" || file?.name.toLowerCase().endsWith(".pdf");
+  return (
+    <DialogPrimitive.Root open={Boolean(file)} onOpenChange={(open) => !open && onClose()}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60" />
+        <DialogPrimitive.Content className="fixed top-1/2 left-1/2 z-50 flex h-[90vh] w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-lg bg-card p-4 shadow-lg">
+          <div className="flex items-center gap-3">
+            <DialogPrimitive.Title className="min-w-0 flex-1 truncate text-base font-bold">{file?.name}</DialogPrimitive.Title>
+            <DialogPrimitive.Description className="sr-only">{file?.name}</DialogPrimitive.Description>
+            <Button type="button" variant="ghost" size="icon" aria-label={closeLabel} title={closeLabel} onClick={onClose}>
+              <X aria-hidden="true" />
+            </Button>
+          </div>
+          <div className="min-h-0 flex-1 overflow-auto rounded-md bg-[#eef1f4]">
+            {file ? isPdf ? <iframe title={file.name} src={file.url} className="size-full border-0" /> : <img src={file.url} alt={file.name} className="mx-auto max-h-full max-w-full object-contain" /> : null}
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
+  );
+}
+
 /**
  * The files of one record (a QT, a production order, a purchase order): the list with the kind, the name, the size, who and when, a
  * download and (for the roles that may) a delete, and a small form that adds a file. PDF, PNG or JPG, up to 10 MB.
@@ -59,6 +91,8 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
   const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState(false); // a file is over the drop zone
   const [deleting, setDeleting] = useState(null); // the file asked about
+  const [preview, setPreview] = useState(null); // the file shown in the large window
+  const view = (id) => blobUrl(id).then(setPreview).catch(() => setError(say("UNKNOWN_ERROR")));
 
   const say = (code) => t(`master:errors.${code}`, { defaultValue: t("master:errors.UNKNOWN_ERROR") });
 
@@ -150,11 +184,16 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
             <li key={row.id} className="flex items-center gap-3 py-3">
               <span className="grid size-10 shrink-0 place-items-center rounded-md bg-[#eef1f4] text-xs font-bold">{(row.fileName.split(".").pop() ?? "").slice(0, 4).toUpperCase()}</span>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold">{row.fileName}</p>
+                <button type="button" className="block max-w-full cursor-pointer truncate text-left font-semibold text-link hover:underline" title={t("master:attachments.view")} onClick={() => view(row.id)}>
+                  {row.fileName}
+                </button>
                 <p className="text-sm text-muted-foreground">
                   {sizeText(row.size)} · {t(`master:attachments.kinds.${row.kind}`)} · {row.uploadedByName} · {formatDateTime(row.at, i18n.language)}
                 </p>
               </div>
+              <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.view")}: ${row.fileName}`} title={t("master:attachments.view")} onClick={() => view(row.id)}>
+                <Eye aria-hidden="true" />
+              </Button>
               <Button type="button" variant="ghost" size="icon" aria-label={`${t("master:attachments.download")}: ${row.fileName}`} title={t("master:attachments.download")} onClick={() => download(row.id).catch(() => setError(say("UNKNOWN_ERROR")))}>
                 <Download aria-hidden="true" />
               </Button>
@@ -167,6 +206,8 @@ export function Attachments({ ownerType, ownerId, kinds, canChange, title, locke
           ))}
         </ul>
       )}
+
+      <Preview file={preview} onClose={() => setPreview(null)} closeLabel={t("master:attachments.close")} />
 
       <ConfirmDialog
         open={Boolean(deleting)}

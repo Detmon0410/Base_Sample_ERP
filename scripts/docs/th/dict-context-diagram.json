@@ -37,7 +37,7 @@
   "Sales orders, delivery, supplier invoices, serial numbers and tax. (The Accounting page also lists the received purchase orders that wait for payment and the ones that are paid; the payment is recorded on the PO.)": "ใบสั่งขาย การจัดส่ง ใบแจ้งหนี้จากผู้จัดจำหน่าย หมายเลขซีเรียล และภาษี (หน้าบัญชียังแสดงรายการใบสั่งซื้อที่รับของแล้วและรอจ่ายเงิน กับที่จ่ายแล้ว โดยบันทึกการจ่ายเงินที่ PO)",
   "Customer": "ลูกค้า",
   "Supplier": "ผู้จัดจำหน่าย",
-  "Mini ERP 2.0": "Mini ERP 2.0",
+  "Refrigerator Factory": "Refrigerator Factory",
   "customer PO": "PO ของลูกค้า",
   "payment": "การชำระเงิน",
   "QT form": "แบบฟอร์ม QT",

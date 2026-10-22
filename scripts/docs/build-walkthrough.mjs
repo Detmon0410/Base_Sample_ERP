@@ -1,6 +1,6 @@
 /*
  * Builds the Thai step-by-step guide of the whole job, from the QT to the receipt, from the screenshots that walk-*.mjs took of the running app
- * (scripts/docs/out/walkthrough). Output: docs/ProjectdocInfo/Thai/Workflow QT to Receipt (ไทย).pdf
+ * (scripts/docs/out/walkthrough). Output: docs/ThaiReading/Workflow QT to Receipt (ไทย).pdf
  *   node build-walkthrough.mjs
  */
 import fs from "node:fs";
@@ -10,7 +10,7 @@ import { chromium } from "playwright";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SHOTS = path.join(HERE, "out/walkthrough");
-const OUT = path.resolve(HERE, "../../docs/ProjectdocInfo/Thai/Workflow QT to Receipt (ไทย).pdf");
+const OUT = path.resolve(HERE, "../../docs/ThaiReading/Workflow QT to Receipt (ไทย).pdf");
 
 const ROLE = {
   sale: { name: "พนักงานขาย", account: "sale@gmail.com", color: "#7c3aed" },
@@ -196,7 +196,7 @@ const img = (name) => `data:image/png;base64,${fs.readFileSync(path.join(SHOTS, 
 const chip = (role) => `<span class="chip" style="background:${ROLE[role].color}">${ROLE[role].name}</span>`;
 
 const body = [];
-body.push(`<section class="cover"><h1>ขั้นตอนการทำงานของระบบ Mini ERP</h1><p class="sub">ตั้งแต่สร้างใบเสนอราคา (QT) จนถึงใบเสร็จรับเงิน (Receipt) พร้อมภาพหน้าจอจริงและสิ่งที่ต้องทำในแต่ละขั้น</p></section>`);
+body.push(`<section class="cover"><h1>ขั้นตอนการทำงานของระบบ Refrigerator Factory</h1><p class="sub">ตั้งแต่สร้างใบเสนอราคา (QT) จนถึงใบเสร็จรับเงิน (Receipt) พร้อมภาพหน้าจอจริงและสิ่งที่ต้องทำในแต่ละขั้น</p></section>`);
 body.push(`<h2>ภาพรวม</h2><p>งานหนึ่งงานผ่านสามบทบาทตามลำดับ: <b>พนักงานขาย</b> ทำใบเสนอราคาและยืนยัน → <b>พนักงานโรงงาน</b> วางขั้นตอน เริ่มผลิต และบันทึกความคืบหน้า → <b>ผู้ดูแลระบบ</b> ออกใบแจ้งหนี้ รับชำระ และออกใบเสร็จรับเงิน ภาพหน้าจอทั้งหมดถ่ายจากระบบที่ทำงานจริงตามตัวอย่างงานเดียวกัน (QT-2026-020 → ORD-2026-0008 → INV-2026-0008 → RC-2026-0008) ปุ่มและช่องในภาพเป็นภาษาอังกฤษตามหน้าจอ (ระบบสลับ EN / JA ได้) จึงเขียนชื่อปุ่มเป็นตัวหนาตามที่เห็น</p>`);
 body.push(`<table class="summary"><thead><tr><th>ขั้น</th><th>ผู้ทำ</th><th>สิ่งที่ทำ</th></tr></thead><tbody>${STEPS.map((s, i) => `<tr><td class="c">${i + 1}</td><td>${chip(s.role)}</td><td>${md(s.title)}</td></tr>`).join("")}</tbody></table>`);
 body.push(`<h3>บัญชีที่ใช้ในการสาธิต</h3><table class="summary"><thead><tr><th>บทบาท</th><th>อีเมล</th></tr></thead><tbody>${Object.values(ROLE).map((r) => `<tr><td>${r.name}</td><td><code>${r.account}</code></td></tr>`).join("")}</tbody></table>`);

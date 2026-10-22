@@ -30,7 +30,7 @@ const usable = (orientation) => ({ w: (PAGE[orientation].w - 2 * MARGIN_MM) * PX
 
 const theme = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(fs.readFileSync(path.join(DOCS, "diagram-theme.md"), "utf8"))[1]);
 const args = process.argv.slice(2);
-// --th: the Thai edition (a reading copy, written to docs/ProjectdocInfo/Thai): every text goes through the dictionary th/dict-*.json
+// --th: the Thai edition (a reading copy, written to docs/ThaiReading): every text goes through the dictionary th/dict-*.json
 const TH = args.includes("--th");
 if (TH) theme.font = "Leelawadee UI, Tahoma, Arial, sans-serif";
 // the dictionary of a document: the words every document shares (all dict files), overridden by the file of that document (dict-<name>.json)
@@ -493,7 +493,7 @@ try {
     }
     if (checkOnly || failed) continue;
     await page.setContent(doc, { waitUntil: "load" });
-    const target = TH ? path.join(DOCS, "Thai") : path.dirname(source);
+    const target = TH ? path.join(ROOT, "docs/ThaiReading") : path.dirname(source);
     fs.mkdirSync(target, { recursive: true });
     await page.pdf({
       path: path.join(target, TH ? `${name} (ไทย).pdf` : `${name}.pdf`),

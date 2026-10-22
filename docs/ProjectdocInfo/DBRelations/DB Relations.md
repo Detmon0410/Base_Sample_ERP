@@ -24,7 +24,7 @@ Rules to remember:
 
 ---
 
-## Part 1: The base tables (the Mini ERP before Version 2.0)
+## Part 1: The base tables (Refrigerator Factory before Version 2.0)
 
 Table-by-table list of keys, relations and delete rules. The whole model, as built, is in the [ER Diagram](../ERDiagram/ER%20Diagram.md). The rows of QtReference, Material and User are changed by Part 2 below. Source: [docs/api](../../api/README.md) (`master-data.md`, `stock.md`, `qt.md`, `orders.md`, `invoices.md`, `receipts.md`).
 

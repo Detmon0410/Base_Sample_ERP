@@ -12,7 +12,7 @@ flowchart LR
     Cust([Customer])
     Sup([Supplier])
 
-    ERP[["Mini ERP 2.0"]]
+    ERP[["Refrigerator Factory"]]
 
     Admin -- "master data, invoices,<br/>payments, all actions" --> ERP
     ERP -- "dashboard, all lists,<br/>invoice, receipt" --> Admin

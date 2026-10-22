@@ -1,4 +1,4 @@
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, LogIn, Mail } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { AppLogo } from "@/components/common/AppLogo";
 import { useAuth } from "@/hooks/useAuth";
 
 // Messages are i18n keys, translated when rendered so a language switch updates them.
@@ -68,11 +69,12 @@ export function LoginPage() {
   const passwordInvalid = Boolean(errors.password) || isCredentialError;
 
   return (
-    <Card className="border border-slate-300 [--card-spacing:--spacing(7)]">
-      <CardContent className="flex flex-col gap-5">
+    <Card className="gap-0 overflow-hidden rounded-2xl border border-slate-300 py-0 shadow-lg [--card-spacing:--spacing(7)]">
+      <CardContent className="flex flex-col gap-5 py-8">
         <div className="text-center">
+          <AppLogo className="mx-auto mb-1 size-20" />
           <div>
-            <h1 className="text-2xl leading-tight font-bold">{t("login.title")}</h1>
+            <h1 className="text-2xl leading-tight font-bold text-foreground">{t("login.title")}</h1>
             {/* Hidden while the error alert is shown so the card stays within one screen. */}
             {alertKey ? null : (
               <p className="mt-1.5 text-base text-muted-foreground">{t("login.subtitle")}</p>
@@ -90,6 +92,7 @@ export function LoginPage() {
         <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Field data-invalid={emailInvalid ? true : undefined}>
             <FieldLabel htmlFor="email" className="text-base font-semibold">
+              <Mail aria-hidden="true" className="size-4 text-link" />
               {t("login.email")}
             </FieldLabel>
             <Input
@@ -108,9 +111,10 @@ export function LoginPage() {
 
           <Field data-invalid={passwordInvalid ? true : undefined}>
             <FieldLabel htmlFor="password" className="text-base font-semibold">
+              <LockKeyhole aria-hidden="true" className="size-4 text-link" />
               {t("login.password")}
             </FieldLabel>
-                        <div className="group/password relative">
+            <div className="group/password relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}

@@ -184,8 +184,8 @@
   }
 }
 
-/* Phone: tables become blocks, one per row, each cell with its column name in front. */
-@media (max-width: 767px) {
+/* Phone: tables become blocks, one per row, each cell with its column name in front (on the screen only: a narrow paper must stay a table). */
+@media screen and (max-width: 767px) {
   table[data-stack] thead {
     display: none;
   }
@@ -233,6 +233,12 @@
   }
   body[data-printing] * {
     visibility: hidden;
+  }
+  /* the page behind the paper is hidden, not gone: cut it so it adds no empty sheets */
+  html:has(body[data-printing]),
+  body[data-printing] {
+    height: 100vh;
+    overflow: hidden;
   }
   body[data-printing="invoice"] [data-print-doc="invoice"],
   body[data-printing="invoice"] [data-print-doc="invoice"] *,

@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { StepChain } from "@/components/common/StepChain";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { PrintNowButton } from "@/pages/invoices/Documents";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
@@ -144,8 +145,8 @@ export function OrderView({ order, onChanged, embedded = false }) {
               [t("orders:customerPo"), order.customerPoNumber],
               [t("orders:orderDate"), order.orderDate],
               [t("orders:startedAt"), order.started ? formatDateTime(order.startedAt, language) : t("orders:notStarted")],
-              [t("orders:invoice"), order.invoice ? <Link key="invoice" to={`/accounting/invoices/${order.invoice.id}`}>{order.invoice.invoiceNumber}</Link> : null],
-              [t("orders:receipt"), order.invoice?.receiptNumber ? <Link key="receipt" to={`/accounting/receipts/${order.invoice.receiptId}`}>{order.invoice.receiptNumber}</Link> : null],
+              [t("orders:invoice"), order.invoice ? <PrintNowButton key="invoice" kind="invoice" id={order.invoice.id} number={order.invoice.invoiceNumber} variant="link" className="h-auto p-0">{order.invoice.invoiceNumber}</PrintNowButton> : null],
+              [t("orders:receipt"), order.invoice?.receiptNumber ? <PrintNowButton key="receipt" kind="receipt" id={order.invoice.receiptId} number={order.invoice.receiptNumber} variant="link" className="h-auto p-0">{order.invoice.receiptNumber}</PrintNowButton> : null],
               [t("orders:notes"), order.notes],
             ]
               .filter((_, index) => !(embedded && index < 2)) // the QT and the customer are on the page

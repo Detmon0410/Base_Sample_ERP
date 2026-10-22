@@ -1,4 +1,4 @@
-import { Banknote, ReceiptText } from "lucide-react";
+import { Banknote, Printer, ReceiptText } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLoad } from "@/hooks/useLoad";
+import { PrintNowButton } from "@/pages/invoices/Documents";
 import { InvoicesPage } from "@/pages/invoices/InvoicesPage";
 import { ReceiptsPage } from "@/pages/receipts/ReceiptsPage";
 import { invoicesApi } from "@/services/invoices.service";
@@ -125,6 +126,9 @@ function InvoiceTable({ rows, language, paid, empty, onPay }) {
           <TableRow key={invoice.id}>
             <TableCell data-label={t("number")}>
               <Link to={`/accounting/invoices/${invoice.id}`}>{invoice.invoiceNumber}</Link>
+              <PrintNowButton kind="invoice" id={invoice.id} number={invoice.invoiceNumber} variant="ghost" size="icon" className="ml-1 size-8 align-middle" aria-label={`${t("print")}: ${invoice.invoiceNumber}`}>
+                <Printer aria-hidden="true" />
+              </PrintNowButton>
             </TableCell>
             <TableCell data-label={t("date")}>{invoice.invoiceDate}</TableCell>
             <TableCell data-label={t("customer")}>{invoice.customerName}</TableCell>
@@ -137,12 +141,10 @@ function InvoiceTable({ rows, language, paid, empty, onPay }) {
             <TableCell>
               {paid ? (
                 invoice.receipt ? (
-                  <Button asChild variant="outline" size="sm">
-                    <Link to={`/accounting/receipts/${invoice.receipt.id}`}>
-                      <ReceiptText aria-hidden="true" />
-                      {t("accounting.openReceipt")}: {invoice.receipt.receiptNumber}
-                    </Link>
-                  </Button>
+                  <PrintNowButton kind="receipt" id={invoice.receipt.id} number={invoice.receipt.receiptNumber} variant="outline" size="sm">
+                    <ReceiptText aria-hidden="true" />
+                    {t("accounting.openReceipt")}: {invoice.receipt.receiptNumber}
+                  </PrintNowButton>
                 ) : null
               ) : (
                 <Button type="button" size="sm" aria-label={`${t("accounting.pay")}: ${invoice.invoiceNumber}`} onClick={() => onPay(invoice)}>

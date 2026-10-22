@@ -1,11 +1,13 @@
 import { Download, Printer } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { HiddenPaper, Paper, PaperHeader, PaperNotes, PaperParties, PaperTable, PaperTotal, Signatures } from "@/components/documents/Paper";
 import { formatCurrency, formatNumber } from "@/utils/format";
+import { invoicesApi, receiptsApi } from "@/services/invoices.service";
 import { downloadPdf } from "@/utils/pdf";
 import { printDocument } from "@/utils/print";
 
@@ -104,5 +106,46 @@ export function DocumentActions({ name, number }) {
         <Printer aria-hidden="true" />{t("print")}
       </Button>
     </div>
+  );
+}
+
+/**
+ * A button that opens the print dialog of an invoice or a receipt at once, from a list: it loads the record, draws its paper out of sight
+ * and prints it, so nobody has to open the page of the document first. `kind` is "invoice" or "receipt".
+ */
+export function PrintNowButton({ kind, id, number, children, ...buttonProps }) {
+  const { t, i18n } = useTranslation("invoices");
+  const [record, setRecord] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!record) return undefined;
+    // one frame later, so the paper is on the page when the dialog takes its picture
+    const frame = requestAnimationFrame(() => {
+      printDocument(kind, number);
+      setRecord(null);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [record, kind, number]);
+
+  const start = async () => {
+    setBusy(true);
+    try {
+      setRecord(await (kind === "invoice" ? invoicesApi : receiptsApi).get(id));
+    } catch {
+      toast.error(t("pdfFailed"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <>
+      <Button type="button" disabled={busy} onClick={start} {...buttonProps}>
+        {children}
+      </Button>
+      {/* in the body, outside every positioned box of the page, so the paper starts at the top of the sheet */}
+      {record ? createPortal(kind === "invoice" ? <InvoiceDocument invoice={record} language={i18n.language} /> : <ReceiptDocument receipt={record} language={i18n.language} />, document.body) : null}
+    </>
   );
 }

@@ -27,7 +27,6 @@ function StockToBuy() {
 
   return (
     <Section icon={ShoppingCart} title={t("stock.title")} className="mb-6">
-      <p className="mb-3 text-sm text-muted-foreground">{t("stock.hint")}</p>
       {data && rows.length === 0 ? (
         <p className="text-muted-foreground">{t("stock.none")}</p>
       ) : (

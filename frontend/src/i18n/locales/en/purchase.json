@@ -21,7 +21,6 @@
   "paidNo": "Not paid",
   "stock": {
     "title": "Stock to buy",
-    "hint": "The materials that are low or out. Create a PO for the ones you need.",
     "none": "No material is low or out.",
     "code": "Code",
     "name": "Material",
@@ -33,9 +32,7 @@
   "form": {
     "section": "Purchase order",
     "chooseSupplier": "Choose a supplier",
-    "supplierHint": "Only the active suppliers. The lines can be the materials this supplier sells.",
-    "pickSupplier": "Choose the supplier first: its materials are the ones you can add.",
-    "noPrice": "The price starts from the price of the supplier; you can change it."
+    "pickSupplier": "Choose a supplier first."
   },
   "lines": {
     "title": "Materials",

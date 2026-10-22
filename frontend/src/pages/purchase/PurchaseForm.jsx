@@ -82,7 +82,6 @@ function PoLines({ form }) {
           {t("lines.total")}: {formatCurrency(total, i18n.language)}
         </p>
       </div>
-      <p className="mt-2 text-sm text-muted-foreground">{t("form.noPrice")}</p>
     </Section>
   );
 }
@@ -113,7 +112,6 @@ function PoFields({ form }) {
           />
           <TextField label={t("purchase:requiredDate")} placeholder={t("examples:date")} inputMode="numeric" error={errors.requiredDate?.message} {...form.register("requiredDate")} />
           <SelectField label={t("purchase:department")} options={departments} error={errors.department?.message} {...form.register("department")} />
-          <p className="self-end pb-2 text-sm text-muted-foreground">{t("purchase:form.supplierHint")}</p>
           <Field className="sm:col-span-2">
             <FieldLabel htmlFor={notesId} className="text-sm font-semibold">
               {t("purchase:notes")}

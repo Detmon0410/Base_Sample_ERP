@@ -221,7 +221,6 @@ function QtForm() {
                 <TextField label={t("qt.po.number")} error={errors.customerPoNumber?.message} {...form.register("customerPoNumber")} />
                 <TextField label={t("qt.po.date")} inputMode="numeric" error={errors.customerPoDate?.message} {...form.register("customerPoDate")} />
               </div>
-              <p className="mt-3 text-sm text-muted-foreground">{record ? t("qt.po.hint") : t("qt.po.saveFirst")}</p>
             </Section>
 
             {record ? <Attachments ownerType="QtReference" ownerId={record.id} kinds={["PO_FILE", "QUOTATION", "OTHER"]} canChange title={t("qt.filesTitle")} /> : null}

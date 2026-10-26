@@ -153,7 +153,7 @@ code { font-family: Consolas, monospace; font-size: 11pt; }
 .stephead h3 { margin: 0; flex: 1; }
 ul.notes { margin: 0 0 6pt; padding-left: 18pt; font-size: 12pt; color: #000; break-after: avoid; }
 .shot { margin: 6pt 0 10pt; break-inside: avoid; }
-.shot img { display: block; width: 100%; border: 0.75pt solid #000; }
+.shot img { display: block; box-sizing: border-box; width: 100%; border: 0.75pt solid #000; }
 .shot.paper img { width: 120mm; margin: 0 auto; }
 figcaption { font-size: 11pt; color: #000; margin: 4pt 0; text-align: center; }
 ol.legend { list-style: none; margin: 5pt 0 0; padding: 0; font-size: 12pt; }
